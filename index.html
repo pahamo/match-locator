@@ -35,9 +35,9 @@
 
   <script type="module">
     // ---- App version & expose globally ----
-    const APP_VERSION = "v0.1.3";
+    const APP_VERSION = "v0.1.4";
     window.APP_VERSION = APP_VERSION;
-    const TZ = 'Europe/Amsterdam'; const LOCALE = 'en-GB';
+    const TZ = 'Europe/London'; const LOCALE = 'en-GB';
 
     // ---- Supabase config ----
     const SUPABASE_URL = "https://ksqyurqkqznzrntdpood.supabase.co";
@@ -82,22 +82,53 @@
     async function homeView(){
       const app = document.getElementById("app");
 
-      const fixtures = await jget(`${PATH.fixtures}?select=id,utc_kickoff,home_team:teams!fixtures_home_team_id_fkey(name),away_team:teams!fixtures_away_team_id_fkey(name),broadcasts:broadcasts_uk(channel_name,providers(display_name))&${orderByKickoff}&limit=${BIG_LIMIT}`);
-      if (!fixtures.length){ app.innerHTML = `<p class="muted">No fixtures in the next 14 days.</p>`; return; }
+      // Fetch only future fixtures (server-side filter) and order by kickoff
+      const nowIso = new Date().toISOString();
+      const fixtures = await jget(
+        `${PATH.fixtures}?select=id,utc_kickoff,matchday,home_team:teams!fixtures_home_team_id_fkey(name),away_team:teams!fixtures_away_team_id_fkey(name),broadcasts:broadcasts_uk(channel_name,providers(display_name))&utc_kickoff=gte.${nowIso}&${orderByKickoff}&limit=${BIG_LIMIT}`
+      );
 
-      const df = new Intl.DateTimeFormat(LOCALE, { dateStyle: "medium", timeStyle: "short", timeZone: TZ });
-      app.innerHTML = fixtures.map(f => {
-        const kickoff = df.format(new Date(f.utc_kickoff));
-        const providers = (f.broadcasts || []).map(providersString).join(", ") || "TBC";
-        return `
-          <a href="#/match?id=${f.id}" style="text-decoration:none;color:inherit;display:block">
-            <div class="card">
-              <div><strong>${f.home_team.name}</strong> vs <strong>${f.away_team.name}</strong></div>
-              <div class="muted">${kickoff}</div>
-              <div class="muted"><em>${providers}</em></div>
-            </div>
-          </a>`;
+      // Safety: ensure parsed dates are valid
+      const safe = (fixtures || []).filter(f => !Number.isNaN(Date.parse(f.utc_kickoff)));
+      if (!safe.length){ app.innerHTML = `<p class="muted">No upcoming fixtures.</p>`; return; }
+
+      // Date formatters: heading per day, and kickoff time per match
+      const dayHeading = new Intl.DateTimeFormat(LOCALE, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', timeZone: TZ });
+      const timeOnly = new Intl.DateTimeFormat(LOCALE, { timeStyle: 'short', timeZone: TZ });
+
+      // Group fixtures by local calendar day in user's TZ
+      const byDay = new Map();
+      for (const f of safe){
+        const d = new Date(f.utc_kickoff);
+        // key that is stable for grouping but not shown directly
+        const key = new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' }).format(d); // YYYY-MM-DD
+        if (!byDay.has(key)) byDay.set(key, []);
+        byDay.get(key).push(f);
+      }
+
+      // Render groups in chronological order
+      const html = Array.from(byDay.entries()).sort(([a],[b])=> a.localeCompare(b)).map(([key, items]) => {
+        const headingLabel = dayHeading.format(new Date(items[0].utc_kickoff));
+        const cards = items.map(f => {
+          const kickoffTime = timeOnly.format(new Date(f.utc_kickoff));
+          const providers = (f.broadcasts || []).map(providersString).join(", ") || "TBC";
+          const mwChip = (typeof f.matchday === 'number' || (f.matchday && f.matchday !== null)) ? `<span class="chip">MW ${f.matchday}</span>` : '';
+          return `
+            <a href="#/match?id=${f.id}" style="text-decoration:none;color:inherit;display:block">
+              <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+                  <div><strong>${f.home_team.name}</strong> vs <strong>${f.away_team.name}</strong></div>
+                  ${mwChip}
+                </div>
+                <div class="muted">${kickoffTime}</div>
+                <div class="muted"><em>${providers}</em></div>
+              </div>
+            </a>`;
+        }).join("");
+        return `<h2 class="muted" style="margin:24px 0 8px">${headingLabel}</h2>` + cards;
       }).join("");
+
+      app.innerHTML = `<p class="muted" style="margin:4px 0 16px">All times UK (Europe/London)</p>` + html;
     }
 
     async function matchView(params){
