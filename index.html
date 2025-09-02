@@ -33,7 +33,7 @@
 
   <script type="module">
     // ---- App version & expose globally ----
-    const APP_VERSION = "v0.1.0";
+    const APP_VERSION = "v0.1.2";
     window.APP_VERSION = APP_VERSION;
     const TZ = 'Europe/Amsterdam'; const LOCALE = 'en-GB';
 
@@ -68,10 +68,8 @@
     // ---- Views ----
     async function homeView(){
       const app = document.getElementById("app");
-      const fromISO = new Date().toISOString();
-      const toISO = new Date(Date.now() + 14*24*3600*1000).toISOString();
 
-      const fixtures = await jget(`/rest/v1/fixtures?select=id,utc_kickoff,home_team:teams!fixtures_home_team_id_fkey(name),away_team:teams!fixtures_away_team_id_fkey(name),broadcasts:broadcasts_uk(channel_name,providers(display_name))&utc_kickoff=gte.${fromISO}&utc_kickoff=lte.${toISO}&order=utc_kickoff.asc`);
+      const fixtures = await jget(`/rest/v1/fixtures?select=id,utc_kickoff,home_team:teams!fixtures_home_team_id_fkey(name),away_team:teams!fixtures_away_team_id_fkey(name),broadcasts:broadcasts_uk(channel_name,providers(display_name))&order=utc_kickoff.asc&limit=1000`);
       if (!fixtures.length){ app.innerHTML = `<p class="muted">No fixtures in the next 14 days.</p>`; return; }
 
       const df = new Intl.DateTimeFormat(LOCALE, { dateStyle: "medium", timeStyle: "short", timeZone: TZ });
