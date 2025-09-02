@@ -15,8 +15,30 @@
     .wrap{max-width:920px;margin:0 auto;padding:20px}
     .muted{color:var(--muted)}
     .card{border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin:12px 0}
-    .chip{border:1px solid #d1d5db;border-radius:999px;padding:4px 10px;font-size:.9rem;display:inline-block;margin-right:6px;margin-top:6px}
+    .cardlink{display:block;text-decoration:none;color:inherit}
+    .row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .row .left{display:flex;flex-direction:column}
+    .filters{display:flex;gap:12px;flex-wrap:wrap;margin:8px 0 20px}
+    .filters select{padding:6px 10px;border:1px solid var(--border);border-radius:8px}
     .btn{display:inline-block;margin-top:8px;border:1px solid #111;padding:8px 12px;border-radius:10px;text-decoration:none}
+    .btn.small{font-size:.9rem;padding:6px 10px}
+    .btn.disabled{opacity:.5;pointer-events:none}
+    .btn.right{margin-top:0}
+    .section{margin:28px 0}
+    .section h2{margin:0 0 6px}
+    .section .range{font-size:.9rem}
+    /* Matchweek grouping visuals */
+    .mw{border:1px solid var(--border);border-radius:14px;padding:12px 16px;margin:28px 0;background:#fff;box-shadow:0 1px 0 rgba(0,0,0,.04)}
+    .mw-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:6px}
+    .mw h2{margin:0 0 2px}
+    .mw .range{color:var(--muted);margin:0 0 8px}
+    .mw h3{margin:16px 0 8px;padding-top:6px;border-top:1px solid var(--border);color:#111}
+    .mw h3:first-of-type{border-top:0;padding-top:0}
+    .pill{display:inline-block;border:1px solid var(--border);border-radius:999px;padding:4px 8px;font-size:.85rem;color:var(--muted)}
+    /* Tiny home/away dots */
+    .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin:-1px 6px 0 0;vertical-align:middle;border:1.5px solid #111}
+    .dot.home{background:#111}
+    .dot.away{background:transparent}
   </style>
 </head>
 <body>
@@ -37,7 +59,17 @@
     // ---- App version & expose globally ----
     const APP_VERSION = "v0.1.4";
     window.APP_VERSION = APP_VERSION;
-    const TZ = 'Europe/London'; const LOCALE = 'en-GB';
+    const DEFAULT_TZ = 'Europe/London';
+    const LOCALE = 'en-GB';
+    // Minimal country -> IANA timezone map for display; expand later
+    const TZ_OPTIONS = [
+      {label:'UK', tz:'Europe/London'},
+      {label:'Netherlands', tz:'Europe/Amsterdam'},
+      {label:'USA (Eastern)', tz:'America/New_York'},
+      {label:'USA (Pacific)', tz:'America/Los_Angeles'},
+      {label:'India', tz:'Asia/Kolkata'},
+      {label:'Australia (Sydney)', tz:'Australia/Sydney'}
+    ];
 
     // ---- Supabase config ----
     const SUPABASE_URL = "https://ksqyurqkqznzrntdpood.supabase.co";
@@ -81,60 +113,200 @@
     // ---- Views ----
     async function homeView(){
       const app = document.getElementById("app");
+      const { params } = parseHash();
+      const tzParam = params.get('tz');
+      const TZ = tzParam || DEFAULT_TZ;
+      const teamFilter = (params.get('team')||'').toLowerCase();
+      const compFilter = (params.get('comp')||'pl');
 
-      // Fetch only future fixtures (server-side filter) and order by kickoff
+      // Fetch fixtures directly from fixtures (ensures full coverage)
       const nowIso = new Date().toISOString();
-      const fixtures = await jget(
-        `${PATH.fixtures}?select=id,utc_kickoff,matchday,home_team:teams!fixtures_home_team_id_fkey(name),away_team:teams!fixtures_away_team_id_fkey(name),broadcasts:broadcasts_uk(channel_name,providers(display_name))&utc_kickoff=gte.${nowIso}&${orderByKickoff}&limit=${BIG_LIMIT}`
+      const rows = await jget(
+        `${PATH.fixtures}?select=id,utc_kickoff,matchday,` +
+        `home_team:teams!fixtures_home_team_id_fkey(name),` +
+        `away_team:teams!fixtures_away_team_id_fkey(name)` +
+        `&utc_kickoff=gte.${nowIso}&${orderByKickoff}&limit=${BIG_LIMIT}`
       );
+      const fixtures = (rows||[]).map(r => ({
+        id: r.id,
+        utc_kickoff: r.utc_kickoff,
+        matchday: r.matchday ?? null,
+        home: r.home_team?.name,
+        away: r.away_team?.name,
+      })).filter(f => f.home && f.away && !Number.isNaN(Date.parse(f.utc_kickoff)));
 
-      // Safety: ensure parsed dates are valid
-      const safe = (fixtures || []).filter(f => !Number.isNaN(Date.parse(f.utc_kickoff)));
-      if (!safe.length){ app.innerHTML = `<p class="muted">No upcoming fixtures.</p>`; return; }
+      // Client-side filter (club & competition & matchweek)
+      const teamSet = Array.from(new Set(fixtures.flatMap(f=>[f.home,f.away]))).sort((a,b)=>a.localeCompare(b));
+      const mwSet = Array.from(new Set(fixtures.map(f => f.matchday).filter(n => Number.isInteger(n)))).sort((a,b)=>a-b);
+      const mwParam = (params.get('mw')||'');
+      const filterHTML = `
+        <div class="filters">
+          <label>Club
+            <select id="clubFilter">
+              <option value="">All clubs</option>
+              ${teamSet.map(t=>`<option value="${t}">${t}</option>`).join('')}
+            </select>
+          </label>
+          <label>Competition
+            <select id="compFilter">
+              <option value="pl">Premier League</option>
+            </select>
+          </label>
+          <label>Matchweek
+            <select id="mwFilter">
+              <option value="">All</option>
+              ${mwSet.map(n=>`<option value="${n}">MW ${n}</option>`).join('')}
+            </select>
+          </label>
+          <label>Watching from
+            <select id="tzFilter">
+              ${TZ_OPTIONS.map(o=>`<option value="${o.tz}">${o.label}</option>`).join('')}
+            </select>
+          </label>
+        </div>`;
+      const filtered = fixtures.filter(f => {
+        const teamOK = teamFilter ? (f.home.toLowerCase()===teamFilter || f.away.toLowerCase()===teamFilter) : true;
+        const compOK = (compFilter === 'pl');
+        const mwOK = mwParam ? String(f.matchday||'') === mwParam : true;
+        return teamOK && compOK && mwOK;
+      });
 
-      // Date formatters: heading per day, and kickoff time per match
-      const dayHeading = new Intl.DateTimeFormat(LOCALE, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', timeZone: TZ });
-      const timeOnly = new Intl.DateTimeFormat(LOCALE, { timeStyle: 'short', timeZone: TZ });
-
-      // Group fixtures by local calendar day in user's TZ
-      const byDay = new Map();
-      for (const f of safe){
-        const d = new Date(f.utc_kickoff);
-        // key that is stable for grouping but not shown directly
-        const key = new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' }).format(d); // YYYY-MM-DD
-        if (!byDay.has(key)) byDay.set(key, []);
-        byDay.get(key).push(f);
+      if (!filtered.length){
+        app.innerHTML = filterHTML + `<p class="muted">No upcoming fixtures.</p>`;
+        const clubSel = document.getElementById('clubFilter');
+        const compSel = document.getElementById('compFilter');
+        const mwSel = document.getElementById('mwFilter');
+        if (clubSel){ clubSel.value = teamFilter ? teamSet.find(t=>t.toLowerCase()===teamFilter) || '' : ''; }
+        if (compSel){ compSel.value = compFilter; }
+        if (mwSel){ mwSel.value = mwParam; }
+        function updateParam(k,v){
+          const { path, params } = parseHash();
+          if (v) params.set(k,v); else params.delete(k);
+          const qs = params.toString();
+          location.hash = path + (qs?`?${qs}`:'');
+        }
+        clubSel?.addEventListener('change', e=> updateParam('team', e.target.value));
+        compSel?.addEventListener('change', e=> updateParam('comp', e.target.value));
+        mwSel?.addEventListener('change', e=> updateParam('mw', e.target.value));
+        return;
       }
 
-      // Render groups in chronological order
-      const html = Array.from(byDay.entries()).sort(([a],[b])=> a.localeCompare(b)).map(([key, items]) => {
-        const headingLabel = dayHeading.format(new Date(items[0].utc_kickoff));
-        const cards = items.map(f => {
-          const kickoffTime = timeOnly.format(new Date(f.utc_kickoff));
-          const providers = (f.broadcasts || []).map(providersString).join(", ") || "TBC";
-          const mwChip = (typeof f.matchday === 'number' || (f.matchday && f.matchday !== null)) ? `<span class="chip">MW ${f.matchday}</span>` : '';
-          return `
-            <a href="#/match?id=${f.id}" style="text-decoration:none;color:inherit;display:block">
-              <div class="card">
-                <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-                  <div><strong>${f.home_team.name}</strong> vs <strong>${f.away_team.name}</strong></div>
-                  ${mwChip}
-                </div>
-                <div class="muted">${kickoffTime}</div>
-                <div class="muted"><em>${providers}</em></div>
-              </div>
-            </a>`;
-        }).join("");
-        return `<h2 class="muted" style="margin:24px 0 8px">${headingLabel}</h2>` + cards;
-      }).join("");
+      // Batch-load broadcasts for all fixtures (single request) and map by fixture_id
+      let bmap = {};
+      const ids = filtered.map(f => f.id);
+      if (ids.length) {
+        const qs = ids.join(',');
+        try {
+          const brows = await jget(`${PATH.broadcasts}?select=fixture_id,channel_name,providers(display_name)&fixture_id=in.(${qs})`);
+          for (const b of (brows || [])){
+            if (!bmap[b.fixture_id]) bmap[b.fixture_id] = [];
+            bmap[b.fixture_id].push(b);
+          }
+        } catch (_) { /* ignore; show TBC */ }
+      }
 
-      app.innerHTML = `<p class="muted" style="margin:4px 0 16px">All times UK (Europe/London)</p>` + html;
+      // Date formatters
+      const dayHeading = new Intl.DateTimeFormat(LOCALE, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', timeZone: TZ });
+      const timeOnly   = new Intl.DateTimeFormat(LOCALE, { timeStyle: 'short', timeZone: TZ });
+      const ymd        = new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' }); // YYYY-MM-DD
+      const pretty     = new Intl.DateTimeFormat(LOCALE, { day:'numeric', month:'short', timeZone: TZ });
+      
+      // Helper: render one day's cards
+      const renderCards = (items) => items.map(f => {
+        const kickoffTime = timeOnly.format(new Date(f.utc_kickoff));
+        const hasB = (bmap[f.id] || []).length > 0;
+        return `
+          <a class="cardlink" href="#/match?id=${f.id}">
+            <div class="card">
+              <div class="row">
+                <div class="left">
+                  <div>
+                    <span class="dot home" aria-label="Home" title="Home"></span><strong>${f.home}</strong>
+                    &nbsp;vs&nbsp;
+                    <span class="dot away" aria-label="Away" title="Away"></span><strong>${f.away}</strong>
+                  </div>
+                  <div class="muted">${kickoffTime}</div>
+                </div>
+                <div>
+                  <a class="${hasB ? 'btn small right' : 'btn small right disabled'}" href="#/match?id=${f.id}">${hasB ? 'Watch options' : 'Broadcasts (TBC)'}</a>
+                </div>
+              </div>
+            </div>
+          </a>`;
+      }).join('');
+      
+      // Render sections per matchweek
+      const sections = Array.from(new Map(
+        filtered.reduce((map,f) => {
+          const mw = f.matchday ?? 0;
+          if (!map.has(mw)) map.set(mw, []);
+          map.get(mw).push(f);
+          return map;
+        }, new Map())
+      ).entries())
+        .sort(([a],[b]) => (a||0) - (b||0))
+        .map(([mw, items]) => {
+          // Group by UK day inside the MW
+          const byDay = new Map();
+          for (const f of items){
+            const key = ymd.format(new Date(f.utc_kickoff));
+            if (!byDay.has(key)) byDay.set(key, []);
+            byDay.get(key).push(f);
+          }
+          // Determine MW date span for heading
+          const dates = items.map(f => new Date(f.utc_kickoff)).sort((a,b)=>a-b);
+          const first = pretty.format(dates[0]);
+          const last  = pretty.format(dates[dates.length-1]);
+          const range = first === last ? first : `${first} – ${last}`;
+          const mwLabel = mw > 0 ? `Matchweek ${mw}` : 'Upcoming matches';
+          
+          const inner = Array.from(byDay.entries())
+            .sort(([a],[b])=> a.localeCompare(b))
+            .map(([key, dayItems]) => {
+              const headingLabel = dayHeading.format(new Date(dayItems[0].utc_kickoff));
+              // Ensure chronological within day
+              dayItems.sort((x,y) => new Date(x.utc_kickoff) - new Date(y.utc_kickoff));
+              return `<h3 class="muted">${headingLabel}</h3>` + renderCards(dayItems);
+            }).join('');
+          
+          return `<section class="section mw">
+            <div class="mw-head">
+              <h2>${mwLabel}</h2>
+              <span class="pill">${range}</span>
+            </div>
+            ${inner}
+          </section>`;
+        }).join('');
+      
+      const tzLabel = (TZ_OPTIONS.find(o=>o.tz===TZ)?.label || 'UK') + ` (${TZ})`;
+      app.innerHTML = `<p class="muted" style="margin:4px 0 16px">All times ${tzLabel}</p>` + filterHTML + sections;
+      const clubSel = document.getElementById('clubFilter');
+      const compSel = document.getElementById('compFilter');
+      const mwSel = document.getElementById('mwFilter');
+      const tzSel = document.getElementById('tzFilter');
+      if (clubSel){ clubSel.value = teamFilter ? teamSet.find(t=>t.toLowerCase()===teamFilter) || '' : ''; }
+      if (compSel){ compSel.value = compFilter; }
+      if (mwSel){ mwSel.value = mwParam; }
+      if (tzSel){ tzSel.value = TZ; }
+      function updateParam(k,v){
+        const { path, params } = parseHash();
+        if (v) params.set(k,v); else params.delete(k);
+        const qs = params.toString();
+        location.hash = path + (qs?`?${qs}`:'');
+      }
+      clubSel?.addEventListener('change', e=> updateParam('team', e.target.value));
+      compSel?.addEventListener('change', e=> updateParam('comp', e.target.value));
+      mwSel?.addEventListener('change', e=> updateParam('mw', e.target.value));
+      tzSel?.addEventListener('change', e=> updateParam('tz', e.target.value));
     }
 
     async function matchView(params){
       const app = document.getElementById("app");
       const id = params.get("id");
       if (!id){ app.innerHTML = `<p class="muted">Missing ?id=… <a href=\"#/\">Go back</a></p>`; return; }
+
+      const { params: _p } = parseHash();
+      const tzView = _p.get('tz') || DEFAULT_TZ;
 
       const [fixture] = await jget(`${PATH.fixtures}?id=eq.${id}&select=id,utc_kickoff,home_team_id,away_team_id,venue`);
       if (!fixture){ app.innerHTML = `<p class="muted">Fixture not found. <a href=\"#/\">Home</a></p>`; return; }
@@ -151,7 +323,7 @@
         affiliatesByProv = Object.fromEntries(aff.map(a => [a.provider_id, a.affiliate_url]));
       }
       const demoFallback = (providerName) => `https://example.com/demo?provider=${encodeURIComponent(providerName)}&fixture=${encodeURIComponent(id)}`;
-      const df = new Intl.DateTimeFormat(LOCALE, { dateStyle: "medium", timeStyle: "short", timeZone: TZ });
+      const df = new Intl.DateTimeFormat(LOCALE, { dateStyle: "medium", timeStyle: "short", timeZone: tzView });
 
       app.innerHTML = `
         <a href=\"#/\" class=\"muted\">← Back</a>
