@@ -1,13 +1,49 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>PL — UK TV & Radio (MVP)</title>
-</head>
 <body>
   <h1>Premier League — UK Listings MVP</h1>
-  <p>If you can see this file in your browser, your local setup works 🎉</p>
-  <p>Next step: paste the Supabase fetch code here to pull fixtures.</p>
+  <div id="fixtures">Loading fixtures...</div>
+
+  <script type="module">
+    // --- Supabase config ---
+    const SUPABASE_URL = "https://ksqyurqkqznzrntdpood.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzcXl1cnFrcXpuenJudGRwb29kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3OTEwNjAsImV4cCI6MjA3MjM2NzA2MH0.wVBZBEbfctB7JPnpMZkXKMGwXlYxGWjOF_AxixVo-S4"; // your anon key
+    const HEADERS = { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` };
+    async function loadFixtures() {
+      const container = document.getElementById("fixtures");
+
+      // 1. Fetch fixtures
+      const res = await fetch(
+        `${SUPABASE_URL}/rest/v1/fixtures?select=id,utc_kickoff,home_team:teams!fixtures_home_team_id_fkey(name),away_team:teams!fixtures_away_team_id_fkey(name),broadcasts:broadcasts_uk(channel_name,providers(display_name))&order=utc_kickoff.asc`,
+        { headers: HEADERS }
+      );
+      const data = await res.json();
+
+      if (!data.length) {
+        container.textContent = "No fixtures found.";
+        return;
+      }
+
+      // 2. Render fixtures
+      const df = new Intl.DateTimeFormat(undefined, {
+        dateStyle: "medium",
+        timeStyle: "short",
+      });
+
+      container.innerHTML = data.map(f => {
+        const kickoff = df.format(new Date(f.utc_kickoff));
+        const providers = f.broadcasts
+          .map(b => `${b.providers.display_name}${b.channel_name ? " — " + b.channel_name : ""}`)
+          .join(", ") || "TBC";
+
+        return `
+          <div style="margin:1em 0;padding:0.5em;border:1px solid #ddd;border-radius:8px">
+            <div><strong>${f.home_team.name}</strong> vs <strong>${f.away_team.name}</strong></div>
+            <div>${kickoff}</div>
+            <div><em>${providers}</em></div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    loadFixtures();
+  </script>
 </body>
-</html>
