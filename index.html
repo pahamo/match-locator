@@ -1,51 +1,137 @@
 <body>
-  <h1>Premier League — UK Listings MVP</h1>
-  <div id="fixtures">Loading fixtures...</div>
+  <header style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #e5e7eb;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+    <a href="#/" style="text-decoration:none;color:inherit"><strong>Premier League — UK Listings</strong></a>
+    <nav style="display:flex;gap:12px;font-size:14px">
+      <a href="#/" style="text-decoration:none;color:inherit">Home</a>
+      <a href="#/about" style="text-decoration:none;color:inherit;opacity:.6" aria-disabled="true">About (coming)</a>
+    </nav>
+  </header>
+
+  <div class="wrap" style="max-width:920px;margin:0 auto;padding:20px;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+    <div id="status" style="color:#6b7280">loading…</div>
+    <div id="app"></div>
+  </div>
+
+  <style>
+    .card{border:1px solid #e5e7eb;border-radius:12px;padding:14px 16px;margin:12px 0}
+    .muted{color:#6b7280}
+    .chip{border:1px solid #d1d5db;border-radius:999px;padding:4px 10px;font-size:.9rem;display:inline-block;margin-right:6px;margin-top:6px}
+    .btn{display:inline-block;margin-top:8px;border:1px solid #111;padding:8px 12px;border-radius:10px;text-decoration:none}
+  </style>
 
   <script type="module">
-    // --- Supabase config ---
+    // ---- Supabase config ----
+    const APP_VERSION = "v0.1.0";
     const SUPABASE_URL = "https://ksqyurqkqznzrntdpood.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzcXl1cnFrcXpuenJudGRwb29kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3OTEwNjAsImV4cCI6MjA3MjM2NzA2MH0.wVBZBEbfctB7JPnpMZkXKMGwXlYxGWjOF_AxixVo-S4"; // your anon key
-    const HEADERS = { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` };
-    async function loadFixtures() {
-      const container = document.getElementById("fixtures");
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzcXl1cnFrcXpuenJudGRwb29kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3OTEwNjAsImV4cCI6MjA3MjM2NzA2MH0.wVBZBEbfctB7JPnpMZkXKMGwXlYxGWjOF_AxixVo-S4";
+    const H = { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` };
 
-      // 1. Fetch fixtures
-      const res = await fetch(
-        `${SUPABASE_URL}/rest/v1/fixtures?select=id,utc_kickoff,home_team:teams!fixtures_home_team_id_fkey(name),away_team:teams!fixtures_away_team_id_fkey(name),broadcasts:broadcasts_uk(channel_name,providers(display_name))&order=utc_kickoff.asc`,
-        { headers: HEADERS }
-      );
-      const data = await res.json();
+    const routes = { "/": homeView, "/match": matchView };
+    window.addEventListener("hashchange", render);
+    render();
 
-      if (!data.length) {
-        container.textContent = "No fixtures found.";
-        return;
-      }
+    function parseHash(){
+      const [path, qs=""] = (location.hash.replace(/^#/, "")||"/").split("?");
+      return { path: path || "/", params: new URLSearchParams(qs) };
+    }
 
-      // 2. Render fixtures
-      const df = new Intl.DateTimeFormat(undefined, {
-        dateStyle: "medium",
-        timeStyle: "short",
-      });
+    async function render(){
+      const { path, params } = parseHash();
+      const view = routes[path] || homeView;
+      document.getElementById("status").textContent = "loading…";
+      try { await view(params); } catch(e){ console.error(e); document.getElementById("app").innerHTML = `<p class=\"muted\">${e.message}</p>`; }
+      document.getElementById("status").textContent = "";
+    }
 
-      container.innerHTML = data.map(f => {
+    // ---- Views ----
+    async function homeView(){
+      const app = document.getElementById("app");
+      const fromISO = new Date().toISOString();
+      const toISO = new Date(Date.now() + 14*24*3600*1000).toISOString();
+
+      // fixtures (minimal join via embedded select)
+      const fixtures = await jget(`/rest/v1/fixtures?select=id,utc_kickoff,home_team:teams!fixtures_home_team_id_fkey(name),away_team:teams!fixtures_away_team_id_fkey(name),broadcasts:broadcasts_uk(channel_name,providers(display_name))&utc_kickoff=gte.${fromISO}&utc_kickoff=lte.${toISO}&order=utc_kickoff.asc`);
+      if (!fixtures.length){ app.innerHTML = `<p class="muted">No fixtures in the next 14 days.</p>`; return; }
+
+      const df = new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" });
+      app.innerHTML = fixtures.map(f => {
         const kickoff = df.format(new Date(f.utc_kickoff));
-        const providers = f.broadcasts
-          .map(b => `${b.providers.display_name}${b.channel_name ? " — " + b.channel_name : ""}`)
-          .join(", ") || "TBC";
-
+        const providers = (f.broadcasts||[]).map(b => `${b.providers.display_name}${b.channel_name? " — "+b.channel_name : ""}`).join(", ") || "TBC";
         return `
-          <a href="match.html?id=${f.id}" style="text-decoration:none;color:inherit;display:block">
-            <div style="margin:1em 0;padding:0.5em;border:1px solid #ddd;border-radius:8px">
+          <a href="#/match?id=${f.id}" style="text-decoration:none;color:inherit;display:block">
+            <div class="card">
               <div><strong>${f.home_team.name}</strong> vs <strong>${f.away_team.name}</strong></div>
-              <div>${kickoff}</div>
-              <div><em>${providers}</em></div>
+              <div class="muted">${kickoff}</div>
+              <div class="muted"><em>${providers}</em></div>
             </div>
-          </a>
-        `;
+          </a>`;
       }).join("");
     }
 
-    loadFixtures();
+    async function matchView(params){
+      const app = document.getElementById("app");
+      const id = params.get("id");
+      if (!id){ app.innerHTML = `<p class="muted">Missing ?id=… <a href=\"#/\">Go back</a></p>`; return; }
+
+      const [fixture] = await jget(`/rest/v1/fixtures?id=eq.${id}&select=id,utc_kickoff,home_team_id,away_team_id,venue`);
+      if (!fixture){ app.innerHTML = `<p class="muted">Fixture not found. <a href=\"#/\">Home</a></p>`; return; }
+
+      const teams = await jget(`/rest/v1/teams?id=in.(${[fixture.home_team_id, fixture.away_team_id].join(",")})&select=id,name`);
+      const tById = Object.fromEntries(teams.map(t=>[t.id,t.name]));
+
+      const bcasts = await jget(`/rest/v1/broadcasts_uk?fixture_id=eq.${id}&select=provider_id,channel_name,stream_type,verified,verified_at,providers!inner(id,display_name)`);
+
+      // affiliate URLs per provider (if present)
+      const provIds = [...new Set(bcasts.map(b => b.provider_id))];
+      let affiliatesByProv = {};
+      if (provIds.length) {
+        const aff = await jget(`/rest/v1/affiliate_destinations?provider_id=in.(${provIds.join(",")})&select=provider_id,affiliate_url`);
+        affiliatesByProv = Object.fromEntries(aff.map(a => [a.provider_id, a.affiliate_url]));
+      }
+
+      const df = new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" });
+
+      app.innerHTML = `
+        <a href=\"#/\" class=\"muted\">← Back</a>
+        <h1 style=\"margin:8px 0\">${tById[fixture.home_team_id]} vs ${tById[fixture.away_team_id]}</h1>
+        <div class=\"muted\">${df.format(new Date(fixture.utc_kickoff))}${fixture.venue? " — "+fixture.venue: ""}</div>
+        <div id=\"providers\"></div>`;
+
+      const order = { tv:1, ott:2, radio:3 };
+      bcasts.sort((a,b)=> (order[a.stream_type]||9)-(order[b.stream_type]||9));
+      const provBox = document.getElementById("providers");
+      provBox.innerHTML = bcasts.length ? bcasts.map(b=>{
+        const name = b.providers.display_name;
+        const channel = b.channel_name ? ` — ${b.channel_name}` : "";
+        const verify = b.verified ? `✅ Verified ${b.verified_at ?? ""}` : "Unverified";
+        const affUrl = affiliatesByProv[b.provider_id] || "";
+        const showBtn = (b.stream_type !== "radio") && !!affUrl;
+        return `
+          <div class=\"card\">
+            <div><strong>${name}${channel}</strong> <span class=\"muted\">(${b.stream_type})</span></div>
+            <div class=\"muted\" style=\"margin-top:4px\">${verify}</div>
+            ${showBtn ? `<a class=\"btn\" href=\"${affUrl}\" target=\"_blank\" rel=\"nofollow noopener\" data-provider=\"${name}\" data-fixture=\"${id}\">Watch on ${name}</a>` : ``}
+          </div>`;
+      }).join("") : `<div class=\"card\"><span class=\"muted\">No UK broadcaster listed yet.</span></div>`;
+
+      // outbound click tracking (Plausible)
+      document.querySelectorAll('.btn[data-provider]').forEach(el => {
+        el.addEventListener('click', () => {
+          if (window.plausible) window.plausible('AffiliateClick', { props: { provider: el.dataset.provider, fixture_id: el.dataset.fixture } });
+        });
+      });
+    }
+
+    // ---- helper ----
+    async function jget(path){
+      const r = await fetch(`${SUPABASE_URL}${path}`, { headers: H });
+      if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
+      return r.json();
+    }
   </script>
+
+  <!-- Plausible (replace domain when ready) -->
+  <script defer data-domain="football-listings.netlify.app" src="https://plausible.io/js/script.js"></script>
+  <div id="ver" style="position:fixed;right:12px;bottom:12px;background:#111;color:#fff;font:12px/1 system-ui;padding:6px 8px;border-radius:8px;opacity:.85;z-index:9999"></div>
+  <script>document.getElementById('ver').textContent = typeof APP_VERSION !== 'undefined' ? APP_VERSION : 'v0.0.0';</script>
 </body>
