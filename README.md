@@ -1,41 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Football Listings MVP</title>
-</head>
-<body>
-  <div id="app"></div>
-  <script type="module">
-    import { jget, PATH, BIG_LIMIT, orderByKickoff } from './api.js';
+# Football Listings MVP
 
-    async function homeView(){
-      const nowISO = new Date().toISOString();
-      const fixtures = await jget(`${PATH.fixtures}?select=id,utc_kickoff,home_team:teams!fixtures_home_team_id_fkey(name),away_team:teams!fixtures_away_team_id_fkey(name),broadcasts:broadcasts_uk(channel_name,providers(display_name))&utc_kickoff=gte.${nowISO}&${orderByKickoff}&limit=${BIG_LIMIT}`);
+Minimal site that lists **Premier League fixtures** and (soon) **UK TV/Radio broadcasters**. Front end is a single-file SPA, data lives in Supabase.
 
-      const listHtml = fixtures.map(fixture => {
-        return `
-          <div>
-            <strong>${fixture.home_team.name}</strong> vs <strong>${fixture.away_team.name}</strong><br />
-            Kickoff: ${new Date(fixture.utc_kickoff).toLocaleString()}
-          </div>
-        `;
-      }).join('');
+## Run locally
+1. Open `index.html` in **VS Code**.
+2. Use **Live Server** (or any static server) to preview.
 
-      const countLine = `<p style="margin:0 0 8px; font-size:12px; opacity:.7;">Showing ${fixtures.length} upcoming fixtures</p>`;
+## Deploy
+- Push to `main` on GitHub; **Netlify** auto-deploys from the repo root.
+- Version badge shows the current release (bottom-right of the site).
 
-      const app = document.getElementById('app');
-      app.innerHTML = `
-        <h1>Football Listings</h1>
-        ${countLine}
-        <div id="list">
-          ${listHtml}
-        </div>
-      `;
-    }
+## Data model (Supabase)
+- `teams` — canonical team list (with `slug`);
+- `team_aliases` — flexible mapping for names like *Spurs*, *Man Utd*;
+- `fixtures` — season fixtures with `external_ref`, `utc_kickoff`, `home_team_id`, `away_team_id`, `venue`, `status`;
+- `providers` — e.g. Sky Sports, TNT Sports, BBC;
+- `broadcasts_uk` — link table (fixture ↔ provider), `channel_name`, `stream_type`, `verified`.
 
-    homeView();
-  </script>
-</body>
-</html>
+Read access uses the Supabase **anon** key. Writes are protected by RLS.
+
+## Importing fixtures (one-off or refresh)
+1. Import the season CSV into staging table `fixtures_fd_stage` with headers:
+   `Match Number, Round Number, Date, Location, Home Team, Away Team, Result`
+2. Run the SQL upsert to transform and load into `fixtures` (maps team names via `teams` / `team_aliases`, converts UK time → UTC).
+3. Verify with:
+   ```sql
+   select count(*) from fixtures;
+   select (utc_kickoff at time zone 'Europe/London') as uk_time, * from fixtures order by utc_kickoff asc limit 10;
+   ```
+
+## Adding broadcasters (manual via sheet → staging → upsert)
+- Prepare a CSV with columns:
+  `external_ref,date_local,time_local,home_name,away_name,provider_name,channel_name,stream_type,verified,source_note`
+- Import into `broadcasts_uk_sheet_stage`.
+- Apply with the UPSERT script (idempotent) to populate `broadcasts_uk`.
+
+## Frontend behaviour
+- Homepage lists **upcoming fixtures only** (filters to `utc_kickoff >= now`).
+- Match page shows fixture details + any broadcasters found.
+
+## Notes
+- All fixtures are subject to change per Premier League announcements.
+- Do **not** use official club crests; use text/colour badges.
+
+---
+
+*This README intentionally contains **no app code**. All runtime code lives in `index.html` (and small inline scripts).*
