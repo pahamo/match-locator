@@ -35,11 +35,13 @@
           .join(", ") || "TBC";
 
         return `
-          <div style="margin:1em 0;padding:0.5em;border:1px solid #ddd;border-radius:8px">
-            <div><strong>${f.home_team.name}</strong> vs <strong>${f.away_team.name}</strong></div>
-            <div>${kickoff}</div>
-            <div><em>${providers}</em></div>
-          </div>
+          <a href="match.html?id=${f.id}" style="text-decoration:none;color:inherit;display:block">
+            <div style="margin:1em 0;padding:0.5em;border:1px solid #ddd;border-radius:8px">
+              <div><strong>${f.home_team.name}</strong> vs <strong>${f.away_team.name}</strong></div>
+              <div>${kickoff}</div>
+              <div><em>${providers}</em></div>
+            </div>
+          </a>
         `;
       }).join("");
     }
