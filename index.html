@@ -35,6 +35,7 @@
     // ---- App version & expose globally ----
     const APP_VERSION = "v0.1.0";
     window.APP_VERSION = APP_VERSION;
+    const TZ = 'Europe/Amsterdam'; const LOCALE = 'en-GB';
 
     // ---- Supabase config ----
     const SUPABASE_URL = "https://ksqyurqkqznzrntdpood.supabase.co";
@@ -73,7 +74,7 @@
       const fixtures = await jget(`/rest/v1/fixtures?select=id,utc_kickoff,home_team:teams!fixtures_home_team_id_fkey(name),away_team:teams!fixtures_away_team_id_fkey(name),broadcasts:broadcasts_uk(channel_name,providers(display_name))&utc_kickoff=gte.${fromISO}&utc_kickoff=lte.${toISO}&order=utc_kickoff.asc`);
       if (!fixtures.length){ app.innerHTML = `<p class="muted">No fixtures in the next 14 days.</p>`; return; }
 
-      const df = new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" });
+      const df = new Intl.DateTimeFormat(LOCALE, { dateStyle: "medium", timeStyle: "short", timeZone: TZ });
       app.innerHTML = fixtures.map(f => {
         const kickoff = df.format(new Date(f.utc_kickoff));
         const providers = (f.broadcasts||[]).map(b => `${b.providers.display_name}${b.channel_name? " — "+b.channel_name : ""}`).join(", ") || "TBC";
@@ -100,16 +101,15 @@
       const tById = Object.fromEntries(teams.map(t=>[t.id,t.name]));
 
       const bcasts = await jget(`/rest/v1/broadcasts_uk?fixture_id=eq.${id}&select=provider_id,channel_name,stream_type,verified,verified_at,providers!inner(id,display_name)`);
-
-      // affiliate URLs per provider (if present)
+      // Affiliate URLs (with harmless demo fallback if none exists)
       const provIds = [...new Set(bcasts.map(b => b.provider_id))];
       let affiliatesByProv = {};
       if (provIds.length) {
         const aff = await jget(`/rest/v1/affiliate_destinations?provider_id=in.(${provIds.join(",")})&select=provider_id,affiliate_url`);
         affiliatesByProv = Object.fromEntries(aff.map(a => [a.provider_id, a.affiliate_url]));
       }
-
-      const df = new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" });
+      const demoFallback = (providerName) => `https://example.com/demo?provider=${encodeURIComponent(providerName)}&fixture=${encodeURIComponent(id)}`;
+      const df = new Intl.DateTimeFormat(LOCALE, { dateStyle: "medium", timeStyle: "short", timeZone: TZ });
 
       app.innerHTML = `
         <a href=\"#/\" class=\"muted\">← Back</a>
@@ -124,22 +124,15 @@
         const name = b.providers.display_name;
         const channel = b.channel_name ? ` — ${b.channel_name}` : "";
         const verify = b.verified ? `✅ Verified ${b.verified_at ?? ""}` : "Unverified";
-        const affUrl = affiliatesByProv[b.provider_id] || "";
-        const showBtn = (b.stream_type !== "radio") && !!affUrl;
+        const affUrl = affiliatesByProv[b.provider_id] || demoFallback(name);
+        const showBtn = (b.stream_type !== "radio");
         return `
           <div class=\"card\">
             <div><strong>${name}${channel}</strong> <span class=\"muted\">(${b.stream_type})</span></div>
             <div class=\"muted\" style=\"margin-top:4px\">${verify}</div>
-            ${showBtn ? `<a class=\"btn\" href=\"${affUrl}\" target=\"_blank\" rel=\"nofollow noopener\" data-provider=\"${name}\" data-fixture=\"${id}\">Watch on ${name}</a>` : ``}
+            ${showBtn ? `<a class=\"btn\" href=\"${affUrl}\" target=\"_blank\" rel=\"nofollow noopener\">Watch on ${name}</a>` : ``}
           </div>`;
       }).join("") : `<div class=\"card\"><span class=\"muted\">No UK broadcaster listed yet.</span></div>`;
-
-      // outbound click tracking (Plausible)
-      document.querySelectorAll('.btn[data-provider]').forEach(el => {
-        el.addEventListener('click', () => {
-          if (window.plausible) window.plausible('AffiliateClick', { props: { provider: el.dataset.provider, fixture_id: el.dataset.fixture } });
-        });
-      });
     }
 
     // ---- helper ----

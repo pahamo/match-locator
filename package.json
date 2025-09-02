@@ -1,0 +1,23 @@
+{
+  "name": "pl_tv_mvp_spa",
+  "version": "1.0.0",
+  "description": "This is a placeholder for your frontend MVP.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pahamo/football-listings.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pahamo/football-listings/issues"
+  },
+  "homepage": "https://github.com/pahamo/football-listings#readme",
+  "dependencies": {
+    "node-ical": "^0.20.1"
+  }
+}

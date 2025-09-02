@@ -1,0 +1,11 @@
+external_ref,home_name,away_name,utc_kickoff,venue,status
+demo-9002001,Arsenal,Chelsea,2025-09-06T14:00:00Z,Emirates Stadium,scheduled
+demo-9002002,Liverpool,Manchester City,2025-09-06T16:30:00Z,Anfield,scheduled
+demo-9002003,Manchester United,Tottenham Hotspur,2025-09-07T13:00:00Z,Old Trafford,scheduled
+demo-9002004,Newcastle United,Aston Villa,2025-09-07T15:30:00Z,St James' Park,scheduled
+demo-9002005,Brighton & Hove Albion,West Ham United,2025-09-13T14:00:00Z,Amex Stadium,scheduled
+demo-9002006,Brentford,Everton,2025-09-13T14:00:00Z,Gtech Community Stadium,scheduled
+demo-9002007,Crystal Palace,Fulham,2025-09-13T14:00:00Z,Selhurst Park,scheduled
+demo-9002008,Leicester City,Southampton,2025-09-13T14:00:00Z,King Power Stadium,scheduled
+demo-9002009,Wolverhampton Wanderers,Bournemouth,2025-09-14T13:00:00Z,Molineux,scheduled
+demo-9002010,Nottingham Forest,Newcastle United,2025-09-14T15:30:00Z,The City Ground,scheduled
