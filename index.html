@@ -9,12 +9,13 @@
     /* Inline for MVP; safe to split later into styles.css */
     :root{--border:#e5e7eb;--muted:#6b7280}
     *{box-sizing:border-box}
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:0}
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:0;background:#f8fafc}
     header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
     a{color:inherit}
     .wrap{max-width:920px;margin:0 auto;padding:20px}
     .muted{color:var(--muted)}
-    .card{border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin:12px 0}
+    .card{border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin:12px 0;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.06),0 6px 16px rgba(0,0,0,.04);transition:box-shadow .15s ease, transform .15s ease}
+    .card:hover{box-shadow:0 3px 8px rgba(0,0,0,.08),0 10px 24px rgba(0,0,0,.06);transform:translateY(-1px)}
     .cardlink{display:block;text-decoration:none;color:inherit}
     .row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
     .row .left{display:flex;flex-direction:column}
@@ -28,7 +29,7 @@
     .section h2{margin:0 0 6px}
     .section .range{font-size:.9rem}
     /* Matchweek grouping visuals */
-    .mw{border:1px solid var(--border);border-radius:14px;padding:12px 16px;margin:28px 0;background:#fff;box-shadow:0 1px 0 rgba(0,0,0,.04)}
+    .mw{border:1px solid var(--border);border-radius:14px;padding:12px 16px;margin:28px 0;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.06)}
     .mw-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:6px}
     .mw h2{margin:0 0 2px}
     .mw .range{color:var(--muted);margin:0 0 8px}
@@ -39,6 +40,10 @@
     .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin:-1px 6px 0 0;vertical-align:middle;border:1.5px solid #111}
     .dot.home{background:#111}
     .dot.away{background:transparent}
+    /* Team badges */
+    .team-row{display:flex;align-items:center;gap:8px}
+    .crest{width:18px;height:18px;object-fit:contain;vertical-align:middle}
+    .teams-stack{display:grid;grid-template-columns:1fr;gap:6px}
   </style>
 </head>
 <body>
@@ -57,9 +62,9 @@
 
   <script type="module">
     // ---- App version & expose globally ----
-    const APP_VERSION = "v0.1.4";
+    const APP_VERSION = "v0.1.6";
     window.APP_VERSION = APP_VERSION;
-    const DEFAULT_TZ = 'Europe/London';
+    const DEFAULT_TZ = (Intl.DateTimeFormat().resolvedOptions().timeZone) || 'Europe/London';
     const LOCALE = 'en-GB';
     // Minimal country -> IANA timezone map for display; expand later
     const TZ_OPTIONS = [
@@ -71,21 +76,32 @@
       {label:'Australia (Sydney)', tz:'Australia/Sydney'}
     ];
 
+    // --- robust UTC parser (handles 'YYYY-MM-DDTHH:mm:ss+00:00' and 'YYYY-MM-DD HH:mm:ss+00')
+    function parseUtcStrict(s) {
+      if (s instanceof Date) return s;
+      if (typeof s !== 'string') return new Date(s);
+      if (s.includes('T')) return new Date(s); // ISO already
+      // normalize space-separated to ISO and fix +00/+00:00 to 'Z'
+      return new Date(
+        s.replace(' ', 'T').replace(/(\+00(?::?00)?)$/, 'Z')
+      );
+    }
+
     // ---- Supabase config ----
     const SUPABASE_URL = "https://ksqyurqkqznzrntdpood.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzcXl1cnFrcXpuenJudGRwb29kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3OTEwNjAsImV4cCI6MjA3MjM2NzA2MH0.wVBZBEbfctB7JPnpMZkXKMGwXlYxGWjOF_AxixVo-S4";
     const H = { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` };
 
     // API helpers
-    const PATH = {
-      fixtures: `/rest/v1/fixtures`,
-      teams: `/rest/v1/teams`,
-      broadcasts: `/rest/v1/broadcasts_uk`,
-      affiliate: `/rest/v1/affiliate_destinations`,
-    };
+const PATH = {
+  fixturesList: `/rest/v1/fixtures_with_team_names_v`,
+  fixtureOne:   `/rest/v1/fixtures_min_v`,
+  teams:        `/rest/v1/teams`,
+  broadcasts:   `/rest/v1/broadcasts_with_provider_v`,
+  affiliate:    `/rest/v1/affiliate_min_v`,
+};
     const orderByKickoff = `order=utc_kickoff.asc`;
     const BIG_LIMIT = 2000; // future proof list size
-    const providersString = (b) => `${b.providers.display_name}${b.channel_name ? " — " + b.channel_name : ""}`;
 
     // ---- Tiny hash router ----
     const routes = { "/": homeView, "/match": matchView };
@@ -122,17 +138,16 @@
       // Fetch fixtures directly from fixtures (ensures full coverage)
       const nowIso = new Date().toISOString();
       const rows = await jget(
-        `${PATH.fixtures}?select=id,utc_kickoff,matchday,` +
-        `home_team:teams!fixtures_home_team_id_fkey(name),` +
-        `away_team:teams!fixtures_away_team_id_fkey(name)` +
-        `&utc_kickoff=gte.${nowIso}&${orderByKickoff}&limit=${BIG_LIMIT}`
-      );
+  `${PATH.fixturesList}?utc_kickoff=gte.${nowIso}&${orderByKickoff}&limit=${BIG_LIMIT}`
+);
       const fixtures = (rows||[]).map(r => ({
         id: r.id,
         utc_kickoff: r.utc_kickoff,
         matchday: r.matchday ?? null,
-        home: r.home_team?.name,
-        away: r.away_team?.name,
+        home: r.home_team,
+        away: r.away_team,
+        home_badge: r.home_badge || null,
+        away_badge: r.away_badge || null,
       })).filter(f => f.home && f.away && !Number.isNaN(Date.parse(f.utc_kickoff)));
 
       // Client-side filter (club & competition & matchweek)
@@ -197,12 +212,14 @@
       if (ids.length) {
         const qs = ids.join(',');
         try {
-          const brows = await jget(`${PATH.broadcasts}?select=fixture_id,channel_name,providers(display_name)&fixture_id=in.(${qs})`);
+          const brows = await jget(`${PATH.broadcasts}?fixture_id=in.(${qs})`);
           for (const b of (brows || [])){
             if (!bmap[b.fixture_id]) bmap[b.fixture_id] = [];
             bmap[b.fixture_id].push(b);
           }
-        } catch (_) { /* ignore; show TBC */ }
+        } catch (e) {
+          console.error("Failed to load broadcasts", e);
+        }
       }
 
       // Date formatters
@@ -211,64 +228,64 @@
       const ymd        = new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' }); // YYYY-MM-DD
       const pretty     = new Intl.DateTimeFormat(LOCALE, { day:'numeric', month:'short', timeZone: TZ });
       
-      // Helper: render one day's cards
+      // Helper: render one day's cards (badge-aware, no nested anchors)
       const renderCards = (items) => items.map(f => {
-        const kickoffTime = timeOnly.format(new Date(f.utc_kickoff));
+        const kickoffTime = timeOnly.format(parseUtcStrict(f.utc_kickoff));
         const hasB = (bmap[f.id] || []).length > 0;
+        const href = `#/match?id=${f.id}`;
+        const homeRow = `<div class="team-row">${f.home_badge ? `<img class=\"crest\" alt=\"${f.home} badge\" src=\"${f.home_badge}\">` : ''}<strong>${f.home}</strong></div>`;
+        const awayRow = `<div class="team-row">${f.away_badge ? `<img class=\"crest\" alt=\"${f.away} badge\" src=\"${f.away_badge}\">` : ''}<strong>${f.away}</strong></div>`;
         return `
-          <a class="cardlink" href="#/match?id=${f.id}">
+          <a class="cardlink" href="${href}">
             <div class="card">
               <div class="row">
                 <div class="left">
-                  <div>
-                    <span class="dot home" aria-label="Home" title="Home"></span><strong>${f.home}</strong>
-                    &nbsp;vs&nbsp;
-                    <span class="dot away" aria-label="Away" title="Away"></span><strong>${f.away}</strong>
+                  <div class="teams-stack">
+                    ${homeRow}
+                    ${awayRow}
                   </div>
                   <div class="muted">${kickoffTime}</div>
                 </div>
                 <div>
-                  <a class="${hasB ? 'btn small right' : 'btn small right disabled'}" href="#/match?id=${f.id}">${hasB ? 'Watch options' : 'Broadcasts (TBC)'}</a>
+                  <span class="${hasB ? 'btn small right' : 'btn small right disabled'}">${hasB ? 'Watch options' : 'Broadcasts (TBC)'}</span>
                 </div>
               </div>
             </div>
           </a>`;
       }).join('');
       
-      // Render sections per matchweek
-      const sections = Array.from(new Map(
-        filtered.reduce((map,f) => {
-          const mw = f.matchday ?? 0;
-          if (!map.has(mw)) map.set(mw, []);
-          map.get(mw).push(f);
-          return map;
-        }, new Map())
-      ).entries())
+      // --- Build matchweek groups and render as simple sections ---
+      const groups = new Map();
+      for (const f of filtered){
+        const mw = f.matchday ?? 0;
+        if (!groups.has(mw)) groups.set(mw, []);
+        groups.get(mw).push(f);
+      }
+
+      const sections = Array.from(groups.entries())
         .sort(([a],[b]) => (a||0) - (b||0))
         .map(([mw, items]) => {
-          // Group by UK day inside the MW
+          // Group by UK-local day within the MW
           const byDay = new Map();
-          for (const f of items){
-            const key = ymd.format(new Date(f.utc_kickoff));
+          for (const it of items){
+            const key = ymd.format(parseUtcStrict(it.utc_kickoff));
             if (!byDay.has(key)) byDay.set(key, []);
-            byDay.get(key).push(f);
+            byDay.get(key).push(it);
           }
-          // Determine MW date span for heading
-          const dates = items.map(f => new Date(f.utc_kickoff)).sort((a,b)=>a-b);
+          const dates = items.map(f => parseUtcStrict(f.utc_kickoff)).sort((a,b)=>a-b);
           const first = pretty.format(dates[0]);
           const last  = pretty.format(dates[dates.length-1]);
           const range = first === last ? first : `${first} – ${last}`;
           const mwLabel = mw > 0 ? `Matchweek ${mw}` : 'Upcoming matches';
-          
+
           const inner = Array.from(byDay.entries())
             .sort(([a],[b])=> a.localeCompare(b))
-            .map(([key, dayItems]) => {
-              const headingLabel = dayHeading.format(new Date(dayItems[0].utc_kickoff));
-              // Ensure chronological within day
-              dayItems.sort((x,y) => new Date(x.utc_kickoff) - new Date(y.utc_kickoff));
-              return `<h3 class="muted">${headingLabel}</h3>` + renderCards(dayItems);
+            .map(([_, list]) => {
+              const headingLabel = dayHeading.format(parseUtcStrict(list[0].utc_kickoff));
+              list.sort((x,y)=> parseUtcStrict(x.utc_kickoff) - parseUtcStrict(y.utc_kickoff));
+              return `<h3 class="muted">${headingLabel}</h3>` + renderCards(list);
             }).join('');
-          
+
           return `<section class="section mw">
             <div class="mw-head">
               <h2>${mwLabel}</h2>
@@ -277,9 +294,11 @@
             ${inner}
           </section>`;
         }).join('');
-      
+
       const tzLabel = (TZ_OPTIONS.find(o=>o.tz===TZ)?.label || 'UK') + ` (${TZ})`;
       app.innerHTML = `<p class="muted" style="margin:4px 0 16px">All times ${tzLabel}</p>` + filterHTML + sections;
+
+      // Restore filter selections + wire events
       const clubSel = document.getElementById('clubFilter');
       const compSel = document.getElementById('compFilter');
       const mwSel = document.getElementById('mwFilter');
@@ -308,18 +327,18 @@
       const { params: _p } = parseHash();
       const tzView = _p.get('tz') || DEFAULT_TZ;
 
-      const [fixture] = await jget(`${PATH.fixtures}?id=eq.${id}&select=id,utc_kickoff,home_team_id,away_team_id,venue`);
+      const [fixture] = await jget(`${PATH.fixtureOne}?id=eq.${id}`);
       if (!fixture){ app.innerHTML = `<p class="muted">Fixture not found. <a href=\"#/\">Home</a></p>`; return; }
 
-      const teams = await jget(`${PATH.teams}?id=in.(${[fixture.home_team_id, fixture.away_team_id].join(",")})&select=id,name`);
+      const teams = await jget(`${PATH.teams}?id=in.(${[fixture.home_team_id, fixture.away_team_id].join(",")})&select=id,name,slug`);
       const tById = Object.fromEntries(teams.map(t=>[t.id,t.name]));
 
-      const bcasts = await jget(`${PATH.broadcasts}?fixture_id=eq.${id}&select=provider_id,channel_name,stream_type,verified,verified_at,providers!inner(id,display_name)`);
+      const bcasts = await jget(`${PATH.broadcasts}?fixture_id=eq.${id}`);
       // Affiliate URLs (with harmless demo fallback if none exists)
       const provIds = [...new Set(bcasts.map(b => b.provider_id))];
       let affiliatesByProv = {};
       if (provIds.length) {
-        const aff = await jget(`${PATH.affiliate}?provider_id=in.(${provIds.join(",")})&select=provider_id,affiliate_url`);
+        const aff = await jget(`${PATH.affiliate}?provider_id=in.(${provIds.join(",")})`);
         affiliatesByProv = Object.fromEntries(aff.map(a => [a.provider_id, a.affiliate_url]));
       }
       const demoFallback = (providerName) => `https://example.com/demo?provider=${encodeURIComponent(providerName)}&fixture=${encodeURIComponent(id)}`;
@@ -328,23 +347,23 @@
       app.innerHTML = `
         <a href=\"#/\" class=\"muted\">← Back</a>
         <h1 style=\"margin:8px 0\">${tById[fixture.home_team_id]} vs ${tById[fixture.away_team_id]}</h1>
-        <div class=\"muted\">${df.format(new Date(fixture.utc_kickoff))}${fixture.venue? " — "+fixture.venue: ""}</div>
+        <div class=\"muted\">${df.format(parseUtcStrict(fixture.utc_kickoff))}${fixture.venue? " — "+fixture.venue: ""}</div>
         <div id=\"providers\"></div>`;
 
       const order = { tv:1, ott:2, radio:3 };
       bcasts.sort((a,b)=> (order[a.stream_type]||9)-(order[b.stream_type]||9));
       const provBox = document.getElementById("providers");
       provBox.innerHTML = bcasts.length ? bcasts.map(b=>{
-        const name = b.providers.display_name;
+        const providerName = b.provider_display_name;
         const channel = b.channel_name ? ` — ${b.channel_name}` : "";
         const verify = b.verified ? `✅ Verified ${b.verified_at ?? ""}` : "Unverified";
-        const affUrl = affiliatesByProv[b.provider_id] || demoFallback(name);
+        const affUrl = affiliatesByProv[b.provider_id] || demoFallback(providerName);
         const showBtn = (b.stream_type !== "radio");
         return `
           <div class=\"card\">
-            <div><strong>${name}${channel}</strong> <span class=\"muted\">(${b.stream_type})</span></div>
+            <div><strong>${providerName}${channel}</strong> <span class=\"muted\">(${b.stream_type})</span></div>
             <div class=\"muted\" style=\"margin-top:4px\">${verify}</div>
-            ${showBtn ? `<a class=\"btn\" href=\"${affUrl}\" target=\"_blank\" rel=\"nofollow noopener\">Watch on ${name}</a>` : ``}
+            ${showBtn ? `<a class=\"btn\" href=\"${affUrl}\" target=\"_blank\" rel=\"nofollow noopener\">Watch on ${providerName}</a>` : ``}
           </div>`;
       }).join("") : `<div class=\"card\"><span class=\"muted\">No UK broadcaster listed yet.</span></div>`;
     }

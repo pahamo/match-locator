@@ -4,3 +4,5 @@ npm-debug.log*
 .vscode/
 dist/
 *.local
+# Local Netlify folder
+.netlify
