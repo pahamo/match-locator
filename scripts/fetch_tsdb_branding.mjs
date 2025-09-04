@@ -10,15 +10,30 @@ const TSDB_API_KEY = process.env.TSDB_API_KEY ?? '3';
 const EPL_LEAGUE_ID = '4328';
 
 // Supabase (use SERVICE ROLE key locally; do NOT ship this to frontend)
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
+const SERVICE_KEY =
+  process.env.SUPABASE_SERVICE_ROLE_KEY ||
+  process.env.SUPABASE_SERVICE_ROLE ||
+  process.env.SUPABASE_KEY ||
+  process.env.VITE_SUPABASE_ANON_KEY;
 
-if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE) {
-  console.error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE in .env');
+const SUPABASE_URL = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+
+if (!SUPABASE_URL || !SERVICE_KEY) {
+  console.error('Missing SUPABASE_URL or service key env var. Aborting.');
   process.exit(1);
 }
 
-const sb = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE);
+console.log('Using service key prefix:', (SERVICE_KEY || '').slice(0, 12) + '…');
+
+const sb = createClient(SUPABASE_URL, SERVICE_KEY, { db: { schema: 'public' } });
+
+// Quick smoke test to confirm we can read from teams
+try {
+  const { error: smokeErr } = await sb.from('teams').select('id').limit(1);
+  if (smokeErr) console.error('Supabase smoke test failed:', smokeErr.message);
+} catch (e) {
+  console.error('Supabase client init/select threw:', e?.message || e);
+}
 
 // Small delay to stay well under free-tier rate limits (~2 req/sec)
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
@@ -56,6 +71,20 @@ async function loadTeamIdMap(){
   if (error) throw error;
   for (const r of (data || [])) {
     m.set(String(r.source_id), r.local_id);
+  }
+  return m;
+}
+
+// Prefer the robust ID mapping table (team_external_ids)
+async function loadTeamIdMapFromTeamExternalIds(){
+  const m = new Map();
+  const { data, error } = await sb
+    .from('team_external_ids')
+    .select('team_id, external_id')
+    .eq('source', 'tsdb');
+  if (error) throw error;
+  for (const r of (data || [])) {
+    m.set(String(r.external_id), r.team_id);
   }
   return m;
 }
@@ -120,7 +149,8 @@ async function importSeasonFixturesEPL({ season }){
   if (!res.ok) throw new Error(`TSDB HTTP ${res.status}`);
   const json = await res.json();
   const events = Array.isArray(json.events) ? json.events : [];
-  const teamIdMap = await loadTeamIdMap();
+  // Use robust mapping table (team_external_ids) instead of legacy external_ids
+  const teamIdMap = await loadTeamIdMapFromTeamExternalIds();
   console.log(`Got ${events.length} events`);
 
   const stageRows = [];
@@ -172,6 +202,9 @@ async function run() {
 
   const localIdx = new Map(localTeams.map(t => [norm(t.name), t]));
 
+  // Load robust TSDB -> local team mapping (preferred)
+  const tsdbIdMap = await loadTeamIdMapFromTeamExternalIds();
+
   console.log('Fetching Premier League teams from TheSportsDB…');
   const url = `https://www.thesportsdb.com/api/v1/json/${TSDB_API_KEY}/search_all_teams.php?l=English_Premier_League`;
   const res = await fetch(url);
@@ -188,11 +221,13 @@ async function run() {
   const upsertsExternal = [];
   const upsertsBranding = [];
   const misses = [];
+  const allowFallback = process.argv.includes('--allow-fallback');
 
   for (const t of teams) {
-    const match = matchTsdbToLocal(t.strTeam, localIdx);
-    if (!match) {
-      misses.push(t.strTeam);
+    const internalTeamId = tsdbIdMap.get(String(t.idTeam));
+    if (!internalTeamId) {
+      // No robust mapping yet — skip and log; do NOT fallback to alias
+      misses.push(`${t.strTeam} (tsdb:${t.idTeam})`);
       continue;
     }
 
@@ -201,63 +236,86 @@ async function run() {
 
     upsertsExternal.push({
       entity_type: 'team',
-      local_id: match.id,
+      local_id: internalTeamId,
       source: 'thesportsdb',
       source_id: String(t.idTeam),
     });
 
     upsertsBranding.push({
-      team_id: match.id,
+      team_id: internalTeamId,
       badge_url: badge,
       // Colors are sparse in TSDB; keep placeholders for future enrichment
       primary_color: null,
       secondary_color: null,
     });
+
+    // also update teams.crest_url for backward compatibility
+    await sb.from('teams')
+      .update({ crest_url: badge })
+      .eq('id', internalTeamId);
+
+    // NEW: persist mapping directly to team_external_ids (idempotent)
+    await sb.from('team_external_ids').upsert({
+      team_id: internalTeamId,
+      source: 'tsdb',
+      external_id: String(t.idTeam),
+    }, { onConflict: 'source,external_id' });
   }
 
   console.log(`Matched ${upsertsBranding.length} teams, ${misses.length} unmatched`);
-  if (misses.length) console.log('Unmatched TSDB names:', misses.join(', '));
+  if (misses.length) {
+    console.log('Unmapped TSDB teams (add to team_external_ids and rerun):');
+    for (const m of misses) console.log('  -', m);
+  }
 
-  // Fallback: for any local teams that didn't get branding yet, try per-team search by name
-  const matchedLocalIds = new Set(upsertsBranding.map(x => x.team_id));
-  const remainingLocals = localTeams.filter(t => !matchedLocalIds.has(t.id));
+  if (allowFallback) {
+    // Fallback: for any local teams that didn't get branding yet, try per-team search by name
+    const matchedLocalIds = new Set(upsertsBranding.map(x => x.team_id));
+    const remainingLocals = localTeams.filter(t => !matchedLocalIds.has(t.id));
 
-  for (const lt of remainingLocals) {
-    const q = encodeURIComponent(lt.name);
-    const searchUrl = `https://www.thesportsdb.com/api/v1/json/${TSDB_API_KEY}/searchteams.php?t=${q}`;
-    try {
-      await sleep(600); // be nice to the free tier
-      const r = await fetch(searchUrl);
-      if (!r.ok) continue;
-      const j = await r.json();
-      const arr = j?.teams || [];
-      // Choose the best candidate by normalized name match
-      let best = null;
-      for (const cand of arr) {
-        const nCand = norm(cand.strTeam || '');
-        if (nCand && nCand === norm(lt.name)) { best = cand; break; }
-      }
-      const chosen = best || arr[0];
-      if (chosen) {
-        const badge = chosen.strTeamBadge || chosen.strBadge || null;
-        if (badge) {
-          upsertsExternal.push({
-            entity_type: 'team',
-            local_id: lt.id,
-            source: 'thesportsdb',
-            source_id: String(chosen.idTeam),
-          });
-          upsertsBranding.push({
-            team_id: lt.id,
-            badge_url: badge,
-            primary_color: null,
-            secondary_color: null,
-          });
-          console.log(`Fallback matched via search: ${lt.name}`);
+    for (const lt of remainingLocals) {
+      const q = encodeURIComponent(lt.name);
+      const searchUrl = `https://www.thesportsdb.com/api/v1/json/${TSDB_API_KEY}/searchteams.php?t=${q}`;
+      try {
+        await sleep(600); // be nice to the free tier
+        const r = await fetch(searchUrl);
+        if (!r.ok) continue;
+        const j = await r.json();
+        const arr = j?.teams || [];
+        // Choose the best candidate by normalized name match
+        let best = null;
+        for (const cand of arr) {
+          const nCand = norm(cand.strTeam || '');
+          if (nCand && nCand === norm(lt.name)) { best = cand; break; }
         }
+        const chosen = best || arr[0];
+        if (chosen) {
+          const badge = chosen.strTeamBadge || chosen.strBadge || null;
+          if (badge) {
+            upsertsExternal.push({
+              entity_type: 'team',
+              local_id: lt.id,
+              source: 'thesportsdb',
+              source_id: String(chosen.idTeam),
+            });
+            upsertsBranding.push({
+              team_id: lt.id,
+              badge_url: badge,
+              primary_color: null,
+              secondary_color: null,
+            });
+            console.log(`Fallback matched via search: ${lt.name}`);
+            // Persist mapping into team_external_ids so future ingests use stable IDs
+            await sb.from('team_external_ids').upsert({
+              team_id: lt.id,
+              source: 'tsdb',
+              external_id: String(chosen.idTeam),
+            }, { onConflict: 'source,external_id' });
+          }
+        }
+      } catch (e) {
+        console.warn('Search fallback failed for', lt.name, e?.message || e);
       }
-    } catch (e) {
-      console.warn('Search fallback failed for', lt.name, e?.message || e);
     }
   }
 

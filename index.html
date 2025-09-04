@@ -51,6 +51,8 @@
     <a href="#/" style="text-decoration:none;color:inherit"><strong>Premier League — UK Listings</strong></a>
     <nav style="display:flex;gap:12px;font-size:14px">
       <a href="#/" style="text-decoration:none;color:inherit">Home</a>
+      <a href="#/fixtures" style="text-decoration:none;color:inherit">Fixtures</a>
+      <a href="#/table" style="text-decoration:none;color:inherit">Table</a>
       <a href="#/about" style="text-decoration:none;color:inherit;opacity:.6" aria-disabled="true">About (coming)</a>
     </nav>
   </header>
@@ -62,7 +64,7 @@
 
   <script type="module">
     // ---- App version & expose globally ----
-    const APP_VERSION = "v0.1.6";
+    const APP_VERSION = "v0.2.0";
     window.APP_VERSION = APP_VERSION;
     const DEFAULT_TZ = (Intl.DateTimeFormat().resolvedOptions().timeZone) || 'Europe/London';
     const LOCALE = 'en-GB';
@@ -96,7 +98,7 @@
 const PATH = {
   fixturesList: `/rest/v1/fixtures_with_team_names_v`,
   fixtureOne:   `/rest/v1/fixtures_min_v`,
-  teams:        `/rest/v1/teams`,
+  teams:        `/rest/v1/teams_v`,
   broadcasts:   `/rest/v1/broadcasts_with_provider_v`,
   affiliate:    `/rest/v1/affiliate_min_v`,
 };
@@ -104,9 +106,24 @@ const PATH = {
     const BIG_LIMIT = 2000; // future proof list size
 
     // ---- Tiny hash router ----
-    const routes = { "/": homeView, "/match": matchView };
+    const routes = { "/": homeView, "/fixtures": fixturesView, "/table": tableView, "/match": matchView };
     window.addEventListener("hashchange", render);
+    window.addEventListener("hashchange", () => {
+      if (window.plausible) {
+        try { window.plausible('pageview'); } catch(e) { /* no-op */ }
+      }
+    });
     render();
+
+    function setActiveNav(path){
+      const nav = document.querySelector('header nav');
+      if (!nav) return;
+      for (const a of nav.querySelectorAll('a')){
+        const isActive = a.getAttribute('href') === `#${path}`;
+        a.style.opacity = isActive ? '1' : '';
+        a.style.fontWeight = isActive ? '600' : '';
+      }
+    }
 
     function parseHash(){
       const raw = (location.hash || "#/").slice(1);
@@ -116,6 +133,7 @@ const PATH = {
 
     async function render(){
       const { path, params } = parseHash();
+      setActiveNav(path);
       const view = routes[path] || homeView;
       setStatus("loading…");
       try { await view(params); } catch(e){
@@ -132,14 +150,10 @@ const PATH = {
       const { params } = parseHash();
       const tzParam = params.get('tz');
       const TZ = tzParam || DEFAULT_TZ;
-      const teamFilter = (params.get('team')||'').toLowerCase();
-      const compFilter = (params.get('comp')||'pl');
 
-      // Fetch fixtures directly from fixtures (ensures full coverage)
+      // Load upcoming fixtures (same source as fixtures page)
       const nowIso = new Date().toISOString();
-      const rows = await jget(
-  `${PATH.fixturesList}?utc_kickoff=gte.${nowIso}&${orderByKickoff}&limit=${BIG_LIMIT}`
-);
+      const rows = await jget(`${PATH.fixturesList}?utc_kickoff=gte.${nowIso}&${orderByKickoff}&limit=${BIG_LIMIT}`);
       const fixtures = (rows||[]).map(r => ({
         id: r.id,
         utc_kickoff: r.utc_kickoff,
@@ -150,10 +164,101 @@ const PATH = {
         away_badge: r.away_badge || null,
       })).filter(f => f.home && f.away && !Number.isNaN(Date.parse(f.utc_kickoff)));
 
-      // Client-side filter (club & competition & matchweek)
+      if (!fixtures.length){
+        app.innerHTML = `<p class="muted">No upcoming fixtures.</p>`;
+        return;
+      }
+
+      // Determine the next matchweek number among upcoming fixtures
+      const upcomingMw = fixtures
+        .map(f => f.matchday)
+        .filter(n => Number.isInteger(n))
+        .sort((a,b)=>a-b)[0] ?? null;
+
+      const subset = upcomingMw == null ? fixtures.slice(0, Math.min(10, fixtures.length))
+                                        : fixtures.filter(f => f.matchday === upcomingMw);
+
+      // Preload broadcasts for those fixtures only
+      let bmap = {};
+      const ids = subset.map(f => f.id);
+      if (ids.length) {
+        const qs = ids.join(',');
+        try {
+          const brows = await jget(`${PATH.broadcasts}?fixture_id=in.(${qs})`);
+          for (const b of (brows || [])){
+            if (!bmap[b.fixture_id]) bmap[b.fixture_id] = [];
+            bmap[b.fixture_id].push(b);
+          }
+        } catch (e) { console.error("Failed to load broadcasts", e); }
+      }
+
+      const timeOnly   = new Intl.DateTimeFormat(LOCALE, { timeStyle: 'short', timeZone: TZ });
+      const pretty     = new Intl.DateTimeFormat(LOCALE, { day:'numeric', month:'short', timeZone: TZ });
+
+      const renderCards = (items) => items.map(f => {
+        const kickoffTime = timeOnly.format(parseUtcStrict(f.utc_kickoff));
+        const hasB = (bmap[f.id] || []).length > 0;
+        const href = `#/match?id=${f.id}`;
+        const homeRow = `<div class="team-row">${f.home_badge ? `<img class=\"crest\" alt=\"${f.home} badge\" src=\"${f.home_badge}\">` : ''}<strong>${f.home}</strong></div>`;
+        const awayRow = `<div class="team-row">${f.away_badge ? `<img class=\"crest\" alt=\"${f.away} badge\" src=\"${f.away_badge}\">` : ''}<strong>${f.away}</strong></div>`;
+        return `
+          <a class="cardlink" href="${href}">
+            <div class="card">
+              <div class="row">
+                <div class="left">
+                  <div class="teams-stack">${homeRow}${awayRow}</div>
+                  <div class="muted">${kickoffTime}</div>
+                </div>
+                <div>
+                  <span class="${hasB ? 'btn small right' : 'btn small right disabled'}">${hasB ? 'Watch options' : 'Broadcasts (TBC)'}</span>
+                </div>
+              </div>
+            </div>
+          </a>`;
+      }).join('');
+
+      const dates = subset.map(f => parseUtcStrict(f.utc_kickoff)).sort((a,b)=>a-b);
+      const first = pretty.format(dates[0]);
+      const last  = pretty.format(dates[dates.length-1]);
+      const range = first === last ? first : `${first} – ${last}`;
+      const mwLabel = (upcomingMw != null) ? `Matchweek ${upcomingMw}` : 'Upcoming matches';
+
+      app.innerHTML = `
+        <section class="section mw">
+          <div class="mw-head">
+            <h2>${mwLabel}</h2>
+            <span class="pill">${range}</span>
+          </div>
+          ${renderCards(subset)}
+        </section>
+        <div style="margin-top:8px"><a class="btn" href="#/fixtures">See all fixtures</a></div>
+      `;
+    }
+
+    async function fixturesView(){
+      const app = document.getElementById("app");
+      const { params } = parseHash();
+      const tzParam = params.get('tz');
+      const TZ = tzParam || DEFAULT_TZ;
+      const teamFilter = (params.get('team')||'').toLowerCase();
+      const compFilter = (params.get('comp')||'pl');
+
+      const nowIso = new Date().toISOString();
+      const rows = await jget(`${PATH.fixturesList}?utc_kickoff=gte.${nowIso}&${orderByKickoff}&limit=${BIG_LIMIT}`);
+      const fixtures = (rows||[]).map(r => ({
+        id: r.id,
+        utc_kickoff: r.utc_kickoff,
+        matchday: r.matchday ?? null,
+        home: r.home_team,
+        away: r.away_team,
+        home_badge: r.home_badge || null,
+        away_badge: r.away_badge || null,
+      })).filter(f => f.home && f.away && !Number.isNaN(Date.parse(f.utc_kickoff)));
+
       const teamSet = Array.from(new Set(fixtures.flatMap(f=>[f.home,f.away]))).sort((a,b)=>a.localeCompare(b));
       const mwSet = Array.from(new Set(fixtures.map(f => f.matchday).filter(n => Number.isInteger(n)))).sort((a,b)=>a-b);
       const mwParam = (params.get('mw')||'');
+
       const filterHTML = `
         <div class="filters">
           <label>Club
@@ -179,6 +284,7 @@ const PATH = {
             </select>
           </label>
         </div>`;
+
       const filtered = fixtures.filter(f => {
         const teamOK = teamFilter ? (f.home.toLowerCase()===teamFilter || f.away.toLowerCase()===teamFilter) : true;
         const compOK = (compFilter === 'pl');
@@ -191,9 +297,11 @@ const PATH = {
         const clubSel = document.getElementById('clubFilter');
         const compSel = document.getElementById('compFilter');
         const mwSel = document.getElementById('mwFilter');
+        const tzSel = document.getElementById('tzFilter');
         if (clubSel){ clubSel.value = teamFilter ? teamSet.find(t=>t.toLowerCase()===teamFilter) || '' : ''; }
         if (compSel){ compSel.value = compFilter; }
         if (mwSel){ mwSel.value = mwParam; }
+        if (tzSel){ tzSel.value = TZ; }
         function updateParam(k,v){
           const { path, params } = parseHash();
           if (v) params.set(k,v); else params.delete(k);
@@ -203,10 +311,11 @@ const PATH = {
         clubSel?.addEventListener('change', e=> updateParam('team', e.target.value));
         compSel?.addEventListener('change', e=> updateParam('comp', e.target.value));
         mwSel?.addEventListener('change', e=> updateParam('mw', e.target.value));
+        tzSel?.addEventListener('change', e=> updateParam('tz', e.target.value));
         return;
       }
 
-      // Batch-load broadcasts for all fixtures (single request) and map by fixture_id
+      // Batch-load broadcasts for filtered fixtures
       let bmap = {};
       const ids = filtered.map(f => f.id);
       if (ids.length) {
@@ -217,18 +326,14 @@ const PATH = {
             if (!bmap[b.fixture_id]) bmap[b.fixture_id] = [];
             bmap[b.fixture_id].push(b);
           }
-        } catch (e) {
-          console.error("Failed to load broadcasts", e);
-        }
+        } catch (e) { console.error("Failed to load broadcasts", e); }
       }
 
-      // Date formatters
       const dayHeading = new Intl.DateTimeFormat(LOCALE, { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', timeZone: TZ });
       const timeOnly   = new Intl.DateTimeFormat(LOCALE, { timeStyle: 'short', timeZone: TZ });
-      const ymd        = new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' }); // YYYY-MM-DD
+      const ymd        = new Intl.DateTimeFormat('en-CA', { timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit' });
       const pretty     = new Intl.DateTimeFormat(LOCALE, { day:'numeric', month:'short', timeZone: TZ });
-      
-      // Helper: render one day's cards (badge-aware, no nested anchors)
+
       const renderCards = (items) => items.map(f => {
         const kickoffTime = timeOnly.format(parseUtcStrict(f.utc_kickoff));
         const hasB = (bmap[f.id] || []).length > 0;
@@ -240,10 +345,7 @@ const PATH = {
             <div class="card">
               <div class="row">
                 <div class="left">
-                  <div class="teams-stack">
-                    ${homeRow}
-                    ${awayRow}
-                  </div>
+                  <div class="teams-stack">${homeRow}${awayRow}</div>
                   <div class="muted">${kickoffTime}</div>
                 </div>
                 <div>
@@ -253,8 +355,8 @@ const PATH = {
             </div>
           </a>`;
       }).join('');
-      
-      // --- Build matchweek groups and render as simple sections ---
+
+      // Group into matchweeks, then within matchweeks by day
       const groups = new Map();
       for (const f of filtered){
         const mw = f.matchday ?? 0;
@@ -265,7 +367,6 @@ const PATH = {
       const sections = Array.from(groups.entries())
         .sort(([a],[b]) => (a||0) - (b||0))
         .map(([mw, items]) => {
-          // Group by UK-local day within the MW
           const byDay = new Map();
           for (const it of items){
             const key = ymd.format(parseUtcStrict(it.utc_kickoff));
@@ -298,7 +399,7 @@ const PATH = {
       const tzLabel = (TZ_OPTIONS.find(o=>o.tz===TZ)?.label || 'UK') + ` (${TZ})`;
       app.innerHTML = `<p class="muted" style="margin:4px 0 16px">All times ${tzLabel}</p>` + filterHTML + sections;
 
-      // Restore filter selections + wire events
+      // Wire filters → URL params
       const clubSel = document.getElementById('clubFilter');
       const compSel = document.getElementById('compFilter');
       const mwSel = document.getElementById('mwFilter');
@@ -317,6 +418,38 @@ const PATH = {
       compSel?.addEventListener('change', e=> updateParam('comp', e.target.value));
       mwSel?.addEventListener('change', e=> updateParam('mw', e.target.value));
       tzSel?.addEventListener('change', e=> updateParam('tz', e.target.value));
+    }
+
+    async function tableView(){
+      const app = document.getElementById('app');
+      try {
+        // Try a hypothetical league table view; if absent, fall back
+        const rows = await jget('/rest/v1/league_table_v?select=*');
+        if (!rows || !rows.length){
+          app.innerHTML = `<p class="muted">League table coming soon.</p>`;
+          return;
+        }
+        const thead = `<tr><th style="text-align:left">Club</th><th>MP</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr>`;
+        const trs = rows.map(r=>`<tr>
+          <td style="text-align:left">${r.team_name||r.team||r.name}</td>
+          <td>${r.played||r.mp||''}</td>
+          <td>${r.wins||r.w||''}</td>
+          <td>${r.draws||r.d||''}</td>
+          <td>${r.losses||r.l||''}</td>
+          <td>${r.gf||''}</td>
+          <td>${r.ga||''}</td>
+          <td>${(r.gd!=null?r.gd:(r.gf!=null&&r.ga!=null?(r.gf-r.ga):''))}</td>
+          <td><strong>${r.points||r.pts||''}</strong></td>
+        </tr>`).join('');
+        app.innerHTML = `<div class="card"><div class="section"><h2 style="margin:0 0 6px">Premier League table</h2>
+          <div class="muted">Auto-updating soon</div>
+          <div style="overflow:auto"><table style="width:100%;border-collapse:collapse">
+            <thead>${thead}</thead>
+            <tbody>${trs}</tbody>
+          </table></div></div></div>`;
+      } catch(e){
+        app.innerHTML = `<p class="muted">League table coming soon.</p>`;
+      }
     }
 
     async function matchView(params){
