@@ -16,6 +16,248 @@
     <meta property="og:url" content="https://football-listings.netlify.app">
     
     <style>
+        /* ===========================================
+           DESIGN TOKENS - Consistent design system
+           =========================================== */
+        :root {
+            /* Colors */
+            --primary-color: #1e293b;
+            --primary-light: #334155;
+            --primary-dark: #0f172a;
+            --accent-color: #3b82f6;
+            --accent-light: #60a5fa;
+            --success-color: #059669;
+            --warning-color: #d97706;
+            --error-color: #dc2626;
+            
+            /* Backgrounds */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-hover: #f1f5f9;
+            
+            /* Text */
+            --text-primary: #1f2937;
+            --text-secondary: #4b5563;
+            --text-muted: #6b7280;
+            --text-inverse: #ffffff;
+            
+            /* Borders */
+            --border-color: #e2e8f0;
+            --border-color-hover: #cbd5e0;
+            
+            /* Spacing */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+            
+            /* Typography */
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-2xl: 1.5rem;
+            --font-size-3xl: 1.875rem;
+            
+            /* Effects */
+            --border-radius: 8px;
+            --border-radius-sm: 4px;
+            --border-radius-lg: 12px;
+            --border-radius-xl: 16px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            
+            /* Transitions */
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
+            --transition-slow: 350ms ease;
+        }
+
+        /* ===========================================
+           THEME VARIANTS
+           =========================================== */
+        .theme-dark {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #1e293b;
+            --bg-hover: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --border-color-hover: #475569;
+            --accent-color: #60a5fa;
+            --accent-light: #93c5fd;
+        }
+
+        .theme-sport {
+            --primary-color: #059669;
+            --primary-light: #10b981;
+            --accent-color: #f59e0b;
+            --accent-light: #fbbf24;
+            --success-color: #059669;
+            --bg-secondary: #f0fdf4;
+        }
+
+        .theme-minimal {
+            --primary-color: #374151;
+            --accent-color: #6b7280;
+            --border-radius: 4px;
+            --shadow-md: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+            --bg-secondary: #f9fafb;
+        }
+
+        .theme-pixel {
+            /* iOS-inspired color system */
+            --primary-color: #007aff;
+            --primary-light: #5ac8fa;
+            --primary-dark: #0051d5;
+            --accent-color: #ff9500;
+            --accent-light: #ffb340;
+            --success-color: #30d158;
+            --warning-color: #ff9f0a;
+            
+            /* Clean backgrounds with subtle tints */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f2f2f7;
+            --bg-card: rgba(255, 255, 255, 0.8);
+            --bg-hover: rgba(0, 0, 0, 0.04);
+            
+            /* Accessible text colors */
+            --text-primary: #000000;
+            --text-secondary: #3c3c43;
+            --text-muted: #6d6d7d;
+            --text-inverse: #ffffff;
+            
+            /* Subtle borders */
+            --border-color: rgba(60, 60, 67, 0.12);
+            --border-color-hover: rgba(60, 60, 67, 0.2);
+            
+            /* iOS-style rounded corners */
+            --border-radius: 12px;
+            --border-radius-sm: 8px;
+            --border-radius-lg: 16px;
+            --border-radius-xl: 20px;
+            
+            /* Soft, elevated shadows */
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+            --shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.14);
+            
+            /* Smooth, natural transitions */
+            --transition-fast: 200ms cubic-bezier(0.25, 0.1, 0.25, 1);
+            --transition-normal: 300ms cubic-bezier(0.25, 0.1, 0.25, 1);
+            --transition-slow: 400ms cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        /* iOS-inspired theme specific styling */
+        .theme-pixel .card {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            transition: all var(--transition-normal);
+        }
+
+        .theme-pixel .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--border-color-hover);
+        }
+
+        .theme-pixel .btn {
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all var(--transition-fast);
+        }
+
+        .theme-pixel .btn:hover {
+            transform: scale(1.02);
+            opacity: 0.8;
+        }
+
+        .theme-pixel .btn:active {
+            transform: scale(0.98);
+        }
+
+        .theme-pixel .matchweek-card {
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(255, 255, 255, 0.4) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+        }
+
+        .theme-pixel .fixture-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all var(--transition-normal);
+        }
+
+        .theme-pixel .fixture-card:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .theme-pixel .team-crest {
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+        }
+
+        .theme-pixel h1, .theme-pixel h2, .theme-pixel h3 {
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .theme-pixel .theme-switcher {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.8);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Dark mode support for pixel theme */
+        @media (prefers-color-scheme: dark) {
+            .theme-pixel {
+                --bg-primary: #000000;
+                --bg-secondary: #1c1c1e;
+                --bg-card: rgba(28, 28, 30, 0.8);
+                --bg-hover: rgba(255, 255, 255, 0.04);
+                
+                --text-primary: #ffffff;
+                --text-secondary: #ebebf5;
+                --text-muted: #ebebf5cc;
+                --text-inverse: #000000;
+                
+                --border-color: rgba(84, 84, 88, 0.4);
+                --border-color-hover: rgba(84, 84, 88, 0.6);
+            }
+            
+            .theme-pixel .theme-switcher {
+                background: rgba(28, 28, 30, 0.8);
+            }
+            
+            .theme-pixel .matchweek-card {
+                background: linear-gradient(135deg, var(--bg-card) 0%, rgba(28, 28, 30, 0.4) 100%);
+            }
+            
+            .theme-pixel .fixture-card:hover {
+                background: rgba(28, 28, 30, 0.9);
+            }
+        }
+
+        /* ===========================================
+           BASE STYLES
+           =========================================== */
         * {
             margin: 0;
             padding: 0;
@@ -23,42 +265,190 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: var(--font-family);
             line-height: 1.6;
-            color: #1f2937;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            color: var(--text-primary);
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
             min-height: 100vh;
+            transition: all var(--transition-normal);
         }
         
+        /* ===========================================
+           UTILITY CLASSES
+           =========================================== */
+
+        /* Layout */
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 var(--spacing-md);
         }
+
+        .flex {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .flex--between {
+            justify-content: space-between;
+        }
+
+        .flex--center {
+            align-items: center;
+        }
+
+        .flex--wrap {
+            flex-wrap: wrap;
+        }
+
+        .grid {
+            display: grid;
+            gap: var(--spacing-md);
+        }
+
+        .grid--2 {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-lg);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-fast);
+        }
+
+        .card:hover {
+            border-color: var(--border-color-hover);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .card--match {
+            padding: var(--spacing-md);
+        }
+
+        .card--featured {
+            border-color: var(--accent-color);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: none;
+            border-radius: var(--border-radius-sm);
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .btn--primary {
+            background: var(--primary-color);
+            color: var(--text-inverse);
+        }
+
+        .btn--primary:hover {
+            background: var(--primary-light);
+            transform: translateY(-1px);
+        }
+
+        .btn--accent {
+            background: var(--accent-color);
+            color: var(--text-inverse);
+        }
+
+        .btn--accent:hover {
+            background: var(--accent-light);
+            transform: translateY(-1px);
+        }
+
+        .btn--broadcaster {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn--broadcaster:hover {
+            background: var(--bg-hover);
+            border-color: var(--border-color-hover);
+        }
+
+        /* Typography */
+        .text-xs { font-size: var(--font-size-xs); }
+        .text-sm { font-size: var(--font-size-sm); }
+        .text-lg { font-size: var(--font-size-lg); }
+        .text-xl { font-size: var(--font-size-xl); }
+        .text-2xl { font-size: var(--font-size-2xl); }
+        .text-3xl { font-size: var(--font-size-3xl); }
+
+        .text-muted { color: var(--text-muted); }
+        .text-secondary { color: var(--text-secondary); }
+
+        .font-medium { font-weight: 500; }
+        .font-semibold { font-weight: 600; }
+        .font-bold { font-weight: 700; }
+
+        /* Spacing */
+        .mt-sm { margin-top: var(--spacing-sm); }
+        .mt-md { margin-top: var(--spacing-md); }
+        .mt-lg { margin-top: var(--spacing-lg); }
+        .mb-sm { margin-bottom: var(--spacing-sm); }
+        .mb-md { margin-bottom: var(--spacing-md); }
+        .mb-lg { margin-bottom: var(--spacing-lg); }
         
+        /* Theme Switcher */
+        .theme-switcher {
+            position: fixed;
+            top: var(--spacing-md);
+            right: var(--spacing-md);
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-sm);
+            box-shadow: var(--shadow-md);
+            z-index: 1000;
+        }
+
+        .theme-switcher select {
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+        }
+
+        /* Header */
         header {
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            background: var(--bg-card);
             backdrop-filter: blur(10px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            padding: 1.5rem 0;
-            margin-bottom: 2rem;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+            box-shadow: var(--shadow-md);
+            padding: var(--spacing-lg) 0;
+            margin-bottom: var(--spacing-xl);
+            border-bottom: 1px solid var(--border-color);
         }
         
-        h1 {
-            background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
+        .logo {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            font-size: 2rem;
+            font-size: var(--font-size-3xl);
             font-weight: 700;
             letter-spacing: -0.025em;
         }
         
         .subtitle {
-            color: #64748b;
-            font-size: 1.1rem;
-            margin-top: 0.5rem;
+            color: var(--text-secondary);
+            font-size: var(--font-size-lg);
+            margin-top: var(--spacing-sm);
             font-weight: 400;
         }
         
@@ -346,16 +736,27 @@
     </style>
 </head>
 <body>
+    <!-- Theme Switcher -->
+    <div class="theme-switcher">
+        <select id="themeSelect" onchange="switchTheme(this.value)">
+            <option value="">Default</option>
+            <option value="dark">Dark</option>
+            <option value="sport">Sport</option>
+            <option value="minimal">Minimal</option>
+            <option value="pixel">Pixel</option>
+        </select>
+    </div>
+
     <header>
-        <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="container flex flex--between flex--center">
             <div>
-                <h1 style="margin: 0;">Premier League — UK Listings</h1>
-                <p class="subtitle" style="margin: 0.5rem 0 0 0;">Find out which TV channel is showing your team's matches</p>
+                <h1 class="logo" style="margin: 0;">Premier League — UK Listings</h1>
+                <p class="subtitle" style="margin: var(--spacing-sm) 0 0 0;">Find out which TV channel is showing your team's matches</p>
             </div>
-            <nav style="display: flex; gap: 0.5rem; font-size: 0.95rem;">
-                <a href="/football" style="text-decoration: none; color: #475569; padding: 0.5rem 1rem; border-radius: 8px; transition: all 0.3s ease; font-weight: 500;" onmouseover="this.style.backgroundColor='rgba(59, 130, 246, 0.1)'; this.style.color='#3b82f6'; this.style.transform='translateY(-1px)'" onmouseout="this.style.backgroundColor=''; this.style.color='#475569'; this.style.transform=''">Home</a>
-                <a href="/football/fixtures" style="text-decoration: none; color: #475569; padding: 0.5rem 1rem; border-radius: 8px; transition: all 0.3s ease; font-weight: 500;" onmouseover="this.style.backgroundColor='rgba(59, 130, 246, 0.1)'; this.style.color='#3b82f6'; this.style.transform='translateY(-1px)'" onmouseout="this.style.backgroundColor=''; this.style.color='#475569'; this.style.transform=''">Fixtures</a>
-                <a href="/football/clubs" style="text-decoration: none; color: #475569; padding: 0.5rem 1rem; border-radius: 8px; transition: all 0.3s ease; font-weight: 500;" onmouseover="this.style.backgroundColor='rgba(59, 130, 246, 0.1)'; this.style.color='#3b82f6'; this.style.transform='translateY(-1px)'" onmouseout="this.style.backgroundColor=''; this.style.color='#475569'; this.style.transform=''">Clubs</a>
+            <nav class="flex">
+                <a href="/football" class="btn btn--primary">Home</a>
+                <a href="/football/fixtures" class="btn btn--broadcaster">Fixtures</a>
+                <a href="/football/clubs" class="btn btn--broadcaster">Clubs</a>
             </nav>
         </div>
     </header>
@@ -365,20 +766,20 @@
         <div id="status"></div>
         
         <!-- Filters -->
-        <div class="filters">
-            <div class="filter-group">
-                <label for="team-filter">Filter by Team:</label>
-                <select id="team-filter">
+        <div class="card mb-lg" style="background: var(--bg-card);">
+            <div class="flex flex--wrap flex--center">
+                <label class="text-sm font-medium" for="team-filter">Filter by Team:</label>
+                <select id="team-filter" class="btn btn--broadcaster">
                     <option value="">All Teams</option>
                 </select>
                 
-                <label for="matchweek-filter">Matchweek:</label>
-                <select id="matchweek-filter">
+                <label class="text-sm font-medium" for="matchweek-filter">Matchweek:</label>
+                <select id="matchweek-filter" class="btn btn--broadcaster">
                     <option value="">All Matchweeks</option>
                 </select>
                 
-                <label for="time-filter">Show:</label>
-                <select id="time-filter">
+                <label class="text-sm font-medium" for="time-filter">Show:</label>
+                <select id="time-filter" class="btn btn--broadcaster">
                     <option value="upcoming">Upcoming Only</option>
                     <option value="all">All Fixtures</option>
                 </select>
@@ -399,6 +800,29 @@
     <div class="version-badge">v1.5.0</div>
 
     <script>
+        // Theme switching functionality
+        function switchTheme(theme) {
+            const body = document.body;
+            // Remove existing theme classes
+            body.className = body.className.replace(/theme-\w+/g, '');
+            // Add new theme class if selected
+            if (theme) {
+                body.classList.add(`theme-${theme}`);
+            }
+            // Store preference
+            localStorage.setItem('theme', theme);
+        }
+
+        // Load saved theme on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.getElementById('themeSelect').value = savedTheme;
+                switchTheme(savedTheme);
+            }
+        });
+
+        // Supabase configuration
         const SUPABASE_URL = 'https://ksqyurqkqznzrntdpood.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzcXl1cnFrcXpuenJudGRwb29kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3OTEwNjAsImV4cCI6MjA3MjM2NzA2MH0.wVBZBEbfctB7JPnpMZkXKMGwXlYxGWjOF_AxixVo-S4';
 
@@ -529,7 +953,7 @@
             showStatus('Loading fixtures...', 'loading');
             
             try {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/fixtures?select=id,home_team_id,away_team_id,utc_kickoff,matchweek,venue&order=utc_kickoff`, {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/fixtures?select=id,home_team_id,away_team_id,utc_kickoff,matchweek,venue,broadcasts_uk(provider_id,channel_name,stream_type,verified,providers(display_name))&order=utc_kickoff`, {
                     headers: {
                         'apikey': SUPABASE_ANON_KEY,
                         'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
@@ -673,7 +1097,7 @@
                             </div>
                         </div>
                         <div class="broadcasters">
-                            <span style="color: #7f8c8d;">Broadcaster TBC</span>
+                            ${renderBroadcastInfo(fixture)}
                         </div>
                     </div>
                 </a>
@@ -789,9 +1213,46 @@
             render();
         });
 
+        function updateFiltersVisibility(currentPath) {
+            const filtersDiv = document.querySelector(".filters");
+            if (filtersDiv) {
+                // Only show filters on fixtures page
+                if (currentPath === '/fixtures') {
+                    filtersDiv.style.display = "block";
+                } else {
+                    filtersDiv.style.display = "none";
+                }
+            }
+        }
+
+        function updateNavigationActiveStates(currentPath) {
+            const navLinks = document.querySelectorAll('nav a');
+            navLinks.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href === '/football' && currentPath === '/') {
+                    // Home is active
+                    link.className = 'btn btn--primary';
+                } else if (href === '/football/fixtures' && currentPath === '/fixtures') {
+                    // Fixtures is active
+                    link.className = 'btn btn--primary';
+                } else if (href === '/football/clubs' && currentPath === '/clubs') {
+                    // Clubs is active
+                    link.className = 'btn btn--primary';
+                } else {
+                    // Not active
+                    link.className = 'btn btn--broadcaster';
+                }
+            });
+        }
+
         async function render(){
             const { path, params } = parseRoute();
             const view = routes[path] || homeView;
+            
+            // Update navigation active states and filter visibility
+            updateNavigationActiveStates(path);
+            updateFiltersVisibility(path);
+            
             showStatus('Loading...', 'loading');
             try { 
                 await view(params); 
@@ -821,7 +1282,7 @@
             try {
                 // Load upcoming fixtures
                 const nowIso = new Date().toISOString();
-                const fixturesResponse = await fetch(`${SUPABASE_URL}/rest/v1/fixtures?utc_kickoff=gte.${nowIso}&select=id,home_team_id,away_team_id,utc_kickoff,matchweek,venue&order=utc_kickoff&limit=100`, {
+                const fixturesResponse = await fetch(`${SUPABASE_URL}/rest/v1/fixtures?utc_kickoff=gte.${nowIso}&select=id,home_team_id,away_team_id,utc_kickoff,matchweek,venue,broadcasts_uk(provider_id,channel_name,stream_type,verified,providers(display_name))&order=utc_kickoff&limit=100`, {
                     headers: {
                         'apikey': SUPABASE_ANON_KEY,
                         'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
@@ -920,9 +1381,9 @@
                     const fixtureCards = dayFixtures.map(fixture => renderFixtureCard(fixture)).join('');
                     return `
                         <div class="day-group">
-                            <div class="day-header" style="display: flex; align-items: center; margin-bottom: 1rem;">
-                                <h3 style="margin: 0; font-size: 1.1rem; color: #1f2937; font-weight: 600; letter-spacing: 0.025em;">${dayKey}</h3>
-                                <div style="flex: 1; height: 2px; background: linear-gradient(90deg, #e5e7eb 0%, transparent 100%); margin-left: 1rem; border-radius: 1px;"></div>
+                            <div class="flex flex--center mb-md">
+                                <h3 class="text-lg font-semibold text-primary" style="margin: 0;">${dayKey}</h3>
+                                <div style="flex: 1; height: 2px; background: linear-gradient(90deg, var(--border-color) 0%, transparent 100%); margin-left: var(--spacing-md); border-radius: 1px;"></div>
                             </div>
                             <div class="day-fixtures" style="margin-top: 1rem;">
                                 ${fixtureCards}
@@ -932,22 +1393,154 @@
                 }).join('');
             
             return `
-                <div class="matchweek-card" style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 16px; padding: 0; margin-bottom: 2rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.2);">
-                    <div class="matchweek-header" style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; position: relative;">
-                        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%); pointer-events: none;"></div>
-                        <h2 style="margin: 0; font-size: 1.5rem; color: #ffffff; font-weight: 700; letter-spacing: -0.025em; position: relative; z-index: 1;">
+                <div class="card card--featured mb-lg">
+                    <div class="flex flex--between flex--center mb-lg" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%); margin: calc(var(--spacing-lg) * -1) calc(var(--spacing-lg) * -1) var(--spacing-lg); padding: var(--spacing-lg); border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;">
+                        <h2 class="text-2xl font-bold" style="margin: 0; color: var(--text-inverse);">
                             ${matchweek !== 'Unknown' ? `Matchweek ${matchweek}` : 'Upcoming Fixtures'}
                         </h2>
-                        <div style="background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); padding: 0.5rem 1rem; border-radius: 999px; font-size: 0.875rem; color: #ffffff; font-weight: 500; position: relative; z-index: 1; border: 1px solid rgba(255, 255, 255, 0.1);">
+                        <div class="btn btn--broadcaster" style="background: rgba(255, 255, 255, 0.2); color: var(--text-inverse); border: 1px solid rgba(255, 255, 255, 0.2);">
                             ${fixtures.length} matches
                         </div>
                     </div>
-                    <div style="padding: 1.5rem;">
                     ${dayGroups}
                 </div>
             `;
         }
         
+        function renderMatchBroadcastInfo(fixture) {
+            if (!fixture.broadcasts_uk || fixture.broadcasts_uk.length === 0) {
+                return `
+                    <div class="card" style="padding: 1.5rem; background: rgba(0, 0, 0, 0.05); border: 1px solid rgba(0, 0, 0, 0.2); border-radius: 8px;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; color: #000000;">
+                            <span style="font-size: 1.25rem;">📵</span>
+                            <div>
+                                <div style="font-weight: 600; font-size: 1rem;">Blackout</div>
+                                <div style="font-size: 0.875rem; margin-top: 0.25rem; color: #4a4a4a;">Not available on UK TV (3pm Saturday blackout)</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            const broadcasts = fixture.broadcasts_uk.filter(broadcast => broadcast.providers && broadcast.providers.display_name);
+            
+            if (broadcasts.length === 0) {
+                return `
+                    <div class="card" style="padding: 1.5rem; background: rgba(0, 0, 0, 0.05); border: 1px solid rgba(0, 0, 0, 0.2); border-radius: 8px;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem; color: #000000;">
+                            <span style="font-size: 1.25rem;">📵</span>
+                            <div>
+                                <div style="font-weight: 600; font-size: 1rem;">Blackout</div>
+                                <div style="font-size: 0.875rem; margin-top: 0.25rem; color: #4a4a4a;">Not available on UK TV (3pm Saturday blackout)</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            const getBroadcasterCardStyle = (broadcaster) => {
+                const baseName = broadcaster.toLowerCase();
+                if (baseName.includes('tnt')) {
+                    return {
+                        background: "linear-gradient(135deg, rgba(220, 38, 38, 0.05) 0%, rgba(248, 113, 113, 0.05) 100%)",
+                        border: "1px solid rgba(220, 38, 38, 0.2)",
+                        iconColor: "#dc2626"
+                    };
+                } else if (baseName.includes('sky')) {
+                    return {
+                        background: "linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(96, 165, 250, 0.05) 100%)",
+                        border: "1px solid rgba(37, 99, 235, 0.2)",
+                        iconColor: "#2563eb"
+                    };
+                } else {
+                    return {
+                        background: "linear-gradient(135deg, rgba(107, 114, 128, 0.02) 0%, rgba(156, 163, 175, 0.02) 100%)",
+                        border: "1px solid rgba(107, 114, 128, 0.1)",
+                        iconColor: "#6b7280"
+                    };
+                }
+            };
+
+            const broadcasterCards = broadcasts.map(broadcast => {
+                const style = getBroadcasterCardStyle(broadcast.providers.display_name);
+                return `
+                    <div class="card" style="padding: 1.25rem; background: ${style.background}; border: ${style.border}; border-radius: 8px;">
+                        <div style="display: flex; align-items: center; gap: 0.75rem;">
+                            <span style="font-size: 1.25rem; color: ${style.iconColor};">📡</span>
+                            <div>
+                                <div style="font-weight: 600; font-size: 1rem; color: #1f2937;">${broadcast.providers.display_name}</div>
+                                ${broadcast.channel_name ? `<div style="font-size: 0.875rem; color: #6b7280; margin-top: 0.25rem;">${broadcast.channel_name}</div>` : ''}
+                                ${broadcast.stream_type ? `<div style="font-size: 0.75rem; color: #9ca3af; margin-top: 0.25rem;">${broadcast.stream_type}</div>` : ''}
+                                ${broadcast.verified ? 
+                                    '<div style="font-size: 0.75rem; color: #10b981; margin-top: 0.5rem;">✅ Verified</div>' : 
+                                    '<div style="font-size: 0.75rem; color: #f59e0b; margin-top: 0.5rem;">⚠️ Unverified</div>'
+                                }
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            return `
+                <div style="display: grid; gap: 1rem;">
+                    ${broadcasterCards}
+                </div>
+            `;
+        }
+
+        function renderBroadcastInfo(fixture) {
+            if (!fixture.broadcasts_uk || fixture.broadcasts_uk.length === 0) {
+                return `
+                    <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(226, 232, 240, 0.5);">
+                        <div style="display: inline-block; padding: 0.25rem 0.75rem; background: rgba(0, 0, 0, 0.8); color: #ffffff; font-size: 0.75rem; border-radius: 12px; font-weight: 500;">
+                            Blackout
+                        </div>
+                    </div>
+                `;
+            }
+
+            const broadcasters = fixture.broadcasts_uk
+                .filter(broadcast => broadcast.providers && broadcast.providers.display_name)
+                .map(broadcast => broadcast.providers.display_name)
+                .filter((name, index, self) => self.indexOf(name) === index); // Remove duplicates
+
+            if (broadcasters.length === 0) {
+                return `
+                    <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(226, 232, 240, 0.5);">
+                        <div style="display: inline-block; padding: 0.25rem 0.75rem; background: rgba(0, 0, 0, 0.8); color: #ffffff; font-size: 0.75rem; border-radius: 12px; font-weight: 500;">
+                            Blackout
+                        </div>
+                    </div>
+                `;
+            }
+
+            const getBroadcasterButtonStyle = (broadcaster) => {
+                let baseStyle = "padding: 0.25rem 0.75rem; font-size: 0.75rem; border-radius: 12px; margin-right: 0.5rem; margin-bottom: 0.25rem; border: none; font-weight: 500;";
+                
+                if (broadcaster.toLowerCase().includes('tnt')) {
+                    return baseStyle + " background: #dc2626; color: #ffffff;";
+                } else if (broadcaster.toLowerCase().includes('sky')) {
+                    return baseStyle + " background: #2563eb; color: #ffffff;";
+                } else {
+                    return baseStyle + " background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color);";
+                }
+            };
+
+            const broadcasterButtons = broadcasters.map(broadcaster => `
+                <button style="${getBroadcasterButtonStyle(broadcaster)}" onclick="event.preventDefault(); event.stopPropagation();">
+                    ${broadcaster}
+                </button>
+            `).join('');
+
+            return `
+                <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid rgba(226, 232, 240, 0.5);">
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.25rem;">
+                        ${broadcasterButtons}
+                    </div>
+                </div>
+            `;
+        }
+
         function renderFixtureCard(fixture) {
             const homeTeam = teamsMap[fixture.home_team_id];
             const awayTeam = teamsMap[fixture.away_team_id];
@@ -970,7 +1563,7 @@
             
             return `
                 <a class="cardlink" href="${href}">
-                    <div class="match-card" style="border: 1px solid rgba(226, 232, 240, 0.8); border-radius: 12px; padding: 1.25rem; margin-bottom: 0.75rem; background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); backdrop-filter: blur(10px); cursor: pointer;" 
+                    <div class="card card--match" style="border: 1px solid rgba(226, 232, 240, 0.8); border-radius: 12px; padding: 1.25rem; margin-bottom: 0.75rem; background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); backdrop-filter: blur(10px); cursor: pointer;" 
                          onmouseover="this.style.background='linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(147, 197, 253, 0.05) 100%)'; this.style.transform='translateY(-3px) scale(1.01)'; this.style.boxShadow='0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'; this.style.borderColor='rgba(59, 130, 246, 0.3)'" 
                          onmouseout="this.style.background='linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%)'; this.style.transform=''; this.style.boxShadow=''; this.style.borderColor='rgba(226, 232, 240, 0.8)'">
                         <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -1005,6 +1598,7 @@
                                 ${fixture.venue ? `<div style="font-size: 0.75rem; margin-top: 0.25rem;">${fixture.venue}</div>` : ''}
                             </div>
                         </div>
+                        ${renderBroadcastInfo(fixture)}
                     </div>
                 </a>
             `;
@@ -1134,9 +1728,9 @@
                 }).join('');
                 
                 container.innerHTML = `
-                    <div style="background: white; padding: 2rem; border-radius: 8px; margin-bottom: 2rem;">
-                        <h2 style="margin: 0 0 1rem 0;">Premier League Clubs</h2>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem;">
+                    <div class="card mb-lg">
+                        <h2 class="text-2xl font-semibold mb-lg">Premier League Clubs</h2>
+                        <div class="grid grid--2">
                             ${clubsGrid}
                         </div>
                     </div>
@@ -1195,7 +1789,7 @@
                 
                 // Load upcoming fixtures for this team
                 const nowIso = new Date().toISOString();
-                const fixturesResponse = await fetch(`${SUPABASE_URL}/rest/v1/fixtures?or=(home_team_id.eq.${team.id},away_team_id.eq.${team.id})&utc_kickoff=gte.${nowIso}&select=id,home_team_id,away_team_id,utc_kickoff,venue&order=utc_kickoff&limit=10`, {
+                const fixturesResponse = await fetch(`${SUPABASE_URL}/rest/v1/fixtures?or=(home_team_id.eq.${team.id},away_team_id.eq.${team.id})&utc_kickoff=gte.${nowIso}&select=id,home_team_id,away_team_id,utc_kickoff,venue,broadcasts_uk(provider_id,channel_name,stream_type,verified,providers(display_name))&order=utc_kickoff&limit=10`, {
                     headers: {
                         'apikey': SUPABASE_ANON_KEY,
                         'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
@@ -1306,7 +1900,7 @@
             
             try {
                 // Load fixture details
-                const fixtureResponse = await fetch(`${SUPABASE_URL}/rest/v1/fixtures?id=eq.${id}&select=id,home_team_id,away_team_id,utc_kickoff,venue`, {
+                const fixtureResponse = await fetch(`${SUPABASE_URL}/rest/v1/fixtures?id=eq.${id}&select=id,home_team_id,away_team_id,utc_kickoff,venue,broadcasts_uk(provider_id,channel_name,stream_type,verified,providers(display_name))`, {
                     headers: {
                         'apikey': SUPABASE_ANON_KEY,
                         'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
@@ -1372,13 +1966,10 @@
                         </div>
                         <div id="broadcast-info">
                             <h3 style="margin: 1.5rem 0 1rem 0;">Where to Watch</h3>
-                            <div style="color: #7f8c8d;">Loading broadcast information...</div>
+                            ${renderMatchBroadcastInfo(fixture)}
                         </div>
                     </div>
                 `;
-                
-                // Load broadcast information
-                loadBroadcastInfo(id);
                 
             } catch (error) {
                 console.error('Error loading match details:', error);
@@ -1411,19 +2002,24 @@
                     
                     if (broadcasts && broadcasts.length > 0) {
                         broadcastDiv.innerHTML = `
-                            <h3 style="margin: 1.5rem 0 1rem 0;">Where to Watch</h3>
-                            ${broadcasts.map(b => `
-                                <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; background: #f9fafb;">
-                                    <div><strong>${b.provider_name || 'TBC'}</strong>${b.channel_name ? ` — ${b.channel_name}` : ''}</div>
-                                    <div style="color: #7f8c8d; margin-top: 4px;">${b.stream_type || 'TV'}</div>
-                                    ${b.verified ? '<div style="color: #059669; margin-top: 4px;">✅ Verified</div>' : '<div style="color: #d97706; margin-top: 4px;">⚠️ Unverified</div>'}
-                                </div>
-                            `).join('')}
+                            <h3 class="text-xl font-semibold mb-md">Where to Watch</h3>
+                            <div class="grid">
+                                ${broadcasts.map(b => `
+                                    <div class="card mb-sm">
+                                        <div class="font-medium">${b.provider_name || 'TBC'}${b.channel_name ? ` — ${b.channel_name}` : ''}</div>
+                                        <div class="text-sm text-secondary mt-sm">${b.stream_type || 'TV'}</div>
+                                        ${b.verified ? 
+                                            '<div class="text-sm mt-sm" style="color: var(--success-color);">✅ Verified</div>' : 
+                                            '<div class="text-sm mt-sm" style="color: var(--warning-color);">⚠️ Unverified</div>'
+                                        }
+                                    </div>
+                                `).join('')}
+                            </div>
                         `;
                     } else {
                         broadcastDiv.innerHTML = `
-                            <h3 style="margin: 1.5rem 0 1rem 0;">Where to Watch</h3>
-                            <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; color: #7f8c8d; background: #f9fafb;">
+                            <h3 class="text-xl font-semibold mb-md">Where to Watch</h3>
+                            <div class="card text-muted">
                                 No UK broadcaster information available yet.
                             </div>
                         `;
@@ -1434,8 +2030,8 @@
             } catch (error) {
                 console.error('Error loading broadcasts:', error);
                 broadcastDiv.innerHTML = `
-                    <h3 style="margin: 1.5rem 0 1rem 0;">Where to Watch</h3>
-                    <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; color: #7f8c8d; background: #f9fafb;">
+                    <h3 class="text-xl font-semibold mb-md">Where to Watch</h3>
+                    <div class="card text-muted">
                         Broadcaster information will be added closer to match time.
                     </div>
                 `;
