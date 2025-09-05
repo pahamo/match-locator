@@ -14,15 +14,6 @@
     <meta property="og:description" content="Never miss a match - find out which channel is showing your team's games">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://football-listings.netlify.app">
-    <meta property="og:site_name" content="Football Listings">
-    
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Premier League Fixtures & TV Guide">
-    <meta name="twitter:description" content="Find out which channel is showing your team's Premier League matches">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
     
     <style>
         * {
@@ -63,46 +54,27 @@
             margin-top: 0.5rem;
         }
         
-        /* Error Banner Styles */
-        .error-banner {
-            background: #e74c3c;
-            color: white;
+        /* Status Messages */
+        .status {
             padding: 1rem;
-            text-align: center;
-            font-weight: 500;
-            border-radius: 4px;
             margin-bottom: 1rem;
-            animation: slideDown 0.3s ease-out;
-        }
-        
-        @keyframes slideDown {
-            from { transform: translateY(-100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        
-        /* Loading Styles */
-        .loading {
+            border-radius: 4px;
             text-align: center;
-            padding: 3rem;
-            color: #7f8c8d;
-            font-size: 1.2rem;
         }
         
-        .loading::after {
-            content: '';
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #7f8c8d;
-            border-top: 2px solid transparent;
-            border-radius: 50%;
-            margin-left: 10px;
-            animation: spin 1s linear infinite;
+        .status.loading {
+            background: #e3f2fd;
+            color: #1976d2;
         }
         
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .status.success {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+        
+        .status.error {
+            background: #ffebee;
+            color: #c62828;
         }
         
         /* Filters */
@@ -133,14 +105,28 @@
             font-size: 1rem;
         }
         
-        /* Fixtures */
-        .fixtures-container {
+        /* Matchweek Groups */
+        .matchweek-group {
+            margin-bottom: 2rem;
+        }
+        
+        .matchweek-header {
+            background: #2c3e50;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px 8px 0 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        .matchweek-fixtures {
             background: white;
-            border-radius: 8px;
+            border-radius: 0 0 8px 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             overflow: hidden;
         }
         
+        /* Fixtures */
         .fixture {
             border-bottom: 1px solid #eee;
             padding: 1.5rem;
@@ -163,14 +149,57 @@
         }
         
         .fixture-teams {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
             font-size: 1.2rem;
             font-weight: 600;
             color: #2c3e50;
         }
         
+        .team-badge {
+            width: 32px;
+            height: 32px;
+            background: #f0f0f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #666;
+            border: 1px solid #ddd;
+            overflow: hidden;
+        }
+        
+        .team-badge img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 50%;
+        }
+        
+        .vs-text {
+            color: #7f8c8d;
+            font-weight: normal;
+            font-size: 0.9em;
+        }
+        
+        .fixture-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.25rem;
+        }
+        
         .fixture-date {
             color: #7f8c8d;
             font-size: 0.95rem;
+        }
+        
+        .fixture-venue {
+            color: #95a5a6;
+            font-size: 0.85rem;
         }
         
         .broadcasters {
@@ -179,32 +208,14 @@
             flex-wrap: wrap;
         }
         
-        .broadcaster-btn {
-            display: inline-block;
-            padding: 0.5rem 1rem;
-            background: #3498db;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: background-color 0.2s;
-        }
-        
-        .broadcaster-btn:hover {
-            background: #2980b9;
-        }
-        
-        .broadcaster-btn.sky { background: #1e3a8a; }
-        .broadcaster-btn.tnt { background: #dc2626; }
-        .broadcaster-btn.amazon { background: #f59e0b; }
-        .broadcaster-btn.bbc { background: #7c3aed; }
-        
         .no-fixtures {
             text-align: center;
             padding: 3rem;
             color: #7f8c8d;
             font-size: 1.1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         /* Footer */
@@ -249,8 +260,12 @@
                 gap: 0.5rem;
             }
             
-            .broadcasters {
-                width: 100%;
+            .fixture-teams {
+                font-size: 1.1rem;
+            }
+            
+            .fixture-info {
+                align-items: flex-start;
             }
         }
     </style>
@@ -264,7 +279,8 @@
     </header>
 
     <main class="container">
-        <!-- Error messages will be inserted here -->
+        <!-- Status Messages -->
+        <div id="status"></div>
         
         <!-- Filters -->
         <div class="filters">
@@ -288,11 +304,7 @@
         </div>
 
         <!-- Fixtures List -->
-        <div class="fixtures-container">
-            <div id="fixtures-list">
-                <div class="loading">Loading fixtures...</div>
-            </div>
-        </div>
+        <div id="fixtures-container"></div>
     </main>
 
     <footer>
@@ -302,119 +314,164 @@
         </div>
     </footer>
 
-    <div class="version-badge">v1.1.0</div>
+    <div class="version-badge">v1.5.0</div>
 
     <script>
-        // Configuration
         const SUPABASE_URL = 'https://ksqyurqkqznzrntdpood.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzcXl1cnFrcXpuenJudGRwb29kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3OTEwNjAsImV4cCI6MjA3MjM2NzA2MH0.wVBZBEbfctB7JPnpMZkXKMGwXlYxGWjOF_AxixVo-S4';
-        
+
         // Global state
-        let allFixtures = [];
         let allTeams = [];
-        let currentFilters = {
-            team: '',
-            matchweek: '',
-            time: 'upcoming'
-        };
+        let allFixtures = [];
+        let teamsMap = {};
 
         // Utility Functions
-        function showError(message) {
-            removeExistingErrors();
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'error-banner';
-            errorDiv.textContent = message;
-            document.querySelector('main').insertBefore(errorDiv, document.querySelector('main').firstChild);
+        function showStatus(message, type = 'loading') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        function hideStatus() {
+            document.getElementById('status').innerHTML = '';
+        }
+
+        function getTeamAbbreviation(teamName) {
+            const abbreviations = {
+                'Arsenal': 'ARS',
+                'Aston Villa': 'AVL',
+                'Brighton & Hove Albion': 'BHA',
+                'Brighton': 'BHA',
+                'Burnley': 'BUR',
+                'Chelsea': 'CHE',
+                'Crystal Palace': 'CRY',
+                'Everton': 'EVE',
+                'Fulham': 'FUL',
+                'Liverpool': 'LIV',
+                'Luton Town': 'LUT',
+                'Manchester City': 'MCI',
+                'Manchester United': 'MUN',
+                'Newcastle United': 'NEW',
+                'Newcastle': 'NEW',
+                'Nottingham Forest': 'NFO',
+                'Sheffield United': 'SHU',
+                'Tottenham Hotspur': 'TOT',
+                'Tottenham': 'TOT',
+                'West Ham United': 'WHU',
+                'West Ham': 'WHU',
+                'Wolverhampton Wanderers': 'WOL',
+                'Wolves': 'WOL',
+                'Brentford': 'BRE',
+                'Leicester City': 'LEI',
+                'Leeds United': 'LEE',
+                'Sunderland': 'SUN'
+            };
             
-            // Auto-hide after 5 seconds
-            setTimeout(() => errorDiv.remove(), 5000);
+            return abbreviations[teamName] || teamName.substring(0, 3).toUpperCase();
         }
 
-        function removeExistingErrors() {
-            const existingErrors = document.querySelectorAll('.error-banner');
-            existingErrors.forEach(error => error.remove());
-        }
-
-        function showLoading() {
-            document.getElementById('fixtures-list').innerHTML = 
-                '<div class="loading">Loading fixtures...</div>';
-        }
-
-        function hideLoading() {
-            const loading = document.querySelector('.loading');
-            if (loading) loading.remove();
-        }
-
-        // API Functions with Error Handling
-        async function fetchWithErrorHandling(url, options = {}) {
-            try {
-                const response = await fetch(url, {
-                    ...options,
-                    headers: {
-                        'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-                        'Content-Type': 'application/json',
-                        ...options.headers
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                return await response.json();
-            } catch (error) {
-                console.error('API Error:', error);
-                showError('Unable to load data. Please check your connection and try again.');
-                return null;
-            }
+        function getTeamCrestUrl(teamName) {
+            const crestUrls = {
+                'Arsenal': 'https://www.thesportsdb.com/images/media/team/badge/vrtrtp1448813175.png',
+                'Aston Villa': 'https://www.thesportsdb.com/images/media/team/badge/yvwvtu1448813188.png',
+                'Brighton & Hove Albion': 'https://www.thesportsdb.com/images/media/team/badge/wwxuyw1448813221.png',
+                'Brighton': 'https://www.thesportsdb.com/images/media/team/badge/wwxuyw1448813221.png',
+                'Chelsea': 'https://www.thesportsdb.com/images/media/team/badge/yvwvtu1448813225.png',
+                'Crystal Palace': 'https://www.thesportsdb.com/images/media/team/badge/vwpvry1467462651.png',
+                'Everton': 'https://www.thesportsdb.com/images/media/team/badge/vwpvry1467462685.png',
+                'Fulham': 'https://www.thesportsdb.com/images/media/team/badge/adklsj1672750184.png',
+                'Liverpool': 'https://www.thesportsdb.com/images/media/team/badge/txrxpy1448813215.png',
+                'Manchester City': 'https://www.thesportsdb.com/images/media/team/badge/vwpvry1467462692.png',
+                'Manchester United': 'https://www.thesportsdb.com/images/media/team/badge/vrtrtp1448813187.png',
+                'Newcastle United': 'https://www.thesportsdb.com/images/media/team/badge/wwxuyw1448813348.png',
+                'Newcastle': 'https://www.thesportsdb.com/images/media/team/badge/wwxuyw1448813348.png',
+                'Nottingham Forest': 'https://www.thesportsdb.com/images/media/team/badge/uyhbfe1612467038.png',
+                'Tottenham Hotspur': 'https://www.thesportsdb.com/images/media/team/badge/xxrxpu1448813232.png',
+                'Tottenham': 'https://www.thesportsdb.com/images/media/team/badge/xxrxpu1448813232.png',
+                'West Ham United': 'https://www.thesportsdb.com/images/media/team/badge/tpwptu1467456296.png',
+                'West Ham': 'https://www.thesportsdb.com/images/media/team/badge/tpwptu1467456296.png',
+                'Wolverhampton Wanderers': 'https://www.thesportsdb.com/images/media/team/badge/1yhpte1646072327.png',
+                'Wolves': 'https://www.thesportsdb.com/images/media/team/badge/1yhpte1646072327.png',
+                'Brentford': 'https://www.thesportsdb.com/images/media/team/badge/qtpsps1420049324.png',
+                'Leicester City': 'https://www.thesportsdb.com/images/media/team/badge/uvxutp1448813130.png',
+                'Sunderland': 'https://www.thesportsdb.com/images/media/team/badge/rwqrrq1448813106.png'
+            };
+            
+            return crestUrls[teamName] || null;
         }
 
         // Data Loading Functions
         async function loadTeams() {
-            const teams = await fetchWithErrorHandling(`${SUPABASE_URL}/rest/v1/teams?select=*&order=name`);
-            if (teams) {
-                allTeams = teams;
-                populateTeamFilter();
+            showStatus('Loading teams...', 'loading');
+            
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/teams?select=id,name,slug,crest_url&order=name`, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Teams API failed: ${response.status}`);
+                }
+                
+                allTeams = await response.json();
+                
+                // Create teams lookup
+                teamsMap = {};
+                allTeams.forEach(team => {
+                    teamsMap[team.id] = team;
+                });
+                
+                // Populate team filter
+                const teamFilter = document.getElementById('team-filter');
+                teamFilter.innerHTML = '<option value="">All Teams</option>';
+                allTeams.forEach(team => {
+                    const option = document.createElement('option');
+                    option.value = team.id;
+                    option.textContent = team.name;
+                    teamFilter.appendChild(option);
+                });
+                
+                console.log('Teams loaded:', allTeams.length);
+                return true;
+                
+            } catch (error) {
+                console.error('Error loading teams:', error);
+                showStatus(`Error loading teams: ${error.message}`, 'error');
+                return false;
             }
-            return teams;
         }
 
         async function loadFixtures() {
-            showLoading();
+            showStatus('Loading fixtures...', 'loading');
             
-            // Load fixtures with team information
-            const fixtures = await fetchWithErrorHandling(
-                `${SUPABASE_URL}/rest/v1/fixtures?select=*,home_team:teams!home_team_id(name,slug),away_team:teams!away_team_id(name,slug)&order=utc_kickoff`
-            );
-            
-            if (fixtures) {
-                allFixtures = fixtures;
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/fixtures?select=id,home_team_id,away_team_id,utc_kickoff,matchweek,venue&order=utc_kickoff`, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Fixtures API failed: ${response.status}`);
+                }
+                
+                allFixtures = await response.json();
+                console.log('Fixtures loaded:', allFixtures.length);
+                
+                // Populate matchweek filter
                 populateMatchweekFilter();
+                
                 displayFixtures();
+                return true;
+                
+            } catch (error) {
+                console.error('Error loading fixtures:', error);
+                showStatus(`Error loading fixtures: ${error.message}`, 'error');
+                return false;
             }
-            
-            hideLoading();
-            return fixtures;
-        }
-
-        async function loadBroadcasters(fixtureId) {
-            return await fetchWithErrorHandling(
-                `${SUPABASE_URL}/rest/v1/broadcasts_uk?select=*,provider:providers(*),affiliate:affiliate_destinations(*)&fixture_id=eq.${fixtureId}`
-            );
-        }
-
-        // Display Functions
-        function populateTeamFilter() {
-            const teamFilter = document.getElementById('team-filter');
-            teamFilter.innerHTML = '<option value="">All Teams</option>';
-            
-            allTeams.forEach(team => {
-                const option = document.createElement('option');
-                option.value = team.id;
-                option.textContent = team.name;
-                teamFilter.appendChild(option);
-            });
         }
 
         function populateMatchweekFilter() {
@@ -431,54 +488,61 @@
         }
 
         function getFilteredFixtures() {
+            const teamFilter = document.getElementById('team-filter').value;
+            const matchweekFilter = document.getElementById('matchweek-filter').value;
+            const timeFilter = document.getElementById('time-filter').value;
+            
             let filtered = allFixtures;
 
-            // Time filter
-            if (currentFilters.time === 'upcoming') {
-                const now = new Date();
-                filtered = filtered.filter(fixture => new Date(fixture.utc_kickoff) > now);
-            }
-
             // Team filter
-            if (currentFilters.team) {
+            if (teamFilter) {
                 filtered = filtered.filter(fixture => 
-                    fixture.home_team_id == currentFilters.team || 
-                    fixture.away_team_id == currentFilters.team
+                    fixture.home_team_id == teamFilter || 
+                    fixture.away_team_id == teamFilter
                 );
             }
 
             // Matchweek filter
-            if (currentFilters.matchweek) {
-                filtered = filtered.filter(fixture => fixture.matchweek == currentFilters.matchweek);
+            if (matchweekFilter) {
+                filtered = filtered.filter(fixture => 
+                    fixture.matchweek == matchweekFilter
+                );
+            }
+
+            // Time filter
+            if (timeFilter === 'upcoming') {
+                const now = new Date();
+                filtered = filtered.filter(fixture => 
+                    new Date(fixture.utc_kickoff) > now
+                );
             }
 
             return filtered;
         }
 
-        async function displayFixtures() {
-            const fixturesList = document.getElementById('fixtures-list');
-            const filteredFixtures = getFilteredFixtures();
-
-            if (filteredFixtures.length === 0) {
-                fixturesList.innerHTML = '<div class="no-fixtures">No fixtures found matching your filters.</div>';
-                return;
-            }
-
-            let html = '';
-            for (const fixture of filteredFixtures) {
-                const broadcasters = await loadBroadcasters(fixture.id);
-                html += renderFixture(fixture, broadcasters || []);
-            }
+        function groupFixtures(fixtures) {
+            const groups = {};
             
-            fixturesList.innerHTML = html;
-
-            // Update page title for SEO
-            if (filteredFixtures.length > 0) {
-                updatePageTitle(filteredFixtures[0]);
-            }
+            fixtures.forEach(fixture => {
+                const groupKey = fixture.matchweek ? `Matchweek ${fixture.matchweek}` : 'No Matchweek';
+                
+                if (!groups[groupKey]) {
+                    groups[groupKey] = [];
+                }
+                groups[groupKey].push(fixture);
+            });
+            
+            return groups;
         }
 
-        function renderFixture(fixture, broadcasters) {
+        function renderFixture(fixture) {
+            const homeTeam = teamsMap[fixture.home_team_id];
+            const awayTeam = teamsMap[fixture.away_team_id];
+            
+            if (!homeTeam || !awayTeam) {
+                return '';
+            }
+            
             const kickoffDate = new Date(fixture.utc_kickoff);
             const dateStr = kickoffDate.toLocaleDateString('en-GB', {
                 weekday: 'short',
@@ -487,134 +551,105 @@
                 hour: '2-digit',
                 minute: '2-digit'
             });
-
-            const broadcastersHtml = broadcasters.map(broadcast => {
-                const providerClass = broadcast.provider?.name?.toLowerCase().replace(/\s+/g, '') || '';
-                const affiliateUrl = broadcast.affiliate?.url || '#';
-                
-                return `<a href="${affiliateUrl}" 
-                           class="broadcaster-btn ${providerClass}" 
-                           target="_blank"
-                           onclick="trackAffiliateClick('${broadcast.provider?.name}', '${fixture.id}')">
-                    ${broadcast.provider?.name} ${broadcast.channel_name ? `- ${broadcast.channel_name}` : ''}
-                </a>`;
-            }).join('');
-
+            
+            // Get crest URLs with fallbacks
+            const homeCrestUrl = homeTeam.crest_url || getTeamCrestUrl(homeTeam.name);
+            const awayCrestUrl = awayTeam.crest_url || getTeamCrestUrl(awayTeam.name);
+            const homeAbbr = getTeamAbbreviation(homeTeam.name);
+            const awayAbbr = getTeamAbbreviation(awayTeam.name);
+            
             return `
-                <div class="fixture" data-fixture-id="${fixture.id}">
+                <div class="fixture">
                     <div class="fixture-header">
                         <div class="fixture-teams">
-                            ${fixture.home_team?.name || 'TBD'} vs ${fixture.away_team?.name || 'TBD'}
+                            <div class="team-badge">
+                                ${homeCrestUrl ? 
+                                    `<img src="${homeCrestUrl}" alt="${homeTeam.name}" onerror="this.style.display='none'; this.nextSibling.style.display='block';">
+                                     <span style="display:none">${homeAbbr}</span>` :
+                                    homeAbbr
+                                }
+                            </div>
+                            <span>${homeTeam.name}</span>
+                            <span class="vs-text">vs</span>
+                            <span>${awayTeam.name}</span>
+                            <div class="team-badge">
+                                ${awayCrestUrl ? 
+                                    `<img src="${awayCrestUrl}" alt="${awayTeam.name}" onerror="this.style.display='none'; this.nextSibling.style.display='block';">
+                                     <span style="display:none">${awayAbbr}</span>` :
+                                    awayAbbr
+                                }
+                            </div>
                         </div>
-                        <div class="fixture-date">${dateStr}</div>
+                        <div class="fixture-info">
+                            <div class="fixture-date">${dateStr}</div>
+                            ${fixture.venue ? `<div class="fixture-venue">${fixture.venue}</div>` : ''}
+                        </div>
                     </div>
                     <div class="broadcasters">
-                        ${broadcastersHtml || '<span style="color: #7f8c8d;">Broadcaster TBC</span>'}
+                        <span style="color: #7f8c8d;">Broadcaster TBC</span>
                     </div>
                 </div>
             `;
         }
 
-        // SEO Functions
-        function updatePageTitle(fixture) {
-            if (currentFilters.team && fixture) {
-                const teamName = allTeams.find(t => t.id == currentFilters.team)?.name;
-                if (teamName) {
-                    document.title = `${teamName} Fixtures & TV Guide - Where to Watch`;
-                }
-            }
-        }
-
-        function addStructuredData(fixture) {
-            // Remove existing structured data
-            const existingScript = document.querySelector('script[type="application/ld+json"]');
-            if (existingScript) existingScript.remove();
-
-            const script = document.createElement('script');
-            script.type = 'application/ld+json';
-            script.textContent = JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "SportsEvent",
-                "name": `${fixture.home_team?.name} vs ${fixture.away_team?.name}`,
-                "startDate": fixture.utc_kickoff,
-                "location": {
-                    "@type": "Place",
-                    "name": fixture.venue || "TBD"
-                },
-                "homeTeam": {
-                    "@type": "SportsTeam",
-                    "name": fixture.home_team?.name
-                },
-                "awayTeam": {
-                    "@type": "SportsTeam", 
-                    "name": fixture.away_team?.name
-                },
-                "sport": "Football"
-            });
-            document.head.appendChild(script);
-        }
-
-        // Analytics Functions
-        function trackAffiliateClick(provider, fixtureId) {
-            // Track affiliate clicks for revenue optimization
-            console.log(`Affiliate click: ${provider} for fixture ${fixtureId}`);
+        function displayFixtures() {
+            const fixturesContainer = document.getElementById('fixtures-container');
+            const filtered = getFilteredFixtures();
             
-            // Send to analytics (implement when ready)
-            if (typeof gtag !== 'undefined') {
-                gtag('event', 'affiliate_click', {
-                    'provider': provider,
-                    'fixture_id': fixtureId
-                });
+            if (filtered.length === 0) {
+                fixturesContainer.innerHTML = '<div class="no-fixtures">No fixtures found matching your filters.</div>';
+                hideStatus();
+                return;
             }
+            
+            const grouped = groupFixtures(filtered);
+            
+            let html = '';
+            
+            Object.entries(grouped).forEach(([groupName, fixtures]) => {
+                html += `
+                    <div class="matchweek-group">
+                        <div class="matchweek-header">${groupName}</div>
+                        <div class="matchweek-fixtures">
+                `;
+                
+                fixtures.forEach(fixture => {
+                    html += renderFixture(fixture);
+                });
+                
+                html += '</div></div>';
+            });
+            
+            fixturesContainer.innerHTML = html;
+            showStatus(`Showing ${filtered.length} fixtures`, 'success');
+            
+            // Hide status after 2 seconds
+            setTimeout(hideStatus, 2000);
         }
 
         // Event Listeners
-        document.getElementById('team-filter').addEventListener('change', (e) => {
-            currentFilters.team = e.target.value;
-            displayFixtures();
-        });
-
-        document.getElementById('matchweek-filter').addEventListener('change', (e) => {
-            currentFilters.matchweek = e.target.value;
-            displayFixtures();
-        });
-
-        document.getElementById('time-filter').addEventListener('change', (e) => {
-            currentFilters.time = e.target.value;
-            displayFixtures();
-        });
+        document.getElementById('team-filter').addEventListener('change', displayFixtures);
+        document.getElementById('matchweek-filter').addEventListener('change', displayFixtures);
+        document.getElementById('time-filter').addEventListener('change', displayFixtures);
 
         // Initialize App
         async function initApp() {
             try {
-                // Load data in parallel
-                await Promise.all([
-                    loadTeams(),
-                    loadFixtures()
-                ]);
-
-                // Add structured data for first fixture
-                if (allFixtures.length > 0) {
-                    addStructuredData(allFixtures[0]);
+                const teamsLoaded = await loadTeams();
+                if (teamsLoaded) {
+                    const fixturesLoaded = await loadFixtures();
+                    if (fixturesLoaded) {
+                        console.log('App initialized successfully');
+                    }
                 }
-
             } catch (error) {
                 console.error('Failed to initialize app:', error);
-                showError('Failed to load fixtures. Please refresh the page.');
+                showStatus('Failed to load fixtures. Please refresh the page.', 'error');
             }
         }
 
         // Start the app
         document.addEventListener('DOMContentLoaded', initApp);
-
-        // Add service worker for offline capability (optional)
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(() => console.log('SW registered'))
-                    .catch(() => console.log('SW registration failed'));
-            });
-        }
     </script>
 </body>
 </html>
