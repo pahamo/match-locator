@@ -25,8 +25,9 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             line-height: 1.6;
-            color: #333;
-            background-color: #f8f9fa;
+            color: #1f2937;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
         }
         
         .container {
@@ -36,54 +37,69 @@
         }
         
         header {
-            background: #fff;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            padding: 1rem 0;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 1.5rem 0;
             margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
         }
         
         h1 {
-            color: #2c3e50;
+            background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             font-size: 2rem;
             font-weight: 700;
+            letter-spacing: -0.025em;
         }
         
         .subtitle {
-            color: #7f8c8d;
+            color: #64748b;
             font-size: 1.1rem;
             margin-top: 0.5rem;
+            font-weight: 400;
         }
         
         /* Status Messages */
         .status {
             padding: 1rem;
             margin-bottom: 1rem;
-            border-radius: 4px;
+            border-radius: 12px;
             text-align: center;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .status.loading {
-            background: #e3f2fd;
-            color: #1976d2;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 197, 253, 0.1) 100%);
+            color: #1e40af;
+            border-color: rgba(59, 130, 246, 0.2);
         }
         
         .status.success {
-            background: #e8f5e8;
-            color: #2e7d32;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(134, 239, 172, 0.1) 100%);
+            color: #166534;
+            border-color: rgba(34, 197, 94, 0.2);
         }
         
         .status.error {
-            background: #ffebee;
-            color: #c62828;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(252, 165, 165, 0.1) 100%);
+            color: #991b1b;
+            border-color: rgba(239, 68, 68, 0.2);
         }
         
         /* Filters */
         .filters {
-            background: white;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%);
+            backdrop-filter: blur(10px);
             padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 16px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .filter-group {
@@ -94,15 +110,32 @@
         }
         
         .filter-group label {
-            font-weight: 500;
-            color: #2c3e50;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.9rem;
+            letter-spacing: 0.025em;
         }
         
         .filter-group select {
-            padding: 0.5rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
             font-size: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .filter-group select:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        .filter-group select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
         
         /* Matchweek Groups */
@@ -111,30 +144,72 @@
         }
         
         .matchweek-header {
-            background: #2c3e50;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
             color: white;
-            padding: 1rem;
-            border-radius: 8px 8px 0 0;
+            padding: 1.5rem;
+            border-radius: 16px 16px 0 0;
             font-size: 1.1rem;
             font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .matchweek-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            pointer-events: none;
         }
         
         .matchweek-fixtures {
-            background: white;
-            border-radius: 0 0 8px 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 0 0 16px 16px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             overflow: hidden;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-top: none;
         }
         
         /* Fixtures */
         .fixture {
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.6);
             padding: 1.5rem;
-            transition: background-color 0.2s;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .fixture::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.6s ease;
         }
         
         .fixture:hover {
-            background-color: #f8f9fa;
+            background: linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.8) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .fixture:hover::before {
+            left: 100%;
+        }
+        
+        .cardlink {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
         }
         
         .fixture:last-child {
@@ -272,9 +347,16 @@
 </head>
 <body>
     <header>
-        <div class="container">
-            <h1>Premier League Fixtures</h1>
-            <p class="subtitle">Find out which TV channel is showing your team's matches</p>
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h1 style="margin: 0;">Premier League — UK Listings</h1>
+                <p class="subtitle" style="margin: 0.5rem 0 0 0;">Find out which TV channel is showing your team's matches</p>
+            </div>
+            <nav style="display: flex; gap: 0.5rem; font-size: 0.95rem;">
+                <a href="/football" style="text-decoration: none; color: #475569; padding: 0.5rem 1rem; border-radius: 8px; transition: all 0.3s ease; font-weight: 500;" onmouseover="this.style.backgroundColor='rgba(59, 130, 246, 0.1)'; this.style.color='#3b82f6'; this.style.transform='translateY(-1px)'" onmouseout="this.style.backgroundColor=''; this.style.color='#475569'; this.style.transform=''">Home</a>
+                <a href="/football/fixtures" style="text-decoration: none; color: #475569; padding: 0.5rem 1rem; border-radius: 8px; transition: all 0.3s ease; font-weight: 500;" onmouseover="this.style.backgroundColor='rgba(59, 130, 246, 0.1)'; this.style.color='#3b82f6'; this.style.transform='translateY(-1px)'" onmouseout="this.style.backgroundColor=''; this.style.color='#475569'; this.style.transform=''">Fixtures</a>
+                <a href="/football/clubs" style="text-decoration: none; color: #475569; padding: 0.5rem 1rem; border-radius: 8px; transition: all 0.3s ease; font-weight: 500;" onmouseover="this.style.backgroundColor='rgba(59, 130, 246, 0.1)'; this.style.color='#3b82f6'; this.style.transform='translateY(-1px)'" onmouseout="this.style.backgroundColor=''; this.style.color='#475569'; this.style.transform=''">Clubs</a>
+            </nav>
         </div>
     </header>
 
@@ -558,37 +640,43 @@
             const homeAbbr = getTeamAbbreviation(homeTeam.name);
             const awayAbbr = getTeamAbbreviation(awayTeam.name);
             
+            // Generate match URL like backup version
+            const matchSlug = `${homeTeam.name.toLowerCase().replace(/\s+/g, '-')}-vs-${awayTeam.name.toLowerCase().replace(/\s+/g, '-')}-${fixture.utc_kickoff.split('T')[0]}`;
+            const href = `/football/matches/${fixture.id}-${matchSlug}`;
+            
             return `
-                <div class="fixture">
-                    <div class="fixture-header">
-                        <div class="fixture-teams">
-                            <div class="team-badge">
-                                ${homeCrestUrl ? 
-                                    `<img src="${homeCrestUrl}" alt="${homeTeam.name}" onerror="this.style.display='none'; this.nextSibling.style.display='block';">
-                                     <span style="display:none">${homeAbbr}</span>` :
-                                    homeAbbr
-                                }
+                <a class="cardlink" href="${href}">
+                    <div class="fixture">
+                        <div class="fixture-header">
+                            <div class="fixture-teams">
+                                <div class="team-badge">
+                                    ${homeCrestUrl ? 
+                                        `<img src="${homeCrestUrl}" alt="${homeTeam.name}" onerror="this.style.display='none'; this.nextSibling.style.display='block';">
+                                         <span style="display:none">${homeAbbr}</span>` :
+                                        homeAbbr
+                                    }
+                                </div>
+                                <span>${homeTeam.name}</span>
+                                <span class="vs-text">vs</span>
+                                <span>${awayTeam.name}</span>
+                                <div class="team-badge">
+                                    ${awayCrestUrl ? 
+                                        `<img src="${awayCrestUrl}" alt="${awayTeam.name}" onerror="this.style.display='none'; this.nextSibling.style.display='block';">
+                                         <span style="display:none">${awayAbbr}</span>` :
+                                        awayAbbr
+                                    }
+                                </div>
                             </div>
-                            <span>${homeTeam.name}</span>
-                            <span class="vs-text">vs</span>
-                            <span>${awayTeam.name}</span>
-                            <div class="team-badge">
-                                ${awayCrestUrl ? 
-                                    `<img src="${awayCrestUrl}" alt="${awayTeam.name}" onerror="this.style.display='none'; this.nextSibling.style.display='block';">
-                                     <span style="display:none">${awayAbbr}</span>` :
-                                    awayAbbr
-                                }
+                            <div class="fixture-info">
+                                <div class="fixture-date">${dateStr}</div>
+                                ${fixture.venue ? `<div class="fixture-venue">${fixture.venue}</div>` : ''}
                             </div>
                         </div>
-                        <div class="fixture-info">
-                            <div class="fixture-date">${dateStr}</div>
-                            ${fixture.venue ? `<div class="fixture-venue">${fixture.venue}</div>` : ''}
+                        <div class="broadcasters">
+                            <span style="color: #7f8c8d;">Broadcaster TBC</span>
                         </div>
                     </div>
-                    <div class="broadcasters">
-                        <span style="color: #7f8c8d;">Broadcaster TBC</span>
-                    </div>
-                </div>
+                </a>
             `;
         }
 
@@ -627,6 +715,7 @@
             setTimeout(hideStatus, 2000);
         }
 
+
         // Event Listeners
         document.getElementById('team-filter').addEventListener('change', displayFixtures);
         document.getElementById('matchweek-filter').addEventListener('change', displayFixtures);
@@ -648,8 +737,715 @@
             }
         }
 
-        // Start the app
-        document.addEventListener('DOMContentLoaded', initApp);
+        // ---- Routing System (from backup-index.html) ----
+        const routes = { "/": homeView, "/fixtures": fixturesView, "/match": matchView, "/clubs": clubsView, "/club": clubPageView };
+        const APP_BASE = '/football';
+
+        function parseRoute(){
+            let p = location.pathname;
+            const searchParams = new URLSearchParams(location.search);
+            if (!p.startsWith(APP_BASE)) return { path:'/', params:new URLSearchParams(searchParams) };
+            const parts = p.slice(APP_BASE.length).replace(/^\/+/, '').split('/').filter(Boolean);
+            
+            if (parts.length === 0) return { path:'/', params:new URLSearchParams(searchParams) };
+            if (parts[0] === 'fixtures') return { path:'/fixtures', params:new URLSearchParams(searchParams) };
+            if (parts[0] === 'clubs' && parts.length === 1) return { path:'/clubs', params:new URLSearchParams(searchParams) };
+            if (parts[0] === 'clubs' && parts[1]){
+                const mergedClub = new URLSearchParams(searchParams); 
+                mergedClub.set('slug', parts[1]);
+                return { path:'/club', params: mergedClub };
+            }
+            if (parts[0] === 'matches' && parts[1]){
+                const m = /^(\d+)/.exec(parts[1]);
+                const id = m ? m[1] : parts[1];
+                const mergedMatch = new URLSearchParams(searchParams); 
+                mergedMatch.set('id', id);
+                return { path:'/match', params: mergedMatch };
+            }
+            return { path:'/', params:new URLSearchParams(searchParams) };
+        }
+
+        function navigate(to){
+            const href = to.startsWith('/') ? to : APP_BASE + '/' + to;
+            if (location.pathname + location.search !== href){
+                history.pushState(null, '', href);
+                render();
+            }
+        }
+
+        // Intercept internal links to use the History API
+        document.addEventListener('click', (e)=>{
+            const a = e.target.closest('a');
+            if (!a) return;
+            const href = a.getAttribute('href') || '';
+            const isInternal = href.startsWith(APP_BASE) || href.startsWith('/');
+            if (!isInternal || a.origin !== location.origin) return;
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || a.target === '_blank') return;
+            e.preventDefault();
+            navigate(href);
+        });
+
+        window.addEventListener('popstate', () => {
+            render();
+        });
+
+        async function render(){
+            const { path, params } = parseRoute();
+            const view = routes[path] || homeView;
+            showStatus('Loading...', 'loading');
+            try { 
+                await view(params); 
+            } catch(e){
+                console.error(e);
+                document.getElementById("fixtures-container").innerHTML = `<p class="muted">${e.message}</p>`;
+            } finally { 
+                hideStatus(); 
+            }
+        }
+
+        // Global variables for lazy loading
+        let currentMatchweek = null;
+        let allMatchweeks = [];
+        let isLoading = false;
+        
+        // Views
+        async function homeView(params){
+            // Hide filters for home view - we want a clean main page
+            const filtersDiv = document.querySelector(".filters");
+            if (filtersDiv) {
+                filtersDiv.style.display = "none";
+            }
+            
+            const container = document.getElementById("fixtures-container");
+            
+            try {
+                // Load upcoming fixtures
+                const nowIso = new Date().toISOString();
+                const fixturesResponse = await fetch(`${SUPABASE_URL}/rest/v1/fixtures?utc_kickoff=gte.${nowIso}&select=id,home_team_id,away_team_id,utc_kickoff,matchweek,venue&order=utc_kickoff&limit=100`, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
+                
+                if (!fixturesResponse.ok) {
+                    throw new Error(`Failed to load fixtures: ${fixturesResponse.status}`);
+                }
+                
+                const fixtures = await fixturesResponse.json();
+                
+                // Load teams data
+                await loadTeamsForHome();
+                
+                // Group fixtures by matchweek
+                const groupedByMatchweek = {};
+                fixtures.forEach(fixture => {
+                    const mw = fixture.matchweek || 'Unknown';
+                    if (!groupedByMatchweek[mw]) {
+                        groupedByMatchweek[mw] = [];
+                    }
+                    groupedByMatchweek[mw].push(fixture);
+                });
+                
+                // Get sorted matchweeks
+                allMatchweeks = Object.keys(groupedByMatchweek).sort((a, b) => {
+                    if (a === 'Unknown') return 1;
+                    if (b === 'Unknown') return -1;
+                    return parseInt(a) - parseInt(b);
+                });
+                
+                // Show only the first (current/upcoming) matchweek
+                currentMatchweek = 0;
+                
+                if (allMatchweeks.length > 0) {
+                    const firstMatchweek = allMatchweeks[0];
+                    const matchweekFixtures = groupedByMatchweek[firstMatchweek];
+                    
+                    container.innerHTML = renderMatchweekCard(firstMatchweek, matchweekFixtures);
+                    
+                    // Add scroll indicator if there are more matchweeks
+                    if (allMatchweeks.length > 1) {
+                        addScrollIndicator();
+                        setupLazyLoading(groupedByMatchweek);
+                    }
+                } else {
+                    container.innerHTML = `<div class="no-fixtures">No upcoming fixtures found.</div>`;
+                }
+                
+            } catch (error) {
+                console.error('Error loading home page:', error);
+                container.innerHTML = `<div class="no-fixtures">Error loading fixtures: ${error.message}</div>`;
+            }
+        }
+        
+        async function loadTeamsForHome() {
+            if (Object.keys(teamsMap).length > 0) return; // Already loaded
+            
+            const teamsResponse = await fetch(`${SUPABASE_URL}/rest/v1/teams?select=id,name,slug,crest_url&order=name`, {
+                headers: {
+                    'apikey': SUPABASE_ANON_KEY,
+                    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                }
+            });
+            
+            if (teamsResponse.ok) {
+                const teams = await teamsResponse.json();
+                teamsMap = {};
+                teams.forEach(team => {
+                    teamsMap[team.id] = team;
+                });
+            }
+        }
+        
+        function renderMatchweekCard(matchweek, fixtures) {
+            // Group fixtures by day within this matchweek
+            const groupedByDay = {};
+            fixtures.forEach(fixture => {
+                const date = new Date(fixture.utc_kickoff);
+                const dayKey = date.toLocaleDateString('en-GB', {
+                    weekday: 'long',
+                    day: 'numeric', 
+                    month: 'long'
+                });
+                
+                if (!groupedByDay[dayKey]) {
+                    groupedByDay[dayKey] = [];
+                }
+                groupedByDay[dayKey].push(fixture);
+            });
+            
+            const dayGroups = Object.entries(groupedByDay)
+                .sort(([,a], [,b]) => new Date(a[0].utc_kickoff) - new Date(b[0].utc_kickoff))
+                .map(([dayKey, dayFixtures]) => {
+                    const fixtureCards = dayFixtures.map(fixture => renderFixtureCard(fixture)).join('');
+                    return `
+                        <div class="day-group">
+                            <div class="day-header" style="display: flex; align-items: center; margin-bottom: 1rem;">
+                                <h3 style="margin: 0; font-size: 1.1rem; color: #1f2937; font-weight: 600; letter-spacing: 0.025em;">${dayKey}</h3>
+                                <div style="flex: 1; height: 2px; background: linear-gradient(90deg, #e5e7eb 0%, transparent 100%); margin-left: 1rem; border-radius: 1px;"></div>
+                            </div>
+                            <div class="day-fixtures" style="margin-top: 1rem;">
+                                ${fixtureCards}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            
+            return `
+                <div class="matchweek-card" style="background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); border-radius: 16px; padding: 0; margin-bottom: 2rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.2);">
+                    <div class="matchweek-header" style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; position: relative;">
+                        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%); pointer-events: none;"></div>
+                        <h2 style="margin: 0; font-size: 1.5rem; color: #ffffff; font-weight: 700; letter-spacing: -0.025em; position: relative; z-index: 1;">
+                            ${matchweek !== 'Unknown' ? `Matchweek ${matchweek}` : 'Upcoming Fixtures'}
+                        </h2>
+                        <div style="background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); padding: 0.5rem 1rem; border-radius: 999px; font-size: 0.875rem; color: #ffffff; font-weight: 500; position: relative; z-index: 1; border: 1px solid rgba(255, 255, 255, 0.1);">
+                            ${fixtures.length} matches
+                        </div>
+                    </div>
+                    <div style="padding: 1.5rem;">
+                    ${dayGroups}
+                </div>
+            `;
+        }
+        
+        function renderFixtureCard(fixture) {
+            const homeTeam = teamsMap[fixture.home_team_id];
+            const awayTeam = teamsMap[fixture.away_team_id];
+            
+            if (!homeTeam || !awayTeam) return '';
+            
+            const kickoffDate = new Date(fixture.utc_kickoff);
+            const timeStr = kickoffDate.toLocaleTimeString('en-GB', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            
+            const homeCrestUrl = homeTeam.crest_url || getTeamCrestUrl(homeTeam.name);
+            const awayCrestUrl = awayTeam.crest_url || getTeamCrestUrl(awayTeam.name);
+            const homeAbbr = getTeamAbbreviation(homeTeam.name);
+            const awayAbbr = getTeamAbbreviation(awayTeam.name);
+            
+            const matchSlug = `${homeTeam.name.toLowerCase().replace(/\s+/g, '-')}-vs-${awayTeam.name.toLowerCase().replace(/\s+/g, '-')}-${fixture.utc_kickoff.split('T')[0]}`;
+            const href = `/football/matches/${fixture.id}-${matchSlug}`;
+            
+            return `
+                <a class="cardlink" href="${href}">
+                    <div class="match-card" style="border: 1px solid rgba(226, 232, 240, 0.8); border-radius: 12px; padding: 1.25rem; margin-bottom: 0.75rem; background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); backdrop-filter: blur(10px); cursor: pointer;" 
+                         onmouseover="this.style.background='linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(147, 197, 253, 0.05) 100%)'; this.style.transform='translateY(-3px) scale(1.01)'; this.style.boxShadow='0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'; this.style.borderColor='rgba(59, 130, 246, 0.3)'" 
+                         onmouseout="this.style.background='linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%)'; this.style.transform=''; this.style.boxShadow=''; this.style.borderColor='rgba(226, 232, 240, 0.8)'">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 0.75rem; flex: 1;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem; min-width: 120px;">
+                                    <div class="team-badge" style="width: 24px; height: 24px;">
+                                        ${homeCrestUrl ? 
+                                            `<img src="${homeCrestUrl}" alt="${homeTeam.name}" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.style.display='none'; this.nextSibling.style.display='block';">
+                                             <span style="display:none; font-size: 0.7rem; font-weight: bold;">${homeAbbr}</span>` :
+                                            `<span style="font-size: 0.7rem; font-weight: bold;">${homeAbbr}</span>`
+                                        }
+                                    </div>
+                                    <span style="font-weight: 600; font-size: 0.9rem;">${homeTeam.name}</span>
+                                </div>
+                                
+                                <div style="color: #9ca3af; font-size: 0.8rem; margin: 0 0.5rem;">vs</div>
+                                
+                                <div style="display: flex; align-items: center; gap: 0.5rem; min-width: 120px;">
+                                    <span style="font-weight: 600; font-size: 0.9rem;">${awayTeam.name}</span>
+                                    <div class="team-badge" style="width: 24px; height: 24px;">
+                                        ${awayCrestUrl ? 
+                                            `<img src="${awayCrestUrl}" alt="${awayTeam.name}" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.style.display='none'; this.nextSibling.style.display='block';">
+                                             <span style="display:none; font-size: 0.7rem; font-weight: bold;">${awayAbbr}</span>` :
+                                            `<span style="font-size: 0.7rem; font-weight: bold;">${awayAbbr}</span>`
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div style="text-align: right; color: #6b7280; font-size: 0.9rem;">
+                                <div style="font-weight: 600;">${timeStr}</div>
+                                ${fixture.venue ? `<div style="font-size: 0.75rem; margin-top: 0.25rem;">${fixture.venue}</div>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            `;
+        }
+        
+        function addScrollIndicator() {
+            const container = document.getElementById("fixtures-container");
+            const indicator = document.createElement('div');
+            indicator.id = 'scroll-indicator';
+            indicator.innerHTML = `
+                <div style="text-align: center; padding: 3rem; background: linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(248, 250, 252, 0.8) 100%); border-radius: 16px; margin-top: 2rem; backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2);">
+                    <div style="display: inline-flex; align-items: center; gap: 0.75rem; font-size: 0.95rem; color: #64748b; font-weight: 500;">
+                        <span>Scroll for more matchweeks</span>
+                        <div style="width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 8px solid #64748b; animation: bounce 2s infinite; opacity: 0.7;"></div>
+                    </div>
+                </div>
+                <style>
+                    @keyframes bounce {
+                        0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+                        40% { transform: translateY(-5px); }
+                        60% { transform: translateY(-3px); }
+                    }
+                </style>
+            `;
+            container.appendChild(indicator);
+        }
+        
+        function setupLazyLoading(groupedByMatchweek) {
+            let lastScrollTop = 0;
+            
+            window.addEventListener('scroll', () => {
+                if (isLoading) return;
+                
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const windowHeight = window.innerHeight;
+                const documentHeight = document.documentElement.scrollHeight;
+                
+                // Check if we're near the bottom and scrolling down
+                if (scrollTop > lastScrollTop && scrollTop + windowHeight >= documentHeight - 100) {
+                    loadNextMatchweek(groupedByMatchweek);
+                }
+                
+                lastScrollTop = scrollTop;
+            });
+        }
+        
+        function loadNextMatchweek(groupedByMatchweek) {
+            if (isLoading || currentMatchweek >= allMatchweeks.length - 1) return;
+            
+            isLoading = true;
+            currentMatchweek++;
+            
+            const nextMatchweek = allMatchweeks[currentMatchweek];
+            const matchweekFixtures = groupedByMatchweek[nextMatchweek];
+            
+            const container = document.getElementById("fixtures-container");
+            const indicator = document.getElementById('scroll-indicator');
+            
+            // Remove the scroll indicator temporarily
+            if (indicator) indicator.style.display = 'none';
+            
+            // Add the new matchweek card
+            const newCard = document.createElement('div');
+            newCard.innerHTML = renderMatchweekCard(nextMatchweek, matchweekFixtures);
+            container.appendChild(newCard.firstElementChild);
+            
+            // Show indicator again if there are more matchweeks
+            if (currentMatchweek < allMatchweeks.length - 1) {
+                if (indicator) indicator.style.display = 'block';
+            } else {
+                if (indicator) indicator.remove();
+            }
+            
+            setTimeout(() => {
+                isLoading = false;
+            }, 500);
+        }
+
+        async function fixturesView(params){
+            // Show filters for fixtures view  
+            const filtersDiv = document.querySelector(".filters");
+            if (filtersDiv) {
+                filtersDiv.style.display = "block";
+            }
+            // Use existing functionality for fixtures view
+            await initApp();
+        }
+
+        async function clubsView(params){
+            // Hide filters for clubs view
+            const filtersDiv = document.querySelector(".filters");
+            if (filtersDiv) {
+                filtersDiv.style.display = "none";
+            }
+            
+            const container = document.getElementById("fixtures-container");
+            
+            try {
+                // Load only current Premier League teams (exclude Championship teams)
+                // Exclude teams that are not in this season's Premier League  
+                const excludedTeams = ['Leicester City', 'Southampton', 'Leeds United', 'Burnley', 'Sunderland'];
+                const teamsResponse = await fetch(`${SUPABASE_URL}/rest/v1/teams?select=id,name,slug,crest_url&order=name&name=not.in.%28Leicester+City%2CSouthampton%2CLeeds+United%2CBurnley%2CSunderland%29`, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
+                
+                if (!teamsResponse.ok) {
+                    throw new Error(`Failed to load teams: ${teamsResponse.status}`);
+                }
+                
+                const teams = await teamsResponse.json();
+                
+                const clubsGrid = teams.map(team => {
+                    const crestUrl = team.crest_url || getTeamCrestUrl(team.name);
+                    return `
+                        <a href="/football/clubs/${team.slug}" style="text-decoration: none; color: inherit;">
+                            <div style="border: 1px solid #e5e7eb; border-radius: 12px; padding: 1rem; background: white; box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: transform 0.2s, box-shadow 0.2s; text-align: center; min-height: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;" 
+                                 onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'" 
+                                 onmouseout="this.style.transform=''; this.style.boxShadow='0 1px 3px rgba(0,0,0,0.06)'">
+                                ${crestUrl ? `<img src="${crestUrl}" alt="${team.name} badge" style="width: 36px; height: 36px; object-fit: contain;">` : ''}
+                                <strong style="font-size: 0.9rem; line-height: 1.2;">${team.name}</strong>
+                            </div>
+                        </a>
+                    `;
+                }).join('');
+                
+                container.innerHTML = `
+                    <div style="background: white; padding: 2rem; border-radius: 8px; margin-bottom: 2rem;">
+                        <h2 style="margin: 0 0 1rem 0;">Premier League Clubs</h2>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem;">
+                            ${clubsGrid}
+                        </div>
+                    </div>
+                `;
+                
+            } catch (error) {
+                console.error('Error loading clubs:', error);
+                container.innerHTML = `
+                    <div style="background: white; padding: 2rem; border-radius: 8px; margin-bottom: 2rem;">
+                        <h2 style="margin: 0 0 1rem 0;">Error Loading Clubs</h2>
+                        <p class="muted">Failed to load club information. Please try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function clubPageView(params){
+            // Hide filters for individual club page
+            const filtersDiv = document.querySelector(".filters");
+            if (filtersDiv) {
+                filtersDiv.style.display = "none";
+            }
+            
+            const container = document.getElementById("fixtures-container");
+            const slug = params.get('slug');
+            if (!slug) {
+                container.innerHTML = '<p class="muted">Club not found.</p>';
+                return;
+            }
+            
+            try {
+                // Load team details
+                const teamResponse = await fetch(`${SUPABASE_URL}/rest/v1/teams?slug=eq.${encodeURIComponent(slug)}&select=id,name,slug,crest_url`, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
+                
+                if (!teamResponse.ok) {
+                    throw new Error(`Failed to load team: ${teamResponse.status}`);
+                }
+                
+                const teams = await teamResponse.json();
+                const team = teams[0];
+                
+                if (!team) {
+                    container.innerHTML = `
+                        <div style="background: white; padding: 2rem; border-radius: 8px;">
+                            <a href="/football/clubs" style="color: #7f8c8d; text-decoration: none;">← Back to clubs</a>
+                            <p class="muted" style="margin-top: 1rem;">Club not found.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Load upcoming fixtures for this team
+                const nowIso = new Date().toISOString();
+                const fixturesResponse = await fetch(`${SUPABASE_URL}/rest/v1/fixtures?or=(home_team_id.eq.${team.id},away_team_id.eq.${team.id})&utc_kickoff=gte.${nowIso}&select=id,home_team_id,away_team_id,utc_kickoff,venue&order=utc_kickoff&limit=10`, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
+                
+                const fixtures = fixturesResponse.ok ? await fixturesResponse.json() : [];
+                
+                // Load team names for opponents
+                let allTeamIds = [];
+                fixtures.forEach(f => {
+                    if (f.home_team_id !== team.id) allTeamIds.push(f.home_team_id);
+                    if (f.away_team_id !== team.id) allTeamIds.push(f.away_team_id);
+                });
+                
+                let opponentTeams = {};
+                if (allTeamIds.length > 0) {
+                    const opponentsResponse = await fetch(`${SUPABASE_URL}/rest/v1/teams?id=in.(${allTeamIds.join(',')})&select=id,name,crest_url`, {
+                        headers: {
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                        }
+                    });
+                    if (opponentsResponse.ok) {
+                        const opponents = await opponentsResponse.json();
+                        opponentTeams = Object.fromEntries(opponents.map(t => [t.id, t]));
+                    }
+                }
+                
+                const crestUrl = team.crest_url || getTeamCrestUrl(team.name);
+                
+                const fixturesList = fixtures.length > 0 ? fixtures.map(fixture => {
+                    const isHome = fixture.home_team_id === team.id;
+                    const opponentId = isHome ? fixture.away_team_id : fixture.home_team_id;
+                    const opponent = opponentTeams[opponentId];
+                    
+                    if (!opponent) return '';
+                    
+                    const kickoffDate = new Date(fixture.utc_kickoff);
+                    const dateStr = kickoffDate.toLocaleDateString('en-GB', {
+                        weekday: 'short',
+                        day: 'numeric',
+                        month: 'short',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    
+                    const matchSlug = `${isHome ? team.name : opponent.name}-vs-${isHome ? opponent.name : team.name}-${fixture.utc_kickoff.split('T')[0]}`.toLowerCase().replace(/\s+/g, '-');
+                    const href = `/football/matches/${fixture.id}-${matchSlug}`;
+                    
+                    const opponentCrest = opponent.crest_url || getTeamCrestUrl(opponent.name);
+                    
+                    return `
+                        <a href="${href}" style="text-decoration: none; color: inherit;">
+                            <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; background: white; transition: background-color 0.2s;" onmouseover="this.style.backgroundColor='#f9fafb'" onmouseout="this.style.backgroundColor='white'">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="display: flex; align-items: center; gap: 8px;">
+                                        ${opponentCrest ? `<img src="${opponentCrest}" alt="${opponent.name} badge" style="width: 24px; height: 24px; object-fit: contain;">` : ''}
+                                        <strong>${opponent.name}</strong>
+                                    </div>
+                                    <div style="text-align: right;">
+                                        <div style="font-size: 0.9rem; color: #7f8c8d;">${dateStr}</div>
+                                        <div style="font-size: 0.8rem; color: #9ca3af; margin-top: 2px;">${isHome ? 'Home' : 'Away'}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    `;
+                }).filter(Boolean).join('') : '<p class="muted">No upcoming fixtures.</p>';
+                
+                container.innerHTML = `
+                    <div style="background: white; padding: 2rem; border-radius: 8px; margin-bottom: 2rem;">
+                        <a href="/football/clubs" style="color: #7f8c8d; text-decoration: none;">← Back to clubs</a>
+                        <div style="display: flex; align-items: center; gap: 12px; margin: 1.5rem 0;">
+                            ${crestUrl ? `<img src="${crestUrl}" alt="${team.name} badge" style="width: 48px; height: 48px; object-fit: contain;">` : ''}
+                            <h1 style="margin: 0; font-size: 2rem;">${team.name}</h1>
+                        </div>
+                        <h3 style="margin: 1.5rem 0 1rem 0;">Upcoming Fixtures</h3>
+                        ${fixturesList}
+                    </div>
+                `;
+                
+            } catch (error) {
+                console.error('Error loading club page:', error);
+                container.innerHTML = `
+                    <div style="background: white; padding: 2rem; border-radius: 8px;">
+                        <a href="/football/clubs" style="color: #7f8c8d; text-decoration: none;">← Back to clubs</a>
+                        <h2 style="margin: 1rem 0;">Error Loading Club</h2>
+                        <p class="muted">Failed to load club information. Please try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        async function matchView(params){
+            // Hide filters on match page
+            const filtersDiv = document.querySelector(".filters");
+            if (filtersDiv) {
+                filtersDiv.style.display = "none";
+            }
+            
+            const container = document.getElementById("fixtures-container");
+            const id = params.get("id");
+            if (!id){ 
+                container.innerHTML = `<p class="muted">Match not found. <a href="/football">Go back</a></p>`; 
+                return; 
+            }
+            
+            try {
+                // Load fixture details
+                const fixtureResponse = await fetch(`${SUPABASE_URL}/rest/v1/fixtures?id=eq.${id}&select=id,home_team_id,away_team_id,utc_kickoff,venue`, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
+                
+                if (!fixtureResponse.ok) {
+                    throw new Error(`Failed to load fixture: ${fixtureResponse.status}`);
+                }
+                
+                const fixtures = await fixtureResponse.json();
+                const fixture = fixtures[0];
+                
+                if (!fixture) {
+                    container.innerHTML = `<p class="muted">Fixture not found. <a href="/football">Home</a></p>`;
+                    return;
+                }
+                
+                // Load team details
+                const teamIds = [fixture.home_team_id, fixture.away_team_id].join(',');
+                const teamsResponse = await fetch(`${SUPABASE_URL}/rest/v1/teams?id=in.(${teamIds})&select=id,name,slug,crest_url`, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
+                
+                if (!teamsResponse.ok) {
+                    throw new Error(`Failed to load teams: ${teamsResponse.status}`);
+                }
+                
+                const teams = await teamsResponse.json();
+                const tById = Object.fromEntries(teams.map(t => [t.id, t.name]));
+                const crestById = Object.fromEntries(teams.map(t => [t.id, t.crest_url || getTeamCrestUrl(t.name)]));
+                
+                // Format date and time
+                const kickoffDate = new Date(fixture.utc_kickoff);
+                const dateStr = kickoffDate.toLocaleDateString('en-GB', {
+                    weekday: 'long',
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                // Build match header with team crests and names
+                const homeTeam = tById[fixture.home_team_id];
+                const awayTeam = tById[fixture.away_team_id];
+                const homeCrest = crestById[fixture.home_team_id];
+                const awayCrest = crestById[fixture.away_team_id];
+                
+                container.innerHTML = `
+                    <div style="background: white; padding: 2rem; border-radius: 8px; margin-bottom: 2rem;">
+                        <a href="/football" style="color: #7f8c8d; text-decoration: none;">← Back</a>
+                        <h1 style="margin: 1rem 0; display: flex; align-items: center; gap: 12px; font-size: 2rem;">
+                            ${homeCrest ? `<img style="width: 48px; height: 48px; object-fit: contain;" alt="${homeTeam} badge" src="${homeCrest}">` : ''}
+                            ${homeTeam} vs ${awayTeam}
+                            ${awayCrest ? `<img style="width: 48px; height: 48px; object-fit: contain;" alt="${awayTeam} badge" src="${awayCrest}">` : ''}
+                        </h1>
+                        <div style="color: #7f8c8d; font-size: 1.1rem; margin-bottom: 2rem;">
+                            ${dateStr}${fixture.venue ? ` — ${fixture.venue}` : ''}
+                        </div>
+                        <div id="broadcast-info">
+                            <h3 style="margin: 1.5rem 0 1rem 0;">Where to Watch</h3>
+                            <div style="color: #7f8c8d;">Loading broadcast information...</div>
+                        </div>
+                    </div>
+                `;
+                
+                // Load broadcast information
+                loadBroadcastInfo(id);
+                
+            } catch (error) {
+                console.error('Error loading match details:', error);
+                container.innerHTML = `
+                    <div style="background: white; padding: 2rem; border-radius: 8px; margin-bottom: 2rem;">
+                        <a href="/football" style="color: #7f8c8d; text-decoration: none;">← Back to fixtures</a>
+                        <h2 style="margin: 1rem 0;">Error Loading Match</h2>
+                        <p class="muted">Failed to load match details. Please try again.</p>
+                        <p class="muted">Error: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+        
+        async function loadBroadcastInfo(fixtureId) {
+            const broadcastDiv = document.getElementById("broadcast-info");
+            if (!broadcastDiv) return;
+            
+            try {
+                // Try to load broadcasts
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/broadcasts_uk?fixture_id=eq.${fixtureId}&select=*`, {
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const broadcasts = await response.json();
+                    
+                    if (broadcasts && broadcasts.length > 0) {
+                        broadcastDiv.innerHTML = `
+                            <h3 style="margin: 1.5rem 0 1rem 0;">Where to Watch</h3>
+                            ${broadcasts.map(b => `
+                                <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; background: #f9fafb;">
+                                    <div><strong>${b.provider_name || 'TBC'}</strong>${b.channel_name ? ` — ${b.channel_name}` : ''}</div>
+                                    <div style="color: #7f8c8d; margin-top: 4px;">${b.stream_type || 'TV'}</div>
+                                    ${b.verified ? '<div style="color: #059669; margin-top: 4px;">✅ Verified</div>' : '<div style="color: #d97706; margin-top: 4px;">⚠️ Unverified</div>'}
+                                </div>
+                            `).join('')}
+                        `;
+                    } else {
+                        broadcastDiv.innerHTML = `
+                            <h3 style="margin: 1.5rem 0 1rem 0;">Where to Watch</h3>
+                            <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; color: #7f8c8d; background: #f9fafb;">
+                                No UK broadcaster information available yet.
+                            </div>
+                        `;
+                    }
+                } else {
+                    throw new Error(`Broadcasts API failed: ${response.status}`);
+                }
+            } catch (error) {
+                console.error('Error loading broadcasts:', error);
+                broadcastDiv.innerHTML = `
+                    <h3 style="margin: 1.5rem 0 1rem 0;">Where to Watch</h3>
+                    <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; color: #7f8c8d; background: #f9fafb;">
+                        Broadcaster information will be added closer to match time.
+                    </div>
+                `;
+            }
+        }
+
+        // Start the app with routing
+        document.addEventListener('DOMContentLoaded', () => {
+            render();
+        });
     </script>
 </body>
 </html>
