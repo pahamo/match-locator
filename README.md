@@ -1,6 +1,6 @@
 # Football Listings MVP
 
-Minimal site that lists **Premier League fixtures** and (soon) **UK TV/Radio broadcasters**. Front end is a single-file SPA; data lives in Supabase.
+Modern single-page application showing **Premier League fixtures** with **UK TV/Radio broadcaster information**. Features iOS-inspired design, broadcaster integration, and timezone-accurate fixture times.
 
 ## Run locally
 1. Open `index.html` in **VS Code**.
@@ -33,13 +33,33 @@ Read access uses the Supabase **anon** key. Writes are protected by RLS.
 - Import into `broadcasts_uk_sheet_stage`.
 - Apply the UPSERT to populate `broadcasts_uk`.
 
-## Frontend behaviour
-- **Homepage shows only upcoming fixtures** by filtering to `utc_kickoff >= now` (server + client safety filter implemented in `index.html`).
-- Match page shows fixture details + any broadcasters found.
+## Features ✨
+- **Broadcaster Integration**: Shows Sky Sports (blue), TNT Sports (red), and other UK broadcasters
+- **3pm Saturday Blackout**: Clear indicators for games not available on UK TV
+- **iOS-Inspired Design**: Glassmorphism effects with backdrop blur and smooth animations  
+- **Theme System**: Multiple themes including modern iOS-style "Pixel" theme
+- **Timezone Accuracy**: Fixtures display correct UK local times (fixed timezone conversion)
+- **Smart Navigation**: Active page highlighting and context-aware filter visibility
+- **Mobile-First**: Responsive design optimized for all screen sizes
+
+## Frontend Behavior
+- **Homepage**: Shows upcoming fixtures grouped by matchweek with lazy loading
+- **Fixtures Page**: Complete fixture list with filtering by team, matchweek, and time
+- **Match Pages**: Detailed view with broadcaster information, venue, and match details  
+- **Clubs Pages**: Team-focused views with upcoming fixtures
+- **Broadcaster Display**: Color-coded buttons and cards showing where to watch each game
+
+## Broadcaster Information
+- **Sky Sports**: Blue styling with channel details (Sky Sports Main Event, etc.)
+- **TNT Sports**: Red styling with stream type information
+- **Blackout Games**: Black styling indicating "Not available on UK TV (3pm Saturday blackout)"
+- **Multiple Broadcasters**: Shows all available options for each fixture
+- **Verification Status**: Displays verified vs unverified broadcast information
 
 ## Notes
-- Fixtures are subject to change per Premier League announcements.
-- Use text/colour badges instead of official crests.
+- Fixtures are subject to change per Premier League announcements
+- Broadcaster information updated regularly via `broadcasts_uk` table
+- 3pm Saturday games follow UK broadcasting blackout rules
 
 ---
 
