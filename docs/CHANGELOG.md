@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.0] - 2025-09-06
+
+### ✨ Features
+- complete automated versioning system with user-friendly changelog and enhanced version badge (65a9105a)
+
+---
+
+
 ## [1.0.1] - 2025-09-06
 
 ### 🐛 Bug Fixes
