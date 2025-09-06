@@ -40,11 +40,13 @@ Goal: Lean, profitable side business showing fans which channel their games are 
 - ✅ Git post-commit hook installed
 
 ## Recent Changes
+- 2025-09-06: mobile responsiveness improvements - responsive design, touch targets, typography (80fc8654)
 - 2025-09-06: complete automated versioning system with user-friendly changelog and enhanced version badge (65a9105a)
 - 2025-09-06: update Netlify configuration to serve from src/ directory and correct git hook paths (6c5bf0af)
 
 - ✅ Git post-commit hook installed
 
 ## Recent Changes
+- 2025-09-06: mobile responsiveness improvements - responsive design, touch targets, typography (80fc8654)
 - 2025-09-06: complete automated versioning system with user-friendly changelog and enhanced version badge (65a9105a)
 - 2025-09-06: update Netlify configuration to serve from src/ directory and correct git hook paths (6c5bf0af)

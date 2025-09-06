@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1] - 2025-09-06
+
+### 🐛 Bug Fixes
+- mobile responsiveness improvements - responsive design, touch targets, typography (80fc8654)
+
+---
+
+
 ## [1.1.0] - 2025-09-06
 
 ### ✨ Features
