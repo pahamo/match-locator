@@ -42,6 +42,13 @@ Read access uses the Supabase **anon** key. Writes are protected by RLS.
 - **Smart Navigation**: Active page highlighting and context-aware filter visibility
 - **Mobile-First**: Responsive design optimized for all screen sizes
 
+## Frontend Architecture
+- **Single Page Application**: Clean, modern SPA built with vanilla JavaScript
+- **Optimized Performance**: CSS custom properties, efficient API layer, proper error handling
+- **Mobile-First Design**: Responsive design with accessibility considerations
+- **SEO-Friendly**: Clean URLs, proper meta tags, semantic HTML structure
+- **Well-Documented Code**: Comprehensive JSDoc documentation, modular organization
+
 ## Frontend Behavior
 - **Homepage**: Shows upcoming fixtures grouped by matchweek with lazy loading
 - **Fixtures Page**: Complete fixture list with filtering by team, matchweek, and time
@@ -61,6 +68,22 @@ Read access uses the Supabase **anon** key. Writes are protected by RLS.
 - Broadcaster information updated regularly via `broadcasts_uk` table
 - 3pm Saturday games follow UK broadcasting blackout rules
 
+## Code Structure
+The application is built as a single-file SPA for optimal performance:
+
+- **`src/index.html`**: Main application file containing HTML, CSS, and JavaScript
+- **Inline CSS**: Organized with CSS custom properties and component-based structure
+- **Modular JavaScript**: Well-documented functions grouped by purpose
+- **API Layer**: Centralized Supabase integration with proper error handling
+- **Routing System**: Clean URLs with History API navigation
+
+## Development Notes
+- **CSS Architecture**: Uses custom properties for consistent theming
+- **JavaScript**: ES6+ features with comprehensive JSDoc documentation  
+- **Error Handling**: Graceful degradation and user-friendly error messages
+- **Performance**: Optimized API calls and efficient DOM manipulation
+- **Maintainability**: Clear code organization and extensive documentation
+
 ---
 
-*This README intentionally contains **no app code**. All runtime code lives in `index.html` (and small inline scripts).*
+*This README intentionally contains **no app code**. All runtime code lives in `src/index.html` with proper organization and documentation.*

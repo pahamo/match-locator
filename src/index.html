@@ -4,27 +4,151 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Premier League TV & radio listings for UK broadcasters. See who shows each match and when." />
+  
+  <!-- Security headers -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta http-equiv="X-Frame-Options" content="DENY" />
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+  
+  <!-- SEO and social media -->
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Patrick Hallett-Morley" />
+  <meta property="og:title" content="Premier League — UK TV Listings" />
+  <meta property="og:description" content="Find out which UK broadcaster shows every Premier League match. Sky Sports, TNT Sports, and more." />
+  <meta property="og:type" content="website" />
+  
   <title>Premier League — UK Listings</title>
   <style>
-    /* Inline for MVP; safe to split later into styles.css */
-    :root{--border:#e5e7eb;--muted:#6b7280}
-    *{box-sizing:border-box}
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:0;background:#f8fafc}
-    header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
-    a{color:inherit}
-    .wrap{max-width:920px;margin:0 auto;padding:20px}
-    .muted{color:var(--muted)}
-    .card{border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin:12px 0;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.06),0 6px 16px rgba(0,0,0,.04);transition:box-shadow .15s ease, transform .15s ease}
-    .card:hover{box-shadow:0 3px 8px rgba(0,0,0,.08),0 10px 24px rgba(0,0,0,.06);transform:translateY(-1px)}
-    .cardlink{display:block;text-decoration:none;color:inherit}
-    .row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-    .row .left{display:flex;flex-direction:column}
-    .filters{display:flex;gap:12px;flex-wrap:wrap;margin:8px 0 20px}
-    .filters select{padding:6px 10px;border:1px solid var(--border);border-radius:8px}
-    .btn{display:inline-block;margin-top:8px;border:1px solid #111;padding:8px 12px;border-radius:10px;text-decoration:none}
-    .btn.small{font-size:.9rem;padding:6px 10px}
-    .btn.disabled{opacity:.5;pointer-events:none}
-    .btn.right{margin-top:0}
+    /* ==============================================
+       Premier League Listings - Inline Styles
+       Optimized for performance and maintainability
+       ============================================== */
+       
+    /* CSS Custom Properties */
+    :root {
+      --color-border: #e5e7eb;
+      --color-muted: #6b7280;
+      --color-background: #f8fafc;
+      --color-card: #ffffff;
+      --color-text: #111827;
+      --color-accent: #6366f1;
+      --border-radius: 12px;
+      --border-radius-pill: 999px;
+      --spacing-xs: 4px;
+      --spacing-sm: 8px;
+      --spacing-md: 12px;
+      --spacing-lg: 16px;
+      --spacing-xl: 20px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 6px 16px rgba(0,0,0,.04);
+      --shadow-md: 0 3px 8px rgba(0,0,0,.08), 0 10px 24px rgba(0,0,0,.06);
+      --font-system: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    /* Base Styles */
+    * { box-sizing: border-box; }
+    
+    body {
+      font-family: var(--font-system);
+      margin: 0;
+      background: var(--color-background);
+      color: var(--color-text);
+    }
+    
+    a { color: inherit; }
+    
+    /* Layout Components */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--spacing-lg) var(--spacing-xl);
+      border-bottom: 1px solid var(--color-border);
+    }
+    
+    .wrap {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: var(--spacing-xl);
+    }
+    
+    .muted { color: var(--color-muted); }
+    /* Card Components */
+    .card {
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius);
+      padding: 14px var(--spacing-lg);
+      margin: var(--spacing-md) 0;
+      background: var(--color-card);
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow .15s ease, transform .15s ease;
+    }
+    
+    .card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
+    }
+    
+    .cardlink {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+    }
+    
+    /* Layout Components */
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--spacing-md);
+      flex-wrap: wrap;
+    }
+    
+    .row .left {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Form Components */
+    .filters {
+      display: flex;
+      gap: var(--spacing-md);
+      flex-wrap: wrap;
+      margin: var(--spacing-sm) 0 var(--spacing-xl);
+    }
+    
+    .filters select {
+      padding: 6px 10px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--spacing-sm);
+      font-family: inherit;
+    }
+    
+    /* Button Components */
+    .btn {
+      display: inline-block;
+      margin-top: var(--spacing-sm);
+      border: 1px solid var(--color-text);
+      padding: var(--spacing-sm) var(--spacing-md);
+      border-radius: 10px;
+      text-decoration: none;
+      font-family: inherit;
+      cursor: pointer;
+      transition: opacity .15s ease;
+    }
+    
+    .btn.small {
+      font-size: .9rem;
+      padding: 6px 10px;
+    }
+    
+    .btn.disabled {
+      opacity: .5;
+      pointer-events: none;
+    }
+    
+    .btn.right {
+      margin-top: 0;
+    }
     .section{margin:28px 0}
     .section h2{margin:0 0 6px}
     .section .range{font-size:.9rem}
@@ -98,10 +222,10 @@
       .main-col{padding:0 12px}
       
       /* Mobile header and navigation */
-      header{padding:12px 16px}
+      header{padding:12px 16px;flex-direction:column;align-items:flex-start;gap:12px}
       .brand{font-size:18px}
       .brand .logo{width:24px;height:24px}
-      header nav{gap:8px;font-size:14px}
+      header nav{gap:8px;font-size:14px;width:100%}
       header nav a{padding:8px;min-height:32px;display:inline-flex;align-items:center}
       
       /* Mobile wrap container */
@@ -150,18 +274,28 @@
 
     /* Floating hint on home */
     .floater{position:fixed;left:50%;transform:translateX(-50%);bottom:20px;background:#111;color:#fff;border-radius:999px;padding:10px 14px;text-decoration:none;box-shadow:0 6px 24px rgba(0,0,0,.15);z-index:9999;font-size:14px}
+    
+    /* Accessibility: Skip navigation */
+    .skip-nav:focus {
+      position: absolute;
+      left: var(--spacing-md);
+      top: var(--spacing-md);
+    }
   </style>
 </head>
   <link rel="canonical" href="">
   <script defer data-domain="football-listings.netlify.app" src="https://analytics.kinotto.co/js/script.js"></script>
 <body>
-  <header>
-    <a href="/football" class="brand" style="text-decoration:none;color:inherit">
-      <img class="logo" alt="Logo" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 32 32'><rect rx='6' ry='6' width='32' height='32' fill='%23111'/><circle cx='16' cy='12' r='6' fill='%23fff'/><rect x='8' y='18' width='16' height='6' rx='3' fill='%23fff'/></svg>">
+  <!-- Skip navigation for accessibility -->
+  <a href="#app" class="skip-nav" style="position:absolute;left:-9999px;z-index:10000;background:#111;color:#fff;padding:8px;text-decoration:none;border-radius:4px;">Skip to main content</a>
+  
+  <header role="banner">
+    <a href="/football" class="brand" style="text-decoration:none;color:inherit" aria-label="Premier League UK Listings - Home">
+      <img class="logo" alt="Premier League football logo" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 32 32'><rect rx='6' ry='6' width='32' height='32' fill='%23111'/><circle cx='16' cy='12' r='6' fill='%23fff'/><rect x='8' y='18' width='16' height='6' rx='3' fill='%23fff'/></svg>">
       <strong>Premier League — UK Listings</strong>
     </a>
-    <nav style="display:flex;gap:12px;font-size:14px">
-      <a href="/football" style="text-decoration:none;color:inherit">Home</a>
+    <nav role="navigation" aria-label="Main navigation" style="display:flex;gap:12px;font-size:14px">
+      <a href="/football" style="text-decoration:none;color:inherit" aria-current="page">Home</a>
       <a href="/football/fixtures" style="text-decoration:none;color:inherit">Fixtures</a>
       <a href="/football/clubs" style="text-decoration:none;color:inherit">Clubs</a>
       <a href="/football/table" style="text-decoration:none;color:inherit">Table</a>
@@ -169,42 +303,72 @@
     </nav>
   </header>
 
-  <div class="wrap">
-    <div id="status" class="muted">loading…</div>
-    <div id="app"></div>
-  </div>
+  <main class="wrap" role="main">
+    <div id="status" class="muted" aria-live="polite" aria-label="Loading status">loading…</div>
+    <div id="app" role="application" aria-label="Premier League fixtures application"></div>
+  </main>
 
   <script type="module">
-    // ---- App version & expose globally ----
+    /**
+     * ================================================
+     * Premier League TV Listings - SPA Application
+     * ================================================
+     * Single-page application for viewing Premier League 
+     * fixtures with UK broadcaster information
+     */
+
+    // ===========================================
+    // APP CONFIGURATION & CONSTANTS
+    // ===========================================
+    
+    /** Application version - displayed in version badge */
     const APP_VERSION = "v1.5.2";
     window.APP_VERSION = APP_VERSION;
-    const DEFAULT_TZ = (Intl.DateTimeFormat().resolvedOptions().timeZone) || 'Europe/London';
+    
+    /** Default timezone and locale settings */
+    const DEFAULT_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/London';
     const LOCALE = 'en-GB';
-    // Feature flags via URL (?largeCrests=1)
-    const _ff = new URLSearchParams((location.hash.split('?')[1]||''));
-    if (_ff.get('largeCrests') === '1') document.documentElement.classList.add('large-crests');
-    // Minimal country -> IANA timezone map for display; expand later
-    const TZ_OPTIONS = [
-      {label:'UK', tz:'Europe/London'},
-      {label:'Netherlands', tz:'Europe/Amsterdam'},
-      {label:'USA (Eastern)', tz:'America/New_York'},
-      {label:'USA (Pacific)', tz:'America/Los_Angeles'},
-      {label:'India', tz:'Asia/Kolkata'},
-      {label:'Australia (Sydney)', tz:'Australia/Sydney'}
+    
+    /** Feature flags from URL parameters */
+    const featureFlags = new URLSearchParams((location.hash.split('?')[1] || ''));
+    if (featureFlags.get('largeCrests') === '1') {
+      document.documentElement.classList.add('large-crests');
+    }
+    
+    /** Available timezone options for user selection */
+    const TIMEZONE_OPTIONS = [
+      { label: 'UK', tz: 'Europe/London' },
+      { label: 'Netherlands', tz: 'Europe/Amsterdam' },
+      { label: 'USA (Eastern)', tz: 'America/New_York' },
+      { label: 'USA (Pacific)', tz: 'America/Los_Angeles' },
+      { label: 'India', tz: 'Asia/Kolkata' },
+      { label: 'Australia (Sydney)', tz: 'Australia/Sydney' }
     ];
-    // --- Pretty path helpers ---
-
-    function setCanonical(url){
+    // ===========================================
+    // UTILITY FUNCTIONS
+    // ===========================================
+    
+    /**
+     * Sets the canonical URL for SEO
+     * @param {string} url - The canonical URL to set
+     */
+    function setCanonical(url) {
       let link = document.querySelector('link[rel="canonical"]');
-      if (!link){
+      if (!link) {
         link = document.createElement('link');
-        link.setAttribute('rel','canonical');
+        link.setAttribute('rel', 'canonical');
         document.head.appendChild(link);
       }
       link.setAttribute('href', url);
     }
-    function slugify(s){
-      return String(s)
+    
+    /**
+     * Converts text to URL-friendly slug
+     * @param {string} text - Text to slugify
+     * @returns {string} URL-friendly slug
+     */
+    function slugify(text) {
+      return String(text)
         .normalize('NFKD')
         .replace(/\p{Diacritic}/gu, '')
         .toLowerCase()
@@ -213,76 +377,184 @@
         .replace(/^-+|-+$/g, '')
         .replace(/-{2,}/g, '-');
     }
-    function ymd(iso){
-      const d = new Date(iso);
-      const y = d.getUTCFullYear();
-      const m = String(d.getUTCMonth()+1).padStart(2, '0');
-      const dd = String(d.getUTCDate()).padStart(2, '0');
-      return `${y}-${m}-${dd}`;
+    
+    /**
+     * Formats ISO date to YYYY-MM-DD
+     * @param {string} isoDate - ISO date string
+     * @returns {string} Formatted date
+     */
+    function formatDateYMD(isoDate) {
+      const date = new Date(isoDate);
+      const year = date.getUTCFullYear();
+      const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+      const day = String(date.getUTCDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
     }
-    function matchSlugFromParts(home, away, utc){
-      return `${slugify(home)}-vs-${slugify(away)}-${ymd(utc)}`;
+    
+    /**
+     * Creates SEO-friendly match slug from team names and date
+     * @param {string} homeTeam - Home team name
+     * @param {string} awayTeam - Away team name
+     * @param {string} utcKickoff - UTC kickoff time
+     * @returns {string} Match slug for URLs
+     */
+    function createMatchSlug(homeTeam, awayTeam, utcKickoff) {
+      return `${slugify(homeTeam)}-vs-${slugify(awayTeam)}-${formatDateYMD(utcKickoff)}`;
     }
-    // Short display names for tight layouts
-    const TEAM_ALIAS = {
-      'Wolverhampton Wanderers':'Wolves',
-      'Brighton & Hove Albion':'Brighton',
-      'Manchester United':'Man Utd',
-      'Manchester City':'Man City',
-      'Tottenham Hotspur':'Spurs',
-      'West Ham United':'West Ham',
-      'Newcastle United':'Newcastle',
-      'Nottingham Forest':'Nottm Forest',
-      'Sheffield United':'Sheff Utd',
-      'Leicester City':'Leicester',
-      'Leeds United':'Leeds',
-      'West Bromwich Albion':'West Brom'
+    /** Team name aliases for compact display */
+    const TEAM_ALIASES = {
+      'Wolverhampton Wanderers': 'Wolves',
+      'Brighton & Hove Albion': 'Brighton',
+      'Manchester United': 'Man Utd',
+      'Manchester City': 'Man City',
+      'Tottenham Hotspur': 'Spurs',
+      'West Ham United': 'West Ham',
+      'Newcastle United': 'Newcastle',
+      'Nottingham Forest': 'Nottm Forest',
+      'Sheffield United': 'Sheff Utd',
+      'Leicester City': 'Leicester',
+      'Leeds United': 'Leeds',
+      'West Bromwich Albion': 'West Brom'
     };
-    const alias = (name)=> TEAM_ALIAS[name] || name;
+    
+    /**
+     * Gets team alias for compact display
+     * @param {string} teamName - Full team name
+     * @returns {string} Alias or original name
+     */
+    const getTeamAlias = (teamName) => TEAM_ALIASES[teamName] || teamName;
 
-    // --- robust UTC parser (handles 'YYYY-MM-DDTHH:mm:ss+00:00' and 'YYYY-MM-DD HH:mm:ss+00')
-    function parseUtcStrict(s) {
-      if (s instanceof Date) return s;
-      if (typeof s !== 'string') return new Date(s);
-      if (s.includes('T')) return new Date(s); // ISO already
-      // normalize space-separated to ISO and fix +00/+00:00 to 'Z'
-      return new Date(
-        s.replace(' ', 'T').replace(/(\+00(?::?00)?)$/, 'Z')
-      );
+    // ===========================================
+    // DATE & TIME UTILITIES
+    // ===========================================
+    
+    /**
+     * Robust UTC date parser handling multiple input formats
+     * @param {string|Date} dateInput - Date input in various formats
+     * @returns {Date} Parsed Date object
+     */
+    function parseUtcDate(dateInput) {
+      if (dateInput instanceof Date) return dateInput;
+      if (typeof dateInput !== 'string') return new Date(dateInput);
+      
+      if (dateInput.includes('T')) {
+        // ISO format with timezone info
+        if (dateInput.endsWith('Z') || dateInput.includes('+') || dateInput.includes('-')) {
+          return new Date(dateInput);
+        } else {
+          // No timezone info, assume UTC
+          return new Date(dateInput + 'Z');
+        }
+      }
+      
+      // Normalize space-separated format and handle timezone suffixes
+      const normalized = dateInput.replace(' ', 'T').replace(/(\+00(?::?00)?)$/, 'Z');
+      if (!normalized.endsWith('Z') && !normalized.includes('+') && !normalized.includes('-')) {
+        return new Date(normalized + 'Z');
+      }
+      return new Date(normalized);
     }
 
-    // Group fixtures by UK day (YYYY-MM-DD) then by HH:mm
-    const ukDayKey = new Intl.DateTimeFormat('en-CA', { timeZone:'Europe/London', year:'numeric', month:'2-digit', day:'2-digit' });
-    const ukTimeKey = new Intl.DateTimeFormat('en-GB', { timeZone:'Europe/London', hour:'2-digit', minute:'2-digit', hour12:false });
-    function groupByDayAndTime(items){
+    /**
+     * Creates timezone-specific formatters for day and time display
+     * @param {string} timezone - IANA timezone identifier
+     * @returns {Object} Object with dayKey and timeKey formatters
+     */
+    function createTimezoneFormatters(timezone) {
+      return {
+        dayKey: new Intl.DateTimeFormat('en-CA', { 
+          timeZone: timezone, 
+          year: 'numeric', 
+          month: '2-digit', 
+          day: '2-digit' 
+        }),
+        timeKey: new Intl.DateTimeFormat('en-GB', { 
+          timeZone: timezone, 
+          hour: '2-digit', 
+          minute: '2-digit', 
+          hour12: false 
+        })
+      };
+    }
+    
+    /**
+     * Groups fixtures by day and time within each day
+     * @param {Array} fixtures - Array of fixture objects
+     * @param {string} timezone - IANA timezone identifier
+     * @returns {Map} Map of day -> Map of time -> fixtures array
+     */
+    function groupFixturesByDayAndTime(fixtures, timezone = DEFAULT_TZ) {
+      const { dayKey, timeKey } = createTimezoneFormatters(timezone);
       const byDay = new Map();
-      for (const f of items){
-        const d = parseUtcStrict(f.utc_kickoff);
-        const dk = ukDayKey.format(d);
-        const tk = ukTimeKey.format(d);
-        if (!byDay.has(dk)) byDay.set(dk, new Map());
-        const byTime = byDay.get(dk);
-        if (!byTime.has(tk)) byTime.set(tk, []);
-        byTime.get(tk).push(f);
+      
+      for (const fixture of fixtures) {
+        const date = parseUtcDate(fixture.utc_kickoff);
+        const dayKey_formatted = dayKey.format(date);
+        const timeKey_formatted = timeKey.format(date);
+        
+        if (!byDay.has(dayKey_formatted)) {
+          byDay.set(dayKey_formatted, new Map());
+        }
+        
+        const byTime = byDay.get(dayKey_formatted);
+        if (!byTime.has(timeKey_formatted)) {
+          byTime.set(timeKey_formatted, []);
+        }
+        
+        byTime.get(timeKey_formatted).push(fixture);
       }
+      
       return byDay; // Map(dayKey -> Map(timeKey -> fixtures[]))
     }
 
-    // ---- Supabase config ----
-    const SUPABASE_URL = "https://ksqyurqkqznzrntdpood.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzcXl1cnFrcXpuenJudGRwb29kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3OTEwNjAsImV4cCI6MjA3MjM2NzA2MH0.wVBZBEbfctB7JPnpMZkXKMGwXlYxGWjOF_AxixVo-S4";
-    const H = { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` };
+    // ===========================================
+    // API CONFIGURATION
+    // ===========================================
+    
+    /** Supabase API configuration */
+    const SUPABASE_CONFIG = {
+      url: 'https://ksqyurqkqznzrntdpood.supabase.co',
+      anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzcXl1cnFrcXpuenJudGRwb29kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY3OTEwNjAsImV4cCI6MjA3MjM2NzA2MH0.wVBZBEbfctB7JPnpMZkXKMGwXlYxGWjOF_AxixVo-S4'
+    };
+    
+    /** HTTP headers for Supabase API requests */
+    const API_HEADERS = { 
+      apikey: SUPABASE_CONFIG.anonKey, 
+      Authorization: `Bearer ${SUPABASE_CONFIG.anonKey}` 
+    };
 
-    // API helpers
-const PATH = {
-  fixturesList: `/rest/v1/fixtures_with_team_names_v`,
-  fixtureOne:   `/rest/v1/fixtures_min_v`,
-  teams:        `/rest/v1/teams_v`,
-  broadcasts:   `/rest/v1/broadcasts_with_provider_v`,
-  affiliate:    `/rest/v1/affiliate_min_v`,
-};
-    const orderByKickoff = `order=utc_kickoff.asc`;
-    const BIG_LIMIT = 2000; // future proof list size
+    /** API endpoint paths */
+    const API_ENDPOINTS = {
+      fixturesList: '/rest/v1/fixtures_with_team_names_v',
+      fixtureOne: '/rest/v1/fixtures_min_v',
+      teams: '/rest/v1/teams_v',
+      broadcasts: '/rest/v1/broadcasts_with_provider_v',
+      providers: '/rest/v1/providers',
+      affiliate: '/rest/v1/affiliate_destinations'
+    };
+    
+    /** Common query parameters */
+    const QUERY_PARAMS = {
+      orderByKickoff: 'order=utc_kickoff.asc',
+      limit: 2000 // Generous limit for fixture lists
+    };
+    
+    /**
+     * Makes authenticated API request to Supabase
+     * @param {string} endpoint - API endpoint path
+     * @returns {Promise<any>} API response data
+     */
+    async function apiRequest(endpoint) {
+      const response = await fetch(`${SUPABASE_CONFIG.url}${endpoint}`, { 
+        headers: API_HEADERS 
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+      }
+      
+      return response.json();
+    }
 
    // ---- History API Router (clean URLs under /football) ----
 const routes = { "/": homeView, "/fixtures": fixturesView, "/table": tableView, "/match": matchView, "/clubs": clubsIndexView, "/club": clubPageView, "/about": aboutView };
@@ -336,9 +608,16 @@ function parseRoute(){
   }
   if (parts[0] === 'matches' && parts[1]){
     const m = /^(\d+)/.exec(parts[1]);
-    const id = m ? m[1] : parts[1];
-    const mergedMatch = new URLSearchParams(searchParams); mergedMatch.set('id', id);
-    return { path:'/match', params: mergedMatch };
+    const id = m ? m[1] : '';
+    console.log('Routing match:', { parts, rawSlug: parts[1], extractedId: id, regex: m });
+    // Only set id if we successfully extracted a numeric ID
+    if (id) {
+      const mergedMatch = new URLSearchParams(searchParams); mergedMatch.set('id', id);
+      return { path:'/match', params: mergedMatch };
+    } else {
+      // If no numeric ID found, return 404-like route
+      return { path:'/', params:new URLSearchParams(searchParams) };
+    }
   }
   if (parts[0] === 'table') return { path:'/table', params:new URLSearchParams(searchParams) };
   if (parts[0] === 'about') return { path:'/about', params:new URLSearchParams(searchParams) };
@@ -458,8 +737,9 @@ render();
         const hasB = (bmap[f.id] || []).length > 0;
         const idSlug = `${f.id}-${matchSlugFromParts(f.home, f.away, f.utc_kickoff)}`;
         const href = `/football/matches/${idSlug}`;
-        const homeRow = `<div class="team-row">${f.home_badge ? `<img class=\"crest\" alt=\"${f.home} badge\" src=\"${f.home_badge}\">` : ''}<strong>${f.home}</strong></div>`;
-        const awayRow = `<div class="team-row">${f.away_badge ? `<img class=\"crest\" alt=\"${f.away} badge\" src=\"${f.away_badge}\">` : ''}<strong>${f.away}</strong></div>`;
+        console.log('Generating match link:', { id: f.id, slug: idSlug, href, fixture: f });
+        const homeRow = `<div class="team-row">${f.home_badge ? `<img class=\"crest\" alt=\"${f.home} badge\" src=\"${f.home_badge}\">` : ''}<strong>${alias(f.home)}</strong></div>`;
+        const awayRow = `<div class="team-row">${f.away_badge ? `<img class=\"crest\" alt=\"${f.away} badge\" src=\"${f.away_badge}\">` : ''}<strong>${alias(f.away)}</strong></div>`;
         return `
           <a class="cardlink" href="${href}">
             <div class="card">
@@ -476,11 +756,12 @@ render();
       };
 
       // Build grouped sections: by day, then by HH:mm (one time label per group)
-      const byDay = groupByDayAndTime(subset);
+      const byDay = groupByDayAndTime(subset, TZ);
+      const { dayKey: currentDayKey } = createDayTimeFormatters(TZ);
       const daySections = Array.from(byDay.entries())
         .sort(([a],[b])=>a.localeCompare(b))
         .map(([dayKey, byTime]) => {
-          const sample = subset.find(f => ukDayKey.format(parseUtcStrict(f.utc_kickoff)) === dayKey);
+          const sample = subset.find(f => currentDayKey.format(parseUtcStrict(f.utc_kickoff)) === dayKey);
           const dayLabel = sample ? prettyDay.format(parseUtcStrict(sample.utc_kickoff)) : dayKey;
           const timeBlocks = Array.from(byTime.entries())
             .sort(([a],[b])=>a.localeCompare(b))
@@ -609,8 +890,8 @@ render();
         const hasB = (bmap[f.id] || []).length > 0;
         const idSlug = `${f.id}-${matchSlugFromParts(f.home, f.away, f.utc_kickoff)}`;
         const href = `/football/matches/${idSlug}`;
-        const homeRow = `<div class="team-row">${f.home_badge ? `<img class=\"crest\" alt=\"${f.home} badge\" src=\"${f.home_badge}\">` : ''}<strong>${f.home}</strong></div>`;
-        const awayRow = `<div class="team-row">${f.away_badge ? `<img class=\"crest\" alt=\"${f.away} badge\" src=\"${f.away_badge}\">` : ''}<strong>${f.away}</strong></div>`;
+        const homeRow = `<div class="team-row">${f.home_badge ? `<img class=\"crest\" alt=\"${f.home} badge\" src=\"${f.home_badge}\">` : ''}<strong>${alias(f.home)}</strong></div>`;
+        const awayRow = `<div class="team-row">${f.away_badge ? `<img class=\"crest\" alt=\"${f.away} badge\" src=\"${f.away_badge}\">` : ''}<strong>${alias(f.away)}</strong></div>`;
         return `
           <a class="cardlink" href="${href}">
             <div class="card">
@@ -640,12 +921,13 @@ render();
         // Otherwise: grouped by MW, then by day and kickoff time (time label once)
         const groups = new Map();
         for (const f of items){ const mw = f.matchday ?? 0; if (!groups.has(mw)) groups.set(mw, []); groups.get(mw).push(f); }
+        const { dayKey: fixturesDayKey } = createDayTimeFormatters(TZ);
         const sections = Array.from(groups.entries()).sort(([a],[b])=> (a||0)-(b||0)).map(([mw, list])=>{
-          const byDay = groupByDayAndTime(list);
+          const byDay = groupByDayAndTime(list, TZ);
           const dates = list.map(f => parseUtcStrict(f.utc_kickoff)).sort((a,b)=>a-b);
           const range = `${prettyDate.format(dates[0])}${dates.length>1?` – ${prettyDate.format(dates[dates.length-1])}`:''}`;
           const inner = Array.from(byDay.entries()).sort(([a],[b])=>a.localeCompare(b)).map(([dayKey, byTime])=>{
-            const sample = list.find(x => ukDayKey.format(parseUtcStrict(x.utc_kickoff)) === dayKey);
+            const sample = list.find(x => fixturesDayKey.format(parseUtcStrict(x.utc_kickoff)) === dayKey);
             const dayLabel = sample ? prettyDay.format(parseUtcStrict(sample.utc_kickoff)) : dayKey;
             const timeBlocks = Array.from(byTime.entries()).sort(([a],[b])=>a.localeCompare(b)).map(([hhmm, li])=>{
               const cards = li.map(f=> renderCard(f, false)).join('');
@@ -731,25 +1013,92 @@ render();
     async function matchView(params){
       const app = document.getElementById("app");
       const id = params.get("id");
-      if (!id){ app.innerHTML = `<p class="muted">Missing ?id=… <a href="/football">Go back</a></p>`; return; }
+      if (!id){ app.innerHTML = `<p class="muted">Missing match ID. <a href="/football">Go back</a></p>`; return; }
+      
+      // Validate ID is a number
+      if (!/^\d+$/.test(id)) {
+        app.innerHTML = `<p class="muted">Invalid match ID format. <a href="/football">Home</a></p>`;
+        return;
+      }
 
       const { params: _p } = parseHash();
       const tzView = _p.get('tz') || DEFAULT_TZ;
 
-      const [fixture] = await jget(`${PATH.fixtureOne}?id=eq.${id}`);
-      if (!fixture){ app.innerHTML = `<p class="muted">Fixture not found. <a href="/football">Home</a></p>`; return; }
+      console.log('matchView: Looking for fixture with ID:', id);
+      console.log('API endpoint:', `${SUPABASE_URL}${PATH.fixtureOne}?id=eq.${id}`);
+      
+      let fixture;
+      try {
+        // Try fixtures_min_v first
+        let results = await jget(`${PATH.fixtureOne}?id=eq.${id}`);
+        console.log('API response from fixtures_min_v:', results);
+        fixture = results[0];
+        
+        // If not found, try the main fixtures view
+        if (!fixture) {
+          console.log('Trying fixtures_with_team_names_v as fallback...');
+          results = await jget(`${PATH.fixturesList}?id=eq.${id}&limit=1`);
+          console.log('API response from fixtures_with_team_names_v:', results);
+          fixture = results[0];
+        }
+        
+        if (!fixture){ 
+          console.log('No fixture found for ID:', id, 'in either view');
+          app.innerHTML = `<p class="muted">Fixture not found (ID: ${id}). <a href="/football">Home</a></p>`; 
+          return; 
+        }
+        console.log('Found fixture:', fixture);
+      } catch (error) {
+        console.error('Error fetching fixture:', error);
+        app.innerHTML = `<p class="muted">Error loading fixture: ${error.message}. <a href="/football">Home</a></p>`;
+        return;
+      }
 
-      const teams = await jget(`${PATH.teams}?id=in.(${[fixture.home_team_id, fixture.away_team_id].join(",")})&select=id,name,slug,crest_url`);
-      const tById = Object.fromEntries(teams.map(t=>[t.id,t.name]));
-      const crestById = Object.fromEntries(teams.map(t=>[t.id,t.crest_url]));
-
-      const bcasts = await jget(`${PATH.broadcasts}?fixture_id=eq.${id}`);
-      // Affiliate URLs (with harmless demo fallback if none exists)
-      const provIds = [...new Set(bcasts.map(b => b.provider_id))];
+      // Fetch additional data with error handling
+      let teams = [];
+      let tById = {};
+      let crestById = {};
+      let bcasts = [];
       let affiliatesByProv = {};
-      if (provIds.length) {
-        const aff = await jget(`${PATH.affiliate}?provider_id=in.(${provIds.join(",")})`);
-        affiliatesByProv = Object.fromEntries(aff.map(a => [a.provider_id, a.affiliate_url]));
+      
+      try {
+        teams = await jget(`${PATH.teams}?id=in.(${[fixture.home_team_id, fixture.away_team_id].join(",")})&select=id,name,slug,crest_url`);
+        tById = Object.fromEntries((teams || []).map(t=>[t.id,t.name]));
+        crestById = Object.fromEntries((teams || []).map(t=>[t.id,t.crest_url]));
+        
+        // Verify we have team data for both teams
+        if (!tById[fixture.home_team_id] || !tById[fixture.away_team_id]) {
+          console.error('Missing team data for fixture:', { fixture, tById });
+          app.innerHTML = `<p class="muted">Match data incomplete (missing team information). <a href="/football">Home</a></p>`;
+          return;
+        }
+      } catch (error) {
+        console.error('Error fetching team data:', error);
+        app.innerHTML = `<p class="muted">Error loading team data: ${error.message}. <a href="/football">Home</a></p>`;
+        return;
+      }
+
+      try {
+        bcasts = await jget(`${PATH.broadcasts}?fixture_id=eq.${id}`) || [];
+        // Fetch provider names to replace the incorrect display_name from the view
+        const provIds = [...new Set(bcasts.map(b => b.provider_id))];
+        let providersByProvId = {};
+        if (provIds.length) {
+          const providers = await jget(`/rest/v1/providers?id=in.(${provIds.join(",")})`);
+          providersByProvId = Object.fromEntries((providers || []).map(p => [p.id, p.display_name]));
+          
+          const aff = await jget(`${PATH.affiliate}?provider_id=in.(${provIds.join(",")})`);
+          affiliatesByProv = Object.fromEntries((aff || []).map(a => [a.provider_id, a.affiliate_url]));
+        }
+        // Fix the provider_display_name with correct data
+        bcasts = bcasts.map(b => ({
+          ...b,
+          provider_display_name: providersByProvId[b.provider_id] || b.provider_display_name || `Provider ${b.provider_id}`
+        }));
+      } catch (error) {
+        console.error('Error fetching broadcast data:', error);
+        // Continue with empty broadcast data rather than failing
+        bcasts = [];
       }
       const demoFallback = (providerName) => `https://example.com/demo?provider=${encodeURIComponent(providerName)}&fixture=${encodeURIComponent(id)}`;
       const df = new Intl.DateTimeFormat(LOCALE, { dateStyle: "medium", timeStyle: "short", timeZone: tzView });
@@ -883,7 +1232,10 @@ render();
   </script>
 
   <!-- Version badge -->
-  <div id="ver" style="position:fixed;right:12px;bottom:12px;background:#111;color:#fff;font:12px/1 system-ui;padding:6px 8px;border-radius:8px;opacity:.85;z-index:9999"></div>
+  <a id="ver" href="/CHANGELOG.md" target="_blank" rel="noopener" 
+     aria-label="View version changelog" 
+     title="View changelog"
+     style="position:fixed;right:12px;bottom:12px;background:#111;color:#fff;font:12px/1 system-ui;padding:6px 8px;border-radius:8px;opacity:.85;z-index:9999;text-decoration:none;cursor:pointer"></a>
   <script>
     // Keep version badge inline; switch to app.js later if desired
     document.addEventListener('DOMContentLoaded', function(){
