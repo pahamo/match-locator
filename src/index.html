@@ -756,8 +756,8 @@ render();
       };
 
       // Build grouped sections: by day, then by HH:mm (one time label per group)
-      const byDay = groupByDayAndTime(subset, TZ);
-      const { dayKey: currentDayKey } = createDayTimeFormatters(TZ);
+      const byDay = groupFixturesByDayAndTime(subset, TZ);
+      const { dayKey: currentDayKey } = createTimezoneFormatters(TZ);
       const daySections = Array.from(byDay.entries())
         .sort(([a],[b])=>a.localeCompare(b))
         .map(([dayKey, byTime]) => {
@@ -921,9 +921,9 @@ render();
         // Otherwise: grouped by MW, then by day and kickoff time (time label once)
         const groups = new Map();
         for (const f of items){ const mw = f.matchday ?? 0; if (!groups.has(mw)) groups.set(mw, []); groups.get(mw).push(f); }
-        const { dayKey: fixturesDayKey } = createDayTimeFormatters(TZ);
+        const { dayKey: fixturesDayKey } = createTimezoneFormatters(TZ);
         const sections = Array.from(groups.entries()).sort(([a],[b])=> (a||0)-(b||0)).map(([mw, list])=>{
-          const byDay = groupByDayAndTime(list, TZ);
+          const byDay = groupFixturesByDayAndTime(list, TZ);
           const dates = list.map(f => parseUtcDate(f.utc_kickoff)).sort((a,b)=>a-b);
           const range = `${prettyDate.format(dates[0])}${dates.length>1?` – ${prettyDate.format(dates[dates.length-1])}`:''}`;
           const inner = Array.from(byDay.entries()).sort(([a],[b])=>a.localeCompare(b)).map(([dayKey, byTime])=>{
