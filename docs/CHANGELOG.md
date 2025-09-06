@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1] - 2025-09-06
+
+### 🐛 Bug Fixes
+- update Netlify configuration to serve from src/ directory and correct git hook paths (6c5bf0af)
+
+---
+
+
 All notable changes to this project will be documented in this file.
 
 ## [2.1.0] - 2025-01-09

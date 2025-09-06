@@ -38,3 +38,11 @@ Goal: Lean, profitable side business showing fans which channel their games are 
 ## Automation Setup
 - ✅ CHANGELOG.md updates automatically on each git commit
 - ✅ Git post-commit hook installed
+
+## Recent Changes
+- 2025-09-06: update Netlify configuration to serve from src/ directory and correct git hook paths (6c5bf0af)
+
+- ✅ Git post-commit hook installed
+
+## Recent Changes
+- 2025-09-06: update Netlify configuration to serve from src/ directory and correct git hook paths (6c5bf0af)

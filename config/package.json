@@ -7,7 +7,8 @@
     "dev": "http-server -p 5173 -c-1 . --cors",
     "dev:kill": "sh -c 'kill -9 $(lsof -ti :5173) 2>/dev/null || true'",
     "dev:restart": "npm run dev:kill && npm run dev",
-    "build:seo": "node scripts/build-seo.js"
+    "build:seo": "node scripts/build-seo.js",
+    "version": "node scripts/version-manager.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.0"

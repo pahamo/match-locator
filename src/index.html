@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+b<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -696,12 +696,55 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background: #2c3e50;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 0.25rem 0.5rem;
-            border-radius: 12px;
+            padding: 0.5rem 0.75rem;
+            border-radius: 20px;
             font-size: 0.8rem;
+            font-weight: 600;
             z-index: 1000;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .version-badge:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            color: white;
+            text-decoration: none;
+        }
+
+        .version-badge:active {
+            transform: translateY(0) scale(1.02);
+        }
+
+        .version-badge .new-indicator {
+            background: #10B981;
+            color: white;
+            border-radius: 50%;
+            width: 8px;
+            height: 8px;
+            display: inline-block;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 4px rgba(16, 185, 129, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
         }
         
         /* Responsive */
@@ -797,7 +840,10 @@
         </div>
     </footer>
 
-    <div class="version-badge">v1.5.0</div>
+    <a href="changelog.html" class="version-badge" title="See what's new">
+        v1.5.0
+        <span class="new-indicator"></span>
+    </a>
 
     <script>
         // Theme switching functionality

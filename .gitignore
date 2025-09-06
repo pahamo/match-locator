@@ -1,1 +1,12 @@
-config/.gitignore
+.DS_Store
+node_modules/
+npm-debug.log*
+.vscode/
+dist/
+*.local
+# Local Netlify folder
+.netlify
+node_modules
+node_modules
+node_modules
+node_modules
