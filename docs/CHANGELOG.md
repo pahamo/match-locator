@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.5.2] - 2025-09-06
+
+### 🐛 Bug Fixes
+- restore package.json and update version badge to v1.5.1 (1f0abe3c)
+
+---
+
+
 ## [1.0.1] - 2025-09-06
 
 ### 🐛 Bug Fixes

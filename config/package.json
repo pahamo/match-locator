@@ -1,6 +1,6 @@
 {
   "name": "football-listings-mvp",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "Premier League fixtures and UK broadcaster listings",
   "main": "src/index.html",
   "scripts": {
