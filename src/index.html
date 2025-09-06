@@ -691,7 +691,7 @@ render();
 
       // Load upcoming fixtures (same source as fixtures page)
       const nowIso = new Date().toISOString();
-      const rows = await jget(`${PATH.fixturesList}?utc_kickoff=gte.${nowIso}&${orderByKickoff}&limit=${BIG_LIMIT}`);
+      const rows = await jget(`${API_ENDPOINTS.fixturesList}?utc_kickoff=gte.${nowIso}&${QUERY_PARAMS.orderByKickoff}&limit=${QUERY_PARAMS.limit}`);
       const fixtures = (rows||[]).map(r => ({
         id: r.id,
         utc_kickoff: r.utc_kickoff,
@@ -722,7 +722,7 @@ render();
       if (ids.length) {
         const qs = ids.join(',');
         try {
-          const brows = await jget(`${PATH.broadcasts}?fixture_id=in.(${qs})`);
+          const brows = await jget(`${API_ENDPOINTS.broadcasts}?fixture_id=in.(${qs})`);
           for (const b of (brows || [])){
             if (!bmap[b.fixture_id]) bmap[b.fixture_id] = [];
             bmap[b.fixture_id].push(b);
@@ -735,11 +735,11 @@ render();
 
       const renderCard = (f) => {
         const hasB = (bmap[f.id] || []).length > 0;
-        const idSlug = `${f.id}-${matchSlugFromParts(f.home, f.away, f.utc_kickoff)}`;
+        const idSlug = `${f.id}-${createMatchSlug(f.home, f.away, f.utc_kickoff)}`;
         const href = `/football/matches/${idSlug}`;
         console.log('Generating match link:', { id: f.id, slug: idSlug, href, fixture: f });
-        const homeRow = `<div class="team-row">${f.home_badge ? `<img class=\"crest\" alt=\"${f.home} badge\" src=\"${f.home_badge}\">` : ''}<strong>${alias(f.home)}</strong></div>`;
-        const awayRow = `<div class="team-row">${f.away_badge ? `<img class=\"crest\" alt=\"${f.away} badge\" src=\"${f.away_badge}\">` : ''}<strong>${alias(f.away)}</strong></div>`;
+        const homeRow = `<div class="team-row">${f.home_badge ? `<img class=\"crest\" alt=\"${f.home} badge\" src=\"${f.home_badge}\">` : ''}<strong>${getTeamAlias(f.home)}</strong></div>`;
+        const awayRow = `<div class="team-row">${f.away_badge ? `<img class=\"crest\" alt=\"${f.away} badge\" src=\"${f.away_badge}\">` : ''}<strong>${getTeamAlias(f.away)}</strong></div>`;
         return `
           <a class="cardlink" href="${href}">
             <div class="card">
@@ -761,8 +761,8 @@ render();
       const daySections = Array.from(byDay.entries())
         .sort(([a],[b])=>a.localeCompare(b))
         .map(([dayKey, byTime]) => {
-          const sample = subset.find(f => currentDayKey.format(parseUtcStrict(f.utc_kickoff)) === dayKey);
-          const dayLabel = sample ? prettyDay.format(parseUtcStrict(sample.utc_kickoff)) : dayKey;
+          const sample = subset.find(f => currentDayKey.format(parseUtcDate(f.utc_kickoff)) === dayKey);
+          const dayLabel = sample ? prettyDay.format(parseUtcDate(sample.utc_kickoff)) : dayKey;
           const timeBlocks = Array.from(byTime.entries())
             .sort(([a],[b])=>a.localeCompare(b))
             .map(([hhmm, list]) => `<div class="time-group"><span class="time-dot"></span><strong>${hhmm}</strong></div>` + list.map(renderCard).join(''))
@@ -770,7 +770,7 @@ render();
           return `<h3 class="muted">${dayLabel}</h3>${timeBlocks}`;
         }).join('');
 
-      const dates = subset.map(f => parseUtcStrict(f.utc_kickoff)).sort((a,b)=>a-b);
+      const dates = subset.map(f => parseUtcDate(f.utc_kickoff)).sort((a,b)=>a-b);
       const first = prettyDate.format(dates[0]);
       const last  = prettyDate.format(dates[dates.length-1]);
       const range = first === last ? first : `${first} – ${last}`;
@@ -799,7 +799,7 @@ render();
 
       // Load fixtures
       const nowIso = new Date().toISOString();
-      const rows = await jget(`${PATH.fixturesList}?utc_kickoff=gte.${nowIso}&${orderByKickoff}&limit=${BIG_LIMIT}`);
+      const rows = await jget(`${API_ENDPOINTS.fixturesList}?utc_kickoff=gte.${nowIso}&${QUERY_PARAMS.orderByKickoff}&limit=${QUERY_PARAMS.limit}`);
       const fixtures = (rows||[]).map(r => ({
         id: r.id,
         utc_kickoff: r.utc_kickoff,
@@ -811,7 +811,7 @@ render();
       })).filter(f => f.home && f.away && !Number.isNaN(Date.parse(f.utc_kickoff)));
 
       // Load teams for crest selector
-      const teamsRows = await jget(`${PATH.teams}?select=id,name,slug,crest_url`);
+      const teamsRows = await jget(`${API_ENDPOINTS.teams}?select=id,name,slug,crest_url`);
       const teamByName = Object.fromEntries((teamsRows||[]).map(t=>[t.name, t]));
 
       const teamSet = Array.from(new Set(fixtures.flatMap(f=>[f.home,f.away]))).sort((a,b)=>a.localeCompare(b));
@@ -871,7 +871,7 @@ render();
       if (ids.length) {
         const qs = ids.join(',');
         try {
-          const brows = await jget(`${PATH.broadcasts}?fixture_id=in.(${qs})`);
+          const brows = await jget(`${API_ENDPOINTS.broadcasts}?fixture_id=in.(${qs})`);
           for (const b of (brows || [])){
             if (!bmap[b.fixture_id]) bmap[b.fixture_id] = [];
             bmap[b.fixture_id].push(b);
@@ -886,19 +886,19 @@ render();
       const prettyDate = new Intl.DateTimeFormat(LOCALE, { day:'numeric', month:'short', timeZone: TZ });
 
       const renderCard = (f, withTime=false) => {
-        const kickoffTime = timeOnly.format(parseUtcStrict(f.utc_kickoff));
+        const kickoffTime = timeOnly.format(parseUtcDate(f.utc_kickoff));
         const hasB = (bmap[f.id] || []).length > 0;
-        const idSlug = `${f.id}-${matchSlugFromParts(f.home, f.away, f.utc_kickoff)}`;
+        const idSlug = `${f.id}-${createMatchSlug(f.home, f.away, f.utc_kickoff)}`;
         const href = `/football/matches/${idSlug}`;
-        const homeRow = `<div class="team-row">${f.home_badge ? `<img class=\"crest\" alt=\"${f.home} badge\" src=\"${f.home_badge}\">` : ''}<strong>${alias(f.home)}</strong></div>`;
-        const awayRow = `<div class="team-row">${f.away_badge ? `<img class=\"crest\" alt=\"${f.away} badge\" src=\"${f.away_badge}\">` : ''}<strong>${alias(f.away)}</strong></div>`;
+        const homeRow = `<div class="team-row">${f.home_badge ? `<img class=\"crest\" alt=\"${f.home} badge\" src=\"${f.home_badge}\">` : ''}<strong>${getTeamAlias(f.home)}</strong></div>`;
+        const awayRow = `<div class="team-row">${f.away_badge ? `<img class=\"crest\" alt=\"${f.away} badge\" src=\"${f.away_badge}\">` : ''}<strong>${getTeamAlias(f.away)}</strong></div>`;
         return `
           <a class="cardlink" href="${href}">
             <div class="card">
               <div class="row">
                 <div class="left">
                   <div class="teams-stack">${homeRow}${awayRow}</div>
-                  ${withTime ? `<div class="muted">${dateOnly.format(parseUtcStrict(f.utc_kickoff))} · ${kickoffTime}</div>` : ''}
+                  ${withTime ? `<div class="muted">${dateOnly.format(parseUtcDate(f.utc_kickoff))} · ${kickoffTime}</div>` : ''}
                 </div>
                 <div>
                   <span class="${hasB ? 'btn small right' : 'btn small right disabled'}">${hasB ? 'Watch options' : 'Broadcasts (TBC)'}</span>
@@ -924,11 +924,11 @@ render();
         const { dayKey: fixturesDayKey } = createDayTimeFormatters(TZ);
         const sections = Array.from(groups.entries()).sort(([a],[b])=> (a||0)-(b||0)).map(([mw, list])=>{
           const byDay = groupByDayAndTime(list, TZ);
-          const dates = list.map(f => parseUtcStrict(f.utc_kickoff)).sort((a,b)=>a-b);
+          const dates = list.map(f => parseUtcDate(f.utc_kickoff)).sort((a,b)=>a-b);
           const range = `${prettyDate.format(dates[0])}${dates.length>1?` – ${prettyDate.format(dates[dates.length-1])}`:''}`;
           const inner = Array.from(byDay.entries()).sort(([a],[b])=>a.localeCompare(b)).map(([dayKey, byTime])=>{
-            const sample = list.find(x => fixturesDayKey.format(parseUtcStrict(x.utc_kickoff)) === dayKey);
-            const dayLabel = sample ? prettyDay.format(parseUtcStrict(sample.utc_kickoff)) : dayKey;
+            const sample = list.find(x => fixturesDayKey.format(parseUtcDate(x.utc_kickoff)) === dayKey);
+            const dayLabel = sample ? prettyDay.format(parseUtcDate(sample.utc_kickoff)) : dayKey;
             const timeBlocks = Array.from(byTime.entries()).sort(([a],[b])=>a.localeCompare(b)).map(([hhmm, li])=>{
               const cards = li.map(f=> renderCard(f, false)).join('');
               return `<div class="time-group"><span class="time-dot"></span><strong>${hhmm}</strong></div>` + cards;
@@ -1025,19 +1025,19 @@ render();
       const tzView = _p.get('tz') || DEFAULT_TZ;
 
       console.log('matchView: Looking for fixture with ID:', id);
-      console.log('API endpoint:', `${SUPABASE_URL}${PATH.fixtureOne}?id=eq.${id}`);
+      console.log('API endpoint:', `${SUPABASE_CONFIG.url}${API_ENDPOINTS.fixtureOne}?id=eq.${id}`);
       
       let fixture;
       try {
         // Try fixtures_min_v first
-        let results = await jget(`${PATH.fixtureOne}?id=eq.${id}`);
+        let results = await jget(`${API_ENDPOINTS.fixtureOne}?id=eq.${id}`);
         console.log('API response from fixtures_min_v:', results);
         fixture = results[0];
         
         // If not found, try the main fixtures view
         if (!fixture) {
           console.log('Trying fixtures_with_team_names_v as fallback...');
-          results = await jget(`${PATH.fixturesList}?id=eq.${id}&limit=1`);
+          results = await jget(`${API_ENDPOINTS.fixturesList}?id=eq.${id}&limit=1`);
           console.log('API response from fixtures_with_team_names_v:', results);
           fixture = results[0];
         }
@@ -1062,7 +1062,7 @@ render();
       let affiliatesByProv = {};
       
       try {
-        teams = await jget(`${PATH.teams}?id=in.(${[fixture.home_team_id, fixture.away_team_id].join(",")})&select=id,name,slug,crest_url`);
+        teams = await jget(`${API_ENDPOINTS.teams}?id=in.(${[fixture.home_team_id, fixture.away_team_id].join(",")})&select=id,name,slug,crest_url`);
         tById = Object.fromEntries((teams || []).map(t=>[t.id,t.name]));
         crestById = Object.fromEntries((teams || []).map(t=>[t.id,t.crest_url]));
         
@@ -1079,7 +1079,7 @@ render();
       }
 
       try {
-        bcasts = await jget(`${PATH.broadcasts}?fixture_id=eq.${id}`) || [];
+        bcasts = await jget(`${API_ENDPOINTS.broadcasts}?fixture_id=eq.${id}`) || [];
         // Fetch provider names to replace the incorrect display_name from the view
         const provIds = [...new Set(bcasts.map(b => b.provider_id))];
         let providersByProvId = {};
@@ -1087,7 +1087,7 @@ render();
           const providers = await jget(`/rest/v1/providers?id=in.(${provIds.join(",")})`);
           providersByProvId = Object.fromEntries((providers || []).map(p => [p.id, p.display_name]));
           
-          const aff = await jget(`${PATH.affiliate}?provider_id=in.(${provIds.join(",")})`);
+          const aff = await jget(`${API_ENDPOINTS.affiliate}?provider_id=in.(${provIds.join(",")})`);
           affiliatesByProv = Object.fromEntries((aff || []).map(a => [a.provider_id, a.affiliate_url]));
         }
         // Fix the provider_display_name with correct data
@@ -1110,7 +1110,7 @@ render();
           ${tById[fixture.home_team_id]} vs ${tById[fixture.away_team_id]}
           ${crestById[fixture.away_team_id]?`<img class=\"crest\" alt=\"${tById[fixture.away_team_id]} badge\" src=\"${crestById[fixture.away_team_id]}\">`:''}
         </h1>
-        <div class=\"muted\">${df.format(parseUtcStrict(fixture.utc_kickoff))}${fixture.venue? " — "+fixture.venue: ""}</div>
+        <div class=\"muted\">${df.format(parseUtcDate(fixture.utc_kickoff))}${fixture.venue? " — "+fixture.venue: ""}</div>
         <div id=\"providers\"></div>`;
 
       const order = { tv:1, ott:2, radio:3 };
@@ -1133,12 +1133,12 @@ render();
     // ---- Clubs and About views ----
     async function clubsIndexView(){
       const app = document.getElementById('app');
-      const teams = await jget(`${PATH.teams}?select=id,name,slug,crest_url`);
+      const teams = await jget(`${API_ENDPOINTS.teams}?select=id,name,slug,crest_url`);
       const items = (teams||[]).map(t=>`
         <a class="cardlink" href="/football/clubs/${encodeURIComponent(t.slug)}">
           <div class="card mini-card club-tile">
             ${t.crest_url?`<img class="crest" alt="${t.name} badge" src="${t.crest_url}">`:''}
-            <strong>${alias(t.name)}</strong>
+            <strong>${getTeamAlias(t.name)}</strong>
           </div>
         </a>`).join('');
       app.innerHTML = `<div class="section"><h2 style="margin:0 0 6px">Clubs</h2><div class="muted">Premier League</div></div><div class="clubs-grid">${items||'<p class="muted">No clubs found.</p>'}</div>`;
@@ -1148,12 +1148,12 @@ render();
       const app = document.getElementById('app');
       const slug = params.get('slug');
       if (!slug){ app.innerHTML = '<p class="muted">Missing ?slug=…</p>'; return; }
-      const [team] = await jget(`${PATH.teams}?slug=eq.${encodeURIComponent(slug)}&select=id,name,slug,crest_url`);
+      const [team] = await jget(`${API_ENDPOINTS.teams}?slug=eq.${encodeURIComponent(slug)}&select=id,name,slug,crest_url`);
       if (!team){ app.innerHTML = '<p class="muted">Club not found.</p>'; return; }
 
       // Load upcoming fixtures that include this club
       const nowIso = new Date().toISOString();
-      const rows = await jget(`${PATH.fixturesList}?utc_kickoff=gte.${nowIso}&${orderByKickoff}&limit=${BIG_LIMIT}`);
+      const rows = await jget(`${API_ENDPOINTS.fixturesList}?utc_kickoff=gte.${nowIso}&${QUERY_PARAMS.orderByKickoff}&limit=${QUERY_PARAMS.limit}`);
       const fixtures = (rows||[]).map(r => ({
         id: r.id,
         utc_kickoff: r.utc_kickoff,
@@ -1173,10 +1173,10 @@ render();
         const isHome = (f.home === team.name);
         const opponentName = isHome ? f.away : f.home;
         const opponentBadge = isHome ? f.away_badge : f.home_badge;
-        const kickoff = `${dateOnly.format(parseUtcStrict(f.utc_kickoff))} · ${timeOnly.format(parseUtcStrict(f.utc_kickoff))}`;
-        const idSlug = `${f.id}-${matchSlugFromParts(f.home, f.away, f.utc_kickoff)}`;
+        const kickoff = `${dateOnly.format(parseUtcDate(f.utc_kickoff))} · ${timeOnly.format(parseUtcDate(f.utc_kickoff))}`;
+        const idSlug = `${f.id}-${createMatchSlug(f.home, f.away, f.utc_kickoff)}`;
         const href = `/football/matches/${idSlug}`;
-        const opponentRow = `<div class="opponent-row">${opponentBadge ? `<img class=\"crest\" alt=\"${opponentName} badge\" src=\"${opponentBadge}\">` : ''}<strong>${alias(opponentName)}</strong></div>`;
+        const opponentRow = `<div class="opponent-row">${opponentBadge ? `<img class=\"crest\" alt=\"${opponentName} badge\" src=\"${opponentBadge}\">` : ''}<strong>${getTeamAlias(opponentName)}</strong></div>`;
         return `
           <div class="club-item ${isHome ? 'align-left' : 'align-right'}">
             <a class="cardlink" href="${href}">
@@ -1225,7 +1225,7 @@ render();
 
     // ---- helper ----
     async function jget(path){
-      const r = await fetch(`${SUPABASE_URL}${path}`, { headers: H });
+      const r = await fetch(`${SUPABASE_CONFIG.url}${path}`, { headers: API_HEADERS });
       if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
       return r.json();
     }
