@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Listings - Design System Foundation</title>
+    <style>
+        /* ===========================================
+           DESIGN TOKENS - Easy to swap/test
+           =========================================== */
+        :root {
+            /* Colors */
+            --primary-color: #1a365d;
+            --primary-light: #2c5282;
+            --primary-dark: #1a202c;
+            --accent-color: #e53e3e;
+            --accent-light: #fc8181;
+            --success-color: #38a169;
+            --warning-color: #d69e2e;
+            
+            /* Backgrounds */
+            --bg-primary: #ffffff;
+            --bg-secondary: #f7fafc;
+            --bg-card: #ffffff;
+            --bg-hover: #edf2f7;
+            
+            /* Text */
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --text-muted: #718096;
+            --text-inverse: #ffffff;
+            
+            /* Borders */
+            --border-color: #e2e8f0;
+            --border-color-hover: #cbd5e0;
+            
+            /* Spacing */
+            --spacing-xs: 0.25rem;
+            --spacing-sm: 0.5rem;
+            --spacing-md: 1rem;
+            --spacing-lg: 1.5rem;
+            --spacing-xl: 2rem;
+            --spacing-2xl: 3rem;
+            
+            /* Typography */
+            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-size-xs: 0.75rem;
+            --font-size-sm: 0.875rem;
+            --font-size-base: 1rem;
+            --font-size-lg: 1.125rem;
+            --font-size-xl: 1.25rem;
+            --font-size-2xl: 1.5rem;
+            --font-size-3xl: 1.875rem;
+            
+            /* Effects */
+            --border-radius: 8px;
+            --border-radius-sm: 4px;
+            --border-radius-lg: 12px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            
+            /* Transitions */
+            --transition-fast: 150ms ease;
+            --transition-normal: 250ms ease;
+        }
+
+        /* ===========================================
+           THEME VARIANTS
+           =========================================== */
+        .theme-dark {
+            --bg-primary: #1a202c;
+            --bg-secondary: #2d3748;
+            --bg-card: #2d3748;
+            --bg-hover: #4a5568;
+            --text-primary: #f7fafc;
+            --text-secondary: #e2e8f0;
+            --text-muted: #a0aec0;
+            --border-color: #4a5568;
+            --border-color-hover: #718096;
+        }
+
+        .theme-sport {
+            --primary-color: #38a169;
+            --primary-light: #48bb78;
+            --accent-color: #d69e2e;
+            --accent-light: #f6e05e;
+        }
+
+        .theme-minimal {
+            --primary-color: #2d3748;
+            --accent-color: #4299e1;
+            --border-radius: 4px;
+            --shadow-md: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        /* ===========================================
+           BASE STYLES
+           =========================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: all var(--transition-normal);
+        }
+
+        /* ===========================================
+           UTILITY CLASSES
+           =========================================== */
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-fast);
+        }
+
+        .card:hover {
+            border-color: var(--border-color-hover);
+            box-shadow: var(--shadow-md);
+        }
+
+        .card--featured {
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-md);
+        }
+
+        .card--match {
+            padding: var(--spacing-md);
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: none;
+            border-radius: var(--border-radius-sm);
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .btn--primary {
+            background: var(--primary-color);
+            color: var(--text-inverse);
+        }
+
+        .btn--primary:hover {
+            background: var(--primary-light);
+        }
+
+        .btn--broadcaster {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn--broadcaster:hover {
+            background: var(--bg-hover);
+            border-color: var(--border-color-hover);
+        }
+
+        .btn--accent {
+            background: var(--accent-color);
+            color: var(--text-inverse);
+        }
+
+        .btn--accent:hover {
+            background: var(--accent-light);
+        }
+
+        /* Layout */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+        }
+
+        .grid {
+            display: grid;
+            gap: var(--spacing-md);
+        }
+
+        .grid--2 {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        .flex {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .flex--between {
+            justify-content: space-between;
+        }
+
+        .flex--center {
+            align-items: center;
+        }
+
+        .flex--wrap {
+            flex-wrap: wrap;
+        }
+
+        /* Typography */
+        .text-xs { font-size: var(--font-size-xs); }
+        .text-sm { font-size: var(--font-size-sm); }
+        .text-lg { font-size: var(--font-size-lg); }
+        .text-xl { font-size: var(--font-size-xl); }
+        .text-2xl { font-size: var(--font-size-2xl); }
+
+        .text-muted { color: var(--text-muted); }
+        .text-secondary { color: var(--text-secondary); }
+
+        .font-medium { font-weight: 500; }
+        .font-semibold { font-weight: 600; }
+        .font-bold { font-weight: 700; }
+
+        /* Spacing */
+        .mt-sm { margin-top: var(--spacing-sm); }
+        .mt-md { margin-top: var(--spacing-md); }
+        .mt-lg { margin-top: var(--spacing-lg); }
+        .mb-sm { margin-bottom: var(--spacing-sm); }
+        .mb-md { margin-bottom: var(--spacing-md); }
+        .mb-lg { margin-bottom: var(--spacing-lg); }
+
+        /* ===========================================
+           COMPONENT STYLES
+           =========================================== */
+
+        /* Header */
+        .header {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: var(--spacing-md) 0;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .logo {
+            font-size: var(--font-size-xl);
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        /* Match Card Components */
+        .match-teams {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .match-date {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .broadcast-options {
+            display: flex;
+            gap: var(--spacing-sm);
+            flex-wrap: wrap;
+        }
+
+        /* Theme Switcher */
+        .theme-switcher {
+            position: fixed;
+            top: var(--spacing-md);
+            right: var(--spacing-md);
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: var(--spacing-sm);
+            box-shadow: var(--shadow-md);
+        }
+
+        .theme-switcher select {
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: var(--font-size-sm);
+        }
+    </style>
+</head>
+<body>
+    <!-- Theme Switcher -->
+    <div class="theme-switcher">
+        <select id="themeSelect" onchange="switchTheme(this.value)">
+            <option value="">Default</option>
+            <option value="dark">Dark</option>
+            <option value="sport">Sport</option>
+            <option value="minimal">Minimal</option>
+        </select>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="flex flex--between flex--center">
+                <h1 class="logo">Football Listings</h1>
+                <nav class="flex">
+                    <a href="#" class="btn btn--primary">Fixtures</a>
+                    <a href="#" class="btn btn--broadcaster">Teams</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <h2 class="text-2xl font-semibold mb-lg">Premier League Fixtures</h2>
+        
+        <!-- Example Components -->
+        <div class="grid grid--2">
+            <!-- Standard Match Card -->
+            <div class="card card--match">
+                <div class="match-teams">Arsenal vs Chelsea</div>
+                <div class="match-date text-muted">Saturday, 15 Jan 2025 • 17:30</div>
+                <div class="broadcast-options">
+                    <a href="#" class="btn btn--broadcaster">Sky Sports</a>
+                    <a href="#" class="btn btn--broadcaster">TNT Sports</a>
+                </div>
+            </div>
+
+            <!-- Featured Match Card -->
+            <div class="card card--match card--featured">
+                <div class="match-teams">Manchester United vs Liverpool</div>
+                <div class="match-date text-muted">Sunday, 16 Jan 2025 • 16:30</div>
+                <div class="broadcast-options">
+                    <a href="#" class="btn btn--accent">Amazon Prime</a>
+                    <a href="#" class="btn btn--broadcaster">BBC Radio</a>
+                </div>
+            </div>
+
+            <!-- Regular Match Card -->
+            <div class="card card--match">
+                <div class="match-teams">Manchester City vs Tottenham</div>
+                <div class="match-date text-muted">Monday, 17 Jan 2025 • 20:00</div>
+                <div class="broadcast-options">
+                    <a href="#" class="btn btn--broadcaster">Sky Sports</a>
+                </div>
+            </div>
+
+            <!-- No Broadcast Data -->
+            <div class="card card--match">
+                <div class="match-teams">Brighton vs Newcastle</div>
+                <div class="match-date text-muted">Tuesday, 18 Jan 2025 • 19:45</div>
+                <div class="broadcast-options">
+                    <span class="text-muted text-sm">Broadcast details TBA</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Component Examples -->
+        <section class="mt-2xl">
+            <h3 class="text-xl font-semibold mb-lg">Component Examples</h3>
+            
+            <div class="grid">
+                <div class="card">
+                    <h4 class="font-medium mb-sm">Button Variants</h4>
+                    <div class="flex flex--wrap">
+                        <button class="btn btn--primary">Primary</button>
+                        <button class="btn btn--broadcaster">Broadcaster</button>
+                        <button class="btn btn--accent">Accent</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h4 class="font-medium mb-sm">Typography Scale</h4>
+                    <div class="text-xs">Extra Small Text</div>
+                    <div class="text-sm">Small Text</div>
+                    <div class="text-base">Base Text</div>
+                    <div class="text-lg">Large Text</div>
+                    <div class="text-xl">Extra Large Text</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Theme switching functionality
+        function switchTheme(theme) {
+            const body = document.body;
+            // Remove existing theme classes
+            body.className = body.className.replace(/theme-\w+/g, '');
+            // Add new theme class if selected
+            if (theme) {
+                body.classList.add(`theme-${theme}`);
+            }
+            // Store preference
+            localStorage.setItem('theme', theme);
+        }
+
+        // Load saved theme on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.getElementById('themeSelect').value = savedTheme;
+                switchTheme(savedTheme);
+            }
+        });
+
+        // Example: Component-like function for creating match cards
+        function createMatchCard(fixture) {
+            return `
+                <div class="card card--match">
+                    <div class="match-teams">${fixture.homeTeam} vs ${fixture.awayTeam}</div>
+                    <div class="match-date text-muted">${fixture.date} • ${fixture.time}</div>
+                    <div class="broadcast-options">
+                        ${fixture.broadcasts.map(b => 
+                            `<a href="${b.url}" class="btn btn--broadcaster">${b.name}</a>`
+                        ).join('')}
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

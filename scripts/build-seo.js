@@ -4,7 +4,7 @@ import path from 'path';
 
 // ---- CONFIG ----
 const SITE = 'https://football-listings.netlify.app';
-const OUT = path.join(process.cwd(), 'seo');
+const OUT = path.join(process.cwd(), 'docs', 'seo');
 const SB = {
   url: 'https://ksqyurqkqznzrntdpood.supabase.co',
   // Use env var if set; otherwise fallback to your anon key for convenience
