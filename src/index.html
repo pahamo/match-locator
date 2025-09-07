@@ -1595,49 +1595,7 @@ render();
       return data;
     }
     
-    // Data integrity: Teams that should NOT be in current Premier League (2025-26)
-    const EXCLUDED_PREMIER_LEAGUE_TEAMS = [
-      'Leicester City',      // Relegated 2022-23
-      'Southampton',         // Relegated 2022-23  
-      'Burnley',            // Relegated 2022-23
-      'Leeds United',       // Relegated 2022-23
-      'Sunderland'          // Not a Premier League team
-    ];
-
-    // Apply data integrity filters for current season
-    function applySeasonDataFilter(teams, competitionId) {
-      if (!teams || teams.length === 0) {
-        console.log(`🔧 Data integrity filter: No teams to filter for competition ${competitionId}`);
-        return teams;
-      }
-      
-      console.log(`🔧 Data integrity filter: Processing ${teams.length} teams for competition ${competitionId}`);
-      
-      // Filter out known problematic teams for Premier League
-      if (competitionId === 1) { // Premier League
-        console.log('🔧 Applying Premier League data integrity filter...');
-        const teamNames = teams.map(t => t.name);
-        console.log('🔧 Team names before filter:', teamNames);
-        
-        const filtered = teams.filter(team => {
-          const shouldExclude = EXCLUDED_PREMIER_LEAGUE_TEAMS.includes(team.name);
-          if (shouldExclude) {
-            console.log(`🔧 EXCLUDING: ${team.name} (not in current season)`);
-          }
-          return !shouldExclude;
-        });
-        
-        if (filtered.length !== teams.length) {
-          const excludedCount = teams.length - filtered.length;
-          console.log(`🔧 Data integrity filter: Removed ${excludedCount} incorrect teams from Premier League`);
-          console.log('🔧 Remaining teams:', filtered.map(t => t.name));
-        }
-        return filtered;
-      }
-      
-      console.log(`🔧 No special filtering needed for competition ${competitionId}`);
-      return teams;
-    }
+    // Clean database - no data integrity filters needed
 
     // Robust team loader with fallbacks and data integrity filtering
     async function loadTeams(competitionId, fallbackToAll = false) {
@@ -1658,9 +1616,6 @@ render();
           // Filter by competition_id if we got data with that field
           if (teams && teams.length > 0) {
             let filtered = teams.filter(t => !competitionId || t.competition_id === competitionId || !t.competition_id);
-            
-            // Apply data integrity filters for current season
-            filtered = applySeasonDataFilter(filtered, competitionId);
             
             if (filtered.length > 0) {
               console.log(`Successfully loaded ${filtered.length} teams for competition ${competitionId}`);
