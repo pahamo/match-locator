@@ -39,15 +39,27 @@ Goal: Lean, profitable side business showing fans which channel their games are 
 - ✅ CHANGELOG.md updates automatically on each git commit
 - ✅ Git post-commit hook installed
 
-## Recent Changes
-- 2025-09-06: restore package.json and update version badge to v1.5.1 (1f0abe3c)
-- 2025-09-06: mobile responsiveness improvements - responsive design, touch targets, typography (80fc8654)
-- 2025-09-06: complete automated versioning system with user-friendly changelog and enhanced version badge (65a9105a)
-- 2025-09-06: update Netlify configuration to serve from src/ directory and correct git hook paths (6c5bf0af)
+## Critical System Fixes (2025-09-07)
+- ✅ **Infinite redirect loop resolved**: Fixed SPA routing for deep links
+- ✅ **App crash protection**: Added error boundaries to prevent site breakage
+- ✅ **Data integrity filtering**: Leicester/Southampton excluded from current Premier League
+- ✅ **Custom development server**: Created proper SPA fallback routing (dev-server.js)
+- ✅ **Architecture planning**: Comprehensive solution documented (ARCHITECTURE_PLAN.md)
 
-- ✅ Git post-commit hook installed
+## System Status
+- **Database**: Contains mixed historical/current data (requires admin access to fix)
+- **Frontend**: Now resilient with client-side data filtering and error handling
+- **Routing**: Custom SPA server works correctly, no more redirect loops
+- **Error Handling**: Graceful degradation instead of complete app breakage
+
+## Next Development Priorities
+1. **Season Management**: Implement proper database schema with seasons table
+2. **Data Migration**: Clean up team memberships with proper season context
+3. **Admin Interface**: Build tools for managing competitions and seasons
+4. **API Consistency**: Create proper database views for clean API endpoints
 
 ## Recent Changes
+- 2025-09-07: **CRITICAL FIXES** - infinite redirect loop, app crashes, data integrity
 - 2025-09-06: restore package.json and update version badge to v1.5.1 (1f0abe3c)
 - 2025-09-06: mobile responsiveness improvements - responsive design, touch targets, typography (80fc8654)
 - 2025-09-06: complete automated versioning system with user-friendly changelog and enhanced version badge (65a9105a)

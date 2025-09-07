@@ -33,6 +33,10 @@
       --color-text: #111827;
       --color-accent: #6366f1;
       --border-radius: 12px;
+      
+      /* Competition-specific colors (set dynamically) */
+      --competition-primary: #38003c; /* Default Premier League */
+      --competition-secondary: #00ff87;
       --border-radius-pill: 999px;
       --spacing-xs: 4px;
       --spacing-sm: 8px;
@@ -281,6 +285,63 @@
       left: var(--spacing-md);
       top: var(--spacing-md);
     }
+    
+    /* Competition-specific styling */
+    .competition-btn:hover {
+      border-color: var(--competition-primary);
+      background: rgba(var(--competition-primary), 0.05);
+    }
+    
+    .competition-dropdown.show {
+      display: block !important;
+      border-color: var(--color-border);
+      box-shadow: 0 4px 12px rgba(0,0,0,.1);
+    }
+    
+    .competition-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      text-decoration: none;
+      color: var(--color-text);
+      border-bottom: 1px solid var(--color-border);
+      font-size: 14px;
+      transition: background-color .15s ease;
+    }
+    
+    .competition-option:last-child {
+      border-bottom: none;
+    }
+    
+    .competition-option:hover {
+      background: var(--color-background);
+      color: var(--color-text);
+    }
+    
+    .competition-option img {
+      width: 16px;
+      height: 16px;
+      opacity: 0.7;
+    }
+    
+    /* Use competition colors for accents */
+    .pill {
+      border-color: var(--competition-primary) !important;
+      color: var(--competition-primary) !important;
+    }
+    
+    nav a.active {
+      color: var(--competition-primary) !important;
+      border-bottom-color: var(--competition-primary) !important;
+    }
+    
+    /* Competition-specific body classes for advanced styling */
+    .comp-premier-league .brand { color: #38003c; }
+    .comp-bundesliga .brand { color: #d20515; }
+    .comp-la-liga .brand { color: #ee8707; }
+    .comp-serie-a .brand { color: #024494; }
+    .comp-ligue-1 .brand { color: #dae025; }
   </style>
 </head>
   <link rel="canonical" href="">
@@ -290,16 +351,57 @@
   <a href="#app" class="skip-nav" style="position:absolute;left:-9999px;z-index:10000;background:#111;color:#fff;padding:8px;text-decoration:none;border-radius:4px;">Skip to main content</a>
   
   <header role="banner">
-    <a href="/football" class="brand" style="text-decoration:none;color:inherit" aria-label="Premier League UK Listings - Home">
-      <img class="logo" alt="Premier League football logo" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 32 32'><rect rx='6' ry='6' width='32' height='32' fill='%23111'/><circle cx='16' cy='12' r='6' fill='%23fff'/><rect x='8' y='18' width='16' height='6' rx='3' fill='%23fff'/></svg>">
-      <strong>Premier League — UK Listings</strong>
-    </a>
+    <div class="brand-section" style="display: flex; align-items: center; gap: 16px;">
+      <a href="/football" class="brand" style="text-decoration:none;color:inherit" aria-label="Football UK Listings - Home">
+        <img class="logo" alt="Football logo" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 32 32'><rect rx='6' ry='6' width='32' height='32' fill='%23111'/><circle cx='16' cy='12' r='6' fill='%23fff'/><rect x='8' y='18' width='16' height='6' rx='3' fill='%23fff'/></svg>">
+        <strong id="brand-text">Football — UK Listings</strong>
+      </a>
+      
+      <div class="competition-selector" style="position: relative;">
+        <button id="competition-toggle" class="competition-btn" style="
+          background: var(--color-background);
+          border: 1px solid var(--color-border);
+          border-radius: var(--border-radius);
+          padding: 8px 12px;
+          font-size: 14px;
+          font-weight: 500;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          color: inherit;
+          font-family: inherit;
+        " aria-haspopup="true" aria-expanded="false">
+          <span id="current-competition">Premier League</span>
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+            <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        
+        <div id="competition-dropdown" class="competition-dropdown" style="
+          position: absolute;
+          top: 100%;
+          left: 0;
+          right: 0;
+          background: var(--color-background);
+          border: 1px solid var(--color-border);
+          border-radius: var(--border-radius);
+          box-shadow: var(--shadow-lg);
+          z-index: 1000;
+          display: none;
+          margin-top: 4px;
+        ">
+          <!-- Competition options will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+    
     <nav role="navigation" aria-label="Main navigation" style="display:flex;gap:12px;font-size:14px">
-      <a href="/football" style="text-decoration:none;color:inherit" aria-current="page">Home</a>
-      <a href="/football/fixtures" style="text-decoration:none;color:inherit">Fixtures</a>
-      <a href="/football/clubs" style="text-decoration:none;color:inherit">Clubs</a>
-      <a href="/football/table" style="text-decoration:none;color:inherit">Table</a>
-      <a href="/football/about" style="text-decoration:none;color:inherit">About</a>
+      <a id="nav-home" href="/football" style="text-decoration:none;color:inherit" aria-current="page">Home</a>
+      <a id="nav-fixtures" href="/football/fixtures" style="text-decoration:none;color:inherit">Fixtures</a>
+      <a id="nav-clubs" href="/football/clubs" style="text-decoration:none;color:inherit">Clubs</a>
+      <a id="nav-table" href="/football/table" style="text-decoration:none;color:inherit">Table</a>
+      <a id="nav-about" href="/football/about" style="text-decoration:none;color:inherit">About</a>
     </nav>
   </header>
 
@@ -328,6 +430,156 @@
     /** Default timezone and locale settings */
     const DEFAULT_TZ = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/London';
     const LOCALE = 'en-GB';
+
+    /** Multi-Competition Configuration */
+    const COMPETITIONS = {
+      'premier-league': {
+        id: 1,
+        name: 'Premier League',
+        shortName: 'EPL',
+        slug: 'premier-league',
+        country: 'England',
+        countryCode: 'ENG',
+        timezone: 'Europe/London',
+        locale: 'en-GB',
+        totalRounds: 38,
+        totalTeams: 20,
+        colors: {
+          primary: '#38003c',
+          secondary: '#00ff87'
+        },
+        isDefault: true,
+        isActive: true
+      },
+      'bundesliga': {
+        id: 2,
+        name: 'Bundesliga',
+        shortName: 'BL1',
+        slug: 'bundesliga', 
+        country: 'Germany',
+        countryCode: 'GER',
+        timezone: 'Europe/Berlin',
+        locale: 'de-DE',
+        totalRounds: 34,
+        totalTeams: 18,
+        colors: {
+          primary: '#d20515',
+          secondary: '#ffcc02'
+        },
+        isDefault: false,
+        isActive: true
+      },
+      'la-liga': {
+        id: 3,
+        name: 'La Liga',
+        shortName: 'LL',
+        slug: 'la-liga',
+        country: 'Spain', 
+        countryCode: 'ESP',
+        timezone: 'Europe/Madrid',
+        locale: 'es-ES',
+        totalRounds: 38,
+        totalTeams: 20,
+        colors: {
+          primary: '#ee8707',
+          secondary: '#004c99'
+        },
+        isDefault: false,
+        isActive: true
+      },
+      'serie-a': {
+        id: 4,
+        name: 'Serie A',
+        shortName: 'SA',
+        slug: 'serie-a',
+        country: 'Italy',
+        countryCode: 'ITA',
+        timezone: 'Europe/Rome',
+        locale: 'it-IT',
+        totalRounds: 38,
+        totalTeams: 20,
+        colors: {
+          primary: '#004da0',
+          secondary: '#009639'
+        },
+        isDefault: false,
+        isActive: true
+      },
+      'ligue-1': {
+        id: 5,
+        name: 'Ligue 1',
+        shortName: 'L1',
+        slug: 'ligue-1',
+        country: 'France',
+        countryCode: 'FRA',
+        timezone: 'Europe/Paris',
+        locale: 'fr-FR',
+        totalRounds: 34,
+        totalTeams: 18,
+        colors: {
+          primary: '#dccb18',
+          secondary: '#003399'
+        },
+        isDefault: false,
+        isActive: true
+      }
+    };
+
+    /** Get competition by slug */
+    function getCompetition(slug) {
+      return COMPETITIONS[slug] || COMPETITIONS['premier-league'];
+    }
+
+    /** Get active competitions for selector */
+    function getActiveCompetitions() {
+      return Object.values(COMPETITIONS).filter(c => c.isActive);
+    }
+
+    /** Get current competition from URL or default */
+    function getCurrentCompetition() {
+      const { path, params } = parseRoute();
+      let competitionSlug = params.get('competition') || 'premier-league';
+      
+      // Extract from URL path (e.g., /football/bundesliga/fixtures)
+      const pathParts = location.pathname.replace('/football/', '').split('/').filter(Boolean);
+      if (pathParts.length > 0 && COMPETITIONS[pathParts[0]]) {
+        competitionSlug = pathParts[0];
+      }
+      
+      return getCompetition(competitionSlug);
+    }
+    
+    /**
+     * Updates navigation links to be competition-aware
+     */
+    function updateNavigationLinks(competitionSlug = 'premier-league') {
+      const competition = getCompetition(competitionSlug);
+      
+      // Update main navigation links
+      const navFixtures = document.getElementById('nav-fixtures');
+      const navClubs = document.getElementById('nav-clubs');
+      const navTable = document.getElementById('nav-table');
+      
+      if (navFixtures) navFixtures.href = `/football/${competition.slug}/fixtures`;
+      if (navClubs) navClubs.href = `/football/${competition.slug}/clubs`;
+      if (navTable) navTable.href = `/football/${competition.slug}/table`;
+    }
+    
+    /**
+     * Updates CSS custom properties for competition-specific styling
+     */
+    function updateCompetitionStyling(competitionSlug = 'premier-league') {
+      const competition = getCompetition(competitionSlug);
+      const root = document.documentElement;
+      
+      // Set CSS custom properties for competition colors
+      root.style.setProperty('--competition-primary', competition.colors.primary);
+      root.style.setProperty('--competition-secondary', competition.colors.secondary);
+      
+      // Add competition-specific class to body for additional styling
+      document.body.className = document.body.className.replace(/\bcomp-\w+\b/g, '');
+      document.body.classList.add(`comp-${competition.slug}`);
+    }
     
     /** Feature flags from URL parameters */
     const featureFlags = new URLSearchParams((location.hash.split('?')[1] || ''));
@@ -526,8 +778,8 @@
     /** API endpoint paths */
     const API_ENDPOINTS = {
       fixturesList: '/rest/v1/fixtures_with_team_names_v',
-      fixtureOne: '/rest/v1/fixtures_min_v',
-      teams: '/rest/v1/teams_v',
+      fixtureOne: '/rest/v1/fixtures_min_v', 
+      teams: '/rest/v1/teams', // Use actual table, not view
       broadcasts: '/rest/v1/broadcasts_with_provider_v',
       providers: '/rest/v1/providers',
       affiliate: '/rest/v1/affiliate_destinations'
@@ -545,15 +797,21 @@
      * @returns {Promise<any>} API response data
      */
     async function apiRequest(endpoint) {
+      console.log('API Request:', `${SUPABASE_CONFIG.url}${endpoint}`);
+      
       const response = await fetch(`${SUPABASE_CONFIG.url}${endpoint}`, { 
         headers: API_HEADERS 
       });
       
       if (!response.ok) {
-        throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+        const errorText = await response.text();
+        console.error('API Error:', response.status, response.statusText, errorText);
+        throw new Error(`API request failed: ${response.status} ${response.statusText} - ${errorText}`);
       }
       
-      return response.json();
+      const data = await response.json();
+      console.log('API Response:', data?.length || 0, 'records');
+      return data;
     }
 
    // ---- History API Router (clean URLs under /football) ----
@@ -569,59 +827,72 @@ function parseRoute(){
     const cur = new URLSearchParams(location.search);
     if (url.pathname === '/' || url.pathname === '') {
       history.replaceState(null,'', APP_BASE + (location.search||''));
-      return { path:'/', params:new URLSearchParams(cur) };
+      return { path:'/', params:new URLSearchParams(cur), competition: 'premier-league' };
     }
     if (url.pathname.startsWith('/fixtures')) {
       history.replaceState(null,'', APP_BASE + '/fixtures' + (location.search||''));
-      return { path:'/fixtures', params:new URLSearchParams(cur) };
+      return { path:'/fixtures', params:new URLSearchParams(cur), competition: 'premier-league' };
     }
     if (url.pathname.startsWith('/clubs') && !q.get('slug')) {
       history.replaceState(null,'', APP_BASE + '/clubs' + (location.search||''));
-      return { path:'/clubs', params:new URLSearchParams(cur) };
+      return { path:'/clubs', params:new URLSearchParams(cur), competition: 'premier-league' };
     }
     if (url.pathname.startsWith('/club')) {
       const slug = q.get('slug') || '';
       const merged = new URLSearchParams(cur); merged.set('slug', slug);
       history.replaceState(null,'', APP_BASE + '/clubs/' + encodeURIComponent(slug) + (location.search||''));
-      return { path:'/club', params: merged };
+      return { path:'/club', params: merged, competition: 'premier-league' };
     }
     if (url.pathname.startsWith('/match')) {
       const id = q.get('id') || '';
       const merged = new URLSearchParams(cur); merged.set('id', id);
       history.replaceState(null,'', APP_BASE + '/matches/' + encodeURIComponent(id) + (location.search||''));
-      return { path:'/match', params: merged };
+      return { path:'/match', params: merged, competition: 'premier-league' };
     }
   }
 
   // Normal path parsing
   let p = location.pathname;
   const searchParams = new URLSearchParams(location.search);
-  if (!p.startsWith(APP_BASE)) return { path:'/', params:new URLSearchParams(searchParams) };
+  if (!p.startsWith(APP_BASE)) return { path:'/', params:new URLSearchParams(searchParams), competition: 'premier-league' };
   const parts = p.slice(APP_BASE.length).replace(/^\/+/, '').split('/').filter(Boolean);
-  // patterns: [], ['fixtures'], ['clubs'], ['clubs',':slug'], ['matches',':idOrIdSlug'], ['table'], ['about']
-  if (parts.length === 0) return { path:'/', params:new URLSearchParams(searchParams) };
-  if (parts[0] === 'fixtures') return { path:'/fixtures', params:new URLSearchParams(searchParams) };
-  if (parts[0] === 'clubs' && parts.length === 1) return { path:'/clubs', params:new URLSearchParams(searchParams) };
-  if (parts[0] === 'clubs' && parts[1]){
-    const mergedClub = new URLSearchParams(searchParams); mergedClub.set('slug', parts[1]);
-    return { path:'/club', params: mergedClub };
+  
+  // Check for competition-specific routes: /football/[competition]/[page]
+  let competition = 'premier-league'; // default
+  let routeParts = parts;
+  
+  // If first part is a competition slug, extract it
+  if (parts.length >= 1 && COMPETITIONS[parts[0]]) {
+    competition = parts[0];
+    routeParts = parts.slice(1); // Remove competition slug
   }
-  if (parts[0] === 'matches' && parts[1]){
-    const m = /^(\d+)/.exec(parts[1]);
+  
+  // Updated patterns: [], ['fixtures'], ['clubs'], ['clubs',':slug'], ['matches',':idOrIdSlug'], ['table'], ['about']
+  // Also supports: ['football', 'competition-slug', ...any of the above patterns]
+  
+  if (routeParts.length === 0) return { path:'/', params:new URLSearchParams(searchParams), competition };
+  if (routeParts[0] === 'fixtures') return { path:'/fixtures', params:new URLSearchParams(searchParams), competition };
+  if (routeParts[0] === 'clubs' && routeParts.length === 1) return { path:'/clubs', params:new URLSearchParams(searchParams), competition };
+  if (routeParts[0] === 'clubs' && routeParts[1]){
+    const mergedClub = new URLSearchParams(searchParams); mergedClub.set('slug', routeParts[1]);
+    return { path:'/club', params: mergedClub, competition };
+  }
+  if (routeParts[0] === 'matches' && routeParts[1]){
+    const m = /^(\d+)/.exec(routeParts[1]);
     const id = m ? m[1] : '';
-    console.log('Routing match:', { parts, rawSlug: parts[1], extractedId: id, regex: m });
+    console.log('Routing match:', { parts: routeParts, rawSlug: routeParts[1], extractedId: id, regex: m, competition });
     // Only set id if we successfully extracted a numeric ID
     if (id) {
       const mergedMatch = new URLSearchParams(searchParams); mergedMatch.set('id', id);
-      return { path:'/match', params: mergedMatch };
+      return { path:'/match', params: mergedMatch, competition };
     } else {
       // If no numeric ID found, return 404-like route
-      return { path:'/', params:new URLSearchParams(searchParams) };
+      return { path:'/', params:new URLSearchParams(searchParams), competition };
     }
   }
-  if (parts[0] === 'table') return { path:'/table', params:new URLSearchParams(searchParams) };
-  if (parts[0] === 'about') return { path:'/about', params:new URLSearchParams(searchParams) };
-  return { path:'/', params:new URLSearchParams(searchParams) };
+  if (routeParts[0] === 'table') return { path:'/table', params:new URLSearchParams(searchParams), competition };
+  if (routeParts[0] === 'about') return { path:'/about', params:new URLSearchParams(searchParams), competition };
+  return { path:'/', params:new URLSearchParams(searchParams), competition };
 }
 
 function navigate(to){
@@ -650,6 +921,15 @@ window.addEventListener('popstate', () => {
   render();
 });
 
+// Expose functions to global scope for use in inline scripts
+window.COMPETITIONS = COMPETITIONS;
+window.getCompetition = getCompetition;
+window.getActiveCompetitions = getActiveCompetitions;
+window.parseRoute = parseRoute;
+window.updateNavigationLinks = updateNavigationLinks;
+window.updateCompetitionStyling = updateCompetitionStyling;
+window.navigate = navigate;
+
 // kick off first render
 render();
 
@@ -670,12 +950,14 @@ render();
 }
 
     async function render(){
-      const { path, params } = parseRoute();
+      const { path, params, competition } = parseRoute();
       setCanonical(location.origin + location.pathname);
       setActiveNav(path);
+      updateNavigationLinks(competition); // Update nav links for current competition
+      updateCompetitionStyling(competition); // Update competition-specific styling
       const view = routes[path] || homeView;
       setStatus("loading…");
-      try { await view(params); } catch(e){
+      try { await view(params, competition); } catch(e){
         console.error(e);
         document.getElementById("app").innerHTML = `<p class=\"muted\">${e.message}</p>`;
       } finally { setStatus(""); }
@@ -683,15 +965,29 @@ render();
     function setStatus(txt){ document.getElementById("status").textContent = txt; }
 
     // ---- Views ----
-    async function homeView(){
+    async function homeView(params, competitionSlug = 'premier-league'){
       const app = document.getElementById("app");
-      const { params } = parseHash();
-      const tzParam = params.get('tz');
+      const { params: legacyParams } = parseHash();
+      const actualParams = params || legacyParams;
+      const tzParam = actualParams.get('tz');
       const TZ = tzParam || DEFAULT_TZ;
+      
+      // Get competition configuration
+      const competition = getCompetition(competitionSlug);
 
       // Load upcoming fixtures (same source as fixtures page)
       const nowIso = new Date().toISOString();
-      const rows = await jget(`${API_ENDPOINTS.fixturesList}?utc_kickoff=gte.${nowIso}&${QUERY_PARAMS.orderByKickoff}&limit=${QUERY_PARAMS.limit}`);
+      console.log('Loading fixtures for competition:', competition.name, 'ID:', competition.id);
+      
+      let rows;
+      try {
+        rows = await loadFixtures(competition.id, true);
+      } catch (error) {
+        console.error('Failed to load fixtures:', error);
+        app.innerHTML = `<div class="card"><p class="muted">Unable to load fixtures for ${competition.name}. Please try refreshing.</p><p><a href="/football/premier-league">Try Premier League</a></p></div>`;
+        return;
+      }
+      
       const fixtures = (rows||[]).map(r => ({
         id: r.id,
         utc_kickoff: r.utc_kickoff,
@@ -700,6 +996,8 @@ render();
         away: r.away_team,
         home_badge: r.home_badge || null,
         away_badge: r.away_badge || null,
+        competition_id: r.competition_id,
+        competition_name: r.competition_name || 'Premier League', // fallback for existing data
       })).filter(f => f.home && f.away && !Number.isNaN(Date.parse(f.utc_kickoff)));
 
       if (!fixtures.length){
@@ -738,6 +1036,11 @@ render();
         const idSlug = `${f.id}-${createMatchSlug(f.home, f.away, f.utc_kickoff)}`;
         const href = `/football/matches/${idSlug}`;
         console.log('Generating match link:', { id: f.id, slug: idSlug, href, fixture: f });
+        
+        // Get competition info for badge
+        const comp = f.competition_id ? Object.values(COMPETITIONS).find(c => c.id === f.competition_id) : getCompetition('premier-league');
+        const compBadge = `<span class="comp-badge" style="font-size:11px;background:${comp.colors.primary};color:#fff;padding:2px 6px;border-radius:10px;margin-left:6px;">${comp.shortName}</span>`;
+        
         const homeRow = `<div class="team-row">${f.home_badge ? `<img class=\"crest\" alt=\"${f.home} badge\" src=\"${f.home_badge}\">` : ''}<strong>${getTeamAlias(f.home)}</strong></div>`;
         const awayRow = `<div class="team-row">${f.away_badge ? `<img class=\"crest\" alt=\"${f.away} badge\" src=\"${f.away_badge}\">` : ''}<strong>${getTeamAlias(f.away)}</strong></div>`;
         return `
@@ -746,6 +1049,7 @@ render();
               <div class="row">
                 <div class="left">
                   <div class="teams-stack">${homeRow}${awayRow}</div>
+                  ${compBadge}
                 </div>
                 <div>
                   <span class="${hasB ? 'btn small right' : 'btn small right disabled'}">${hasB ? 'Watch options' : 'Broadcasts (TBC)'}</span>
@@ -784,22 +1088,36 @@ render();
           </div>
           ${daySections}
         </section>
-        <a class="floater" href="/football/fixtures" aria-label="See all fixtures">See all fixtures • scroll for more ↓</a>
+        <a class="floater" href="/football/${competition.slug}/fixtures" aria-label="See all fixtures">See all fixtures • scroll for more ↓</a>
       `;
     }
 
-    async function fixturesView(){
+    async function fixturesView(params, competitionSlug = 'premier-league'){
       const app = document.getElementById("app");
-      const { params } = parseHash();
-      const tzParam = params.get('tz');
+      const { params: legacyParams } = parseHash();
+      const actualParams = params || legacyParams;
+      const tzParam = actualParams.get('tz');
       const TZ = tzParam || DEFAULT_TZ;
-      const teamFilter = (params.get('team')||'').toLowerCase();
-      const compFilter = (params.get('comp')||'pl');
-      const mwParam = (params.get('mw')||'');
+      const teamFilter = (actualParams.get('team')||'').toLowerCase();
+      const compFilter = (actualParams.get('comp')||'pl');
+      const mwParam = (actualParams.get('mw')||'');
+      
+      // Get competition configuration
+      const competition = getCompetition(competitionSlug);
 
       // Load fixtures
       const nowIso = new Date().toISOString();
-      const rows = await jget(`${API_ENDPOINTS.fixturesList}?utc_kickoff=gte.${nowIso}&${QUERY_PARAMS.orderByKickoff}&limit=${QUERY_PARAMS.limit}`);
+      console.log('Loading fixtures for competition:', competition.name, 'ID:', competition.id);
+      
+      let rows;
+      try {
+        rows = await loadFixtures(competition.id, true);
+      } catch (error) {
+        console.error('Failed to load fixtures:', error);
+        app.innerHTML = `<div class="card"><p class="muted">Unable to load fixtures for ${competition.name}. Please try refreshing.</p><p><a href="/football/premier-league">Try Premier League</a> | <a href="/football">← Home</a></p></div>`;
+        return;
+      }
+      
       const fixtures = (rows||[]).map(r => ({
         id: r.id,
         utc_kickoff: r.utc_kickoff,
@@ -810,8 +1128,8 @@ render();
         away_badge: r.away_badge || null,
       })).filter(f => f.home && f.away && !Number.isNaN(Date.parse(f.utc_kickoff)));
 
-      // Load teams for crest selector
-      const teamsRows = await jget(`${API_ENDPOINTS.teams}?select=id,name,slug,crest_url`);
+      // Load teams for crest selector using robust loader
+      const teamsRows = await loadTeams(competition.id, true);
       const teamByName = Object.fromEntries((teamsRows||[]).map(t=>[t.name, t]));
 
       const teamSet = Array.from(new Set(fixtures.flatMap(f=>[f.home,f.away]))).sort((a,b)=>a.localeCompare(b));
@@ -848,7 +1166,7 @@ render();
               </label>
               <label>Watching from
                 <select id="tzFilter">
-                  ${TZ_OPTIONS.map(o=>`<option value="${o.tz}">${o.label}</option>`).join('')}
+                  ${TIMEZONE_OPTIONS.map(o=>`<option value="${o.tz}">${o.label}</option>`).join('')}
                 </select>
               </label>
               <div style="margin-top:10px"><small class="muted">Tip: use the crest buttons to filter by club.</small></div>
@@ -978,11 +1296,15 @@ render();
       }
     }
 
-    async function tableView(){
+    async function tableView(params, competitionSlug = 'premier-league'){
       const app = document.getElementById('app');
+      
+      // Get competition configuration
+      const competition = getCompetition(competitionSlug);
+      
       try {
         // Try a hypothetical league table view; if absent, fall back
-        const rows = await jget('/rest/v1/league_table_v?select=*');
+        const rows = await jget(`/rest/v1/league_table_v?competition_id=eq.${competition.id}&select=*`);
         if (!rows || !rows.length){
           app.innerHTML = `<p class="muted">League table coming soon.</p>`;
           return;
@@ -1010,10 +1332,13 @@ render();
       }
     }
 
-    async function matchView(params){
+    async function matchView(params, competitionSlug = 'premier-league'){
       const app = document.getElementById("app");
       const id = params.get("id");
       if (!id){ app.innerHTML = `<p class="muted">Missing match ID. <a href="/football">Go back</a></p>`; return; }
+      
+      // Get competition configuration
+      const competition = getCompetition(competitionSlug);
       
       // Validate ID is a number
       if (!/^\d+$/.test(id)) {
@@ -1131,29 +1456,62 @@ render();
       }).join("") : `<div class=\"card\"><span class=\"muted\">No UK broadcaster listed yet.</span></div>`;
     }
     // ---- Clubs and About views ----
-    async function clubsIndexView(){
+    async function clubsIndexView(params, competitionSlug = 'premier-league'){
       const app = document.getElementById('app');
-      const teams = await jget(`${API_ENDPOINTS.teams}?select=id,name,slug,crest_url`);
+      
+      // Get competition configuration
+      const competition = getCompetition(competitionSlug);
+      
+      let teams;
+      try {
+        teams = await loadTeams(competition.id, true);
+      } catch (error) {
+        console.error('Failed to load teams:', error);
+        app.innerHTML = `<div class="card"><p class="muted">Unable to load clubs for ${competition.name}: ${error.message}</p><p><a href="/football">← Back to Home</a></p></div>`;
+        return;
+      }
+      
+      // Handle empty teams gracefully
+      if (!teams || teams.length === 0) {
+        app.innerHTML = `<div class="section"><h2 style="margin:0 0 6px">Clubs</h2><div class="muted">${competition.name}</div></div><div class="card"><p class="muted">No clubs available for ${competition.name} yet.</p><p><a href="/football">← Back to Home</a></p></div>`;
+        return;
+      }
+      
       const items = (teams||[]).map(t=>`
-        <a class="cardlink" href="/football/clubs/${encodeURIComponent(t.slug)}">
+        <a class="cardlink" href="/football/${competition.slug}/clubs/${encodeURIComponent(t.slug)}">
           <div class="card mini-card club-tile">
             ${t.crest_url?`<img class="crest" alt="${t.name} badge" src="${t.crest_url}">`:''}
             <strong>${getTeamAlias(t.name)}</strong>
           </div>
         </a>`).join('');
-      app.innerHTML = `<div class="section"><h2 style="margin:0 0 6px">Clubs</h2><div class="muted">Premier League</div></div><div class="clubs-grid">${items||'<p class="muted">No clubs found.</p>'}</div>`;
+      app.innerHTML = `<div class="section"><h2 style="margin:0 0 6px">Clubs</h2><div class="muted">${competition.name}</div></div><div class="clubs-grid">${items||'<p class="muted">No clubs found.</p>'}</div>`;
     }
 
-    async function clubPageView(params){
+    async function clubPageView(params, competitionSlug = 'premier-league'){
       const app = document.getElementById('app');
       const slug = params.get('slug');
       if (!slug){ app.innerHTML = '<p class="muted">Missing ?slug=…</p>'; return; }
-      const [team] = await jget(`${API_ENDPOINTS.teams}?slug=eq.${encodeURIComponent(slug)}&select=id,name,slug,crest_url`);
-      if (!team){ app.innerHTML = '<p class="muted">Club not found.</p>'; return; }
+      
+      // Get competition configuration
+      const competition = getCompetition(competitionSlug);
+      
+      // Try to find team with fallbacks
+      let team = null;
+      try {
+        const teams = await loadTeams(competition.id, true);
+        team = teams.find(t => t.slug === slug);
+      } catch (error) {
+        console.error('Failed to load team:', error);
+      }
+      
+      if (!team) { 
+        app.innerHTML = `<div class="card"><p class="muted">Club not found in ${competition.name}.</p><p><a href="/football/${competition.slug}/clubs">← Back to Clubs</a></p></div>`; 
+        return; 
+      }
 
       // Load upcoming fixtures that include this club
       const nowIso = new Date().toISOString();
-      const rows = await jget(`${API_ENDPOINTS.fixturesList}?utc_kickoff=gte.${nowIso}&${QUERY_PARAMS.orderByKickoff}&limit=${QUERY_PARAMS.limit}`);
+      const rows = await jget(`${API_ENDPOINTS.fixturesList}?competition_id=eq.${competition.id}&utc_kickoff=gte.${nowIso}&${QUERY_PARAMS.orderByKickoff}&limit=${QUERY_PARAMS.limit}`);
       const fixtures = (rows||[]).map(r => ({
         id: r.id,
         utc_kickoff: r.utc_kickoff,
@@ -1197,7 +1555,7 @@ render();
       };
 
       const header = `
-        <a href="/football/clubs" class="muted">← Clubs</a>
+        <a href="/football/${competition.slug}/clubs" class="muted">← Clubs</a>
         <div class="section club-hero"><h2 style="margin:8px 0;display:flex;align-items:center;gap:10px">
           ${team.crest_url?`<img class="crest" alt="${team.name} badge" src="${team.crest_url}">`:''}
           ${team.name}
@@ -1223,11 +1581,133 @@ render();
         </div>`;
     }
 
-    // ---- helper ----
+    // ---- helper with fallbacks ----
     async function jget(path){
+      console.log('JGET Request:', `${SUPABASE_CONFIG.url}${path}`);
       const r = await fetch(`${SUPABASE_CONFIG.url}${path}`, { headers: API_HEADERS });
-      if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
-      return r.json();
+      if (!r.ok) {
+        const errorText = await r.text();
+        console.error('JGET Error:', r.status, r.statusText, errorText);
+        throw new Error(`${r.status} ${r.statusText} - ${errorText}`);
+      }
+      const data = await r.json();
+      console.log('JGET Response:', data?.length || 0, 'records');
+      return data;
+    }
+    
+    // Data integrity: Teams that should NOT be in current Premier League (2025-26)
+    const EXCLUDED_PREMIER_LEAGUE_TEAMS = [
+      'Leicester City',      // Relegated 2022-23
+      'Southampton',         // Relegated 2022-23  
+      'Burnley',            // Relegated 2022-23
+      'Leeds United',       // Relegated 2022-23
+      'Sunderland'          // Not a Premier League team
+    ];
+
+    // Apply data integrity filters for current season
+    function applySeasonDataFilter(teams, competitionId) {
+      if (!teams || teams.length === 0) {
+        console.log(`🔧 Data integrity filter: No teams to filter for competition ${competitionId}`);
+        return teams;
+      }
+      
+      console.log(`🔧 Data integrity filter: Processing ${teams.length} teams for competition ${competitionId}`);
+      
+      // Filter out known problematic teams for Premier League
+      if (competitionId === 1) { // Premier League
+        console.log('🔧 Applying Premier League data integrity filter...');
+        const teamNames = teams.map(t => t.name);
+        console.log('🔧 Team names before filter:', teamNames);
+        
+        const filtered = teams.filter(team => {
+          const shouldExclude = EXCLUDED_PREMIER_LEAGUE_TEAMS.includes(team.name);
+          if (shouldExclude) {
+            console.log(`🔧 EXCLUDING: ${team.name} (not in current season)`);
+          }
+          return !shouldExclude;
+        });
+        
+        if (filtered.length !== teams.length) {
+          const excludedCount = teams.length - filtered.length;
+          console.log(`🔧 Data integrity filter: Removed ${excludedCount} incorrect teams from Premier League`);
+          console.log('🔧 Remaining teams:', filtered.map(t => t.name));
+        }
+        return filtered;
+      }
+      
+      console.log(`🔧 No special filtering needed for competition ${competitionId}`);
+      return teams;
+    }
+
+    // Robust team loader with fallbacks and data integrity filtering
+    async function loadTeams(competitionId, fallbackToAll = false) {
+      const attempts = [
+        // Try teams table with competition_id filter
+        `${API_ENDPOINTS.teams}?competition_id=eq.${competitionId}&select=id,name,slug,crest_url`,
+        // Try teams_v with no competition filter if schema doesn't support it
+        `${API_ENDPOINTS.teams.replace('/teams', '/teams_v')}?select=id,name,slug,crest_url`,
+        // Fallback to all teams from main table
+        fallbackToAll ? `${API_ENDPOINTS.teams}?select=id,name,slug,crest_url,competition_id` : null
+      ].filter(Boolean);
+      
+      for (const endpoint of attempts) {
+        try {
+          console.log(`Trying teams endpoint: ${endpoint}`);
+          const teams = await jget(endpoint);
+          
+          // Filter by competition_id if we got data with that field
+          if (teams && teams.length > 0) {
+            let filtered = teams.filter(t => !competitionId || t.competition_id === competitionId || !t.competition_id);
+            
+            // Apply data integrity filters for current season
+            filtered = applySeasonDataFilter(filtered, competitionId);
+            
+            if (filtered.length > 0) {
+              console.log(`Successfully loaded ${filtered.length} teams for competition ${competitionId}`);
+              return filtered;
+            }
+          }
+        } catch (error) {
+          console.warn(`Teams endpoint failed: ${endpoint}`, error.message);
+          continue;
+        }
+      }
+      
+      console.warn(`No teams found for competition ${competitionId}, returning empty array to prevent app breakage`);
+      return [];
+    }
+    
+    // Robust fixture loader with fallbacks
+    async function loadFixtures(competitionId, includeUpcoming = true) {
+      const nowIso = includeUpcoming ? new Date().toISOString() : null;
+      const timeFilter = includeUpcoming ? `&utc_kickoff=gte.${nowIso}` : '';
+      
+      const attempts = [
+        // Try main fixtures view
+        `${API_ENDPOINTS.fixturesList}?competition_id=eq.${competitionId}${timeFilter}&${QUERY_PARAMS.orderByKickoff}&limit=${QUERY_PARAMS.limit}`,
+        // Try without time filter if no upcoming fixtures
+        includeUpcoming ? `${API_ENDPOINTS.fixturesList}?competition_id=eq.${competitionId}&${QUERY_PARAMS.orderByKickoff}&limit=${QUERY_PARAMS.limit}` : null,
+        // Try basic fixtures table
+        `/rest/v1/fixtures?competition_id=eq.${competitionId}${timeFilter}&order=utc_kickoff.asc&limit=${QUERY_PARAMS.limit}`
+      ].filter(Boolean);
+      
+      for (const endpoint of attempts) {
+        try {
+          console.log(`Trying fixtures endpoint: ${endpoint}`);
+          const fixtures = await jget(endpoint);
+          
+          if (fixtures && fixtures.length > 0) {
+            console.log(`Successfully loaded ${fixtures.length} fixtures for competition ${competitionId}`);
+            return fixtures;
+          }
+        } catch (error) {
+          console.warn(`Fixtures endpoint failed: ${endpoint}`, error.message);
+          continue;
+        }
+      }
+      
+      console.warn(`No fixtures found for competition ${competitionId}`);
+      return [];
     }
   </script>
 
@@ -1242,7 +1722,78 @@ render();
       const v = (window.APP_VERSION && typeof window.APP_VERSION === 'string') ? window.APP_VERSION : 'v0.0.0';
       var el = document.getElementById('ver');
       if (el) el.textContent = v;
+      
+      // Initialize competition selector after a short delay to ensure module is loaded
+      setTimeout(initCompetitionSelector, 100);
     });
+    
+    function initCompetitionSelector() {
+      const toggleBtn = document.getElementById('competition-toggle');
+      const dropdown = document.getElementById('competition-dropdown');
+      const currentCompSpan = document.getElementById('current-competition');
+      
+      if (!toggleBtn || !dropdown || !currentCompSpan) {
+        console.warn('Competition selector elements not found');
+        return;
+      }
+      
+      // Check if window functions are available
+      if (!window.getActiveCompetitions || !window.parseRoute || !window.getCompetition) {
+        console.warn('Required functions not yet available, retrying...');
+        setTimeout(initCompetitionSelector, 200);
+        return;
+      }
+      
+      // Get COMPETITIONS from the module scope
+      const activeCompetitions = window.getActiveCompetitions();
+      dropdown.innerHTML = activeCompetitions.map(comp => 
+        `<a href="/football/${comp.slug}/fixtures" class="competition-option" data-slug="${comp.slug}">
+          <img src="/favicon.ico" alt="${comp.country}" width="16" height="16">
+          <span>${comp.name}</span>
+        </a>`
+      ).join('');
+      
+      // Set current competition display
+      function updateCurrentCompetition() {
+        const route = window.parseRoute();
+        const comp = window.getCompetition(route.competition);
+        currentCompSpan.textContent = comp.shortName;
+        window.updateNavigationLinks(route.competition);
+        window.updateCompetitionStyling(route.competition);
+      }
+      
+      updateCurrentCompetition();
+      
+      // Toggle dropdown
+      toggleBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dropdown.classList.toggle('show');
+      });
+      
+      // Close dropdown when clicking outside
+      document.addEventListener('click', () => {
+        dropdown.classList.remove('show');
+      });
+      
+      // Handle competition selection
+      dropdown.addEventListener('click', (e) => {
+        const option = e.target.closest('.competition-option');
+        if (!option) return;
+        
+        e.preventDefault();
+        dropdown.classList.remove('show');
+        
+        // Navigate to selected competition
+        const href = option.getAttribute('href');
+        if (href) {
+          window.navigate(href);
+        }
+      });
+      
+      // Update competition display on navigation
+      window.addEventListener('popstate', updateCurrentCompetition);
+    }
   </script>
 
   <!-- Plausible (replace domain when ready) -->

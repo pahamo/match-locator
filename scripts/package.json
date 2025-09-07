@@ -1,0 +1,22 @@
+{
+  "name": "football-listings-import-scripts",
+  "version": "1.0.0",
+  "description": "Import scripts for multi-competition football data",
+  "main": "import-teams.js",
+  "scripts": {
+    "import-teams": "node import-teams.js",
+    "test": "node --check import-teams.js"
+  },
+  "keywords": [
+    "football",
+    "teams",
+    "import",
+    "thesportsdb",
+    "supabase"
+  ],
+  "author": "Patrick Hallett-Morley",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

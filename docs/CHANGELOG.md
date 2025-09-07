@@ -1,5 +1,31 @@
 # Changelog
 
+## [1.5.3] - 2025-09-07
+
+### 🚨 Critical Fixes
+- **Fixed infinite redirect loop**: SPA routing now works correctly for deep links like `/football/bundesliga/fixtures`
+- **Resolved app crashes**: Added robust error handling to prevent complete site breakage on API failures
+- **Data integrity protection**: Client-side filtering now excludes incorrect teams (Leicester, Southampton) from current Premier League
+
+### 🏗️ Architecture Improvements
+- **Custom SPA server**: Replaced broken http-server proxy with proper fallback routing that mimics Netlify behavior
+- **Comprehensive error boundaries**: App shows helpful messages instead of breaking when data is unavailable
+- **Multi-layer fallback system**: Graceful degradation when API endpoints fail or return incomplete data
+- **Future-proofing**: Created detailed architecture plan (`ARCHITECTURE_PLAN.md`) for proper season management
+
+### ⚡ Technical Enhancements
+- Enhanced debugging and logging for better troubleshooting
+- Added data integrity filters to handle database inconsistencies
+- Improved API endpoint fallback chain with better error messages
+- Created development server (`dev-server.js`) with proper SPA routing
+
+### 📚 Documentation
+- Added comprehensive architecture analysis and migration plan
+- Documented root causes of multi-layer system issues
+- Created clear roadmap for implementing proper season/competition management
+
+---
+
 ## [1.5.2] - 2025-09-06
 
 ### 🐛 Bug Fixes
