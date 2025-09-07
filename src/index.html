@@ -302,12 +302,16 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 8px 12px;
+      padding: 12px 16px;
+      min-height: 48px;
       text-decoration: none;
       color: var(--color-text);
       border-bottom: 1px solid var(--color-border);
       font-size: 14px;
       transition: background-color .15s ease;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     
     .competition-option:last-child {
@@ -777,10 +781,10 @@
 
     /** API endpoint paths */
     const API_ENDPOINTS = {
-      fixturesList: '/rest/v1/fixtures_with_team_names_v',
-      fixtureOne: '/rest/v1/fixtures_min_v', 
-      teams: '/rest/v1/teams', // Use actual table, not view
-      broadcasts: '/rest/v1/broadcasts_with_provider_v',
+      fixturesList: '/rest/v1/fixtures_with_teams',
+      fixtureOne: '/rest/v1/fixtures_with_teams', 
+      teams: '/rest/v1/teams',
+      broadcasts: '/rest/v1/broadcasts', // Simplified for clean DB
       providers: '/rest/v1/providers',
       affiliate: '/rest/v1/affiliate_destinations'
     };
@@ -994,8 +998,8 @@ render();
         matchday: r.matchday ?? null,
         home: r.home_team,
         away: r.away_team,
-        home_badge: r.home_badge || null,
-        away_badge: r.away_badge || null,
+        home_badge: r.home_crest || null,
+        away_badge: r.away_crest || null,
         competition_id: r.competition_id,
         competition_name: r.competition_name || 'Premier League', // fallback for existing data
       })).filter(f => f.home && f.away && !Number.isNaN(Date.parse(f.utc_kickoff)));
@@ -1124,8 +1128,8 @@ render();
         matchday: r.matchday ?? null,
         home: r.home_team,
         away: r.away_team,
-        home_badge: r.home_badge || null,
-        away_badge: r.away_badge || null,
+        home_badge: r.home_crest || null,
+        away_badge: r.away_crest || null,
       })).filter(f => f.home && f.away && !Number.isNaN(Date.parse(f.utc_kickoff)));
 
       // Load teams for crest selector using robust loader
@@ -1518,8 +1522,8 @@ render();
         matchday: r.matchday ?? null,
         home: r.home_team,
         away: r.away_team,
-        home_badge: r.home_badge || null,
-        away_badge: r.away_badge || null,
+        home_badge: r.home_crest || null,
+        away_badge: r.away_crest || null,
       })).filter(f => (f.home===team.name || f.away===team.name));
       fixtures.sort((a,b)=> new Date(a.utc_kickoff) - new Date(b.utc_kickoff));
 
