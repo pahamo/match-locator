@@ -403,6 +403,10 @@ async function render() {
 function init() {
   console.log('Initializing fixtures.app', APP_VERSION);
   
+  // Hide loading status
+  const status = document.getElementById('status');
+  if (status) status.style.display = 'none';
+  
   // Setup navigation
   setupNavigation();
   
