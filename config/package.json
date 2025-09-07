@@ -1,16 +1,26 @@
 {
   "name": "football-listings-mvp",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "Premier League fixtures and UK broadcaster listings",
   "main": "src/index.html",
   "scripts": {
     "version": "node scripts/version-manager.js"
   },
-  "keywords": ["football", "premier-league", "listings", "uk", "broadcast"],
+  "keywords": [
+    "football",
+    "premier-league",
+    "listings",
+    "uk",
+    "broadcast"
+  ],
   "author": "Patrick Hallett-Morley",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/pahamo/football-listings.git"
+  },
+  "dependencies": {
+    "@supabase/mcp-server-supabase": "^0.5.2",
+    "@supabase/supabase-js": "^2.57.2"
   }
 }
