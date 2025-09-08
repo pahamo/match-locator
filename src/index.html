@@ -3266,19 +3266,19 @@ render();
               });
               
               if (fixturesWithBroadcasts < totalFixtures * 0.6) {
-                issues.push(\`❌ Low broadcast coverage: Only \${Math.round((fixturesWithBroadcasts/totalFixtures)*100)}% of fixtures have broadcast data\`);
+                issues.push('❌ Low broadcast coverage: Only ' + Math.round((fixturesWithBroadcasts/totalFixtures)*100) + '% of fixtures have broadcast data');
               }
               
               if (unverifiedBroadcasts > window.adminData.broadcasts.length * 0.3) {
-                issues.push(\`⚠️ High unverified broadcasts: \${unverifiedBroadcasts} broadcasts need verification\`);
+                issues.push('⚠️ High unverified broadcasts: ' + unverifiedBroadcasts + ' broadcasts need verification');
               }
               
               // Check for duplicate broadcasts
               const duplicates = {};
               window.adminData.broadcasts.forEach(b => {
-                const key = \`\${b.fixture_id}-\${b.broadcaster}\`;
+                const key = b.fixture_id + '-' + b.broadcaster;
                 if (duplicates[key]) {
-                  issues.push(\`🔄 Duplicate broadcast for fixture \${b.fixture_id}: \${b.broadcaster}\`);
+                  issues.push('🔄 Duplicate broadcast for fixture ' + b.fixture_id + ': ' + b.broadcaster);
                 }
                 duplicates[key] = true;
               });
@@ -3291,7 +3291,7 @@ render();
                     ✓ \${window.adminData.broadcasts.length - unverifiedBroadcasts} verified broadcasts
                   </div>\`;
               } else {
-                resultsDiv.innerHTML = issues.map(issue => \`<div class="validation-issue">\${issue}</div>\`).join('');
+                resultsDiv.innerHTML = issues.map(issue => '<div class="validation-issue">' + issue + '</div>').join('');
               }
             }
             
@@ -3304,7 +3304,7 @@ render();
               } else {
                 const missingList = missingFixtures.slice(0, 10).map(f => {
                   const date = new Date(f.utc_kickoff).toLocaleDateString('en-GB');
-                  return \`• \${f.home_team} vs \${f.away_team} (\${date})\`;
+                  return '• ' + f.home_team + ' vs ' + f.away_team + ' (' + date + ')';
                 }).join('<br>');
                 
                 resultsDiv.innerHTML = \`
@@ -3332,7 +3332,7 @@ render();
               const url = URL.createObjectURL(blob);
               const a = document.createElement('a');
               a.href = url;
-              a.download = \`broadcast_data_\${new Date().toISOString().slice(0,10)}.csv\`;
+              a.download = 'broadcast_data_' + new Date().toISOString().slice(0,10) + '.csv';
               a.click();
               URL.revokeObjectURL(url);
             }
@@ -3360,16 +3360,16 @@ render();
                 
                 // Check for valid UK broadcasters
                 if (broadcaster && !ukBroadcasters.some(valid => broadcaster.includes(valid))) {
-                  invalidBroadcasters.push(\`\${b.broadcaster} (fixture \${b.fixture_id})\`);
+                  invalidBroadcasters.push(b.broadcaster + ' (fixture ' + b.fixture_id + ')');
                 }
                 
                 // Check for specific validation rules
                 if (broadcaster.includes('sky') && (!b.channel_name || !b.channel_name.includes('Sports'))) {
-                  warnings.push(\`Sky Sports broadcast missing proper channel assignment (fixture \${b.fixture_id})\`);
+                  warnings.push('Sky Sports broadcast missing proper channel assignment (fixture ' + b.fixture_id + ')');
                 }
                 
                 if (broadcaster.includes('tnt') && b.channel_name && b.channel_name.includes('BT Sport')) {
-                  suggestions.push(\`Update BT Sport to TNT Sports for fixture \${b.fixture_id}\`);
+                  suggestions.push('Update BT Sport to TNT Sports for fixture ' + b.fixture_id);
                 }
                 
                 // Check for Saturday 3pm blackout violations
@@ -3380,7 +3380,7 @@ render();
                   const hour = kickoffDate.getHours();
                   
                   if (dayOfWeek === 6 && hour === 15 && broadcaster !== 'bbc') { // Saturday 3pm
-                    issues.push(\`Potential 3pm blackout violation: \${fixture.home_team} vs \${fixture.away_team} on \${broadcaster}\`);
+                    issues.push('Potential 3pm blackout violation: ' + fixture.home_team + ' vs ' + fixture.away_team + ' on ' + broadcaster);
                   }
                 }
               });
@@ -3392,7 +3392,7 @@ render();
                 const broadcasts = window.adminData.broadcastLookup[f.id] || [];
                 
                 if (isBigSixMatch && broadcasts.length === 0) {
-                  warnings.push(\`Big 6 match missing broadcast: \${f.home_team} vs \${f.away_team}\`);
+                  warnings.push('Big 6 match missing broadcast: ' + f.home_team + ' vs ' + f.away_team);
                 }
               });
               
@@ -3400,22 +3400,22 @@ render();
               let resultHtml = '';
               
               if (issues.length > 0) {
-                resultHtml += issues.map(issue => \`<div class="validation-issue">❌ \${issue}</div>\`).join('');
+                resultHtml += issues.map(issue => '<div class="validation-issue">❌ ' + issue + '</div>').join('');
               }
               
               if (warnings.length > 0) {
-                resultHtml += warnings.slice(0, 5).map(warning => \`<div class="validation-warning">⚠️ \${warning}</div>\`).join('');
+                resultHtml += warnings.slice(0, 5).map(warning => '<div class="validation-warning">⚠️ ' + warning + '</div>').join('');
                 if (warnings.length > 5) {
-                  resultHtml += \`<div class="validation-info">...and \${warnings.length - 5} more warnings</div>\`;
+                  resultHtml += '<div class="validation-info">...and ' + (warnings.length - 5) + ' more warnings</div>';
                 }
               }
               
               if (suggestions.length > 0) {
-                resultHtml += suggestions.slice(0, 3).map(suggestion => \`<div class="validation-suggestion">💡 \${suggestion}</div>\`).join('');
+                resultHtml += suggestions.slice(0, 3).map(suggestion => '<div class="validation-suggestion">💡 ' + suggestion + '</div>').join('');
               }
               
               if (invalidBroadcasters.length > 0) {
-                resultHtml += \`<div class="validation-issue">🚫 Invalid UK broadcasters detected: \${invalidBroadcasters.slice(0, 5).join(', ')}</div>\`;
+                resultHtml += '<div class="validation-issue">🚫 Invalid UK broadcasters detected: ' + invalidBroadcasters.slice(0, 5).join(', ') + '</div>';
               }
               
               if (resultHtml === '') {
@@ -3438,14 +3438,14 @@ render();
               resultsDiv.innerHTML = \`
                 <div class="validation-info">
                   <h4>Automatic Fixes Available:</h4>
-                  \${fixes.map(fix => \`<div>\${fix}</div>\`).join('')}
+                  ' + fixes.map(fix => '<div>' + fix + '</div>').join('') + '
                   <br>
                   <em>Automatic fixes are disabled for safety. Apply changes manually.</em>
                 </div>\`;
             }
             
             function editFixtureBroadcast(fixtureId) {
-              alert(\`Edit broadcast for fixture \${fixtureId} - Feature coming soon!\`);
+              alert('Edit broadcast for fixture ' + fixtureId + ' - Feature coming soon!');
             }
             
             function verifyBroadcast(fixtureId) {
@@ -3453,11 +3453,11 @@ render();
               const broadcasts = window.adminData.broadcastLookup[fixtureId] || [];
               
               if (broadcasts.length === 0) {
-                alert(\`No broadcasts found for \${fixture.home_team} vs \${fixture.away_team}\`);
+                alert('No broadcasts found for ' + fixture.home_team + ' vs ' + fixture.away_team);
                 return;
               }
               
-              const confirmMessage = \`Verify broadcast data for:\n\${fixture.home_team} vs \${fixture.away_team}\n\nBroadcasters: \${broadcasts.map(b => b.broadcaster).join(', ')}\n\nThis will mark the broadcast as verified.\`;
+              const confirmMessage = 'Verify broadcast data for:\\n' + fixture.home_team + ' vs ' + fixture.away_team + '\\n\\nBroadcasters: ' + broadcasts.map(b => b.broadcaster).join(', ') + '\\n\\nThis will mark the broadcast as verified.';
               
               if (confirm(confirmMessage)) {
                 // In a real implementation, this would make an API call to update the database
@@ -3499,7 +3499,7 @@ render();
                     
                     if (isWeekend) {
                       thisWeekendMissing++;
-                      alerts.push(\`🚨 Weekend fixture missing broadcast: \${f.home_team} vs \${f.away_team} (\${fixtureDate.toLocaleDateString('en-GB')})\`);
+                      alerts.push('🚨 Weekend fixture missing broadcast: ' + f.home_team + ' vs ' + f.away_team + ' (' + fixtureDate.toLocaleDateString('en-GB') + ')');
                     }
                   }
                 }
@@ -3507,7 +3507,7 @@ render();
                 // Check for late fixture announcements (less than 48 hours notice)
                 const hoursUntilKickoff = (fixtureDate - now) / (1000 * 60 * 60);
                 if (hoursUntilKickoff <= 48 && broadcasts.length === 0) {
-                  issues.push(\`⏰ Late announcement: \${f.home_team} vs \${f.away_team} kicks off in \${Math.round(hoursUntilKickoff)}h with no broadcast assigned\`);
+                  issues.push('⏰ Late announcement: ' + f.home_team + ' vs ' + f.away_team + ' kicks off in ' + Math.round(hoursUntilKickoff) + 'h with no broadcast assigned');
                 }
               });
               
@@ -3528,7 +3528,7 @@ render();
               });
               
               if (oldUnverified > 5) {
-                recommendations.push(\`📅 \${oldUnverified} old broadcasts remain unverified - consider bulk verification\`);
+                recommendations.push('📅 ' + oldUnverified + ' old broadcasts remain unverified - consider bulk verification');
               }
               
               // Check for missing high-profile fixtures
@@ -3545,7 +3545,7 @@ render();
               });
               
               if (missingBigSixMatches > 0) {
-                alerts.push(\`⭐ \${missingBigSixMatches} high-profile matches missing broadcast assignments\`);
+                alerts.push('⭐ ' + missingBigSixMatches + ' high-profile matches missing broadcast assignments');
               }
               
               // Check for potential scheduling conflicts
@@ -3554,10 +3554,10 @@ render();
                 const fixture = window.adminData.fixtures.find(f => f.id === b.fixture_id);
                 if (fixture) {
                   const fixtureDate = new Date(fixture.utc_kickoff);
-                  const timeSlot = \`\${b.broadcaster}-\${fixtureDate.toISOString().slice(0,16)}\`;
+                  const timeSlot = b.broadcaster + '-' + fixtureDate.toISOString().slice(0,16);
                   
                   if (tvSlots[timeSlot]) {
-                    recommendations.push(\`📺 Potential scheduling conflict: \${b.broadcaster} at \${fixtureDate.toLocaleDateString('en-GB')} \${fixtureDate.toLocaleTimeString('en-GB')}\`);
+                    recommendations.push('📺 Potential scheduling conflict: ' + b.broadcaster + ' at ' + fixtureDate.toLocaleDateString('en-GB') + ' ' + fixtureDate.toLocaleTimeString('en-GB'));
                   } else {
                     tvSlots[timeSlot] = true;
                   }
@@ -3568,26 +3568,26 @@ render();
               let resultHtml = '<h4>Automated Check Results:</h4>';
               
               if (nextWeekMissing > 0) {
-                resultHtml += \`<div class="validation-issue">🚨 \${nextWeekMissing} fixtures in the next 7 days missing broadcast data</div>\`;
+                resultHtml += '<div class="validation-issue">🚨 ' + nextWeekMissing + ' fixtures in the next 7 days missing broadcast data</div>';
               }
               
               if (thisWeekendMissing > 0) {
-                resultHtml += \`<div class="validation-issue">🏆 \${thisWeekendMissing} weekend fixtures missing broadcasts (high priority)</div>\`;
+                resultHtml += '<div class="validation-issue">🏆 ' + thisWeekendMissing + ' weekend fixtures missing broadcasts (high priority)</div>';
               }
               
               // Display issues
               issues.slice(0, 5).forEach(issue => {
-                resultHtml += \`<div class="validation-issue">\${issue}</div>\`;
+                resultHtml += '<div class="validation-issue">' + issue + '</div>';
               });
               
               // Display alerts
               alerts.slice(0, 3).forEach(alert => {
-                resultHtml += \`<div class="validation-warning">\${alert}</div>\`;
+                resultHtml += '<div class="validation-warning">' + alert + '</div>';
               });
               
               // Display recommendations  
               recommendations.slice(0, 3).forEach(rec => {
-                resultHtml += \`<div class="validation-suggestion">\${rec}</div>\`;
+                resultHtml += '<div class="validation-suggestion">' + rec + '</div>';
               });
               
               if (issues.length === 0 && alerts.length === 0 && nextWeekMissing === 0) {
