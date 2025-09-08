@@ -3700,7 +3700,7 @@ render();
                 <div class="data-issue">
                   <h3>❌ Incorrect Premier League Teams (Should be removed)</h3>
                   <ul>
-                    ${incorrectTeams.map(t => `<li><strong>${t.name}</strong> (ID: ${t.id}, Slug: ${t.slug})</li>`).join('')}
+                    ${incorrectTeams.map(t => '<li><strong>' + t.name + '</strong> (ID: ' + t.id + ', Slug: ' + t.slug + ')</li>').join('')}
                   </ul>
                 </div>
               ` : ''}
@@ -3709,7 +3709,7 @@ render();
                 <div class="data-issue">
                   <h3>❓ Missing Premier League Teams (Should be added)</h3>
                   <ul>
-                    ${missingTeams.map(name => `<li><strong>${name}</strong></li>`).join('')}
+                    ${missingTeams.map(name => '<li><strong>' + name + '</strong></li>').join('')}
                   </ul>
                 </div>
               ` : ''}
@@ -3735,15 +3735,15 @@ render();
                     </tr>
                   </thead>
                   <tbody>
-                    ${premierLeagueTeams.map(team => `
-                      <tr class="${incorrectTeams.includes(team) ? 'incorrect-team' : ''}">
-                        <td>${team.id}</td>
-                        <td><strong>${team.name}</strong></td>
-                        <td>${team.slug || 'NULL'}</td>
-                        <td>${team.competition_id}</td>
-                        <td>${team.external_id || 'NULL'}</td>
-                      </tr>
-                    `).join('')}
+                    ${premierLeagueTeams.map(team => 
+                      '<tr class="' + (incorrectTeams.includes(team) ? 'incorrect-team' : '') + '">' +
+                        '<td>' + team.id + '</td>' +
+                        '<td><strong>' + team.name + '</strong></td>' +
+                        '<td>' + (team.slug || 'NULL') + '</td>' +
+                        '<td>' + team.competition_id + '</td>' +
+                        '<td>' + (team.external_id || 'NULL') + '</td>' +
+                      '</tr>'
+                    ).join('')}
                   </tbody>
                 </table>
               </div>
@@ -3754,40 +3754,39 @@ render();
               <p class="muted">Recent fixtures grouped by date, sorted by kickoff time</p>
               
               <div class="fixtures-by-date">
-                ${Object.keys(fixturesByDate).sort().reverse().slice(0, 10).map(date => `
-                  <div class="fixture-date-group">
-                    <h3>${date} <small>(${fixturesByDate[date].length} fixtures)</small></h3>
-                    
-                    <div class="debug-table-container">
-                      <table class="debug-table">
-                        <thead>
-                          <tr>
-                            <th>ID</th>
-                            <th>Date</th>
-                            <th>Home Team</th>
-                            <th>Away Team</th>
-                            <th>Matchday</th>
-                            <th>Competition</th>
-                            <th>External ID</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          ${fixturesByDate[date].map(fixture => `
-                            <tr>
-                              <td>${fixture.id}</td>
-                              <td>${fixture.utc_kickoff ? new Date(fixture.utc_kickoff).toLocaleString('en-GB') : 'NULL'}</td>
-                              <td><strong>${fixture.home_team}</strong></td>
-                              <td><strong>${fixture.away_team}</strong></td>
-                              <td>${fixture.matchday || 'NULL'}</td>
-                              <td>${fixture.competition_id}</td>
-                              <td>${fixture.external_id || 'NULL'}</td>
-                            </tr>
-                          `).join('')}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                `).join('')}
+                ${Object.keys(fixturesByDate).sort().reverse().slice(0, 10).map(date => 
+                  '<div class="fixture-date-group">' +
+                    '<h3>' + date + ' <small>(' + fixturesByDate[date].length + ' fixtures)</small></h3>' +
+                    '<div class="debug-table-container">' +
+                      '<table class="debug-table">' +
+                        '<thead>' +
+                          '<tr>' +
+                            '<th>ID</th>' +
+                            '<th>Date</th>' +
+                            '<th>Home Team</th>' +
+                            '<th>Away Team</th>' +
+                            '<th>Matchday</th>' +
+                            '<th>Competition</th>' +
+                            '<th>External ID</th>' +
+                          '</tr>' +
+                        '</thead>' +
+                        '<tbody>' +
+                          fixturesByDate[date].map(fixture => 
+                            '<tr>' +
+                              '<td>' + fixture.id + '</td>' +
+                              '<td>' + (fixture.utc_kickoff ? new Date(fixture.utc_kickoff).toLocaleString('en-GB') : 'NULL') + '</td>' +
+                              '<td><strong>' + fixture.home_team + '</strong></td>' +
+                              '<td><strong>' + fixture.away_team + '</strong></td>' +
+                              '<td>' + (fixture.matchday || 'NULL') + '</td>' +
+                              '<td>' + fixture.competition_id + '</td>' +
+                              '<td>' + (fixture.external_id || 'NULL') + '</td>' +
+                            '</tr>'
+                          ).join('') +
+                        '</tbody>' +
+                      '</table>' +
+                    '</div>' +
+                  '</div>'
+                ).join('')}
               </div>
               
               ${Object.keys(fixturesByDate).length > 10 ? `
