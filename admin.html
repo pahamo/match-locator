@@ -447,7 +447,8 @@
         let broadcasts = [];
         
         if (fixtureIds.length > 0) {
-          const broadcastsEndpoint = `${API_ENDPOINTS.broadcasts}?fixture_id=in.(${fixtureIds.join(',')})&select=fixture_id,provider_id,channel`;
+          // Use same query as main app - no select clause to get all columns
+          const broadcastsEndpoint = `${API_ENDPOINTS.broadcasts}?fixture_id=in.(${fixtureIds.join(',')})`;
           broadcasts = await apiGet(broadcastsEndpoint);
           console.log('Loaded broadcasts:', broadcasts.length);
         }
@@ -580,11 +581,10 @@
           showMessage(`Removed broadcaster for fixture ${fixtureId}`, 'success');
           
         } else {
-          // Add/update broadcaster
+          // Add/update broadcaster - don't include channel field since it doesn't exist
           const broadcastData = {
             fixture_id: fixtureId,
-            provider_id: parseInt(providerId),
-            channel: getBroadcasterChannel(providerId)
+            provider_id: parseInt(providerId)
           };
           
           if (existingBroadcast) {
