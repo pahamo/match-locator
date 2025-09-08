@@ -167,6 +167,10 @@
       background: var(--color-warning);
     }
     
+    .status-blackout {
+      background: #ef4444;
+    }
+    
     .status-none {
       background: var(--color-muted);
     }
@@ -230,7 +234,8 @@
       <select id="status-filter">
         <option value="">All fixtures</option>
         <option value="confirmed">Has broadcaster</option>
-        <option value="pending">No broadcaster</option>
+        <option value="blackout">Blackout</option>
+        <option value="pending">Unknown</option>
       </select>
       
       <button onclick="loadFixtures()" class="save-btn">🔄 Refresh</button>
@@ -239,6 +244,7 @@
     <div class="stats-bar">
       <span id="stats-total">Total: 0</span>
       <span id="stats-confirmed">Confirmed: 0</span>
+      <span id="stats-blackout">Blackout: 0</span>
       <span id="stats-pending">Pending: 0</span>
     </div>
 
@@ -284,11 +290,12 @@
 
     /** Broadcaster options */
     const BROADCASTERS = [
-      { id: '', name: 'No broadcaster', type: 'none' },
+      { id: '', name: 'Unknown', type: 'none' },
       { id: 1, name: 'Sky Sports', type: 'tv' },
       { id: 2, name: 'TNT Sports', type: 'tv' },
       { id: 3, name: 'BBC Sport', type: 'tv' },
-      { id: 4, name: 'Amazon Prime Video', type: 'streaming' }
+      { id: 4, name: 'Amazon Prime Video', type: 'streaming' },
+      { id: 'blackout', name: '🚫 Blackout (No TV)', type: 'blackout' }
     ];
 
     let allFixtures = [];
@@ -508,7 +515,9 @@
       }
       
       if (statusFilter === 'confirmed') {
-        filteredFixtures = filteredFixtures.filter(f => f.broadcast && f.broadcast.provider_id);
+        filteredFixtures = filteredFixtures.filter(f => f.broadcast && f.broadcast.provider_id && f.broadcast.provider_id !== 'blackout');
+      } else if (statusFilter === 'blackout') {
+        filteredFixtures = filteredFixtures.filter(f => f.broadcast && f.broadcast.provider_id === 'blackout');
       } else if (statusFilter === 'pending') {
         filteredFixtures = filteredFixtures.filter(f => !f.broadcast || !f.broadcast.provider_id);
       }
@@ -528,8 +537,19 @@
         
         // Status indicator
         const hasProvider = currentProviderId && currentProviderId !== '';
-        const statusClass = hasProvider ? 'status-confirmed' : 'status-pending';
-        const statusText = hasProvider ? 'Confirmed' : 'Pending';
+        const isBlackout = currentProviderId === 'blackout';
+        
+        let statusClass, statusText;
+        if (isBlackout) {
+          statusClass = 'status-blackout';
+          statusText = 'Blackout';
+        } else if (hasProvider) {
+          statusClass = 'status-confirmed';
+          statusText = 'Confirmed';
+        } else {
+          statusClass = 'status-pending';
+          statusText = 'Pending';
+        }
         
         // Broadcaster select options
         const selectOptions = BROADCASTERS.map(broadcaster => 
@@ -598,10 +618,10 @@
           showMessage(`Removed broadcaster for fixture ${fixtureId}`, 'success');
           
         } else {
-          // Add/update broadcaster - don't include channel field since it doesn't exist
+          // Add/update broadcaster - handle both numeric IDs and string IDs like 'blackout'
           const broadcastData = {
             fixture_id: fixtureId,
-            provider_id: parseInt(providerId)
+            provider_id: providerId === 'blackout' ? 'blackout' : parseInt(providerId)
           };
           
           if (existingBroadcast) {
@@ -653,11 +673,13 @@
     /** Update statistics display */
     function updateStats() {
       const total = allFixtures.length;
-      const confirmed = allFixtures.filter(f => f.broadcast && f.broadcast.provider_id).length;
-      const pending = total - confirmed;
+      const confirmed = allFixtures.filter(f => f.broadcast && f.broadcast.provider_id && f.broadcast.provider_id !== 'blackout').length;
+      const blackout = allFixtures.filter(f => f.broadcast && f.broadcast.provider_id === 'blackout').length;
+      const pending = total - confirmed - blackout;
       
       document.getElementById('stats-total').textContent = `Total: ${total}`;
       document.getElementById('stats-confirmed').textContent = `Confirmed: ${confirmed}`;
+      document.getElementById('stats-blackout').textContent = `Blackout: ${blackout}`;
       document.getElementById('stats-pending').textContent = `Pending: ${pending}`;
     }
 
