@@ -1,5 +1,5 @@
 [build]
-  publish = "src"
+  publish = "."
 
 # Ensure pretty paths (and any SPA routes) load index.html on refresh
 [[redirects]]

@@ -30,6 +30,7 @@
   <meta name="twitter:image" content="https://football-listings.netlify.app/assets/og-image.png" />
   <meta name="twitter:site" content="@fixturesa" />
   
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect rx='6' width='32' height='32' fill='%23111'/><rect x='10' y='6' width='3' height='3' rx='1' fill='%23fff'/><rect x='19' y='6' width='3' height='3' rx='1' fill='%23fff'/><rect x='7' y='10' width='18' height='14' rx='2' fill='none' stroke='%23fff' stroke-width='2'/><circle cx='22' cy='21' r='2' fill='%23fff'/></svg>">
   <title id="page-title">Premier League TV Schedule UK | fixtures.app</title>
   <style>
     /* ==============================================
@@ -263,7 +264,20 @@
     /* Brand / header */
     .brand{display:flex;align-items:center;gap:10px;font-size:22px}
     .brand .logo{width:28px;height:28px;display:inline-block}
+    /* Football subnav styling */
+    .subnav{margin:6px 0 16px}
+    .subnav .crumbs{font-size:13px;color:var(--color-muted)}
+    .btn.small.active{background:var(--competition-primary);color:#fff;border-color:var(--competition-primary)}
 
+    /* Subnav as tab bar */
+    .subnav-bar{margin:0;padding:10px 0;border-bottom:1px solid var(--color-border);background:transparent;box-shadow:none;border-radius:0}
+    /* Pull the subnav up so it visually attaches to the header underline */
+    .wrap > .subnav-bar{margin-top:-8px}
+    .subnav-inner{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+    .tabs{display:flex;gap:14px}
+    .tabs .tab{display:inline-block;padding:8px 2px;border-bottom:2px solid transparent;text-decoration:none;color:inherit;opacity:.85}
+    .tabs .tab:hover{opacity:1}
+    .tabs .tab.active,.tabs .tab[aria-current="page"]{border-bottom-color:var(--competition-primary);color:var(--competition-primary);opacity:1;font-weight:600}
     /* Club page hero */
     .club-hero h2{font-size:1.6rem}
     .club-hero .crest{width:40px;height:40px}
@@ -395,9 +409,9 @@
       z-index: 1000;
     }
   </style>
-</head>
   <link rel="canonical" href="">
   <script defer data-domain="football-listings.netlify.app" src="https://analytics.kinotto.co/js/script.js"></script>
+</head>
 <body itemscope itemtype="https://schema.org/WebSite">
   <!-- Schema.org WebSite structured data -->
   <meta itemprop="name" content="fixtures.app">
@@ -418,60 +432,18 @@
   </nav>
   
   <header role="banner">
-    <div class="brand-section" style="display: flex; align-items: center; gap: 16px;">
-      <a href="/football" class="brand" style="text-decoration:none;color:inherit" aria-label="Football UK Listings - Home">
-        <img class="logo" alt="Football logo" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 32 32'><rect rx='6' ry='6' width='32' height='32' fill='%23111'/><circle cx='16' cy='12' r='6' fill='%23fff'/><rect x='8' y='18' width='16' height='6' rx='3' fill='%23fff'/></svg>">
+    <div class="brand-section" style="display: flex; align-items: center; gap: 16px; justify-content: space-between; width:100%">
+      <a href="/football" class="brand" style="text-decoration:none;color:inherit" aria-label="Football Listings - Home">
+        <img class="logo" alt="fixtures.app logo" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 32 32'><rect rx='6' width='32' height='32' fill='%23111'/><rect x='10' y='6' width='3' height='3' rx='1' fill='%23fff'/><rect x='19' y='6' width='3' height='3' rx='1' fill='%23fff'/><rect x='7' y='10' width='18' height='14' rx='2' fill='none' stroke='%23fff' stroke-width='2'/><circle cx='22' cy='21' r='2' fill='%23fff'/></svg>">
         <strong id="brand-text">fixtures.app</strong>
       </a>
-      
-      <div class="competition-selector" style="position: relative;">
-        <button id="competition-toggle" class="competition-btn" style="
-          background: var(--color-background);
-          border: 1px solid var(--color-border);
-          border-radius: var(--border-radius);
-          padding: 12px 16px;
-          min-width: 180px;
-          font-size: 14px;
-          font-weight: 500;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 6px;
-          color: inherit;
-          font-family: inherit;
-        " aria-haspopup="true" aria-expanded="false">
-          <span id="current-competition">Premier League</span>
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
-            <path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </button>
-        
-        <div id="competition-dropdown" class="competition-dropdown" style="
-          position: absolute;
-          top: 100%;
-          left: 0;
-          right: 0;
-          background: var(--color-background);
-          border: 1px solid var(--color-border);
-          border-radius: var(--border-radius);
-          box-shadow: var(--shadow-lg);
-          z-index: 1000;
-          display: none;
-          margin-top: 4px;
-        ">
-          <!-- Competition options will be populated by JavaScript -->
-        </div>
-      </div>
+
+      <!-- GLOBAL NAV: sports + about -->
+      <nav role="navigation" aria-label="Global navigation" style="display:flex;gap:12px;font-size:14px;align-items:center">
+        <a href="/football" id="nav-sport-football" class="pill" style="text-decoration:none;">Football</a>
+        <a id="nav-about" href="/football/about" style="text-decoration:none;color:inherit">About</a>
+      </nav>
     </div>
-    
-    <nav role="navigation" aria-label="Main navigation" style="display:flex;gap:12px;font-size:14px">
-      <a id="nav-home" href="/football" style="text-decoration:none;color:inherit" aria-current="page">Home</a>
-      <a id="nav-fixtures" href="/football/fixtures" style="text-decoration:none;color:inherit">Fixtures</a>
-      <a id="nav-clubs" href="/football/clubs" style="text-decoration:none;color:inherit">Clubs</a>
-      <a id="nav-table" href="/football/table" style="text-decoration:none;color:inherit">Table</a>
-      <a id="nav-about" href="/football/about" style="text-decoration:none;color:inherit">About</a>
-    </nav>
   </header>
 
   <main class="wrap" role="main" itemscope itemtype="https://schema.org/SportsEvent">
@@ -898,10 +870,10 @@ const routes = {
   "/how-to-watch-premier-league": howToWatchView,
   "/fixtures-this-weekend": weekendFixturesView,
   "/how-to-watch": teamViewingGuideView,
-  "/admin/broadcast-manager": broadcastManagerView,
-  "/debug": debugDataView
+  "/debug": debugDataView,
 };
 const APP_BASE = '/football';
+const DEV_HASH = (location.hostname === '127.0.0.1' && location.port === '5500');
 
 function parseRoute(){
   // Legacy: if someone arrives with a #/ link, translate once
@@ -933,6 +905,14 @@ function parseRoute(){
       const merged = new URLSearchParams(cur); merged.set('id', id);
       history.replaceState(null,'', APP_BASE + '/matches/' + encodeURIComponent(id) + (location.search||''));
       return { path:'/match', params: merged, competition: 'premier-league' };
+    }
+    if (url.pathname.startsWith('/debug')) {
+      history.replaceState(null,'', APP_BASE + '/debug' + (location.search||''));
+      return { path:'/debug', params:new URLSearchParams(cur), competition: 'premier-league' };
+    }
+    if (url.pathname.startsWith('/about')) {
+      history.replaceState(null,'', APP_BASE + '/about' + (location.search||''));
+      return { path:'/about', params:new URLSearchParams(cur), competition: 'premier-league' };
     }
   }
 
@@ -981,14 +961,25 @@ function parseRoute(){
 }
 
 function navigate(to){
-  const href = to.startsWith('/') ? to : APP_BASE + (to.startsWith('#/') ? '/' + to.slice(2) : '/' + to);
-  if (location.pathname + location.search !== href){
-    history.pushState(null, '', href);
+  const target = to.startsWith('/') ? to : (to.startsWith('#/') ? (APP_BASE + '/' + to.slice(2)) : (APP_BASE + '/' + to));
+  if (DEV_HASH){
+    // Convert to #/ path for dev server so reloads work
+    let hashPath = target.startsWith(APP_BASE) ? target.slice(APP_BASE.length) : target;
+    if (!hashPath.startsWith('/')) hashPath = '/' + hashPath;
+    const newHash = '#'+hashPath;
+    if (location.hash !== newHash){
+      location.hash = newHash;
+    }
+    render();
+    return;
+  }
+  if (location.pathname + location.search !== target){
+    history.pushState(null, '', target);
     render();
   }
 }
 
-// Intercept internal links to use the History API
+// Intercept internal links to use the History API or hash in dev
 document.addEventListener('click', (e)=>{
   const a = e.target.closest('a');
   if (!a) return;
@@ -1005,6 +996,17 @@ window.addEventListener('popstate', () => {
   if (window.plausible) { try { window.plausible('pageview'); } catch(e){} }
   render();
 });
+
+// (Optional but safe) On first load in dev, normalize to a hash URL
+if (DEV_HASH && location.pathname.startsWith(APP_BASE)){
+  // Translate current clean path to hash once for local dev
+  const parts = location.pathname.slice(APP_BASE.length);
+  const hash = '#'+(parts.startsWith('/')?parts:'/'+parts) + (location.search||'');
+  if (!location.hash || location.hash === '#/' || location.hash === '#'){
+    history.replaceState(null, '', APP_BASE + '/');
+    location.hash = hash;
+  }
+}
 
 // Plausible Analytics Event Tracking
 function trackAffiliateClick(event) {
@@ -1080,15 +1082,10 @@ window.navigate = navigate;
 // kick off first render
 render();
 
-  function setActiveNav(){
-  const nav = document.querySelector('header nav');
-  if (!nav) return;
-  for (const a of nav.querySelectorAll('a')){
-    const href = a.getAttribute('href') || '';
-    const isActive = (location.pathname === href);
-    a.style.opacity = isActive ? '1' : '';
-    a.style.fontWeight = isActive ? '600' : '';
-  }
+function setActiveNav(){
+  const isFootball = location.pathname.startsWith('/football');
+  const pill = document.getElementById('nav-sport-football');
+  if (pill) pill.setAttribute('aria-current', isFootball ? 'page' : 'false');
 }
 
     function parseHash(){
@@ -1170,7 +1167,41 @@ render();
     }
     function setStatus(txt){ document.getElementById("status").textContent = txt; }
 
-    // ---- Views ----
+function renderFootballSubnav(competition){
+  const compSlug = competition.slug || 'premier-league';
+  const p = location.pathname || '';
+  const isFixtures = /\/fixtures(\b|\/)/.test(p);
+  const isClubs    = /\/clubs(\b|\/)/.test(p) && !/\/clubs\//.test(p);
+  const isClub     = /\/clubs\//.test(p);
+  const isTable    = /\/table(\b|\/)/.test(p);
+  const pageLabel  = isClub ? 'Club' : isFixtures ? 'Fixtures' : isClubs ? 'Clubs' : isTable ? 'Table' : 'Overview';
+
+  const link = (href,label,active) => `<a class="tab ${active?'active':''}" ${active?'aria-current="page"':''} href="/football/${compSlug}${href}">${label}</a>`;
+  const overviewHref = '';
+
+  const tabs = `
+    <nav class="tabs" aria-label="Section navigation">
+      ${link(overviewHref, 'Overview', pageLabel==='Overview')}
+      ${link('/fixtures', 'Fixtures', pageLabel==='Fixtures')}
+      ${link('/clubs', 'Clubs', pageLabel==='Clubs' || pageLabel==='Club')}
+      ${link('/table', 'Table', pageLabel==='Table')}
+    </nav>`;
+
+  const crumbs = `
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <span>Football</span> · <span>${competition.name}</span>${pageLabel!=='Overview'?` · <span>${pageLabel}</span>`:''}
+    </nav>`;
+
+  return `
+    <div class="subnav subnav-bar" role="navigation" aria-label="Sport context">
+      <div class="subnav-inner">
+        ${crumbs}
+        ${tabs}
+      </div>
+    </div>`;
+}
+
+// ---- Views ----
     async function homeView(params, competitionSlug = 'premier-league'){
       const app = document.getElementById("app");
       const { params: legacyParams } = parseHash();
@@ -1180,6 +1211,7 @@ render();
       
       // Get competition configuration
       const competition = getCompetition(competitionSlug);
+      const subnav = renderFootballSubnav(competition);
 
       // Load upcoming fixtures (same source as fixtures page)
       const nowIso = new Date().toISOString();
@@ -1287,6 +1319,7 @@ render();
       const pill  = (upcomingMw != null) ? `MW ${upcomingMw}` : range;
 
       app.innerHTML = `
+        ${subnav}
         <section class="section mw featured">
           <div class="mw-head">
             <h2>Upcoming matches</h2>
@@ -1297,6 +1330,63 @@ render();
         <a class="floater" href="/football/${competition.slug}/fixtures" aria-label="See all fixtures">See all fixtures • scroll for more ↓</a>
       `;
     }
+// ---- Debug Data View (safe version) ----
+async function debugDataView(params, competitionSlug = 'premier-league') {
+  trackContentPageView('debug');
+  const app = document.getElementById('app');
+
+  const competition = getCompetition(competitionSlug);
+  const subnav = renderFootballSubnav(competition);
+  const nowIso = new Date().toISOString();
+
+  try {
+    // Keep queries light so this page always renders
+    const teams = await jget(`${API_ENDPOINTS.teams}?select=id,name,slug,competition_id&order=name.asc&limit=50`);
+    const fixtures = await jget(`${API_ENDPOINTS.fixturesList}?competition_id=eq.${competition.id}&utc_kickoff=gte.${nowIso}&order=utc_kickoff.asc&limit=10`);
+
+    const rows = (fixtures || []).map(f => {
+      const d = new Date(f.utc_kickoff);
+      const when = new Intl.DateTimeFormat(LOCALE, { dateStyle: 'medium', timeStyle: 'short', timeZone: DEFAULT_TZ }).format(d);
+      return `<tr>
+        <td>${f.id}</td>
+        <td>${when}</td>
+        <td>${f.home_team || f.home}</td>
+        <td>${f.away_team || f.away}</td>
+      </tr>`;
+    }).join('');
+
+    app.innerHTML = subnav + `
+      <section class="section">
+        <h2>🔍 Database Debug Inspector</h2>
+        <p class="muted">Lightweight checks to verify API and data wiring.</p>
+
+        <div class="card"><strong>Competition:</strong> ${competition.name} (ID ${competition.id})</div>
+        <div class="card"><strong>Teams loaded:</strong> ${(teams || []).length}</div>
+        <div class="card">
+          <h3 style="margin:0 0 6px">Upcoming fixtures (first 10)</h3>
+          <div style="overflow:auto">
+            <table style="width:100%;border-collapse:collapse">
+              <thead>
+                <tr><th>ID</th><th>Kickoff</th><th>Home</th><th>Away</th></tr>
+              </thead>
+              <tbody>${rows || ''}</tbody>
+            </table>
+          </div>
+        </div>
+        <p><a href="/football">← Back to Home</a></p>
+      </section>
+    `;
+  } catch (error) {
+    console.error('Error loading debug view:', error);
+    app.innerHTML = subnav + `
+      <div class="card">
+        <h2>Debug Data Error</h2>
+        <p class="muted">${error.message}</p>
+        <p><a href="/football">← Back to Home</a></p>
+      </div>
+    `;
+  }
+}
 
     async function fixturesView(params, competitionSlug = 'premier-league'){
       const app = document.getElementById("app");
@@ -1310,6 +1400,7 @@ render();
       
       // Get competition configuration
       const competition = getCompetition(competitionSlug);
+      const subnav = renderFootballSubnav(competition);
 
       // Load fixtures
       const nowIso = new Date().toISOString();
@@ -1468,7 +1559,7 @@ render();
       }
 
       // Initial render
-      app.innerHTML = filterHTML;
+      app.innerHTML = subnav + filterHTML;
       renderList(baseFiltered);
       // setPrettyUrl('/football/fixtures');
 
@@ -1504,37 +1595,50 @@ render();
 
     async function tableView(params, competitionSlug = 'premier-league'){
       const app = document.getElementById('app');
-      
+
       // Get competition configuration
       const competition = getCompetition(competitionSlug);
-      
+      const subnav = renderFootballSubnav(competition);
+
       try {
-        // Try a hypothetical league table view; if absent, fall back
-        const rows = await jget(`/rest/v1/league_table_v?competition_id=eq.${competition.id}&select=*`);
-        if (!rows || !rows.length){
-          app.innerHTML = `<p class="muted">League table coming soon.</p>`;
-          return;
-        }
-        const thead = `<tr><th style="text-align:left">Club</th><th>MP</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th></tr>`;
-        const trs = rows.map(r=>`<tr>
-          <td style="text-align:left">${r.team_name||r.team||r.name}</td>
-          <td>${r.played||r.mp||''}</td>
-          <td>${r.wins||r.w||''}</td>
-          <td>${r.draws||r.d||''}</td>
-          <td>${r.losses||r.l||''}</td>
-          <td>${r.gf||''}</td>
-          <td>${r.ga||''}</td>
-          <td>${(r.gd!=null?r.gd:(r.gf!=null&&r.ga!=null?(r.gf-r.ga):''))}</td>
-          <td><strong>${r.points||r.pts||''}</strong></td>
-        </tr>`).join('');
-        app.innerHTML = `<div class="card"><div class="section"><h2 style="margin:0 0 6px">Premier League table</h2>
-          <div class="muted">Auto-updating soon</div>
-          <div style="overflow:auto"><table style="width:100%;border-collapse:collapse">
-            <thead>${thead}</thead>
-            <tbody>${trs}</tbody>
-          </table></div></div></div>`;
-      } catch(e){
-        app.innerHTML = `<p class="muted">League table coming soon.</p>`;
+        // Load teams only (no standings yet) and sort by name
+        const teams = await loadTeams(competition.id, true);
+        const list = (teams || []).slice().sort((a,b)=> (a.name||'').localeCompare(b.name||''));
+
+        const thead = `<tr>
+          <th style="text-align:left">Pos</th>
+          <th style="text-align:left">Club</th>
+          <th>MP</th><th>W</th><th>D</th><th>L</th>
+          <th>GF</th><th>GA</th><th>GD</th><th>Pts</th>
+        </tr>`;
+
+        const trs = list.map((t, i) => `
+          <tr>
+            <td>${i + 1}</td>
+            <td style="text-align:left;display:flex;align-items:center;gap:8px">
+              ${t.crest_url ? `<img class="crest" alt="${t.name} badge" src="${t.crest_url}">` : ''}
+              <a class="cardlink" href="/football/${competition.slug}/clubs/${encodeURIComponent(t.slug)}" style="display:inline">${t.name}</a>
+            </td>
+            <td>–</td><td>–</td><td>–</td><td>–</td>
+            <td>–</td><td>–</td><td>–</td><td><strong>–</strong></td>
+          </tr>`).join('');
+
+        app.innerHTML = subnav + `
+          <div class="card">
+            <div class="section">
+              <h2 style="margin:0 0 6px">${competition.name} table</h2>
+              <div class="muted">Standings will auto-update once data is connected.</div>
+              <div style="overflow:auto;margin-top:8px">
+                <table style="width:100%;border-collapse:collapse">
+                  <thead>${thead}</thead>
+                  <tbody>${trs || ''}</tbody>
+                </table>
+              </div>
+            </div>
+          </div>`;
+      } catch (e) {
+        console.error('Table view error:', e);
+        app.innerHTML = subnav + `<p class="muted">Unable to load clubs for ${competition.name} yet.</p>`;
       }
     }
 
@@ -1667,19 +1771,20 @@ render();
       
       // Get competition configuration
       const competition = getCompetition(competitionSlug);
+      const subnav = renderFootballSubnav(competition);
       
       let teams;
       try {
         teams = await loadTeams(competition.id, true);
       } catch (error) {
         console.error('Failed to load teams:', error);
-        app.innerHTML = `<div class="card"><p class="muted">Unable to load clubs for ${competition.name}: ${error.message}</p><p><a href="/football">← Back to Home</a></p></div>`;
+        app.innerHTML = subnav + `<div class="card"><p class="muted">Unable to load clubs for ${competition.name}: ${error.message}</p><p><a href="/football">← Back to Home</a></p></div>`;
         return;
       }
       
       // Handle empty teams gracefully
       if (!teams || teams.length === 0) {
-        app.innerHTML = `<div class="section"><h2 style="margin:0 0 6px">Clubs</h2><div class="muted">${competition.name}</div></div><div class="card"><p class="muted">No clubs available for ${competition.name} yet.</p><p><a href="/football">← Back to Home</a></p></div>`;
+        app.innerHTML = subnav + `<div class="section"><h2 style="margin:0 0 6px">Clubs</h2><div class="muted">${competition.name}</div></div><div class="card"><p class="muted">No clubs available for ${competition.name} yet.</p><p><a href="/football">← Back to Home</a></p></div>`;
         return;
       }
       
@@ -1690,7 +1795,7 @@ render();
             <strong>${getTeamAlias(t.name)}</strong>
           </div>
         </a>`).join('');
-      app.innerHTML = `<div class="section"><h2 style="margin:0 0 6px">Clubs</h2><div class="muted">${competition.name}</div></div><div class="clubs-grid">${items||'<p class="muted">No clubs found.</p>'}</div>`;
+      app.innerHTML = subnav + `<div class="section"><h2 style="margin:0 0 6px">Clubs</h2><div class="muted">${competition.name}</div></div><div class="clubs-grid">${items||'<p class="muted">No clubs found.</p>'}</div>`;
     }
 
     async function clubPageView(params, competitionSlug = 'premier-league'){
@@ -1700,6 +1805,7 @@ render();
       
       // Get competition configuration
       const competition = getCompetition(competitionSlug);
+      const subnav = renderFootballSubnav(competition);
       
       // Try to find team with fallbacks
       let team = null;
@@ -1711,7 +1817,7 @@ render();
       }
       
       if (!team) { 
-        app.innerHTML = `<div class="card"><p class="muted">Club not found in ${competition.name}.</p><p><a href="/football/${competition.slug}/clubs">← Back to Clubs</a></p></div>`; 
+        app.innerHTML = subnav + `<div class="card"><p class="muted">Club not found in ${competition.name}.</p><p><a href="/football/${competition.slug}/clubs">← Back to Clubs</a></p></div>`; 
         return; 
       }
 
@@ -1774,7 +1880,7 @@ render();
         ? `<div class="club-feed">${fixtures.map((f,i)=>renderCard(f, i===0)).join('')}</div>`
         : '<p class="muted">No upcoming fixtures.</p>';
 
-      app.innerHTML = header + body;
+      app.innerHTML = subnav + header + body;
     }
 
     function tvGuideView(){
@@ -2900,1022 +3006,7 @@ render();
         </style>`;
     }
 
-    // ---- Broadcast Manager Interface ----
-    async function broadcastManagerView() {
-      const app = document.getElementById('app');
-      
-      // Simple authentication check - only allow access with ?key=admin
-      const params = new URLSearchParams(window.location.search);
-      const accessKey = params.get('key');
-      
-      if (accessKey !== 'admin') {
-        app.innerHTML = `
-          <div class="card">
-            <h2>Access Restricted</h2>
-            <p class="muted">This page requires admin access.</p>
-            <p><a href="/football">← Back to Home</a></p>
-          </div>`;
-        return;
-      }
-      
-      try {
-        // Load current fixtures and broadcast data
-        const fixtures = await jget('/rest/v1/fixtures?select=id,utc_kickoff,home_team,away_team,matchday&order=utc_kickoff.asc&limit=50');
-        const broadcasts = await jget('/rest/v1/broadcasts?select=fixture_id,broadcaster,channel_name,verified&order=fixture_id.asc');
-        const providers = await jget('/rest/v1/providers?select=id,display_name&order=display_name.asc');
-        
-        // Create broadcast lookup by fixture_id
-        const broadcastLookup = {};
-        broadcasts.forEach(b => {
-          if (!broadcastLookup[b.fixture_id]) broadcastLookup[b.fixture_id] = [];
-          broadcastLookup[b.fixture_id].push(b);
-        });
-        
-        updateMetaTags(
-          "Broadcast Manager | fixtures.app Admin",
-          "Internal tool for managing Premier League broadcast assignments and data validation.",
-          {
-            title: "Broadcast Manager | fixtures.app Admin",
-            description: "Internal tool for managing Premier League broadcast assignments and data validation.",
-            url: "https://football-listings.netlify.app/football/admin/broadcast-manager?key=admin"
-          }
-        );
-        
-        app.innerHTML = `
-          <article class="admin-interface broadcast-manager">
-            <header class="section">
-              <h1>🔧 Broadcast Data Manager</h1>
-              <p class="intro">Bulk update and validate Premier League broadcast assignments. Changes are applied immediately to the live database.</p>
-              <div class="admin-stats">
-                <div class="stat-card">
-                  <div class="stat-number">${fixtures.length}</div>
-                  <div class="stat-label">Fixtures Loaded</div>
-                </div>
-                <div class="stat-card">
-                  <div class="stat-number">${broadcasts.length}</div>
-                  <div class="stat-label">Broadcast Records</div>
-                </div>
-                <div class="stat-card">
-                  <div class="stat-number">${providers.length}</div>
-                  <div class="stat-label">Providers Available</div>
-                </div>
-              </div>
-            </header>
-            
-            <section class="card bulk-actions">
-              <h2>Quick Actions</h2>
-              <div class="action-buttons">
-                <button class="btn admin-btn" onclick="validateAllBroadcasts()">🔍 Validate All Data</button>
-                <button class="btn admin-btn" onclick="validateBroadcasterAssignments()">⚖️ Validate Assignments</button>
-                <button class="btn admin-btn" onclick="findMissingBroadcasts()">❓ Find Missing Broadcasts</button>
-                <button class="btn admin-btn" onclick="runAutomatedChecks()">🤖 Automated Checks</button>
-                <button class="btn admin-btn" onclick="fixCommonIssues()">🔧 Suggest Fixes</button>
-                <button class="btn admin-btn" onclick="exportBroadcastData()">📊 Export Data</button>
-              </div>
-            </section>
-            
-            <section class="card fixture-manager">
-              <h2>Fixture Broadcast Manager</h2>
-              <div class="filter-controls">
-                <label>
-                  Filter fixtures:
-                  <select id="fixture-filter" onchange="filterFixtures()">
-                    <option value="all">All fixtures</option>
-                    <option value="no-broadcast">Missing broadcasts</option>
-                    <option value="unverified">Unverified only</option>
-                    <option value="upcoming">Next 7 days</option>
-                  </select>
-                </label>
-              </div>
-              
-              <div id="fixtures-list" class="fixtures-admin-list">
-                ${generateFixtureManagerList(fixtures, broadcastLookup, providers)}
-              </div>
-            </section>
-            
-            <section class="card data-validation">
-              <h2>Data Validation Results</h2>
-              <div id="validation-results" class="validation-results">
-                <p class="muted">Click "Validate All Data" to check for issues.</p>
-              </div>
-            </section>
-          </article>
-          
-          <style>
-            .admin-interface {
-              max-width: 1200px;
-              margin: 0 auto;
-            }
-            
-            .admin-stats {
-              display: grid;
-              grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-              gap: 1rem;
-              margin: 1.5rem 0;
-            }
-            
-            .stat-card {
-              text-align: center;
-              padding: 1.5rem;
-              background: var(--color-background);
-              border-radius: 12px;
-              border: 1px solid var(--color-border);
-            }
-            
-            .stat-number {
-              font-size: 2rem;
-              font-weight: bold;
-              color: var(--competition-primary);
-              display: block;
-            }
-            
-            .stat-label {
-              font-size: 0.85rem;
-              color: var(--color-muted);
-              margin-top: 0.5rem;
-            }
-            
-            .action-buttons {
-              display: grid;
-              grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-              gap: 1rem;
-              margin: 1rem 0;
-            }
-            
-            .admin-btn {
-              padding: 1rem 1.5rem;
-              background: var(--competition-primary);
-              color: white;
-              border: none;
-              border-radius: 8px;
-              font-weight: 500;
-              cursor: pointer;
-              transition: all 0.2s ease;
-            }
-            
-            .admin-btn:hover {
-              background: #4a00a0;
-              transform: translateY(-1px);
-              box-shadow: var(--shadow-md);
-            }
-            
-            .filter-controls {
-              margin: 1rem 0;
-              padding: 1rem;
-              background: var(--color-background);
-              border-radius: 8px;
-            }
-            
-            .filter-controls select {
-              margin-left: 0.5rem;
-              padding: 0.5rem;
-              border: 1px solid var(--color-border);
-              border-radius: 4px;
-            }
-            
-            .fixtures-admin-list {
-              display: grid;
-              gap: 1rem;
-              margin-top: 1rem;
-            }
-            
-            .fixture-admin-card {
-              display: grid;
-              grid-template-columns: 2fr 1fr 1fr;
-              gap: 1rem;
-              align-items: center;
-              padding: 1rem;
-              border: 1px solid var(--color-border);
-              border-radius: 8px;
-              background: var(--color-card);
-            }
-            
-            .fixture-admin-card.missing-broadcast {
-              border-left: 4px solid #ef4444;
-              background: #fef2f2;
-            }
-            
-            .fixture-admin-card.has-broadcast {
-              border-left: 4px solid #10b981;
-            }
-            
-            .fixture-info {
-              display: flex;
-              flex-direction: column;
-              gap: 0.25rem;
-            }
-            
-            .fixture-match {
-              font-weight: 500;
-              font-size: 1.1rem;
-            }
-            
-            .fixture-date {
-              color: var(--color-muted);
-              font-size: 0.9rem;
-            }
-            
-            .broadcast-status {
-              display: flex;
-              flex-direction: column;
-              gap: 0.25rem;
-              font-size: 0.9rem;
-            }
-            
-            .broadcast-item {
-              padding: 0.25rem 0.5rem;
-              background: var(--color-background);
-              border-radius: 4px;
-              border-left: 3px solid var(--competition-primary);
-            }
-            
-            .broadcast-item.unverified {
-              border-left-color: #f59e0b;
-              background: #fef3c7;
-            }
-            
-            .fixture-actions {
-              display: flex;
-              gap: 0.5rem;
-              flex-wrap: wrap;
-            }
-            
-            .mini-btn {
-              padding: 0.5rem 0.75rem;
-              font-size: 0.8rem;
-              background: var(--color-muted);
-              color: white;
-              border: none;
-              border-radius: 4px;
-              cursor: pointer;
-              transition: background 0.2s;
-            }
-            
-            .mini-btn:hover {
-              background: var(--competition-primary);
-            }
-            
-            .validation-results {
-              margin: 1rem 0;
-            }
-            
-            .validation-issue {
-              padding: 1rem;
-              margin: 0.5rem 0;
-              border-radius: 8px;
-              border-left: 4px solid #ef4444;
-              background: #fef2f2;
-            }
-            
-            .validation-success {
-              padding: 1rem;
-              margin: 0.5rem 0;
-              border-radius: 8px;
-              border-left: 4px solid #10b981;
-              background: #f0fdf4;
-              color: #166534;
-            }
-            
-            .validation-warning {
-              padding: 1rem;
-              margin: 0.5rem 0;
-              border-radius: 8px;
-              border-left: 4px solid #f59e0b;
-              background: #fef3c7;
-              color: #92400e;
-            }
-            
-            .validation-suggestion {
-              padding: 1rem;
-              margin: 0.5rem 0;
-              border-radius: 8px;
-              border-left: 4px solid #3b82f6;
-              background: #dbeafe;
-              color: #1d4ed8;
-            }
-            
-            .validation-info {
-              padding: 1rem;
-              margin: 0.5rem 0;
-              border-radius: 8px;
-              border-left: 4px solid #6b7280;
-              background: #f9fafb;
-              color: #374151;
-            }
-            
-            @media (max-width: 768px) {
-              .fixture-admin-card {
-                grid-template-columns: 1fr;
-                text-align: center;
-              }
-              
-              .action-buttons {
-                grid-template-columns: 1fr;
-              }
-            }
-          </style>
-          
-          <script>
-            // Store data globally for admin functions
-            window.adminData = {
-              fixtures: ${JSON.stringify(fixtures)},
-              broadcasts: ${JSON.stringify(broadcasts)},
-              providers: ${JSON.stringify(providers)},
-              broadcastLookup: ${JSON.stringify(broadcastLookup)}
-            };
-            
-            function filterFixtures() {
-              const filter = document.getElementById('fixture-filter').value;
-              const fixturesList = document.getElementById('fixtures-list');
-              let filteredFixtures = window.adminData.fixtures;
-              
-              switch(filter) {
-                case 'no-broadcast':
-                  filteredFixtures = window.adminData.fixtures.filter(f => !window.adminData.broadcastLookup[f.id]);
-                  break;
-                case 'unverified':
-                  filteredFixtures = window.adminData.fixtures.filter(f => {
-                    const broadcasts = window.adminData.broadcastLookup[f.id] || [];
-                    return broadcasts.some(b => !b.verified);
-                  });
-                  break;
-                case 'upcoming':
-                  const weekFromNow = new Date();
-                  weekFromNow.setDate(weekFromNow.getDate() + 7);
-                  filteredFixtures = window.adminData.fixtures.filter(f => {
-                    const fixtureDate = new Date(f.utc_kickoff);
-                    return fixtureDate <= weekFromNow && fixtureDate >= new Date();
-                  });
-                  break;
-              }
-              
-              fixturesList.innerHTML = generateFixtureManagerList(filteredFixtures, window.adminData.broadcastLookup, window.adminData.providers);
-            }
-            
-            async function validateAllBroadcasts() {
-              const resultsDiv = document.getElementById('validation-results');
-              resultsDiv.innerHTML = '<p>🔍 Validating broadcast data...</p>';
-              
-              let issues = [];
-              let totalFixtures = window.adminData.fixtures.length;
-              let fixturesWithBroadcasts = Object.keys(window.adminData.broadcastLookup).length;
-              let unverifiedBroadcasts = 0;
-              
-              window.adminData.broadcasts.forEach(b => {
-                if (!b.verified) unverifiedBroadcasts++;
-              });
-              
-              if (fixturesWithBroadcasts < totalFixtures * 0.6) {
-                issues.push('❌ Low broadcast coverage: Only ' + Math.round((fixturesWithBroadcasts/totalFixtures)*100) + '% of fixtures have broadcast data');
-              }
-              
-              if (unverifiedBroadcasts > window.adminData.broadcasts.length * 0.3) {
-                issues.push('⚠️ High unverified broadcasts: ' + unverifiedBroadcasts + ' broadcasts need verification');
-              }
-              
-              // Check for duplicate broadcasts
-              const duplicates = {};
-              window.adminData.broadcasts.forEach(b => {
-                const key = b.fixture_id + '-' + b.broadcaster;
-                if (duplicates[key]) {
-                  issues.push('🔄 Duplicate broadcast for fixture ' + b.fixture_id + ': ' + b.broadcaster);
-                }
-                duplicates[key] = true;
-              });
-              
-              if (issues.length === 0) {
-                resultsDiv.innerHTML = 
-                  '<div class="validation-success">' +
-                    '✅ All broadcast data looks good!<br>' +
-                    '📊 ' + fixturesWithBroadcasts + '/' + totalFixtures + ' fixtures have broadcast data (' + Math.round((fixturesWithBroadcasts/totalFixtures)*100) + '%)<br>' +
-                    '✓ ' + (window.adminData.broadcasts.length - unverifiedBroadcasts) + ' verified broadcasts' +
-                  '</div>';
-              } else {
-                resultsDiv.innerHTML = issues.map(issue => '<div class="validation-issue">' + issue + '</div>').join('');
-              }
-            }
-            
-            function findMissingBroadcasts() {
-              const missingFixtures = window.adminData.fixtures.filter(f => !window.adminData.broadcastLookup[f.id]);
-              const resultsDiv = document.getElementById('validation-results');
-              
-              if (missingFixtures.length === 0) {
-                resultsDiv.innerHTML = '<div class="validation-success">✅ All fixtures have broadcast data!</div>';
-              } else {
-                const missingList = missingFixtures.slice(0, 10).map(f => {
-                  const date = new Date(f.utc_kickoff).toLocaleDateString('en-GB');
-                  return '• ' + f.home_team + ' vs ' + f.away_team + ' (' + date + ')';
-                }).join('<br>');
-                
-                resultsDiv.innerHTML = 
-                  '<div class="validation-issue">' +
-                    '❓ ' + missingFixtures.length + ' fixtures missing broadcast data:<br><br>' +
-                    missingList +
-                    (missingFixtures.length > 10 ? '<br>...and more' : '') +
-                  '</div>';
-              }
-            }
-            
-            function exportBroadcastData() {
-              const csvData = [
-                ['fixture_id', 'home_team', 'away_team', 'kickoff', 'broadcaster', 'verified'],
-                ...window.adminData.fixtures.map(f => {
-                  const broadcasts = window.adminData.broadcastLookup[f.id] || [];
-                  if (broadcasts.length === 0) {
-                    return [f.id, f.home_team, f.away_team, f.utc_kickoff, 'NO_BROADCAST', 'false'];
-                  }
-                  return broadcasts.map(b => [f.id, f.home_team, f.away_team, f.utc_kickoff, b.broadcaster || 'Unknown', b.verified || 'false']);
-                }).flat()
-              ].map(row => row.join(',')).join('\\n');
-              
-              const blob = new Blob([csvData], { type: 'text/csv' });
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement('a');
-              a.href = url;
-              a.download = 'broadcast_data_' + new Date().toISOString().slice(0,10) + '.csv';
-              a.click();
-              URL.revokeObjectURL(url);
-            }
-            
-            function generateSampleData() {
-              const resultsDiv = document.getElementById('validation-results');
-              resultsDiv.innerHTML = '<div class="validation-issue">⚠️ Sample data generation is disabled in production. Use the database directly for bulk updates.</div>';
-            }
-            
-            // Advanced data validation functions
-            function validateBroadcasterAssignments() {
-              const resultsDiv = document.getElementById('validation-results');
-              resultsDiv.innerHTML = '<p>🔍 Validating broadcaster assignments...</p>';
-              
-              let issues = [];
-              let warnings = [];
-              let suggestions = [];
-              
-              // UK Broadcasting Rules Validation
-              const ukBroadcasters = ['sky sports', 'tnt sports', 'amazon prime', 'bbc', 'itv'];
-              const invalidBroadcasters = [];
-              
-              window.adminData.broadcasts.forEach(b => {
-                const broadcaster = (b.broadcaster || '').toLowerCase();
-                
-                // Check for valid UK broadcasters
-                if (broadcaster && !ukBroadcasters.some(valid => broadcaster.includes(valid))) {
-                  invalidBroadcasters.push(b.broadcaster + ' (fixture ' + b.fixture_id + ')');
-                }
-                
-                // Check for specific validation rules
-                if (broadcaster.includes('sky') && (!b.channel_name || !b.channel_name.includes('Sports'))) {
-                  warnings.push('Sky Sports broadcast missing proper channel assignment (fixture ' + b.fixture_id + ')');
-                }
-                
-                if (broadcaster.includes('tnt') && b.channel_name && b.channel_name.includes('BT Sport')) {
-                  suggestions.push('Update BT Sport to TNT Sports for fixture ' + b.fixture_id);
-                }
-                
-                // Check for Saturday 3pm blackout violations
-                const fixture = window.adminData.fixtures.find(f => f.id === b.fixture_id);
-                if (fixture) {
-                  const kickoffDate = new Date(fixture.utc_kickoff);
-                  const dayOfWeek = kickoffDate.getDay(); // 0 = Sunday, 6 = Saturday
-                  const hour = kickoffDate.getHours();
-                  
-                  if (dayOfWeek === 6 && hour === 15 && broadcaster !== 'bbc') { // Saturday 3pm
-                    issues.push('Potential 3pm blackout violation: ' + fixture.home_team + ' vs ' + fixture.away_team + ' on ' + broadcaster);
-                  }
-                }
-              });
-              
-              // Check for missing prime fixtures (Big 6 teams)
-              const bigSixTeams = ['Arsenal', 'Chelsea', 'Liverpool', 'Manchester City', 'Manchester United', 'Tottenham'];
-              window.adminData.fixtures.forEach(f => {
-                const isBigSixMatch = bigSixTeams.includes(f.home_team) || bigSixTeams.includes(f.away_team);
-                const broadcasts = window.adminData.broadcastLookup[f.id] || [];
-                
-                if (isBigSixMatch && broadcasts.length === 0) {
-                  warnings.push('Big 6 match missing broadcast: ' + f.home_team + ' vs ' + f.away_team);
-                }
-              });
-              
-              // Display validation results
-              let resultHtml = '';
-              
-              if (issues.length > 0) {
-                resultHtml += issues.map(issue => '<div class="validation-issue">❌ ' + issue + '</div>').join('');
-              }
-              
-              if (warnings.length > 0) {
-                resultHtml += warnings.slice(0, 5).map(warning => '<div class="validation-warning">⚠️ ' + warning + '</div>').join('');
-                if (warnings.length > 5) {
-                  resultHtml += '<div class="validation-info">...and ' + (warnings.length - 5) + ' more warnings</div>';
-                }
-              }
-              
-              if (suggestions.length > 0) {
-                resultHtml += suggestions.slice(0, 3).map(suggestion => '<div class="validation-suggestion">💡 ' + suggestion + '</div>').join('');
-              }
-              
-              if (invalidBroadcasters.length > 0) {
-                resultHtml += '<div class="validation-issue">🚫 Invalid UK broadcasters detected: ' + invalidBroadcasters.slice(0, 5).join(', ') + '</div>';
-              }
-              
-              if (resultHtml === '') {
-                resultHtml = '<div class="validation-success">✅ All broadcaster assignments look valid!</div>';
-              }
-              
-              resultsDiv.innerHTML = resultHtml;
-            }
-            
-            function fixCommonIssues() {
-              const resultsDiv = document.getElementById('validation-results');
-              let fixes = [];
-              
-              // This would be where we implement automatic fixes
-              // For now, just show what could be fixed
-              fixes.push('🔧 Would normalize "BT Sport" → "TNT Sports"');
-              fixes.push('🔧 Would add missing channel names for Sky Sports');
-              fixes.push('🔧 Would flag unverified broadcasts older than 7 days');
-              
-              resultsDiv.innerHTML = 
-                '<div class="validation-info">' +
-                  '<h4>Automatic Fixes Available:</h4>' +
-                  fixes.map(fix => '<div>' + fix + '</div>').join('') +
-                  '<br>' +
-                  '<em>Automatic fixes are disabled for safety. Apply changes manually.</em>' +
-                '</div>';
-            }
-            
-            function editFixtureBroadcast(fixtureId) {
-              alert('Edit broadcast for fixture ' + fixtureId + ' - Feature coming soon!');
-            }
-            
-            function verifyBroadcast(fixtureId) {
-              const fixture = window.adminData.fixtures.find(f => f.id === fixtureId);
-              const broadcasts = window.adminData.broadcastLookup[fixtureId] || [];
-              
-              if (broadcasts.length === 0) {
-                alert('No broadcasts found for ' + fixture.home_team + ' vs ' + fixture.away_team);
-                return;
-              }
-              
-              const confirmMessage = 'Verify broadcast data for:\\n' + fixture.home_team + ' vs ' + fixture.away_team + '\\n\\nBroadcasters: ' + broadcasts.map(b => b.broadcaster).join(', ') + '\\n\\nThis will mark the broadcast as verified.';
-              
-              if (confirm(confirmMessage)) {
-                // In a real implementation, this would make an API call to update the database
-                alert('Broadcast verification feature requires database write access.');
-              }
-            }
-            
-            // Automated checks for missing broadcast data
-            function runAutomatedChecks() {
-              const resultsDiv = document.getElementById('validation-results');
-              resultsDiv.innerHTML = '<p>🤖 Running automated broadcast data checks...</p>';
-              
-              let issues = [];
-              let alerts = [];
-              let recommendations = [];
-              
-              const now = new Date();
-              const nextWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-              const nextMonth = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
-              
-              // Check upcoming fixtures without broadcast data
-              const upcomingFixtures = window.adminData.fixtures.filter(f => {
-                const fixtureDate = new Date(f.utc_kickoff);
-                return fixtureDate >= now && fixtureDate <= nextMonth;
-              });
-              
-              let nextWeekMissing = 0;
-              let thisWeekendMissing = 0;
-              
-              upcomingFixtures.forEach(f => {
-                const fixtureDate = new Date(f.utc_kickoff);
-                const broadcasts = window.adminData.broadcastLookup[f.id] || [];
-                const dayOfWeek = fixtureDate.getDay();
-                const isWeekend = dayOfWeek === 0 || dayOfWeek === 6; // Sunday or Saturday
-                
-                if (broadcasts.length === 0) {
-                  if (fixtureDate <= nextWeek) {
-                    nextWeekMissing++;
-                    
-                    if (isWeekend) {
-                      thisWeekendMissing++;
-                      alerts.push('🚨 Weekend fixture missing broadcast: ' + f.home_team + ' vs ' + f.away_team + ' (' + fixtureDate.toLocaleDateString('en-GB') + ')');
-                    }
-                  }
-                }
-                
-                // Check for late fixture announcements (less than 48 hours notice)
-                const hoursUntilKickoff = (fixtureDate - now) / (1000 * 60 * 60);
-                if (hoursUntilKickoff <= 48 && broadcasts.length === 0) {
-                  issues.push('⏰ Late announcement: ' + f.home_team + ' vs ' + f.away_team + ' kicks off in ' + Math.round(hoursUntilKickoff) + 'h with no broadcast assigned');
-                }
-              });
-              
-              // Check for stale unverified data
-              let oldUnverified = 0;
-              const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-              
-              window.adminData.broadcasts.forEach(b => {
-                if (!b.verified) {
-                  const fixture = window.adminData.fixtures.find(f => f.id === b.fixture_id);
-                  if (fixture) {
-                    const fixtureDate = new Date(fixture.utc_kickoff);
-                    if (fixtureDate < sevenDaysAgo) {
-                      oldUnverified++;
-                    }
-                  }
-                }
-              });
-              
-              if (oldUnverified > 5) {
-                recommendations.push('📅 ' + oldUnverified + ' old broadcasts remain unverified - consider bulk verification');
-              }
-              
-              // Check for missing high-profile fixtures
-              const bigSixTeams = ['Arsenal', 'Chelsea', 'Liverpool', 'Manchester City', 'Manchester United', 'Tottenham'];
-              let missingBigSixMatches = 0;
-              
-              upcomingFixtures.forEach(f => {
-                const isBigSixMatch = bigSixTeams.includes(f.home_team) || bigSixTeams.includes(f.away_team);
-                const broadcasts = window.adminData.broadcastLookup[f.id] || [];
-                
-                if (isBigSixMatch && broadcasts.length === 0) {
-                  missingBigSixMatches++;
-                }
-              });
-              
-              if (missingBigSixMatches > 0) {
-                alerts.push('⭐ ' + missingBigSixMatches + ' high-profile matches missing broadcast assignments');
-              }
-              
-              // Check for potential scheduling conflicts
-              const tvSlots = {};
-              window.adminData.broadcasts.forEach(b => {
-                const fixture = window.adminData.fixtures.find(f => f.id === b.fixture_id);
-                if (fixture) {
-                  const fixtureDate = new Date(fixture.utc_kickoff);
-                  const timeSlot = b.broadcaster + '-' + fixtureDate.toISOString().slice(0,16);
-                  
-                  if (tvSlots[timeSlot]) {
-                    recommendations.push('📺 Potential scheduling conflict: ' + b.broadcaster + ' at ' + fixtureDate.toLocaleDateString('en-GB') + ' ' + fixtureDate.toLocaleTimeString('en-GB'));
-                  } else {
-                    tvSlots[timeSlot] = true;
-                  }
-                }
-              });
-              
-              // Generate automated check summary
-              let resultHtml = '<h4>Automated Check Results:</h4>';
-              
-              if (nextWeekMissing > 0) {
-                resultHtml += '<div class="validation-issue">🚨 ' + nextWeekMissing + ' fixtures in the next 7 days missing broadcast data</div>';
-              }
-              
-              if (thisWeekendMissing > 0) {
-                resultHtml += '<div class="validation-issue">🏆 ' + thisWeekendMissing + ' weekend fixtures missing broadcasts (high priority)</div>';
-              }
-              
-              // Display issues
-              issues.slice(0, 5).forEach(issue => {
-                resultHtml += '<div class="validation-issue">' + issue + '</div>';
-              });
-              
-              // Display alerts
-              alerts.slice(0, 3).forEach(alert => {
-                resultHtml += '<div class="validation-warning">' + alert + '</div>';
-              });
-              
-              // Display recommendations  
-              recommendations.slice(0, 3).forEach(rec => {
-                resultHtml += '<div class="validation-suggestion">' + rec + '</div>';
-              });
-              
-              if (issues.length === 0 && alerts.length === 0 && nextWeekMissing === 0) {
-                resultHtml += '<div class="validation-success">✅ Automated checks passed - no urgent issues detected!</div>';
-              }
-              
-              // Add check summary
-              const totalUpcoming = upcomingFixtures.length;
-              const totalWithBroadcasts = upcomingFixtures.filter(f => window.adminData.broadcastLookup[f.id]?.length > 0).length;
-              const coveragePercent = totalUpcoming > 0 ? Math.round((totalWithBroadcasts / totalUpcoming) * 100) : 0;
-              
-              resultHtml += \`
-                <div class="validation-info">
-                  <strong>Coverage Summary (Next 30 Days):</strong><br>
-                  📊 \${totalWithBroadcasts}/\${totalUpcoming} fixtures have broadcast data (\${coveragePercent}%)<br>
-                  🤖 Last automated check: \${new Date().toLocaleString('en-GB')}
-                </div>\`;
-              
-              resultsDiv.innerHTML = resultHtml;
-              
-              // Store check results for future reference
-              window.lastAutomatedCheck = {
-                timestamp: now,
-                nextWeekMissing,
-                thisWeekendMissing,
-                coveragePercent,
-                totalIssues: issues.length + alerts.length
-              };
-            }
-          </script>
-        `;
-        
-        trackContentPageView('broadcast-manager');
-        
-      } catch (error) {
-        console.error('Error loading broadcast manager:', error);
-        app.innerHTML = 
-          '<div class="card">' +
-            '<h2>Error Loading Broadcast Manager</h2>' +
-            '<p class="muted">Unable to load broadcast management interface: ' + error.message + '</p>' +
-            '<p><a href="/football">← Back to Home</a></p>' +
-          '</div>';
-      }
-    }
-    
-    async function debugDataView() {
-      const app = document.getElementById('app');
-      
-      try {
-        // Load raw database data
-        const teams = await jget('/rest/v1/teams?select=id,name,slug,competition_id,external_id&order=name.asc');
-        const fixtures = await jget('/rest/v1/fixtures?select=id,utc_kickoff,home_team,away_team,matchday,competition_id,external_id&order=utc_kickoff.desc&limit=100');
-        
-        // Correct 2025-26 Premier League teams
-        const correctTeams = [
-          'Liverpool', 'Chelsea', 'Arsenal', 'Tottenham Hotspur', 'Everton', 
-          'Sunderland', 'Bournemouth', 'Crystal Palace', 'Manchester United', 
-          'Nottingham Forest', 'Brighton & Hove Albion', 'Leeds United', 
-          'Manchester City', 'Burnley', 'Brentford', 'West Ham United', 
-          'Newcastle United', 'Fulham', 'Aston Villa', 'Wolverhampton Wanderers'
-        ];
-        
-        // Data quality analysis
-        const premierLeagueTeams = teams.filter(t => t.competition_id === 1);
-        const incorrectTeams = premierLeagueTeams.filter(t => !correctTeams.includes(t.name));
-        const missingTeams = correctTeams.filter(name => !premierLeagueTeams.find(t => t.name === name));
-        
-        // Group fixtures by date
-        const fixturesByDate = {};
-        fixtures.forEach(f => {
-          const date = f.utc_kickoff ? f.utc_kickoff.split('T')[0] : 'No Date';
-          if (!fixturesByDate[date]) fixturesByDate[date] = [];
-          fixturesByDate[date].push(f);
-        });
-        
-        updateMetaTags(
-          "Database Debug | fixtures.app",
-          "Database inspection tool for data quality analysis and corruption detection.",
-          {
-            title: "Database Debug | fixtures.app",
-            description: "Database inspection tool for data quality analysis and corruption detection.",
-            url: "https://football-listings.netlify.app/debug"
-          }
-        );
-        
-        app.innerHTML = `
-          <article class="debug-interface">
-            <header class="section">
-              <h1>🔍 Database Debug Inspector</h1>
-              <p class="intro">Raw database data inspection for quality analysis and corruption detection.</p>
-            </header>
-            
-            <section class="card data-quality-summary">
-              <h2>Data Quality Summary</h2>
-              <div class="debug-stats">
-                <div class="stat-item">
-                  <strong>Total Teams:</strong> ${teams.length}
-                  <small class="muted">(Premier League: ${premierLeagueTeams.length})</small>
-                </div>
-                <div class="stat-item">
-                  <strong>Total Fixtures:</strong> ${fixtures.length}
-                  <small class="muted">(Showing latest 100)</small>
-                </div>
-                <div class="stat-item">
-                  <strong>Fixture Dates:</strong> ${Object.keys(fixturesByDate).length} dates
-                </div>
-              </div>
-              
-              ${incorrectTeams.length > 0 ? `
-                <div class="data-issue">
-                  <h3>❌ Incorrect Premier League Teams (Should be removed)</h3>
-                  <ul>
-                    ${incorrectTeams.map(t => '<li><strong>' + t.name + '</strong> (ID: ' + t.id + ', Slug: ' + t.slug + ')</li>').join('')}
-                  </ul>
-                </div>
-              ` : ''}
-              
-              ${missingTeams.length > 0 ? `
-                <div class="data-issue">
-                  <h3>❓ Missing Premier League Teams (Should be added)</h3>
-                  <ul>
-                    ${missingTeams.map(name => '<li><strong>' + name + '</strong></li>').join('')}
-                  </ul>
-                </div>
-              ` : ''}
-              
-              ${incorrectTeams.length === 0 && missingTeams.length === 0 ? `
-                <div class="data-success">✅ Premier League teams look correct!</div>
-              ` : ''}
-            </section>
-            
-            <section class="card teams-data">
-              <h2>Teams Table (Competition ID = 1)</h2>
-              <p class="muted">All Premier League teams, sorted alphabetically</p>
-              
-              <div class="debug-table-container">
-                <table class="debug-table">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Name</th>
-                      <th>Slug</th>
-                      <th>Competition ID</th>
-                      <th>External ID</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    ${premierLeagueTeams.map(team => 
-                      '<tr class="' + (incorrectTeams.includes(team) ? 'incorrect-team' : '') + '">' +
-                        '<td>' + team.id + '</td>' +
-                        '<td><strong>' + team.name + '</strong></td>' +
-                        '<td>' + (team.slug || 'NULL') + '</td>' +
-                        '<td>' + team.competition_id + '</td>' +
-                        '<td>' + (team.external_id || 'NULL') + '</td>' +
-                      '</tr>'
-                    ).join('')}
-                  </tbody>
-                </table>
-              </div>
-            </section>
-            
-            <section class="card fixtures-data">
-              <h2>Fixtures Table (Latest 100)</h2>
-              <p class="muted">Recent fixtures grouped by date, sorted by kickoff time</p>
-              
-              <div class="fixtures-by-date">
-                ${Object.keys(fixturesByDate).sort().reverse().slice(0, 10).map(date => 
-                  '<div class="fixture-date-group">' +
-                    '<h3>' + date + ' <small>(' + fixturesByDate[date].length + ' fixtures)</small></h3>' +
-                    '<div class="debug-table-container">' +
-                      '<table class="debug-table">' +
-                        '<thead>' +
-                          '<tr>' +
-                            '<th>ID</th>' +
-                            '<th>Date</th>' +
-                            '<th>Home Team</th>' +
-                            '<th>Away Team</th>' +
-                            '<th>Matchday</th>' +
-                            '<th>Competition</th>' +
-                            '<th>External ID</th>' +
-                          '</tr>' +
-                        '</thead>' +
-                        '<tbody>' +
-                          fixturesByDate[date].map(fixture => 
-                            '<tr>' +
-                              '<td>' + fixture.id + '</td>' +
-                              '<td>' + (fixture.utc_kickoff ? new Date(fixture.utc_kickoff).toLocaleString('en-GB') : 'NULL') + '</td>' +
-                              '<td><strong>' + fixture.home_team + '</strong></td>' +
-                              '<td><strong>' + fixture.away_team + '</strong></td>' +
-                              '<td>' + (fixture.matchday || 'NULL') + '</td>' +
-                              '<td>' + fixture.competition_id + '</td>' +
-                              '<td>' + (fixture.external_id || 'NULL') + '</td>' +
-                            '</tr>'
-                          ).join('') +
-                        '</tbody>' +
-                      '</table>' +
-                    '</div>' +
-                  '</div>'
-                ).join('')}
-              </div>
-              
-              ${Object.keys(fixturesByDate).length > 10 ? `
-                <p class="muted">Showing first 10 dates. Total: ${Object.keys(fixturesByDate).length} dates with fixtures.</p>
-              ` : ''}
-            </section>
-          </article>
-          
-          <style>
-            .debug-interface {
-              font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
-            }
-            
-            .debug-stats {
-              display: grid;
-              grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-              gap: var(--spacing-md);
-              margin: var(--spacing-md) 0;
-            }
-            
-            .stat-item {
-              padding: var(--spacing-sm);
-              background: #f8f9fa;
-              border-radius: 6px;
-              border-left: 4px solid var(--color-border);
-            }
-            
-            .data-issue {
-              margin: var(--spacing-md) 0;
-              padding: var(--spacing-md);
-              background: #fef2f2;
-              border: 1px solid #fecaca;
-              border-radius: 8px;
-            }
-            
-            .data-issue h3 {
-              margin: 0 0 var(--spacing-sm) 0;
-              color: #dc2626;
-            }
-            
-            .data-issue ul {
-              margin: var(--spacing-sm) 0 0 0;
-              padding-left: var(--spacing-lg);
-            }
-            
-            .data-success {
-              margin: var(--spacing-md) 0;
-              padding: var(--spacing-md);
-              background: #f0fdf4;
-              border: 1px solid #86efac;
-              border-radius: 8px;
-              color: #16a34a;
-              font-weight: 500;
-            }
-            
-            .debug-table-container {
-              overflow-x: auto;
-              margin: var(--spacing-md) 0;
-            }
-            
-            .debug-table {
-              width: 100%;
-              border-collapse: collapse;
-              font-size: 14px;
-            }
-            
-            .debug-table th,
-            .debug-table td {
-              padding: 8px 12px;
-              border: 1px solid var(--color-border);
-              text-align: left;
-            }
-            
-            .debug-table th {
-              background: #f8f9fa;
-              font-weight: 600;
-              position: sticky;
-              top: 0;
-            }
-            
-            .debug-table td {
-              font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, monospace;
-            }
-            
-            .incorrect-team {
-              background: #fef2f2;
-            }
-            
-            .incorrect-team td {
-              color: #dc2626;
-            }
-            
-            .fixture-date-group {
-              margin: var(--spacing-lg) 0;
-            }
-            
-            .fixture-date-group h3 {
-              margin: 0 0 var(--spacing-sm) 0;
-              padding: var(--spacing-sm) 0;
-              border-bottom: 2px solid var(--color-border);
-            }
-            
-            @media (max-width: 768px) {
-              .debug-stats {
-                grid-template-columns: 1fr;
-              }
-              
-              .debug-table {
-                font-size: 12px;
-              }
-              
-              .debug-table th,
-              .debug-table td {
-                padding: 6px 8px;
-              }
-            }
-          </style>
-        `;
-      
-      } catch (error) {
-        console.error('Error loading debug data:', error);
-        app.innerHTML = `
-          <div class="card">
-            <h2>Debug Error</h2>
-            <p class="muted">Unable to load debug data: ${error.message}</p>
-            <p><a href="/football">← Back to Home</a></p>
-          </div>`;
-      }
-    }
+    // Debug Data View temporarily disabled
     
     function generateFixtureManagerList(fixtures, broadcastLookup, providers) {
       return fixtures.slice(0, 25).map(f => {

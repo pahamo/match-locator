@@ -1,9 +1,102 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://football-listings.netlify.app/football</loc><lastmod>2025-09-05T08:40:35.322Z</lastmod></url>
-  <url><loc>https://football-listings.netlify.app/football/fixtures</loc><lastmod>2025-09-05T08:40:35.322Z</lastmod></url>
-  <url><loc>https://football-listings.netlify.app/football/clubs</loc><lastmod>2025-09-05T08:40:35.322Z</lastmod></url>
-  <url><loc>https://football-listings.netlify.app/football/about</loc><lastmod>2025-09-05T08:40:35.322Z</lastmod></url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" 
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  
+  <!-- Homepage - Highest Priority -->
+  <url>
+    <loc>https://football-listings.netlify.app/</loc>
+    <lastmod>2025-01-08</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  
+  <!-- Premier League Main Pages -->
+  <url>
+    <loc>https://football-listings.netlify.app/football/premier-league</loc>
+    <lastmod>2025-01-08</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <url>
+    <loc>https://football-listings.netlify.app/football/premier-league/fixtures</loc>
+    <lastmod>2025-01-08</lastmod>
+    <changefreq>hourly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Content Strategy Pages -->
+  <url>
+    <loc>https://football-listings.netlify.app/football/tv-guide</loc>
+    <lastmod>2025-01-08</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://football-listings.netlify.app/football/how-to-watch-premier-league</loc>
+    <lastmod>2025-01-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://football-listings.netlify.app/football/fixtures-this-weekend</loc>
+    <lastmod>2025-01-08</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Team Viewing Guides -->
+  <url>
+    <loc>https://football-listings.netlify.app/football/how-to-watch</loc>
+    <lastmod>2025-01-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Top Team Viewing Guides -->
+  <url>
+    <loc>https://football-listings.netlify.app/football/how-to-watch?team=arsenal</loc>
+    <lastmod>2025-01-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://football-listings.netlify.app/football/how-to-watch?team=man-city</loc>
+    <lastmod>2025-01-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://football-listings.netlify.app/football/how-to-watch?team=liverpool</loc>
+    <lastmod>2025-01-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://football-listings.netlify.app/football/how-to-watch?team=chelsea</loc>
+    <lastmod>2025-01-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://football-listings.netlify.app/football/how-to-watch?team=man-utd</loc>
+    <lastmod>2025-01-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://football-listings.netlify.app/football/how-to-watch?team=tottenham</loc>
+    <lastmod>2025-01-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
   <url><loc>https://football-listings.netlify.app/football/clubs/leeds</loc><lastmod>2025-09-05T08:40:35.322Z</lastmod></url>
   <url><loc>https://football-listings.netlify.app/football/clubs/west-ham</loc><lastmod>2025-09-05T08:40:35.322Z</lastmod></url>
   <url><loc>https://football-listings.netlify.app/football/clubs/nottingham-forest</loc><lastmod>2025-09-05T08:40:35.322Z</lastmod></url>
