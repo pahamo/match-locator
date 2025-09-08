@@ -341,7 +341,18 @@
           throw new Error(`API Error: ${response.status} ${response.statusText} - ${errorText}`);
         }
         
-        const result = method === 'POST' ? await response.json() : null;
+        // Only parse JSON if there's content
+        let result = null;
+        const contentLength = response.headers.get('content-length');
+        if (contentLength && contentLength !== '0') {
+          try {
+            result = await response.json();
+          } catch (e) {
+            // Response might be empty or not JSON, which is fine for PATCH/DELETE
+            console.log('Response is not JSON, which is normal for PATCH/DELETE');
+          }
+        }
+        
         console.log('API Write Response:', result);
         return result;
       } catch (error) {
