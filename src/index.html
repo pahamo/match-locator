@@ -3624,12 +3624,12 @@ render();
         
       } catch (error) {
         console.error('Error loading broadcast manager:', error);
-        app.innerHTML = `
-          <div class="card">
-            <h2>Error Loading Broadcast Manager</h2>
-            <p class="muted">Unable to load broadcast management interface: ${error.message}</p>
-            <p><a href="/football">← Back to Home</a></p>
-          </div>`;
+        app.innerHTML = 
+          '<div class="card">' +
+            '<h2>Error Loading Broadcast Manager</h2>' +
+            '<p class="muted">Unable to load broadcast management interface: ' + error.message + '</p>' +
+            '<p><a href="/football">← Back to Home</a></p>' +
+          '</div>';
       }
     }
     
@@ -3930,30 +3930,28 @@ render();
         });
         
         const broadcastStatus = broadcasts.length > 0 
-          ? broadcasts.map(b => `
-              <div class="broadcast-item ${b.verified ? 'verified' : 'unverified'}">
-                ${b.broadcaster || 'Unknown'} ${b.channel_name ? `(${b.channel_name})` : ''}
-                ${b.verified ? '✅' : '⚠️'}
-              </div>
-            `).join('')
+          ? broadcasts.map(b => 
+              '<div class="broadcast-item ' + (b.verified ? 'verified' : 'unverified') + '">' +
+                (b.broadcaster || 'Unknown') + (b.channel_name ? ' (' + b.channel_name + ')' : '') +
+                (b.verified ? ' ✅' : ' ⚠️') +
+              '</div>'
+            ).join('')
           : '<div class="broadcast-item missing">❌ No broadcast assigned</div>';
         
-        return `
-          <div class="fixture-admin-card ${hasBroadcast ? 'has-broadcast' : 'missing-broadcast'}">
-            <div class="fixture-info">
-              <div class="fixture-match">${f.home_team} vs ${f.away_team}</div>
-              <div class="fixture-date">${fixtureDate} • MW${f.matchday || '?'}</div>
-            </div>
-            
-            <div class="broadcast-status">
-              ${broadcastStatus}
-            </div>
-            
-            <div class="fixture-actions">
-              <button class="mini-btn" onclick="editFixtureBroadcast(${f.id})">✏️ Edit</button>
-              <button class="mini-btn" onclick="verifyBroadcast(${f.id})">✅ Verify</button>
-            </div>
-          </div>`;
+        return 
+          '<div class="fixture-admin-card ' + (hasBroadcast ? 'has-broadcast' : 'missing-broadcast') + '">' +
+            '<div class="fixture-info">' +
+              '<div class="fixture-match">' + f.home_team + ' vs ' + f.away_team + '</div>' +
+              '<div class="fixture-date">' + fixtureDate + ' • MW' + (f.matchday || '?') + '</div>' +
+            '</div>' +
+            '<div class="broadcast-status">' +
+              broadcastStatus +
+            '</div>' +
+            '<div class="fixture-actions">' +
+              '<button class="mini-btn" onclick="editFixtureBroadcast(' + f.id + ')">✏️ Edit</button>' +
+              '<button class="mini-btn" onclick="verifyBroadcast(' + f.id + ')">✅ Verify</button>' +
+            '</div>' +
+          '</div>';
       }).join('');
     }
 
