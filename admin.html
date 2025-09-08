@@ -353,6 +353,55 @@
       }, 5000);
     }
 
+    /** Replicate exact loadFixtures logic from main app */
+    async function loadFixturesLikeMainApp(competitionId, includeUpcoming = true) {
+      const nowIso = includeUpcoming ? new Date().toISOString() : null;
+      const timeFilter = includeUpcoming ? `&utc_kickoff=gte.${nowIso}` : '';
+      
+      // Better filtering: only get fixtures from current season with valid matchdays
+      const currentSeasonStart = '2024-08-01T00:00:00.000Z'; // Premier League 2024-25 season
+      const seasonFilter = `&utc_kickoff=gte.${currentSeasonStart}`;
+      const matchdayFilter = '&matchday=gte.1&matchday=lte.38'; // Valid PL matchdays
+      
+      const orderByKickoff = 'order=utc_kickoff.asc';
+      const limit = 2000; // Same as main app
+      
+      const attempts = [
+        // Primary: Current season fixtures with valid matchdays
+        `${API_ENDPOINTS.fixturesList}?competition_id=eq.${competitionId}${timeFilter}${seasonFilter}${matchdayFilter}&${orderByKickoff}&limit=${limit}`,
+        // Fallback: Current season fixtures without matchday constraint
+        `${API_ENDPOINTS.fixturesList}?competition_id=eq.${competitionId}${timeFilter}${seasonFilter}&${orderByKickoff}&limit=${limit}`,
+        // Fallback: All season fixtures with matchday constraint
+        includeUpcoming ? `${API_ENDPOINTS.fixturesList}?competition_id=eq.${competitionId}${seasonFilter}${matchdayFilter}&${orderByKickoff}&limit=${limit}` : null,
+        // Last resort: Basic query with just competition filter
+        `${API_ENDPOINTS.fixturesList}?competition_id=eq.${competitionId}${timeFilter}&${orderByKickoff}&limit=${limit}`
+      ].filter(Boolean);
+      
+      for (const endpoint of attempts) {
+        try {
+          console.log(`Trying fixtures endpoint: ${endpoint}`);
+          const fixtures = await apiGet(endpoint);
+          
+          if (fixtures && fixtures.length > 0) {
+            // Additional safety filter: exclude suspicious low-ID fixtures as backup
+            const filtered = fixtures.filter(f => f.id && f.id > 30);
+            const removedCount = fixtures.length - filtered.length;
+            if (removedCount > 0) {
+              console.log(`Successfully loaded ${fixtures.length} fixtures for competition ${competitionId}, filtered to ${filtered.length} (removed ${removedCount} low-ID fixtures)`);
+            } else {
+              console.log(`Successfully loaded ${filtered.length} valid fixtures for competition ${competitionId}`);
+            }
+            return filtered;
+          }
+        } catch (error) {
+          console.log(`Fixtures endpoint failed: ${endpoint}`, error.message);
+          continue;
+        }
+      }
+      
+      throw new Error(`Unable to load fixtures for competition ${competitionId} after trying ${attempts.length} endpoints`);
+    }
+
     /** Load teams data */
     async function loadTeams() {
       try {
@@ -381,51 +430,17 @@
           await loadTeams();
         }
 
-        // Use same logic as main app loadFixtures function
-        const competitionId = 1; // Premier League
-        const currentSeasonStart = '2024-08-01T00:00:00.000Z';
-        const seasonFilter = `&utc_kickoff=gte.${currentSeasonStart}`;
-        const matchdayFilter = '&matchday=gte.1&matchday=lte.38';
-        const orderBy = 'order=utc_kickoff.asc';
-        const limit = 200;
-        
-        // Try multiple endpoints like main app does
-        const attempts = [
-          // Primary: Current season fixtures with valid matchdays  
-          `${API_ENDPOINTS.fixturesList}?competition_id=eq.${competitionId}${seasonFilter}${matchdayFilter}&${orderBy}&limit=${limit}`,
-          // Fallback: Current season fixtures without matchday constraint
-          `${API_ENDPOINTS.fixturesList}?competition_id=eq.${competitionId}${seasonFilter}&${orderBy}&limit=${limit}`,
-          // Last resort: Basic query with just competition filter
-          `${API_ENDPOINTS.fixturesList}?competition_id=eq.${competitionId}&${orderBy}&limit=${limit}`
-        ];
-        
-        let fixtures = [];
-        for (const endpoint of attempts) {
-          try {
-            console.log(`Trying fixtures endpoint: ${endpoint}`);
-            fixtures = await apiGet(endpoint);
-            if (fixtures && fixtures.length > 0) {
-              console.log(`Successfully loaded ${fixtures.length} fixtures`);
-              break;
-            }
-          } catch (error) {
-            console.log(`Endpoint failed: ${endpoint}`, error.message);
-            continue;
-          }
-        }
+        // Use exactly the same loadFixtures logic as debug page
+        const fixtures = await loadFixturesLikeMainApp(1, true); // Premier League ID = 1
         
         if (!fixtures || fixtures.length === 0) {
-          throw new Error('No fixtures found with any endpoint');
+          throw new Error('No fixtures loaded');
         }
         
         console.log('Loaded fixtures:', fixtures.length);
         
-        // Filter out test fixtures (ID <= 30)
-        const validFixtures = fixtures.filter(f => f.id && f.id > 30);
-        console.log('Valid fixtures after ID filter:', validFixtures.length);
-        
         // Get all broadcast data for these fixtures
-        const fixtureIds = validFixtures.map(f => f.id);
+        const fixtureIds = fixtures.map(f => f.id);
         let broadcasts = [];
         
         if (fixtureIds.length > 0) {
@@ -441,7 +456,7 @@
         });
         
         // Store for filtering
-        allFixtures = validFixtures.map(fixture => ({
+        allFixtures = fixtures.map(fixture => ({
           ...fixture,
           broadcast: broadcastLookup[fixture.id] || null
         }));
