@@ -3086,8 +3086,15 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
           const fixtures = await jget(endpoint);
           
           if (fixtures && fixtures.length > 0) {
-            console.log(`Successfully loaded ${fixtures.length} valid fixtures for competition ${competitionId}`);
-            return fixtures;
+            // Additional safety filter: exclude suspicious low-ID fixtures as backup
+            const filtered = fixtures.filter(f => f.id && f.id > 30);
+            const removedCount = fixtures.length - filtered.length;
+            if (removedCount > 0) {
+              console.log(`Successfully loaded ${fixtures.length} fixtures for competition ${competitionId}, filtered to ${filtered.length} (removed ${removedCount} low-ID fixtures)`);
+            } else {
+              console.log(`Successfully loaded ${filtered.length} valid fixtures for competition ${competitionId}`);
+            }
+            return filtered;
           }
         } catch (error) {
           console.warn(`Fixtures endpoint failed: ${endpoint}`, error.message);
