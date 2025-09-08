@@ -370,7 +370,7 @@
       }
     }
 
-    /** Load fixtures with current broadcasts */
+    /** Load fixtures using same logic as main app */
     async function loadFixtures() {
       const tbody = document.getElementById('fixtures-tbody');
       tbody.innerHTML = '<tr><td colspan="5" class="loading">Loading fixtures...</td></tr>';
@@ -381,11 +381,43 @@
           await loadTeams();
         }
 
-        // Get current season fixtures (Premier League only)
+        // Use same logic as main app loadFixtures function
+        const competitionId = 1; // Premier League
         const currentSeasonStart = '2024-08-01T00:00:00.000Z';
-        const fixturesEndpoint = `${API_ENDPOINTS.fixtures}?competition_id=eq.1&utc_kickoff=gte.${currentSeasonStart}&matchday=gte.1&matchday=lte.38&order=utc_kickoff.asc&limit=200`;
+        const seasonFilter = `&utc_kickoff=gte.${currentSeasonStart}`;
+        const matchdayFilter = '&matchday=gte.1&matchday=lte.38';
+        const orderBy = 'order=utc_kickoff.asc';
+        const limit = 200;
         
-        const fixtures = await apiGet(fixturesEndpoint);
+        // Try multiple endpoints like main app does
+        const attempts = [
+          // Primary: Current season fixtures with valid matchdays  
+          `${API_ENDPOINTS.fixtures}?competition_id=eq.${competitionId}${seasonFilter}${matchdayFilter}&${orderBy}&limit=${limit}`,
+          // Fallback: Current season fixtures without matchday constraint
+          `${API_ENDPOINTS.fixtures}?competition_id=eq.${competitionId}${seasonFilter}&${orderBy}&limit=${limit}`,
+          // Last resort: Basic query with just competition filter
+          `${API_ENDPOINTS.fixtures}?competition_id=eq.${competitionId}&${orderBy}&limit=${limit}`
+        ];
+        
+        let fixtures = [];
+        for (const endpoint of attempts) {
+          try {
+            console.log(`Trying fixtures endpoint: ${endpoint}`);
+            fixtures = await apiGet(endpoint);
+            if (fixtures && fixtures.length > 0) {
+              console.log(`Successfully loaded ${fixtures.length} fixtures`);
+              break;
+            }
+          } catch (error) {
+            console.log(`Endpoint failed: ${endpoint}`, error.message);
+            continue;
+          }
+        }
+        
+        if (!fixtures || fixtures.length === 0) {
+          throw new Error('No fixtures found with any endpoint');
+        }
+        
         console.log('Loaded fixtures:', fixtures.length);
         
         // Filter out test fixtures (ID <= 30)
