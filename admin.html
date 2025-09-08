@@ -323,10 +323,16 @@
     async function apiWrite(endpoint, data, method = 'POST') {
       console.log(`API ${method}:`, `${SUPABASE_CONFIG.url}${endpoint}`, data);
       
+      // Add Content-Type for write operations
+      const writeHeaders = {
+        ...API_HEADERS,
+        'Content-Type': 'application/json'
+      };
+      
       try {
         const response = await fetch(`${SUPABASE_CONFIG.url}${endpoint}`, {
           method: method,
-          headers: API_HEADERS,
+          headers: writeHeaders,
           body: JSON.stringify(data)
         });
         
