@@ -3636,20 +3636,6 @@ render();
     async function debugDataView() {
       const app = document.getElementById('app');
       
-      // Simple authentication check
-      const params = new URLSearchParams(window.location.search);
-      const accessKey = params.get('key');
-      
-      if (accessKey !== 'admin') {
-        app.innerHTML = `
-          <div class="card">
-            <h2>Access Restricted</h2>
-            <p class="muted">This debug page requires admin access.</p>
-            <p><a href="/football">← Back to Home</a></p>
-          </div>`;
-        return;
-      }
-      
       try {
         // Load raw database data
         const teams = await jget('/rest/v1/teams?select=id,name,slug,competition_id,external_id&order=name.asc');
@@ -3678,12 +3664,12 @@ render();
         });
         
         updateMetaTags(
-          "Database Debug | fixtures.app Admin",
-          "Internal debugging tool for database inspection and data quality analysis.",
+          "Database Debug | fixtures.app",
+          "Database inspection tool for data quality analysis and corruption detection.",
           {
-            title: "Database Debug | fixtures.app Admin",
-            description: "Internal debugging tool for database inspection and data quality analysis.",
-            url: "https://football-listings.netlify.app/debug?key=admin"
+            title: "Database Debug | fixtures.app",
+            description: "Database inspection tool for data quality analysis and corruption detection.",
+            url: "https://football-listings.netlify.app/debug"
           }
         );
         
