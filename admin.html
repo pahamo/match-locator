@@ -304,7 +304,10 @@
         });
         
         if (!response.ok) {
-          throw new Error(`API Error: ${response.status} ${response.statusText}`);
+          const errorText = await response.text();
+          console.error(`API Error: ${response.status} ${response.statusText}`, errorText);
+          console.error(`Failed URL: ${SUPABASE_CONFIG.url}${endpoint}`);
+          throw new Error(`API Error: ${response.status} ${response.statusText} - ${errorText}`);
         }
         
         const data = await response.json();
@@ -401,10 +404,11 @@
       throw new Error(`Unable to load fixtures for competition ${competitionId} after trying ${attempts.length} endpoints`);
     }
 
-    /** Load teams data */
+    /** Load teams data - start with exact debug page query */
     async function loadTeams() {
       try {
-        const teams = await apiGet(`${API_ENDPOINTS.teams}?competition_id=eq.1&select=id,name,slug,crest_url`);
+        // Use exact same query as debug page
+        const teams = await apiGet(`${API_ENDPOINTS.teams}?select=id,name,slug,competition_id&order=name.asc&limit=50`);
         
         // Create lookup object
         teams.forEach(team => {
