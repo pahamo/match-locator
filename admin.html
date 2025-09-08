@@ -275,9 +275,9 @@
       'Content-Type': 'application/json'
     };
 
-    /** API endpoints (matching main app) */
+    /** API endpoints (matching main app exactly) */
     const API_ENDPOINTS = {
-      fixtures: '/rest/v1/fixtures_with_teams',
+      fixturesList: '/rest/v1/fixtures_with_teams',
       teams: '/rest/v1/teams',
       broadcasts: '/rest/v1/broadcasts',
       providers: '/rest/v1/providers'
@@ -392,11 +392,11 @@
         // Try multiple endpoints like main app does
         const attempts = [
           // Primary: Current season fixtures with valid matchdays  
-          `${API_ENDPOINTS.fixtures}?competition_id=eq.${competitionId}${seasonFilter}${matchdayFilter}&${orderBy}&limit=${limit}`,
+          `${API_ENDPOINTS.fixturesList}?competition_id=eq.${competitionId}${seasonFilter}${matchdayFilter}&${orderBy}&limit=${limit}`,
           // Fallback: Current season fixtures without matchday constraint
-          `${API_ENDPOINTS.fixtures}?competition_id=eq.${competitionId}${seasonFilter}&${orderBy}&limit=${limit}`,
+          `${API_ENDPOINTS.fixturesList}?competition_id=eq.${competitionId}${seasonFilter}&${orderBy}&limit=${limit}`,
           // Last resort: Basic query with just competition filter
-          `${API_ENDPOINTS.fixtures}?competition_id=eq.${competitionId}&${orderBy}&limit=${limit}`
+          `${API_ENDPOINTS.fixturesList}?competition_id=eq.${competitionId}&${orderBy}&limit=${limit}`
         ];
         
         let fixtures = [];
