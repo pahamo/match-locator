@@ -1302,9 +1302,11 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
   try {
     // Keep queries light so this page always renders
     const teams = await jget(`${API_ENDPOINTS.teams}?select=id,name,slug,competition_id&order=name.asc&limit=50`);
-    const fixtures = await jget(`${API_ENDPOINTS.fixturesList}?competition_id=eq.${competition.id}&utc_kickoff=gte.${nowIso}&order=utc_kickoff.asc&limit=10`);
+    // Use the improved loadFixtures function to get only valid fixtures
+    const allFixtures = await loadFixtures(competition.id, true);
+    const fixtures = (allFixtures || []).slice(0, 10); // Limit to 10 for debug display
 
-    const rows = (fixtures || []).map(f => {
+    const rows = fixtures.map(f => {
       const d = new Date(f.utc_kickoff);
       const when = new Intl.DateTimeFormat(LOCALE, { dateStyle: 'medium', timeStyle: 'short', timeZone: DEFAULT_TZ }).format(d);
       return `<tr>
@@ -1781,17 +1783,16 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
         return; 
       }
 
-      // Load upcoming fixtures that include this club
-      const nowIso = new Date().toISOString();
-      const rows = await jget(`${API_ENDPOINTS.fixturesList}?competition_id=eq.${competition.id}&utc_kickoff=gte.${nowIso}&${QUERY_PARAMS.orderByKickoff}&limit=${QUERY_PARAMS.limit}`);
-      const fixtures = (rows||[]).map(r => ({
+      // Load upcoming fixtures that include this club using improved filtering
+      const allFixtures = await loadFixtures(competition.id, true);
+      const fixtures = (allFixtures||[]).map(r => ({
         id: r.id,
         utc_kickoff: r.utc_kickoff,
         matchday: r.matchday ?? null,
-        home: r.home_team,
-        away: r.away_team,
-        home_badge: r.home_crest || null,
-        away_badge: r.away_crest || null,
+        home: r.home_team || r.home,
+        away: r.away_team || r.away,
+        home_badge: r.home_crest || r.home_badge || null,
+        away_badge: r.away_crest || r.away_badge || null,
       })).filter(f => (f.home===team.name || f.away===team.name));
       fixtures.sort((a,b)=> new Date(a.utc_kickoff) - new Date(b.utc_kickoff));
 
@@ -2118,9 +2119,9 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
         monday.setDate(saturday.getDate() + 2);
         monday.setHours(23, 59, 59, 999);
         
-        // Load fixtures for the weekend period
-        const fixtures = await jget('/rest/v1/fixtures?select=id,utc_kickoff,matchday,home_team,away_team,home_crest,away_crest&order=utc_kickoff.asc');
-        const weekendFixtures = fixtures.filter(f => {
+        // Load fixtures for the weekend period using improved filtering
+        const allFixtures = await loadFixtures(1, false); // Premier League, all fixtures
+        const weekendFixtures = allFixtures.filter(f => {
           const fixtureDate = new Date(f.utc_kickoff);
           return fixtureDate >= saturday && fixtureDate <= monday;
         });
@@ -2577,8 +2578,9 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
           return;
         }
         
-        // Load recent fixtures for this team to show broadcasting patterns
-        const fixtures = await jget(`/rest/v1/fixtures?or=(home_team_id.eq.${team.id},away_team_id.eq.${team.id})&order=utc_kickoff.desc&limit=10&select=id,utc_kickoff,home_team,away_team,matchday`);
+        // Load recent fixtures for this team to show broadcasting patterns (current season only)
+        const currentSeasonStart = '2024-08-01T00:00:00.000Z';
+        const fixtures = await jget(`/rest/v1/fixtures?or=(home_team_id.eq.${team.id},away_team_id.eq.${team.id})&utc_kickoff=gte.${currentSeasonStart}&order=utc_kickoff.desc&limit=10&select=id,utc_kickoff,home_team,away_team,matchday`);
         
         // Load broadcast data for these fixtures
         const broadcasts = {};
@@ -3062,13 +3064,20 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
       const nowIso = includeUpcoming ? new Date().toISOString() : null;
       const timeFilter = includeUpcoming ? `&utc_kickoff=gte.${nowIso}` : '';
       
+      // Better filtering: only get fixtures from current season with valid matchdays
+      const currentSeasonStart = '2024-08-01T00:00:00.000Z'; // Premier League 2024-25 season
+      const seasonFilter = `&utc_kickoff=gte.${currentSeasonStart}`;
+      const matchdayFilter = '&matchday=gte.1&matchday=lte.38'; // Valid PL matchdays
+      
       const attempts = [
-        // Try main fixtures view
-        `${API_ENDPOINTS.fixturesList}?competition_id=eq.${competitionId}${timeFilter}&${QUERY_PARAMS.orderByKickoff}&limit=${QUERY_PARAMS.limit}`,
-        // Try without time filter if no upcoming fixtures
-        includeUpcoming ? `${API_ENDPOINTS.fixturesList}?competition_id=eq.${competitionId}&${QUERY_PARAMS.orderByKickoff}&limit=${QUERY_PARAMS.limit}` : null,
-        // Try basic fixtures table
-        `/rest/v1/fixtures?competition_id=eq.${competitionId}${timeFilter}&order=utc_kickoff.asc&limit=${QUERY_PARAMS.limit}`
+        // Primary: Current season fixtures with valid matchdays
+        `${API_ENDPOINTS.fixturesList}?competition_id=eq.${competitionId}${timeFilter}${seasonFilter}${matchdayFilter}&${QUERY_PARAMS.orderByKickoff}&limit=${QUERY_PARAMS.limit}`,
+        // Fallback: Current season fixtures without matchday constraint
+        `${API_ENDPOINTS.fixturesList}?competition_id=eq.${competitionId}${timeFilter}${seasonFilter}&${QUERY_PARAMS.orderByKickoff}&limit=${QUERY_PARAMS.limit}`,
+        // Fallback: All season fixtures with matchday constraint
+        includeUpcoming ? `${API_ENDPOINTS.fixturesList}?competition_id=eq.${competitionId}${seasonFilter}${matchdayFilter}&${QUERY_PARAMS.orderByKickoff}&limit=${QUERY_PARAMS.limit}` : null,
+        // Last resort: Basic query with just competition filter
+        `${API_ENDPOINTS.fixturesList}?competition_id=eq.${competitionId}${timeFilter}&${QUERY_PARAMS.orderByKickoff}&limit=${QUERY_PARAMS.limit}`
       ].filter(Boolean);
       
       for (const endpoint of attempts) {
@@ -3077,10 +3086,8 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
           const fixtures = await jget(endpoint);
           
           if (fixtures && fixtures.length > 0) {
-            // Filter out suspicious low-ID fixtures (likely test data)
-            const filtered = fixtures.filter(f => f.id && f.id > 30);
-            console.log(`Successfully loaded ${fixtures.length} fixtures for competition ${competitionId}, filtered to ${filtered.length} (removed ${fixtures.length - filtered.length} low-ID fixtures)`);
-            return filtered;
+            console.log(`Successfully loaded ${fixtures.length} valid fixtures for competition ${competitionId}`);
+            return fixtures;
           }
         } catch (error) {
           console.warn(`Fixtures endpoint failed: ${endpoint}`, error.message);
