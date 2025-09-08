@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Broadcast Admin - Premier League TV Schedule</title>
+  <style>
+    :root {
+      --color-border: #e5e7eb;
+      --color-muted: #6b7280;
+      --color-background: #f8fafc;
+      --color-card: #ffffff;
+      --color-text: #111827;
+      --color-accent: #6366f1;
+      --color-success: #10b981;
+      --color-warning: #f59e0b;
+      --border-radius: 8px;
+      --spacing-sm: 8px;
+      --spacing-md: 12px;
+      --spacing-lg: 16px;
+      --spacing-xl: 20px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 6px 16px rgba(0,0,0,.04);
+      --font-system: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    
+    body {
+      font-family: var(--font-system);
+      margin: 0;
+      background: var(--color-background);
+      color: var(--color-text);
+      line-height: 1.5;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--spacing-xl);
+    }
+    
+    .header {
+      background: var(--color-card);
+      border-bottom: 1px solid var(--color-border);
+      padding: var(--spacing-lg) 0;
+      margin-bottom: var(--spacing-xl);
+    }
+    
+    .header h1 {
+      margin: 0;
+      color: var(--color-text);
+      font-size: 1.5rem;
+    }
+    
+    .header p {
+      margin: var(--spacing-sm) 0 0;
+      color: var(--color-muted);
+      font-size: 0.9rem;
+    }
+    
+    .filter-bar {
+      background: var(--color-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius);
+      padding: var(--spacing-md);
+      margin-bottom: var(--spacing-lg);
+      display: flex;
+      gap: var(--spacing-md);
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    
+    .filter-bar select {
+      padding: var(--spacing-sm) var(--spacing-md);
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius);
+      background: var(--color-card);
+    }
+    
+    .fixtures-table {
+      background: var(--color-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius);
+      overflow: hidden;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    th, td {
+      text-align: left;
+      padding: var(--spacing-md);
+      border-bottom: 1px solid var(--color-border);
+    }
+    
+    th {
+      background: var(--color-background);
+      font-weight: 600;
+      color: var(--color-text);
+    }
+    
+    tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .fixture-row:hover {
+      background: #fafafa;
+    }
+    
+    .match-info {
+      font-weight: 500;
+    }
+    
+    .match-time {
+      font-size: 0.9rem;
+      color: var(--color-muted);
+    }
+    
+    .broadcast-editor {
+      display: flex;
+      gap: var(--spacing-sm);
+      align-items: center;
+    }
+    
+    .broadcast-select {
+      padding: var(--spacing-sm);
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius);
+      background: var(--color-card);
+      min-width: 120px;
+    }
+    
+    .save-btn {
+      padding: var(--spacing-sm) var(--spacing-md);
+      background: var(--color-accent);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+    
+    .save-btn:hover {
+      background: #5046e4;
+    }
+    
+    .save-btn:disabled {
+      background: var(--color-muted);
+      cursor: not-allowed;
+    }
+    
+    .status-indicator {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: var(--spacing-sm);
+    }
+    
+    .status-confirmed {
+      background: var(--color-success);
+    }
+    
+    .status-pending {
+      background: var(--color-warning);
+    }
+    
+    .status-none {
+      background: var(--color-muted);
+    }
+    
+    .loading {
+      text-align: center;
+      padding: var(--spacing-xl);
+      color: var(--color-muted);
+    }
+    
+    .error {
+      background: #fee;
+      border: 1px solid #fcc;
+      color: #c33;
+      padding: var(--spacing-md);
+      border-radius: var(--border-radius);
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .success {
+      background: #efe;
+      border: 1px solid #cfc;
+      color: #363;
+      padding: var(--spacing-md);
+      border-radius: var(--border-radius);
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .stats-bar {
+      display: flex;
+      gap: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+      font-size: 0.9rem;
+      color: var(--color-muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="container">
+      <h1>🎬 Broadcast Admin</h1>
+      <p>Manage UK broadcaster assignments for Premier League fixtures</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div id="message-area"></div>
+    
+    <div class="filter-bar">
+      <label>Month:</label>
+      <select id="month-filter">
+        <option value="">All months</option>
+        <option value="2024-09">September 2024</option>
+        <option value="2024-10">October 2024</option>
+        <option value="2024-11">November 2024</option>
+        <option value="2024-12">December 2024</option>
+        <option value="2025-01">January 2025</option>
+      </select>
+      
+      <label>Status:</label>
+      <select id="status-filter">
+        <option value="">All fixtures</option>
+        <option value="confirmed">Has broadcaster</option>
+        <option value="pending">No broadcaster</option>
+      </select>
+      
+      <button onclick="loadFixtures()" class="save-btn">🔄 Refresh</button>
+    </div>
+    
+    <div class="stats-bar">
+      <span id="stats-total">Total: 0</span>
+      <span id="stats-confirmed">Confirmed: 0</span>
+      <span id="stats-pending">Pending: 0</span>
+    </div>
+
+    <div class="fixtures-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Match</th>
+            <th>Date & Time</th>
+            <th>Status</th>
+            <th>UK Broadcaster</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="fixtures-tbody">
+          <tr>
+            <td colspan="5" class="loading">Loading fixtures...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    /** Supabase API configuration (copied from main app) */
+    const SUPABASE_CONFIG = {
+      url: 'https://nkfuzkrazehjivzmdrvt.supabase.co',
+      anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5rZnV6a3JhemVoaml2em1kcnZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyNjI5MzAsImV4cCI6MjA3MjgzODkzMH0.CNW1EUtcC4JWfDy-WzOIVDfv7rnXzsz1qqQyRTZVyXU'
+    };
+    
+    const API_HEADERS = { 
+      apikey: SUPABASE_CONFIG.anonKey, 
+      Authorization: `Bearer ${SUPABASE_CONFIG.anonKey}`,
+      'Content-Type': 'application/json'
+    };
+
+    /** API endpoints */
+    const API_ENDPOINTS = {
+      fixtures: '/rest/v1/fixtures',
+      teams: '/rest/v1/teams',
+      broadcasts: '/rest/v1/broadcasts_uk',
+      providers: '/rest/v1/providers'
+    };
+
+    /** Broadcaster options */
+    const BROADCASTERS = [
+      { id: '', name: 'No broadcaster', type: 'none' },
+      { id: 1, name: 'Sky Sports', type: 'tv' },
+      { id: 2, name: 'TNT Sports', type: 'tv' },
+      { id: 3, name: 'BBC Sport', type: 'tv' },
+      { id: 4, name: 'Amazon Prime Video', type: 'streaming' }
+    ];
+
+    let allFixtures = [];
+    let allTeams = {};
+
+    /** API helper function */
+    async function apiGet(endpoint) {
+      console.log('API GET:', `${SUPABASE_CONFIG.url}${endpoint}`);
+      
+      try {
+        const response = await fetch(`${SUPABASE_CONFIG.url}${endpoint}`, {
+          headers: API_HEADERS
+        });
+        
+        if (!response.ok) {
+          throw new Error(`API Error: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        console.log('API Response:', data);
+        return data;
+      } catch (error) {
+        console.error('API Request failed:', error);
+        throw error;
+      }
+    }
+
+    /** API POST/PATCH helper */
+    async function apiWrite(endpoint, data, method = 'POST') {
+      console.log(`API ${method}:`, `${SUPABASE_CONFIG.url}${endpoint}`, data);
+      
+      try {
+        const response = await fetch(`${SUPABASE_CONFIG.url}${endpoint}`, {
+          method: method,
+          headers: API_HEADERS,
+          body: JSON.stringify(data)
+        });
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`API Error: ${response.status} ${response.statusText} - ${errorText}`);
+        }
+        
+        const result = method === 'POST' ? await response.json() : null;
+        console.log('API Write Response:', result);
+        return result;
+      } catch (error) {
+        console.error('API Write failed:', error);
+        throw error;
+      }
+    }
+
+    /** Show message to user */
+    function showMessage(text, type = 'success') {
+      const messageArea = document.getElementById('message-area');
+      messageArea.innerHTML = `<div class="${type}">${text}</div>`;
+      
+      // Auto-hide after 5 seconds
+      setTimeout(() => {
+        messageArea.innerHTML = '';
+      }, 5000);
+    }
+
+    /** Load teams data */
+    async function loadTeams() {
+      try {
+        const teams = await apiGet(`${API_ENDPOINTS.teams}?competition_id=eq.1&select=id,name,slug,crest_url`);
+        
+        // Create lookup object
+        teams.forEach(team => {
+          allTeams[team.id] = team;
+        });
+        
+        console.log('Loaded teams:', Object.keys(allTeams).length);
+      } catch (error) {
+        console.error('Failed to load teams:', error);
+        showMessage('Failed to load teams data', 'error');
+      }
+    }
+
+    /** Load fixtures with current broadcasts */
+    async function loadFixtures() {
+      const tbody = document.getElementById('fixtures-tbody');
+      tbody.innerHTML = '<tr><td colspan="5" class="loading">Loading fixtures...</td></tr>';
+      
+      try {
+        // Load teams first if not loaded
+        if (Object.keys(allTeams).length === 0) {
+          await loadTeams();
+        }
+
+        // Get current season fixtures (Premier League only)
+        const currentSeasonStart = '2024-08-01T00:00:00.000Z';
+        const fixturesEndpoint = `${API_ENDPOINTS.fixtures}?competition_id=eq.1&utc_kickoff=gte.${currentSeasonStart}&matchday=gte.1&matchday=lte.38&order=utc_kickoff.asc&limit=200`;
+        
+        const fixtures = await apiGet(fixturesEndpoint);
+        console.log('Loaded fixtures:', fixtures.length);
+        
+        // Filter out test fixtures (ID <= 30)
+        const validFixtures = fixtures.filter(f => f.id && f.id > 30);
+        console.log('Valid fixtures after ID filter:', validFixtures.length);
+        
+        // Get all broadcast data for these fixtures
+        const fixtureIds = validFixtures.map(f => f.id);
+        let broadcasts = [];
+        
+        if (fixtureIds.length > 0) {
+          const broadcastsEndpoint = `${API_ENDPOINTS.broadcasts}?fixture_id=in.(${fixtureIds.join(',')})&select=fixture_id,provider_id,channel`;
+          broadcasts = await apiGet(broadcastsEndpoint);
+          console.log('Loaded broadcasts:', broadcasts.length);
+        }
+        
+        // Create broadcast lookup
+        const broadcastLookup = {};
+        broadcasts.forEach(b => {
+          broadcastLookup[b.fixture_id] = b;
+        });
+        
+        // Store for filtering
+        allFixtures = validFixtures.map(fixture => ({
+          ...fixture,
+          broadcast: broadcastLookup[fixture.id] || null
+        }));
+        
+        renderFixtures();
+        updateStats();
+        
+      } catch (error) {
+        console.error('Failed to load fixtures:', error);
+        showMessage('Failed to load fixtures: ' + error.message, 'error');
+        tbody.innerHTML = '<tr><td colspan="5" class="error">Failed to load fixtures</td></tr>';
+      }
+    }
+
+    /** Render fixtures table */
+    function renderFixtures() {
+      const tbody = document.getElementById('fixtures-tbody');
+      const monthFilter = document.getElementById('month-filter').value;
+      const statusFilter = document.getElementById('status-filter').value;
+      
+      // Apply filters
+      let filteredFixtures = allFixtures;
+      
+      if (monthFilter) {
+        filteredFixtures = filteredFixtures.filter(f => 
+          f.utc_kickoff && f.utc_kickoff.startsWith(monthFilter)
+        );
+      }
+      
+      if (statusFilter === 'confirmed') {
+        filteredFixtures = filteredFixtures.filter(f => f.broadcast && f.broadcast.provider_id);
+      } else if (statusFilter === 'pending') {
+        filteredFixtures = filteredFixtures.filter(f => !f.broadcast || !f.broadcast.provider_id);
+      }
+      
+      if (filteredFixtures.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="loading">No fixtures found</td></tr>';
+        return;
+      }
+      
+      tbody.innerHTML = filteredFixtures.map(fixture => {
+        const homeTeam = allTeams[fixture.home_team_id];
+        const awayTeam = allTeams[fixture.away_team_id];
+        const kickoffTime = new Date(fixture.utc_kickoff).toLocaleString('en-GB');
+        
+        const broadcast = fixture.broadcast;
+        const currentProviderId = broadcast?.provider_id || '';
+        
+        // Status indicator
+        const hasProvider = currentProviderId && currentProviderId !== '';
+        const statusClass = hasProvider ? 'status-confirmed' : 'status-pending';
+        const statusText = hasProvider ? 'Confirmed' : 'Pending';
+        
+        // Broadcaster select options
+        const selectOptions = BROADCASTERS.map(broadcaster => 
+          `<option value="${broadcaster.id}" ${currentProviderId == broadcaster.id ? 'selected' : ''}>
+            ${broadcaster.name}
+          </option>`
+        ).join('');
+        
+        return `
+          <tr class="fixture-row">
+            <td class="match-info">
+              ${homeTeam?.name || 'Team ' + fixture.home_team_id} vs 
+              ${awayTeam?.name || 'Team ' + fixture.away_team_id}
+            </td>
+            <td>
+              <div>${kickoffTime}</div>
+              <div class="match-time">Matchday ${fixture.matchday || 'N/A'}</div>
+            </td>
+            <td>
+              <span class="status-indicator ${statusClass}"></span>
+              ${statusText}
+            </td>
+            <td>
+              <div class="broadcast-editor">
+                <select class="broadcast-select" id="provider-${fixture.id}">
+                  ${selectOptions}
+                </select>
+              </div>
+            </td>
+            <td>
+              <button class="save-btn" onclick="saveBroadcast(${fixture.id})" id="save-${fixture.id}">
+                Save
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    /** Save broadcast assignment */
+    async function saveBroadcast(fixtureId) {
+      const saveBtn = document.getElementById(`save-${fixtureId}`);
+      const providerSelect = document.getElementById(`provider-${fixtureId}`);
+      const providerId = providerSelect.value;
+      
+      saveBtn.textContent = 'Saving...';
+      saveBtn.disabled = true;
+      
+      try {
+        // Find existing broadcast record
+        const fixture = allFixtures.find(f => f.id === fixtureId);
+        const existingBroadcast = fixture?.broadcast;
+        
+        if (providerId === '' || providerId === '0') {
+          // Remove broadcaster - delete record if exists
+          if (existingBroadcast) {
+            await apiWrite(
+              `${API_ENDPOINTS.broadcasts}?fixture_id=eq.${fixtureId}`,
+              {},
+              'DELETE'
+            );
+            
+            // Update local data
+            fixture.broadcast = null;
+          }
+          showMessage(`Removed broadcaster for fixture ${fixtureId}`, 'success');
+          
+        } else {
+          // Add/update broadcaster
+          const broadcastData = {
+            fixture_id: fixtureId,
+            provider_id: parseInt(providerId),
+            channel: getBroadcasterChannel(providerId)
+          };
+          
+          if (existingBroadcast) {
+            // Update existing
+            await apiWrite(
+              `${API_ENDPOINTS.broadcasts}?fixture_id=eq.${fixtureId}`,
+              broadcastData,
+              'PATCH'
+            );
+            
+            // Update local data
+            Object.assign(fixture.broadcast, broadcastData);
+          } else {
+            // Create new
+            await apiWrite(API_ENDPOINTS.broadcasts, broadcastData, 'POST');
+            
+            // Update local data
+            fixture.broadcast = broadcastData;
+          }
+          
+          const broadcasterName = BROADCASTERS.find(b => b.id == providerId)?.name || 'Unknown';
+          showMessage(`Set broadcaster to ${broadcasterName} for fixture ${fixtureId}`, 'success');
+        }
+        
+        // Re-render to show updated status
+        renderFixtures();
+        updateStats();
+        
+      } catch (error) {
+        console.error('Failed to save broadcast:', error);
+        showMessage('Failed to save: ' + error.message, 'error');
+      } finally {
+        saveBtn.textContent = 'Save';
+        saveBtn.disabled = false;
+      }
+    }
+
+    /** Get default channel for broadcaster */
+    function getBroadcasterChannel(providerId) {
+      const channels = {
+        '1': 'Sky Sports Premier League',
+        '2': 'TNT Sports',
+        '3': 'BBC One',
+        '4': 'Amazon Prime Video'
+      };
+      return channels[providerId] || null;
+    }
+
+    /** Update statistics display */
+    function updateStats() {
+      const total = allFixtures.length;
+      const confirmed = allFixtures.filter(f => f.broadcast && f.broadcast.provider_id).length;
+      const pending = total - confirmed;
+      
+      document.getElementById('stats-total').textContent = `Total: ${total}`;
+      document.getElementById('stats-confirmed').textContent = `Confirmed: ${confirmed}`;
+      document.getElementById('stats-pending').textContent = `Pending: ${pending}`;
+    }
+
+    /** Event listeners */
+    document.getElementById('month-filter').addEventListener('change', renderFixtures);
+    document.getElementById('status-filter').addEventListener('change', renderFixtures);
+
+    /** Initialize app */
+    async function init() {
+      console.log('Initializing Broadcast Admin...');
+      await loadFixtures();
+    }
+
+    // Start the app
+    init();
+  </script>
+</body>
+</html>
