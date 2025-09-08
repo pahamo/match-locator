@@ -3284,12 +3284,12 @@ render();
               });
               
               if (issues.length === 0) {
-                resultsDiv.innerHTML = \`
-                  <div class="validation-success">
-                    ✅ All broadcast data looks good!<br>
-                    📊 \${fixturesWithBroadcasts}/\${totalFixtures} fixtures have broadcast data (\${Math.round((fixturesWithBroadcasts/totalFixtures)*100)}%)<br>
-                    ✓ \${window.adminData.broadcasts.length - unverifiedBroadcasts} verified broadcasts
-                  </div>\`;
+                resultsDiv.innerHTML = 
+                  '<div class="validation-success">' +
+                    '✅ All broadcast data looks good!<br>' +
+                    '📊 ' + fixturesWithBroadcasts + '/' + totalFixtures + ' fixtures have broadcast data (' + Math.round((fixturesWithBroadcasts/totalFixtures)*100) + '%)<br>' +
+                    '✓ ' + (window.adminData.broadcasts.length - unverifiedBroadcasts) + ' verified broadcasts' +
+                  '</div>';
               } else {
                 resultsDiv.innerHTML = issues.map(issue => '<div class="validation-issue">' + issue + '</div>').join('');
               }
@@ -3307,12 +3307,12 @@ render();
                   return '• ' + f.home_team + ' vs ' + f.away_team + ' (' + date + ')';
                 }).join('<br>');
                 
-                resultsDiv.innerHTML = \`
-                  <div class="validation-issue">
-                    ❓ \${missingFixtures.length} fixtures missing broadcast data:<br><br>
-                    \${missingList}
-                    \${missingFixtures.length > 10 ? '<br>...and more' : ''}
-                  </div>\`;
+                resultsDiv.innerHTML = 
+                  '<div class="validation-issue">' +
+                    '❓ ' + missingFixtures.length + ' fixtures missing broadcast data:<br><br>' +
+                    missingList +
+                    (missingFixtures.length > 10 ? '<br>...and more' : '') +
+                  '</div>';
               }
             }
             
@@ -3435,13 +3435,13 @@ render();
               fixes.push('🔧 Would add missing channel names for Sky Sports');
               fixes.push('🔧 Would flag unverified broadcasts older than 7 days');
               
-              resultsDiv.innerHTML = \`
-                <div class="validation-info">
-                  <h4>Automatic Fixes Available:</h4>
-                  ' + fixes.map(fix => '<div>' + fix + '</div>').join('') + '
-                  <br>
-                  <em>Automatic fixes are disabled for safety. Apply changes manually.</em>
-                </div>\`;
+              resultsDiv.innerHTML = 
+                '<div class="validation-info">' +
+                  '<h4>Automatic Fixes Available:</h4>' +
+                  fixes.map(fix => '<div>' + fix + '</div>').join('') +
+                  '<br>' +
+                  '<em>Automatic fixes are disabled for safety. Apply changes manually.</em>' +
+                '</div>';
             }
             
             function editFixtureBroadcast(fixtureId) {
