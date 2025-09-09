@@ -696,6 +696,24 @@
     function createMatchSlug(homeTeam, awayTeam, utcKickoff) {
       return `${slugify(homeTeam)}-vs-${slugify(awayTeam)}-${formatDateYMD(utcKickoff)}`;
     }
+
+    /** Check if fixture is blackout and return appropriate message */
+    function getBlackoutOrNoProviderMessage(broadcasts) {
+      // Check if any broadcast has provider_id = 99 (blackout)
+      const hasBlackout = broadcasts && broadcasts.some(b => b.provider_id == 99);
+      
+      if (hasBlackout) {
+        return `<div class="card"><span class="muted">🚫 3pm blackout - this match is not televised in the UK due to broadcasting regulations.</span></div>`;
+      } else {
+        return `<div class="card"><span class="muted">No UK broadcaster listed yet.</span></div>`;
+      }
+    }
+
+    /** Check if fixture is blackout for card display */
+    function isBlackoutFixture(broadcasts) {
+      return broadcasts && broadcasts.some(b => b.provider_id == 99);
+    }
+
     /** Team name aliases for compact display */
     const TEAM_ALIASES = {
       'Wolverhampton Wanderers': 'Wolves',
@@ -1230,7 +1248,9 @@ function renderFootballSubnav(competition){
       const prettyDate = new Intl.DateTimeFormat(LOCALE, { day:'numeric', month:'short', timeZone: TZ });
 
       const renderCard = (f) => {
-        const hasB = (bmap[f.id] || []).length > 0;
+        const broadcasts = bmap[f.id] || [];
+        const hasB = broadcasts.length > 0;
+        const isBlackout = isBlackoutFixture(broadcasts);
         const idSlug = f.id ? `${f.id}-${createMatchSlug(f.home, f.away, f.utc_kickoff)}` : createMatchSlug(f.home, f.away, f.utc_kickoff);
         const href = f.id ? `#/matches/${idSlug}` : '#';
         console.log('Generating match link:', { id: f.id, slug: idSlug, href, fixture: f });
@@ -1241,6 +1261,20 @@ function renderFootballSubnav(competition){
         
         const homeRow = `<div class="team-row">${f.home_badge ? `<img class=\"crest\" alt=\"${f.home} badge\" src=\"${f.home_badge}\">` : ''}<strong>${getTeamAlias(f.home)}</strong></div>`;
         const awayRow = `<div class="team-row">${f.away_badge ? `<img class=\"crest\" alt=\"${f.away} badge\" src=\"${f.away_badge}\">` : ''}<strong>${getTeamAlias(f.away)}</strong></div>`;
+        
+        // Determine button text and style
+        let buttonText, buttonClass;
+        if (isBlackout) {
+          buttonText = 'No TV broadcast';
+          buttonClass = 'btn small right disabled broadcast-status';
+        } else if (hasB) {
+          buttonText = 'Watch options';
+          buttonClass = 'btn small right';
+        } else {
+          buttonText = 'Broadcast TBC';
+          buttonClass = 'btn small right disabled broadcast-status';
+        }
+        
         return `
           <a class="cardlink" href="${href}">
             <div class="card">
@@ -1250,7 +1284,7 @@ function renderFootballSubnav(competition){
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
                   ${compBadge}
-                  <span class="${hasB ? 'btn small right' : 'btn small right disabled broadcast-status'}" data-has-broadcast="${hasB}">${hasB ? 'Watch options' : 'Broadcast TBC'}</span>
+                  <span class="${buttonClass}" data-has-broadcast="${hasB}" data-is-blackout="${isBlackout}">${buttonText}</span>
                 </div>
               </div>
             </div>
@@ -1464,11 +1498,27 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
 
       const renderCard = (f, withTime=false) => {
         const kickoffTime = timeOnly.format(parseUtcDate(f.utc_kickoff));
-        const hasB = (bmap[f.id] || []).length > 0;
+        const broadcasts = bmap[f.id] || [];
+        const hasB = broadcasts.length > 0;
+        const isBlackout = isBlackoutFixture(broadcasts);
         const idSlug = f.id ? `${f.id}-${createMatchSlug(f.home, f.away, f.utc_kickoff)}` : createMatchSlug(f.home, f.away, f.utc_kickoff);
         const href = f.id ? `#/matches/${idSlug}` : '#';
         const homeRow = `<div class="team-row">${f.home_badge ? `<img class=\"crest\" alt=\"${f.home} badge\" src=\"${f.home_badge}\">` : ''}<strong>${getTeamAlias(f.home)}</strong></div>`;
         const awayRow = `<div class="team-row">${f.away_badge ? `<img class=\"crest\" alt=\"${f.away} badge\" src=\"${f.away_badge}\">` : ''}<strong>${getTeamAlias(f.away)}</strong></div>`;
+        
+        // Determine button text and style
+        let buttonText, buttonClass;
+        if (isBlackout) {
+          buttonText = 'No TV broadcast';
+          buttonClass = 'btn small right disabled broadcast-status';
+        } else if (hasB) {
+          buttonText = 'Watch options';
+          buttonClass = 'btn small right';
+        } else {
+          buttonText = 'Broadcast TBC';
+          buttonClass = 'btn small right disabled broadcast-status';
+        }
+        
         return `
           <a class="cardlink" href="${href}">
             <div class="card">
@@ -1478,7 +1528,7 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
                   ${withTime ? `<div class="muted">${dateOnly.format(parseUtcDate(f.utc_kickoff))} · ${kickoffTime}</div>` : ''}
                 </div>
                 <div>
-                  <span class="${hasB ? 'btn small right' : 'btn small right disabled broadcast-status'}" data-has-broadcast="${hasB}">${hasB ? 'Watch options' : 'Broadcast TBC'}</span>
+                  <span class="${buttonClass}" data-has-broadcast="${hasB}" data-is-blackout="${isBlackout}">${buttonText}</span>
                 </div>
               </div>
             </div>
@@ -1725,7 +1775,7 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
             <div class=\"muted\" style=\"margin-top:4px\">${verify}</div>
             ${showBtn ? `<a class=\"btn\" href=\"${affUrl}\" target=\"_blank\" rel=\"nofollow noopener\">Watch on ${providerName}</a>` : ``}
           </div>`;
-      }).join("") : `<div class=\"card\"><span class=\"muted\">No UK broadcaster listed yet.</span></div>`;
+      }).join("") : getBlackoutOrNoProviderMessage(bcasts);
     }
     // ---- Clubs and About views ----
     async function clubsIndexView(params, competitionSlug = 'premier-league'){
@@ -2185,9 +2235,12 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
             });
             
             const fixtureBroadcasts = broadcasts[f.id] || [];
-            const broadcastInfo = fixtureBroadcasts.length > 0 
-              ? fixtureBroadcasts.map(b => b.broadcaster).join(', ')
-              : 'Broadcast TBC';
+            const isBlackout = isBlackoutFixture(fixtureBroadcasts);
+            const broadcastInfo = isBlackout 
+              ? 'No TV broadcast' 
+              : fixtureBroadcasts.length > 0 
+                ? fixtureBroadcasts.map(b => b.broadcaster).join(', ')
+                : 'Broadcast TBC';
             
             return `
               <div class="fixture-weekend-card">
@@ -2909,9 +2962,12 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
         });
         
         const fixtureBroadcasts = broadcasts[f.id] || [];
-        const broadcastInfo = fixtureBroadcasts.length > 0 
-          ? fixtureBroadcasts.map(b => b.broadcaster).join(', ')
-          : 'Not televised';
+        const isBlackout = isBlackoutFixture(fixtureBroadcasts);
+        const broadcastInfo = isBlackout 
+          ? 'No TV broadcast'
+          : fixtureBroadcasts.length > 0 
+            ? fixtureBroadcasts.map(b => b.broadcaster).join(', ')
+            : 'Broadcast TBC';
         
         return `
           <div class="fixture-preview">
