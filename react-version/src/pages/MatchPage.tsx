@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { getFixtureById } from '../services/supabase';
 import type { Fixture } from '../types';
+import Header from '../components/Header';
 
 const MatchPage: React.FC = () => {
   const { matchId } = useParams<{ matchId: string }>();
@@ -75,14 +76,10 @@ const MatchPage: React.FC = () => {
   if (loading) {
     return (
       <div className="match-page">
-        <header>
-          <div>
-            <h1>Match Details</h1>
-            <a href="/" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>
-              ← Back to Schedule
-            </a>
-          </div>
-        </header>
+        <Header 
+          title="Match Details"
+          subtitle="Loading match information..."
+        />
         
         <main>
           <div className="wrap">
@@ -96,14 +93,10 @@ const MatchPage: React.FC = () => {
   if (error) {
     return (
       <div className="match-page">
-        <header>
-          <div>
-            <h1>Match Details</h1>
-            <a href="/" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>
-              ← Back to Schedule
-            </a>
-          </div>
-        </header>
+        <Header 
+          title="Match Details"
+          subtitle="Error loading match information"
+        />
         
         <main>
           <div className="wrap">
@@ -117,14 +110,10 @@ const MatchPage: React.FC = () => {
   if (!fixture) {
     return (
       <div className="match-page">
-        <header>
-          <div>
-            <h1>Match Details</h1>
-            <a href="/" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>
-              ← Back to Schedule
-            </a>
-          </div>
-        </header>
+        <Header 
+          title="Match Details"
+          subtitle="Match not found"
+        />
         
         <main>
           <div className="wrap">
@@ -139,14 +128,10 @@ const MatchPage: React.FC = () => {
 
   return (
     <div className="match-page">
-      <header>
-        <div>
-          <h1>Match Details</h1>
-          <a href="/" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>
-            ← Back to Schedule
-          </a>
-        </div>
-      </header>
+      <Header 
+        title={`${fixture.home.name} vs ${fixture.away.name}`}
+        subtitle="Match details and viewing information"
+      />
       
       <main>
         <div className="wrap">

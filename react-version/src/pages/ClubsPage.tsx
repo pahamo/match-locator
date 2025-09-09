@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getTeams } from '../services/supabase';
 import type { Team } from '../types';
+import Header from '../components/Header';
 
 const ClubsPage: React.FC = () => {
   const [teams, setTeams] = useState<Team[]>([]);
@@ -28,18 +29,10 @@ const ClubsPage: React.FC = () => {
   if (loading) {
     return (
       <div className="clubs-page">
-        <header>
-          <div>
-            <h1 style={{ margin: 0 }}>Premier League Clubs</h1>
-            <p style={{ margin: 0, color: 'var(--color-muted)' }}>All 20 clubs in the Premier League</p>
-          </div>
-          <nav style={{ display: 'flex', gap: '12px' }}>
-            <a href="/" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>← Home</a>
-            <a href="/about" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>About</a>
-            <a href="/admin" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>Admin</a>
-          </nav>
-        </header>
-        
+        <Header 
+          title="Premier League Clubs"
+          subtitle="All 20 clubs in the Premier League"
+        />
         <main>
           <div className="wrap">
             <div className="loading">Loading teams...</div>
@@ -52,18 +45,10 @@ const ClubsPage: React.FC = () => {
   if (error) {
     return (
       <div className="clubs-page">
-        <header>
-          <div>
-            <h1 style={{ margin: 0 }}>Premier League Clubs</h1>
-            <p style={{ margin: 0, color: 'var(--color-muted)' }}>All 20 clubs in the Premier League</p>
-          </div>
-          <nav style={{ display: 'flex', gap: '12px' }}>
-            <a href="/" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>← Home</a>
-            <a href="/about" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>About</a>
-            <a href="/admin" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>Admin</a>
-          </nav>
-        </header>
-        
+        <Header 
+          title="Premier League Clubs"
+          subtitle="All 20 clubs in the Premier League"
+        />
         <main>
           <div className="wrap">
             <div className="error">{error}</div>
@@ -76,17 +61,10 @@ const ClubsPage: React.FC = () => {
 
   return (
     <div className="clubs-page">
-      <header>
-        <div>
-          <h1 style={{ margin: 0 }}>Premier League Clubs</h1>
-          <p style={{ margin: 0, color: 'var(--color-muted)' }}>All {teams.length} clubs in the Premier League</p>
-        </div>
-        <nav style={{ display: 'flex', gap: '12px' }}>
-          <a href="/" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>← Home</a>
-          <a href="/about" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>About</a>
-          <a href="/admin" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>Admin</a>
-        </nav>
-      </header>
+      <Header 
+        title="Premier League Clubs"
+        subtitle={`All ${teams.length} clubs in the Premier League`}
+      />
       
       <main>
         <div className="wrap">

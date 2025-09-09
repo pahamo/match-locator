@@ -43,8 +43,19 @@ providers - Sky Sports, TNT Sports, etc.
 Views Used:
 
 fixtures_with_teams - Fixtures with team data joined
-Recent Changes (beta content + admin stability)
+Recent Changes (comprehensive match day experience + fixtures management)
 
+**Latest Update (Match Day Experience)**:
+- **Match Day Home Page**: Completely redesigned home page to show current/upcoming match day with smart date detection
+- **Comprehensive Fixtures Page**: New `/fixtures` page with advanced filtering by team, matchweek, competition, and viewing location
+- **Clubs Grid Page**: Beautiful responsive grid showing all 20 Premier League teams with official crests
+- **Database Schema Fixes**: Resolved column name mismatches (`teams.crest_url`, `fixtures_with_teams` structure)
+- **Supabase Client Consolidation**: Eliminated multiple client warnings by sharing single instance
+- **Full Navigation Integration**: Complete interconnected navigation between all pages
+- **Statistics Dashboard**: Live stats showing TV/streaming/blackout/TBD fixture counts
+- **Visual Enhancements**: Team crests, match day indicators, responsive layouts, provider type icons
+
+**Previous Updates (beta content + admin stability)**:
 - Admin page stability: fixed StrictMode double-mount loading issue, added safe cleanup for message timers, and guarded state updates after unmount
 - Admin UX: detects pending changes, inline "Save" per row, refresh confirmation when there are unsaved edits, disabled controls during save, success/error messaging
 - Simple data service: replaced PostgREST-style JOINs with a robust two-step fetch (fixtures → team names → broadcasts), added dynamic season window (Aug 1 of season year)
@@ -60,6 +71,11 @@ Admin interface for broadcast editing
 Component-based architecture
 About page, Teams index, Team pages
 Admin page resiliency improvements
+Match detail pages with full fixture information
+Match day focused home page with smart date detection
+Comprehensive fixtures page with advanced filtering
+Clubs grid with team crests and responsive layout
+Database schema fixes and Supabase client consolidation
 Known Issues
 Some database views/columns may not exist in new project
 Blackout system may need reimplementation

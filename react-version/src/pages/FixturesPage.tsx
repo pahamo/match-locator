@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getFixtures, getTeams } from '../services/supabase';
 import type { Fixture, Team } from '../types';
+import Header from '../components/Header';
 
 type FilterTeam = '' | string;
 type FilterMatchweek = '' | string;
@@ -168,18 +169,10 @@ const FixturesPage: React.FC = () => {
   if (loading) {
     return (
       <div className="fixtures-page">
-        <header>
-          <div>
-            <h1 style={{ margin: 0 }}>Premier League Fixtures</h1>
-            <p style={{ margin: 0, color: 'var(--color-muted)' }}>All upcoming matches with TV schedule information</p>
-          </div>
-          <nav style={{ display: 'flex', gap: '12px' }}>
-            <a href="/" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>← Home</a>
-            <a href="/clubs" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>Clubs</a>
-            <a href="/admin" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>Admin</a>
-          </nav>
-        </header>
-        
+        <Header 
+          title="Premier League Fixtures"
+          subtitle="All upcoming matches with TV schedule information"
+        />
         <main>
           <div className="wrap">
             <div className="loading">Loading fixtures...</div>
@@ -192,18 +185,10 @@ const FixturesPage: React.FC = () => {
   if (error) {
     return (
       <div className="fixtures-page">
-        <header>
-          <div>
-            <h1 style={{ margin: 0 }}>Premier League Fixtures</h1>
-            <p style={{ margin: 0, color: 'var(--color-muted)' }}>All upcoming matches with TV schedule information</p>
-          </div>
-          <nav style={{ display: 'flex', gap: '12px' }}>
-            <a href="/" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>← Home</a>
-            <a href="/clubs" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>Clubs</a>
-            <a href="/admin" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>Admin</a>
-          </nav>
-        </header>
-        
+        <Header 
+          title="Premier League Fixtures"
+          subtitle="All upcoming matches with TV schedule information"
+        />
         <main>
           <div className="wrap">
             <div className="error">{error}</div>
@@ -218,17 +203,10 @@ const FixturesPage: React.FC = () => {
 
   return (
     <div className="fixtures-page">
-      <header>
-        <div>
-          <h1 style={{ margin: 0 }}>Premier League Fixtures</h1>
-          <p style={{ margin: 0, color: 'var(--color-muted)' }}>All upcoming matches with TV schedule information</p>
-        </div>
-        <nav style={{ display: 'flex', gap: '12px' }}>
-          <a href="/" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>← Home</a>
-          <a href="/clubs" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>Clubs</a>
-          <a href="/admin" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>Admin</a>
-        </nav>
-      </header>
+      <Header 
+        title="Premier League Fixtures"
+        subtitle="All upcoming matches with TV schedule information"
+      />
       
       <main>
         <div className="wrap">

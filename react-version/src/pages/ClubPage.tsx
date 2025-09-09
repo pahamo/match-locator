@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getFixtures } from '../services/supabase';
 import type { Fixture } from '../types';
+import Header from '../components/Header';
 
 const ClubPage: React.FC = () => {
   const { slug, clubId } = useParams<{ slug?: string; clubId?: string }>();
@@ -39,22 +40,10 @@ const ClubPage: React.FC = () => {
 
   return (
     <div className="club-page">
-      <header>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          {team?.crest && (
-            <img src={team.crest} alt={`${team.name} crest`} className="team-crest" />
-          )}
-          <div>
-            <h1 style={{ margin: 0 }}>{team?.name || 'Team'}</h1>
-            <p className="muted" style={{ margin: 0 }}>Upcoming fixtures and how to watch in the UK</p>
-          </div>
-        </div>
-        <nav style={{ display: 'flex', gap: '12px' }}>
-          <a href="/" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>Schedule</a>
-          <a href="/clubs" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>Clubs</a>
-          <a href="/about" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>About</a>
-        </nav>
-      </header>
+      <Header 
+        title={team?.name || 'Team'}
+        subtitle="Upcoming fixtures and how to watch in the UK"
+      />
 
       <main>
         <div className="wrap">

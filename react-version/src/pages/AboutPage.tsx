@@ -1,11 +1,13 @@
 import React from 'react';
+import Header from '../components/Header';
 
 const AboutPage: React.FC = () => {
   return (
     <div className="about-page">
-      <header>
-        <h1>About Premier League TV Schedule (UK)</h1>
-      </header>
+      <Header 
+        title="About fixtures.app"
+        subtitle="Premier League TV Schedule for the UK"
+      />
 
       <main>
         <div className="wrap">

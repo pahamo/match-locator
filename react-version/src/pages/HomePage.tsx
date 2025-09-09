@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getSimpleFixtures, type SimpleFixture } from '../services/supabase-simple';
+import Header from '../components/Header';
 
 interface MatchDay {
   date: string;
@@ -96,11 +97,7 @@ const HomePage: React.FC = () => {
   if (loading) {
     return (
       <div className="home-page">
-        <header>
-          <h1>Premier League TV Schedule</h1>
-          <p>Find which broadcaster shows every match: Sky Sports, TNT Sports</p>
-        </header>
-        
+        <Header />
         <main>
           <div className="wrap">
             <div className="loading">Loading match day...</div>
@@ -113,11 +110,7 @@ const HomePage: React.FC = () => {
   if (error) {
     return (
       <div className="home-page">
-        <header>
-          <h1>Premier League TV Schedule</h1>
-          <p>Find which broadcaster shows every match: Sky Sports, TNT Sports</p>
-        </header>
-        
+        <Header />
         <main>
           <div className="wrap">
             <div className="error">{error}</div>
@@ -131,18 +124,7 @@ const HomePage: React.FC = () => {
   if (!matchDay) {
     return (
       <div className="home-page">
-        <header>
-          <div>
-            <h1 style={{ margin: 0 }}>Premier League TV Schedule UK</h1>
-            <p style={{ margin: 0, color: 'var(--color-muted)' }}>Find which broadcaster shows every match: Sky Sports, TNT Sports, BBC</p>
-          </div>
-          <nav style={{ display: 'flex', gap: '12px' }}>
-            <a href="/clubs" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>Clubs</a>
-            <a href="/about" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>About</a>
-            <a href="/admin" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>Admin</a>
-          </nav>
-        </header>
-        
+        <Header />
         <main>
           <div className="wrap">
             <div className="no-fixtures">
@@ -156,18 +138,7 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="home-page">
-      <header>
-        <div>
-          <h1 style={{ margin: 0 }}>Premier League TV Schedule UK</h1>
-          <p style={{ margin: 0, color: 'var(--color-muted)' }}>Find which broadcaster shows every match: Sky Sports, TNT Sports, BBC</p>
-        </div>
-        <nav style={{ display: 'flex', gap: '12px' }}>
-          <a href="/fixtures" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>Fixtures</a>
-          <a href="/clubs" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>Clubs</a>
-          <a href="/about" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>About</a>
-          <a href="/admin" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>Admin</a>
-        </nav>
-      </header>
+      <Header />
       
       <main>
         <div className="wrap">

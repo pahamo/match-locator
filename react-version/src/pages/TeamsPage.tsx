@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getTeams } from '../services/supabase';
 import type { Team } from '../types';
+import Header from '../components/Header';
 
 const TeamsPage: React.FC = () => {
   const [teams, setTeams] = useState<Team[]>([]);
@@ -27,16 +28,10 @@ const TeamsPage: React.FC = () => {
 
   return (
     <div className="teams-page">
-      <header>
-        <div>
-          <h1 style={{ margin: 0 }}>Premier League Clubs</h1>
-          <p className="muted" style={{ margin: 0 }}>Find your club’s upcoming fixtures and how to watch</p>
-        </div>
-        <nav style={{ display: 'flex', gap: '12px' }}>
-          <a href="/" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>Schedule</a>
-          <a href="/about" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>About</a>
-        </nav>
-      </header>
+      <Header 
+        title="Premier League Clubs"
+        subtitle="Find your club's upcoming fixtures and how to watch"
+      />
 
       <main>
         <div className="wrap">
