@@ -287,6 +287,7 @@
       </select>
       
       <button onclick="loadFixtures()" class="save-btn">🔄 Refresh</button>
+      <button onclick="saveAllChanges()" class="save-btn" id="save-all-btn" style="background: var(--color-success);">💾 Save All Changes</button>
     </div>
     
     <div class="stats-cards">
@@ -371,6 +372,7 @@
     let allFixtures = [];
     let allTeams = {};
     let blackoutFixtures = new Set(); // Track blackout fixtures locally
+    let pendingChanges = new Map(); // Track pending changes: fixtureId -> providerId
 
     /** API helper function */
     async function apiGet(endpoint) {
@@ -667,7 +669,7 @@
             </td>
             <td>
               <div class="broadcast-editor">
-                <select class="broadcast-select" id="provider-${fixture.id}">
+                <select class="broadcast-select" id="provider-${fixture.id}" onchange="trackChange(${fixture.id})">
                   ${selectOptions}
                 </select>
               </div>
@@ -676,6 +678,7 @@
               <button class="save-btn" onclick="saveBroadcast(${fixture.id})" id="save-${fixture.id}">
                 Save
               </button>
+              <span class="pending-indicator" id="pending-${fixture.id}" style="display:none; color: var(--color-warning); font-size: 0.8rem; margin-left: 4px;">●</span>
             </td>
           </tr>
         `;
@@ -692,62 +695,19 @@
       saveBtn.disabled = true;
       
       try {
-        // Find existing broadcast record
-        const fixture = allFixtures.find(f => f.id === fixtureId);
-        const existingBroadcast = fixture?.broadcast;
+        await saveBroadcastInternal(fixtureId, providerId);
         
-        if (providerId === '' || providerId === '0' || providerId == '99') {
-          // Remove broadcaster - delete record if exists (including blackout case)
-          if (existingBroadcast) {
-            await apiWrite(
-              `${API_ENDPOINTS.broadcasts}?fixture_id=eq.${fixtureId}`,
-              {},
-              'DELETE'
-            );
-          }
-          
-          // Update local data - for blackout, create a special marker
-          if (providerId == '99') {
-            blackoutFixtures.add(fixtureId);
-            saveBlackoutFixtures();
-            fixture.broadcast = { provider_id: 99, fixture_id: fixtureId };
-            showMessage(`Set fixture ${fixtureId} as blackout (no TV)`, 'success');
-          } else {
-            blackoutFixtures.delete(fixtureId);
-            saveBlackoutFixtures();
-            fixture.broadcast = null;
-            showMessage(`Removed broadcaster for fixture ${fixtureId}`, 'success');
-          }
-          
+        // Remove from pending changes and hide indicator
+        pendingChanges.delete(fixtureId);
+        document.getElementById(`pending-${fixtureId}`).style.display = 'none';
+        updateSaveAllButton();
+        
+        // Show success message
+        if (providerId == '99') {
+          showMessage(`Set fixture ${fixtureId} as blackout (no TV)`, 'success');
+        } else if (providerId === '' || providerId === '0') {
+          showMessage(`Removed broadcaster for fixture ${fixtureId}`, 'success');
         } else {
-          // Add/update broadcaster - all provider IDs are now numeric
-          const broadcastData = {
-            fixture_id: fixtureId,
-            provider_id: parseInt(providerId)
-          };
-          
-          // Remove from blackout set if setting a real broadcaster
-          blackoutFixtures.delete(fixtureId);
-          saveBlackoutFixtures();
-          
-          if (existingBroadcast) {
-            // Update existing
-            await apiWrite(
-              `${API_ENDPOINTS.broadcasts}?fixture_id=eq.${fixtureId}`,
-              broadcastData,
-              'PATCH'
-            );
-            
-            // Update local data
-            Object.assign(fixture.broadcast, broadcastData);
-          } else {
-            // Create new
-            await apiWrite(API_ENDPOINTS.broadcasts, broadcastData, 'POST');
-            
-            // Update local data
-            fixture.broadcast = broadcastData;
-          }
-          
           const broadcasterName = BROADCASTERS.find(b => b.id == providerId)?.name || 'Unknown';
           showMessage(`Set broadcaster to ${broadcasterName} for fixture ${fixtureId}`, 'success');
         }
@@ -776,11 +736,33 @@
       return channels[providerId] || null;
     }
 
-    /** Update statistics display */
+    /** Update statistics display based on current selection */
     function updateStats() {
-      const total = allFixtures.length;
-      const confirmed = allFixtures.filter(f => f.broadcast && f.broadcast.provider_id && f.broadcast.provider_id != 99).length;
-      const blackout = allFixtures.filter(f => f.broadcast && f.broadcast.provider_id == 99).length;
+      // Get currently filtered fixtures (same as what's shown in table)
+      const monthFilter = document.getElementById('month-filter').value;
+      const statusFilter = document.getElementById('status-filter').value;
+      
+      let filteredFixtures = allFixtures;
+      
+      // Apply same filters as renderFixtures()
+      if (monthFilter) {
+        filteredFixtures = filteredFixtures.filter(f => 
+          f.utc_kickoff && f.utc_kickoff.startsWith(monthFilter)
+        );
+      }
+      
+      if (statusFilter === 'confirmed') {
+        filteredFixtures = filteredFixtures.filter(f => f.broadcast && f.broadcast.provider_id && f.broadcast.provider_id != 99);
+      } else if (statusFilter === 'blackout') {
+        filteredFixtures = filteredFixtures.filter(f => f.broadcast && f.broadcast.provider_id == 99);
+      } else if (statusFilter === 'pending') {
+        filteredFixtures = filteredFixtures.filter(f => !f.broadcast || !f.broadcast.provider_id);
+      }
+      
+      // Calculate stats for filtered fixtures
+      const total = filteredFixtures.length;
+      const confirmed = filteredFixtures.filter(f => f.broadcast && f.broadcast.provider_id && f.broadcast.provider_id != 99).length;
+      const blackout = filteredFixtures.filter(f => f.broadcast && f.broadcast.provider_id == 99).length;
       const pending = total - confirmed - blackout;
       
       // Update main stats cards
@@ -859,14 +841,153 @@
       console.log(`Populated month selector with ${sortedMonths.length} months:`, sortedMonths);
     }
 
+    /** Track changes when dropdown changes */
+    function trackChange(fixtureId) {
+      const select = document.getElementById(`provider-${fixtureId}`);
+      const newProviderId = select.value;
+      const fixture = allFixtures.find(f => f.id === fixtureId);
+      const currentProviderId = fixture?.broadcast?.provider_id || '';
+      
+      // Check if this is actually a change
+      if (newProviderId != currentProviderId) {
+        pendingChanges.set(fixtureId, newProviderId);
+        document.getElementById(`pending-${fixtureId}`).style.display = 'inline';
+      } else {
+        pendingChanges.delete(fixtureId);
+        document.getElementById(`pending-${fixtureId}`).style.display = 'none';
+      }
+      
+      // Update Save All button visibility
+      updateSaveAllButton();
+    }
+
+    /** Update Save All button state */
+    function updateSaveAllButton() {
+      const saveAllBtn = document.getElementById('save-all-btn');
+      const hasChanges = pendingChanges.size > 0;
+      
+      if (hasChanges) {
+        saveAllBtn.style.display = 'inline-block';
+        saveAllBtn.textContent = `💾 Save All (${pendingChanges.size})`;
+      } else {
+        saveAllBtn.style.display = 'none';
+      }
+    }
+
+    /** Save all pending changes */
+    async function saveAllChanges() {
+      if (pendingChanges.size === 0) {
+        showMessage('No changes to save', 'error');
+        return;
+      }
+      
+      const saveAllBtn = document.getElementById('save-all-btn');
+      saveAllBtn.disabled = true;
+      saveAllBtn.textContent = 'Saving...';
+      
+      let successCount = 0;
+      let errorCount = 0;
+      
+      // Process each change
+      for (const [fixtureId, providerId] of pendingChanges.entries()) {
+        try {
+          await saveBroadcastInternal(parseInt(fixtureId), providerId);
+          pendingChanges.delete(fixtureId);
+          document.getElementById(`pending-${fixtureId}`).style.display = 'none';
+          successCount++;
+        } catch (error) {
+          console.error(`Failed to save fixture ${fixtureId}:`, error);
+          errorCount++;
+        }
+      }
+      
+      // Show result message
+      if (errorCount === 0) {
+        showMessage(`Successfully saved ${successCount} changes`, 'success');
+      } else {
+        showMessage(`Saved ${successCount} changes, ${errorCount} failed`, 'error');
+      }
+      
+      // Re-render and update UI
+      renderFixtures();
+      updateStats();
+      updateSaveAllButton();
+      
+      saveAllBtn.disabled = false;
+    }
+
+    /** Extract save logic for reuse */
+    async function saveBroadcastInternal(fixtureId, providerId) {
+      const fixture = allFixtures.find(f => f.id === fixtureId);
+      const existingBroadcast = fixture?.broadcast;
+      
+      if (providerId === '' || providerId === '0' || providerId == '99') {
+        // Remove broadcaster - delete record if exists (including blackout case)
+        if (existingBroadcast) {
+          await apiWrite(
+            `${API_ENDPOINTS.broadcasts}?fixture_id=eq.${fixtureId}`,
+            {},
+            'DELETE'
+          );
+        }
+        
+        // Update local data - for blackout, create a special marker
+        if (providerId == '99') {
+          blackoutFixtures.add(fixtureId);
+          saveBlackoutFixtures();
+          fixture.broadcast = { provider_id: 99, fixture_id: fixtureId };
+        } else {
+          blackoutFixtures.delete(fixtureId);
+          saveBlackoutFixtures();
+          fixture.broadcast = null;
+        }
+        
+      } else {
+        // Add/update broadcaster - all provider IDs are now numeric
+        const broadcastData = {
+          fixture_id: fixtureId,
+          provider_id: parseInt(providerId)
+        };
+        
+        // Remove from blackout set if setting a real broadcaster
+        blackoutFixtures.delete(fixtureId);
+        saveBlackoutFixtures();
+        
+        if (existingBroadcast) {
+          // Update existing
+          await apiWrite(
+            `${API_ENDPOINTS.broadcasts}?fixture_id=eq.${fixtureId}`,
+            broadcastData,
+            'PATCH'
+          );
+          
+          // Update local data
+          Object.assign(fixture.broadcast, broadcastData);
+        } else {
+          // Create new
+          await apiWrite(API_ENDPOINTS.broadcasts, broadcastData, 'POST');
+          
+          // Update local data
+          fixture.broadcast = broadcastData;
+        }
+      }
+    }
+
     /** Event listeners */
-    document.getElementById('month-filter').addEventListener('change', renderFixtures);
-    document.getElementById('status-filter').addEventListener('change', renderFixtures);
+    document.getElementById('month-filter').addEventListener('change', () => {
+      renderFixtures();
+      updateStats(); // Update stats when filter changes
+    });
+    document.getElementById('status-filter').addEventListener('change', () => {
+      renderFixtures();
+      updateStats(); // Update stats when filter changes  
+    });
 
     /** Initialize app */
     async function init() {
       console.log('Initializing Broadcast Admin...');
       loadBlackoutFixtures(); // Load saved blackout states
+      updateSaveAllButton(); // Hide Save All button initially
       await loadFixtures();
     }
 
