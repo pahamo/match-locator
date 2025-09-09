@@ -371,7 +371,6 @@
 
     let allFixtures = [];
     let allTeams = {};
-    let blackoutFixtures = new Set(); // Track blackout fixtures locally
     let pendingChanges = new Map(); // Track pending changes: fixtureId -> providerId
 
     /** API helper function */
@@ -452,17 +451,6 @@
       }, 5000);
     }
 
-    /** Save and load blackout fixtures from localStorage */
-    function saveBlackoutFixtures() {
-      localStorage.setItem('admin-blackout-fixtures', JSON.stringify([...blackoutFixtures]));
-    }
-
-    function loadBlackoutFixtures() {
-      const saved = localStorage.getItem('admin-blackout-fixtures');
-      if (saved) {
-        blackoutFixtures = new Set(JSON.parse(saved));
-      }
-    }
 
     /** Replicate exact loadFixtures logic from main app */
     async function loadFixturesLikeMainApp(competitionId, includeUpcoming = true) {
@@ -568,20 +556,11 @@
           broadcastLookup[b.fixture_id] = b;
         });
         
-        // Store for filtering and apply blackout markers
-        allFixtures = fixtures.map(fixture => {
-          let broadcast = broadcastLookup[fixture.id] || null;
-          
-          // If this fixture is marked as blackout locally, override the broadcast
-          if (blackoutFixtures.has(fixture.id)) {
-            broadcast = { provider_id: 99, fixture_id: fixture.id };
-          }
-          
-          return {
-            ...fixture,
-            broadcast: broadcast
-          };
-        });
+        // Store for filtering - no need for blackout markers, just use database data
+        allFixtures = fixtures.map(fixture => ({
+          ...fixture,
+          broadcast: broadcastLookup[fixture.id] || null
+        }));
         
         populateMonthSelector();
         renderFixtures();
@@ -921,8 +900,8 @@
       const fixture = allFixtures.find(f => f.id === fixtureId);
       const existingBroadcast = fixture?.broadcast;
       
-      if (providerId === '' || providerId === '0' || providerId == '99') {
-        // Remove broadcaster - delete record if exists (including blackout case)
+      if (providerId === '' || providerId === '0') {
+        // Remove broadcaster - delete record if exists
         if (existingBroadcast) {
           await apiWrite(
             `${API_ENDPOINTS.broadcasts}?fixture_id=eq.${fixtureId}`,
@@ -931,27 +910,15 @@
           );
         }
         
-        // Update local data - for blackout, create a special marker
-        if (providerId == '99') {
-          blackoutFixtures.add(fixtureId);
-          saveBlackoutFixtures();
-          fixture.broadcast = { provider_id: 99, fixture_id: fixtureId };
-        } else {
-          blackoutFixtures.delete(fixtureId);
-          saveBlackoutFixtures();
-          fixture.broadcast = null;
-        }
+        // Update local data
+        fixture.broadcast = null;
         
       } else {
-        // Add/update broadcaster - all provider IDs are now numeric
+        // Add/update broadcaster - treat blackout (99) like any other broadcaster
         const broadcastData = {
           fixture_id: fixtureId,
           provider_id: parseInt(providerId)
         };
-        
-        // Remove from blackout set if setting a real broadcaster
-        blackoutFixtures.delete(fixtureId);
-        saveBlackoutFixtures();
         
         if (existingBroadcast) {
           // Update existing
@@ -983,10 +950,36 @@
       updateStats(); // Update stats when filter changes  
     });
 
+    /** Ensure blackout provider exists in database */
+    async function ensureBlackoutProvider() {
+      try {
+        // Check if provider ID 99 exists
+        const existingProvider = await apiGet(`${API_ENDPOINTS.providers}?id=eq.99`);
+        
+        if (!existingProvider || existingProvider.length === 0) {
+          console.log('Creating blackout provider...');
+          // Create the blackout provider
+          await apiWrite(API_ENDPOINTS.providers, {
+            id: 99,
+            name: 'Blackout',
+            display_name: '3pm Blackout',
+            type: 'blackout',
+            logo_url: null
+          }, 'POST');
+          console.log('Blackout provider created successfully');
+        } else {
+          console.log('Blackout provider already exists');
+        }
+      } catch (error) {
+        console.log('Note: Could not create blackout provider (may already exist or no permission):', error);
+        // Continue anyway - the admin will still work if provider 99 exists
+      }
+    }
+
     /** Initialize app */
     async function init() {
       console.log('Initializing Broadcast Admin...');
-      loadBlackoutFixtures(); // Load saved blackout states
+      await ensureBlackoutProvider();
       updateSaveAllButton(); // Hide Save All button initially
       await loadFixtures();
     }
