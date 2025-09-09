@@ -206,6 +206,58 @@
       font-size: 0.9rem;
       color: var(--color-muted);
     }
+    
+    .stats-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .stats-card {
+      background: var(--color-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius);
+      padding: var(--spacing-lg);
+      text-align: center;
+    }
+    
+    .stats-number {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: var(--spacing-sm);
+    }
+    
+    .stats-number.confirmed { color: var(--color-success); }
+    .stats-number.blackout { color: #ef4444; }
+    .stats-number.pending { color: var(--color-warning); }
+    .stats-number.total { color: var(--color-accent); }
+    
+    .stats-label {
+      font-size: 0.9rem;
+      color: var(--color-muted);
+      font-weight: 500;
+    }
+    
+    .month-stats {
+      background: var(--color-background);
+      border: 1px solid var(--color-border);
+      border-radius: var(--border-radius);
+      padding: var(--spacing-md);
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    .month-stats h3 {
+      margin: 0 0 var(--spacing-sm);
+      color: var(--color-text);
+      font-size: 1.1rem;
+    }
+    
+    .month-breakdown {
+      display: flex;
+      gap: var(--spacing-lg);
+      font-size: 0.9rem;
+    }
   </style>
 </head>
 <body>
@@ -223,11 +275,16 @@
       <label>Month:</label>
       <select id="month-filter">
         <option value="">All months</option>
+        <option value="2024-08">August 2024</option>
         <option value="2024-09">September 2024</option>
         <option value="2024-10">October 2024</option>
         <option value="2024-11">November 2024</option>
         <option value="2024-12">December 2024</option>
         <option value="2025-01">January 2025</option>
+        <option value="2025-02">February 2025</option>
+        <option value="2025-03">March 2025</option>
+        <option value="2025-04">April 2025</option>
+        <option value="2025-05">May 2025</option>
       </select>
       
       <label>Status:</label>
@@ -241,11 +298,33 @@
       <button onclick="loadFixtures()" class="save-btn">🔄 Refresh</button>
     </div>
     
-    <div class="stats-bar">
-      <span id="stats-total">Total: 0</span>
-      <span id="stats-confirmed">Confirmed: 0</span>
-      <span id="stats-blackout">Blackout: 0</span>
-      <span id="stats-pending">Pending: 0</span>
+    <div class="stats-cards">
+      <div class="stats-card">
+        <div class="stats-number total" id="stats-total-number">0</div>
+        <div class="stats-label">Total Fixtures</div>
+      </div>
+      <div class="stats-card">
+        <div class="stats-number confirmed" id="stats-confirmed-number">0</div>
+        <div class="stats-label">Confirmed</div>
+      </div>
+      <div class="stats-card">
+        <div class="stats-number blackout" id="stats-blackout-number">0</div>
+        <div class="stats-label">Blackout</div>
+      </div>
+      <div class="stats-card">
+        <div class="stats-number pending" id="stats-pending-number">0</div>
+        <div class="stats-label">Pending</div>
+      </div>
+    </div>
+
+    <div class="month-stats" id="month-stats">
+      <h3 id="current-month-title">Current Month</h3>
+      <div class="month-breakdown">
+        <span id="month-confirmed">Confirmed: 0</span>
+        <span id="month-blackout">Blackout: 0</span>
+        <span id="month-pending">Pending: 0</span>
+        <span id="month-total">Total: 0</span>
+      </div>
     </div>
 
     <div class="fixtures-table">
@@ -682,10 +761,37 @@
       const blackout = allFixtures.filter(f => f.broadcast && f.broadcast.provider_id == 99).length;
       const pending = total - confirmed - blackout;
       
-      document.getElementById('stats-total').textContent = `Total: ${total}`;
-      document.getElementById('stats-confirmed').textContent = `Confirmed: ${confirmed}`;
-      document.getElementById('stats-blackout').textContent = `Blackout: ${blackout}`;
-      document.getElementById('stats-pending').textContent = `Pending: ${pending}`;
+      // Update main stats cards
+      document.getElementById('stats-total-number').textContent = total;
+      document.getElementById('stats-confirmed-number').textContent = confirmed;
+      document.getElementById('stats-blackout-number').textContent = blackout;
+      document.getElementById('stats-pending-number').textContent = pending;
+      
+      // Update current month stats
+      const currentMonth = getCurrentMonth();
+      const monthFixtures = allFixtures.filter(f => 
+        f.utc_kickoff && f.utc_kickoff.startsWith(currentMonth)
+      );
+      
+      const monthTotal = monthFixtures.length;
+      const monthConfirmed = monthFixtures.filter(f => f.broadcast && f.broadcast.provider_id && f.broadcast.provider_id != 99).length;
+      const monthBlackout = monthFixtures.filter(f => f.broadcast && f.broadcast.provider_id == 99).length;
+      const monthPending = monthTotal - monthConfirmed - monthBlackout;
+      
+      const monthName = new Date(currentMonth + '-01').toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+      document.getElementById('current-month-title').textContent = `${monthName} Breakdown`;
+      document.getElementById('month-total').textContent = `Total: ${monthTotal}`;
+      document.getElementById('month-confirmed').textContent = `Confirmed: ${monthConfirmed}`;
+      document.getElementById('month-blackout').textContent = `Blackout: ${monthBlackout}`;
+      document.getElementById('month-pending').textContent = `Pending: ${monthPending}`;
+    }
+
+    /** Get current month in YYYY-MM format */
+    function getCurrentMonth() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      return `${year}-${month}`;
     }
 
     /** Event listeners */
