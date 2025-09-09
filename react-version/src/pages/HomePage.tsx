@@ -115,6 +115,19 @@ const HomePage: React.FC = () => {
                       <span className="tbd-text">TBD</span>
                     )}
                   </div>
+                  <div style={{ marginTop: '12px', textAlign: 'right' }}>
+                    <a 
+                      href={`/matches/${fixture.id}`} 
+                      style={{ 
+                        color: '#6366f1', 
+                        textDecoration: 'underline', 
+                        fontSize: '0.9rem',
+                        fontWeight: '500'
+                      }}
+                    >
+                      Details →
+                    </a>
+                  </div>
                 </div>
               ))}
             </div>
