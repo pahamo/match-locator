@@ -698,16 +698,14 @@
     }
 
     /** Check if fixture is blackout and return appropriate message */
-    function getBlackoutOrNoProviderMessage(broadcasts) {
-      console.log('Checking blackout for broadcasts:', broadcasts);
+    function getBlackoutOrNoProviderMessage(broadcasts, fixtureId) {
+      console.log('Checking blackout for fixture:', fixtureId, 'broadcasts:', broadcasts);
       
-      // Check if any broadcast has provider_id = -1 (blackout)
-      const hasBlackout = broadcasts && broadcasts.some(b => {
-        console.log('Broadcast provider_id:', b.provider_id, 'type:', typeof b.provider_id);
-        return b.provider_id == -1;
-      });
+      // Check if fixture is marked as blackout in localStorage
+      const blackoutFixtures = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
+      const hasBlackout = blackoutFixtures.includes(fixtureId);
       
-      console.log('Has blackout:', hasBlackout);
+      console.log('Has blackout:', hasBlackout, 'blackout list:', blackoutFixtures);
       
       if (hasBlackout) {
         return `<div class="card"><span class="muted">🚫 3pm blackout - this match is not televised in the UK due to broadcasting regulations.</span></div>`;
@@ -717,13 +715,11 @@
     }
 
     /** Check if fixture is blackout for card display */
-    function isBlackoutFixture(broadcasts) {
-      console.log('isBlackoutFixture checking:', broadcasts);
-      const result = broadcasts && broadcasts.some(b => {
-        console.log('Card checking provider_id:', b.provider_id, 'type:', typeof b.provider_id);
-        return b.provider_id == -1;
-      });
-      console.log('isBlackoutFixture result:', result);
+    function isBlackoutFixture(fixtureId) {
+      console.log('isBlackoutFixture checking fixture:', fixtureId);
+      const blackoutFixtures = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
+      const result = blackoutFixtures.includes(fixtureId);
+      console.log('isBlackoutFixture result:', result, 'blackout list:', blackoutFixtures);
       return result;
     }
 
@@ -1263,7 +1259,7 @@ function renderFootballSubnav(competition){
       const renderCard = (f) => {
         const broadcasts = bmap[f.id] || [];
         const hasB = broadcasts.length > 0;
-        const isBlackout = isBlackoutFixture(broadcasts);
+        const isBlackout = isBlackoutFixture(f.id);
         const idSlug = f.id ? `${f.id}-${createMatchSlug(f.home, f.away, f.utc_kickoff)}` : createMatchSlug(f.home, f.away, f.utc_kickoff);
         const href = f.id ? `#/matches/${idSlug}` : '#';
         console.log('Generating match link:', { id: f.id, slug: idSlug, href, fixture: f });
@@ -1513,7 +1509,7 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
         const kickoffTime = timeOnly.format(parseUtcDate(f.utc_kickoff));
         const broadcasts = bmap[f.id] || [];
         const hasB = broadcasts.length > 0;
-        const isBlackout = isBlackoutFixture(broadcasts);
+        const isBlackout = isBlackoutFixture(f.id);
         const idSlug = f.id ? `${f.id}-${createMatchSlug(f.home, f.away, f.utc_kickoff)}` : createMatchSlug(f.home, f.away, f.utc_kickoff);
         const href = f.id ? `#/matches/${idSlug}` : '#';
         const homeRow = `<div class="team-row">${f.home_badge ? `<img class=\"crest\" alt=\"${f.home} badge\" src=\"${f.home_badge}\">` : ''}<strong>${getTeamAlias(f.home)}</strong></div>`;
@@ -1788,7 +1784,7 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
             <div class=\"muted\" style=\"margin-top:4px\">${verify}</div>
             ${showBtn ? `<a class=\"btn\" href=\"${affUrl}\" target=\"_blank\" rel=\"nofollow noopener\">Watch on ${providerName}</a>` : ``}
           </div>`;
-      }).join("") : getBlackoutOrNoProviderMessage(bcasts);
+      }).join("") : getBlackoutOrNoProviderMessage(bcasts, fixture.id);
     }
     // ---- Clubs and About views ----
     async function clubsIndexView(params, competitionSlug = 'premier-league'){
@@ -2248,7 +2244,7 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
             });
             
             const fixtureBroadcasts = broadcasts[f.id] || [];
-            const isBlackout = isBlackoutFixture(fixtureBroadcasts);
+            const isBlackout = isBlackoutFixture(f.id);
             const broadcastInfo = isBlackout 
               ? 'No TV broadcast' 
               : fixtureBroadcasts.length > 0 
@@ -2975,7 +2971,7 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
         });
         
         const fixtureBroadcasts = broadcasts[f.id] || [];
-        const isBlackout = isBlackoutFixture(fixtureBroadcasts);
+        const isBlackout = isBlackoutFixture(f.id);
         const broadcastInfo = isBlackout 
           ? 'No TV broadcast'
           : fixtureBroadcasts.length > 0 

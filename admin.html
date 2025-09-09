@@ -373,6 +373,22 @@
     let allTeams = {};
     let pendingChanges = new Map(); // Track pending changes: fixtureId -> providerId
 
+    /** Check if fixture is marked as blackout in localStorage */
+    function isFixtureBlackout(fixtureId) {
+      const blackoutFixtures = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
+      return blackoutFixtures.includes(fixtureId);
+    }
+
+    /** Check if fixture has confirmed broadcaster */
+    function isFixtureConfirmed(fixture) {
+      return fixture.broadcast && fixture.broadcast.provider_id && !isFixtureBlackout(fixture.id);
+    }
+
+    /** Check if fixture is pending (no broadcaster and not blackout) */
+    function isFixturePending(fixture) {
+      return !fixture.broadcast && !isFixtureBlackout(fixture.id);
+    }
+
     /** API helper function */
     async function apiGet(endpoint) {
       console.log('API GET:', `${SUPABASE_CONFIG.url}${endpoint}`);
@@ -589,11 +605,11 @@
       }
       
       if (statusFilter === 'confirmed') {
-        filteredFixtures = filteredFixtures.filter(f => f.broadcast && f.broadcast.provider_id && f.broadcast.provider_id != -1);
+        filteredFixtures = filteredFixtures.filter(f => isFixtureConfirmed(f));
       } else if (statusFilter === 'blackout') {
-        filteredFixtures = filteredFixtures.filter(f => f.broadcast && f.broadcast.provider_id == -1);
+        filteredFixtures = filteredFixtures.filter(f => isFixtureBlackout(f.id));
       } else if (statusFilter === 'pending') {
-        filteredFixtures = filteredFixtures.filter(f => !f.broadcast || !f.broadcast.provider_id);
+        filteredFixtures = filteredFixtures.filter(f => isFixturePending(f));
       }
       
       if (filteredFixtures.length === 0) {
@@ -611,7 +627,7 @@
         
         // Status indicator
         const hasProvider = currentProviderId && currentProviderId !== '';
-        const isBlackout = currentProviderId == 99;
+        const isBlackout = isFixtureBlackout(fixture.id);
         
         let statusClass, statusText;
         if (isBlackout) {
@@ -625,12 +641,21 @@
           statusText = 'Pending';
         }
         
-        // Broadcaster select options
-        const selectOptions = BROADCASTERS.map(broadcaster => 
-          `<option value="${broadcaster.id}" ${currentProviderId == broadcaster.id ? 'selected' : ''}>
+        // Broadcaster select options - check blackout status from localStorage
+        const selectOptions = BROADCASTERS.map(broadcaster => {
+          let isSelected = false;
+          if (broadcaster.id === '-1') {
+            // Blackout option - check localStorage
+            isSelected = isFixtureBlackout(fixture.id);
+          } else {
+            // Regular broadcaster - check database
+            isSelected = currentProviderId == broadcaster.id;
+          }
+          
+          return `<option value="${broadcaster.id}" ${isSelected ? 'selected' : ''}>
             ${broadcaster.name}
-          </option>`
-        ).join('');
+          </option>`;
+        }).join('');
         
         return `
           <tr class="fixture-row">
@@ -731,17 +756,17 @@
       }
       
       if (statusFilter === 'confirmed') {
-        filteredFixtures = filteredFixtures.filter(f => f.broadcast && f.broadcast.provider_id && f.broadcast.provider_id != -1);
+        filteredFixtures = filteredFixtures.filter(f => isFixtureConfirmed(f));
       } else if (statusFilter === 'blackout') {
-        filteredFixtures = filteredFixtures.filter(f => f.broadcast && f.broadcast.provider_id == -1);
+        filteredFixtures = filteredFixtures.filter(f => isFixtureBlackout(f.id));
       } else if (statusFilter === 'pending') {
-        filteredFixtures = filteredFixtures.filter(f => !f.broadcast || !f.broadcast.provider_id);
+        filteredFixtures = filteredFixtures.filter(f => isFixturePending(f));
       }
       
       // Calculate stats for filtered fixtures
       const total = filteredFixtures.length;
-      const confirmed = filteredFixtures.filter(f => f.broadcast && f.broadcast.provider_id && f.broadcast.provider_id != -1).length;
-      const blackout = filteredFixtures.filter(f => f.broadcast && f.broadcast.provider_id == -1).length;
+      const confirmed = filteredFixtures.filter(f => isFixtureConfirmed(f)).length;
+      const blackout = filteredFixtures.filter(f => isFixtureBlackout(f.id)).length;
       const pending = total - confirmed - blackout;
       
       // Update main stats cards
@@ -757,8 +782,8 @@
       );
       
       const monthTotal = monthFixtures.length;
-      const monthConfirmed = monthFixtures.filter(f => f.broadcast && f.broadcast.provider_id && f.broadcast.provider_id != -1).length;
-      const monthBlackout = monthFixtures.filter(f => f.broadcast && f.broadcast.provider_id == -1).length;
+      const monthConfirmed = monthFixtures.filter(f => isFixtureConfirmed(f)).length;
+      const monthBlackout = monthFixtures.filter(f => isFixtureBlackout(f.id)).length;
       const monthPending = monthTotal - monthConfirmed - monthBlackout;
       
       const monthName = new Date(currentMonth + '-01').toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
@@ -900,8 +925,8 @@
       const fixture = allFixtures.find(f => f.id === fixtureId);
       const existingBroadcast = fixture?.broadcast;
       
-      if (providerId === '' || providerId === '0') {
-        // Remove broadcaster - delete record if exists
+      if (providerId === '' || providerId === '0' || providerId === '-1') {
+        // Remove broadcaster or set as blackout - delete record if exists
         if (existingBroadcast) {
           await apiWrite(
             `${API_ENDPOINTS.broadcasts}?fixture_id=eq.${fixtureId}`,
@@ -913,8 +938,25 @@
         // Update local data
         fixture.broadcast = null;
         
+        // Store blackout flag in localStorage for admin UI tracking
+        if (providerId === '-1') {
+          const blackoutFixtures = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
+          if (!blackoutFixtures.includes(fixtureId)) {
+            blackoutFixtures.push(fixtureId);
+            localStorage.setItem('blackoutFixtures', JSON.stringify(blackoutFixtures));
+          }
+        } else {
+          // Remove from blackout list if setting to empty
+          const blackoutFixtures = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
+          const updatedBlackout = blackoutFixtures.filter(id => id !== fixtureId);
+          localStorage.setItem('blackoutFixtures', JSON.stringify(updatedBlackout));
+        }
+        
       } else {
-        // Add/update broadcaster - treat blackout (99) like any other broadcaster
+        // Add/update broadcaster - remove from blackout list first
+        const blackoutFixtures = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
+        const updatedBlackout = blackoutFixtures.filter(id => id !== fixtureId);
+        localStorage.setItem('blackoutFixtures', JSON.stringify(updatedBlackout));
         const broadcastData = {
           fixture_id: fixtureId,
           provider_id: parseInt(providerId)
