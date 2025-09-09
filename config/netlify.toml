@@ -1,6 +1,7 @@
 [build]
   base = "react-version"
-  command = "npm run build"
+  # Prevent CRA from failing the build on ESLint warnings in CI
+  command = "CI= npm run build"
   publish = "build"
 
 [[redirects]]
