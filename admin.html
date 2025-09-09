@@ -603,19 +603,24 @@
         const fixture = allFixtures.find(f => f.id === fixtureId);
         const existingBroadcast = fixture?.broadcast;
         
-        if (providerId === '' || providerId === '0') {
-          // Remove broadcaster - delete record if exists
+        if (providerId === '' || providerId === '0' || providerId == '99') {
+          // Remove broadcaster - delete record if exists (including blackout case)
           if (existingBroadcast) {
             await apiWrite(
               `${API_ENDPOINTS.broadcasts}?fixture_id=eq.${fixtureId}`,
               {},
               'DELETE'
             );
-            
-            // Update local data
-            fixture.broadcast = null;
           }
-          showMessage(`Removed broadcaster for fixture ${fixtureId}`, 'success');
+          
+          // Update local data - for blackout, create a special marker
+          if (providerId == '99') {
+            fixture.broadcast = { provider_id: 99, fixture_id: fixtureId };
+            showMessage(`Set fixture ${fixtureId} as blackout (no TV)`, 'success');
+          } else {
+            fixture.broadcast = null;
+            showMessage(`Removed broadcaster for fixture ${fixtureId}`, 'success');
+          }
           
         } else {
           // Add/update broadcaster - all provider IDs are now numeric
