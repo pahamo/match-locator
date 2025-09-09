@@ -278,12 +278,18 @@
         <!-- Options will be populated dynamically based on fixture data -->
       </select>
       
+      <label>Matchweek:</label>
+      <select id="matchweek-filter">
+        <option value="">All matchweeks</option>
+        <!-- Options will be populated dynamically based on fixture data -->
+      </select>
+      
       <label>Status:</label>
       <select id="status-filter">
         <option value="">All fixtures</option>
         <option value="confirmed">Has broadcaster</option>
         <option value="blackout">Blackout</option>
-        <option value="pending">Unknown</option>
+        <option value="pending">Pending</option>
       </select>
       
       <button onclick="loadFixtures()" class="save-btn">🔄 Refresh</button>
@@ -361,7 +367,7 @@
 
     /** Broadcaster options */
     const BROADCASTERS = [
-      { id: '', name: 'Unknown', type: 'none' },
+      { id: '', name: 'None', type: 'none' },
       { id: 1, name: 'Sky Sports', type: 'tv' },
       { id: 2, name: 'TNT Sports', type: 'tv' },
       { id: 3, name: 'BBC Sport', type: 'tv' },
@@ -579,6 +585,7 @@
         }));
         
         populateMonthSelector();
+        populateMatchweekSelector();
         renderFixtures();
         updateStats();
         
@@ -593,6 +600,7 @@
     function renderFixtures() {
       const tbody = document.getElementById('fixtures-tbody');
       const monthFilter = document.getElementById('month-filter').value;
+      const matchweekFilter = document.getElementById('matchweek-filter').value;
       const statusFilter = document.getElementById('status-filter').value;
       
       // Apply filters
@@ -601,6 +609,12 @@
       if (monthFilter) {
         filteredFixtures = filteredFixtures.filter(f => 
           f.utc_kickoff && f.utc_kickoff.startsWith(monthFilter)
+        );
+      }
+      
+      if (matchweekFilter) {
+        filteredFixtures = filteredFixtures.filter(f => 
+          f.matchday && f.matchday == matchweekFilter
         );
       }
       
@@ -712,7 +726,7 @@
         } else if (providerId === '' || providerId === '0') {
           showMessage(`Removed broadcaster for fixture ${fixtureId}`, 'success');
         } else {
-          const broadcasterName = BROADCASTERS.find(b => b.id == providerId)?.name || 'Unknown';
+          const broadcasterName = BROADCASTERS.find(b => b.id == providerId)?.name || 'None';
           showMessage(`Set broadcaster to ${broadcasterName} for fixture ${fixtureId}`, 'success');
         }
         
@@ -744,6 +758,7 @@
     function updateStats() {
       // Get currently filtered fixtures (same as what's shown in table)
       const monthFilter = document.getElementById('month-filter').value;
+      const matchweekFilter = document.getElementById('matchweek-filter').value;
       const statusFilter = document.getElementById('status-filter').value;
       
       let filteredFixtures = allFixtures;
@@ -752,6 +767,12 @@
       if (monthFilter) {
         filteredFixtures = filteredFixtures.filter(f => 
           f.utc_kickoff && f.utc_kickoff.startsWith(monthFilter)
+        );
+      }
+      
+      if (matchweekFilter) {
+        filteredFixtures = filteredFixtures.filter(f => 
+          f.matchday && f.matchday == matchweekFilter
         );
       }
       
@@ -843,6 +864,42 @@
       });
       
       console.log(`Populated month selector with ${sortedMonths.length} months:`, sortedMonths);
+    }
+
+    /** Populate matchweek selector based on actual fixture data */
+    function populateMatchweekSelector() {
+      const matchweekSelect = document.getElementById('matchweek-filter');
+      const currentSelection = matchweekSelect.value; // Preserve current selection
+      
+      // Extract unique matchweeks from fixtures
+      const matchweeks = new Set();
+      allFixtures.forEach(fixture => {
+        if (fixture.matchday) {
+          matchweeks.add(fixture.matchday);
+        }
+      });
+      
+      // Convert to sorted array
+      const sortedMatchweeks = Array.from(matchweeks).sort((a, b) => a - b);
+      
+      // Clear current options (except "All matchweeks")
+      matchweekSelect.innerHTML = '<option value="">All matchweeks</option>';
+      
+      // Add new options
+      sortedMatchweeks.forEach(matchweek => {
+        const option = document.createElement('option');
+        option.value = matchweek;
+        option.textContent = `Matchweek ${matchweek}`;
+        
+        // Restore selection if it was previously selected
+        if (matchweek == currentSelection) {
+          option.selected = true;
+        }
+        
+        matchweekSelect.appendChild(option);
+      });
+      
+      console.log(`Populated matchweek selector with ${sortedMatchweeks.length} matchweeks:`, sortedMatchweeks);
     }
 
     /** Track changes when dropdown changes */
@@ -984,6 +1041,10 @@
 
     /** Event listeners */
     document.getElementById('month-filter').addEventListener('change', () => {
+      renderFixtures();
+      updateStats(); // Update stats when filter changes
+    });
+    document.getElementById('matchweek-filter').addEventListener('change', () => {
       renderFixtures();
       updateStats(); // Update stats when filter changes
     });
