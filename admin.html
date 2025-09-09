@@ -287,9 +287,9 @@
       <label>Status:</label>
       <select id="status-filter">
         <option value="">All fixtures</option>
-        <option value="confirmed">Has broadcaster</option>
-        <option value="blackout">Blackout</option>
-        <option value="pending">Pending</option>
+        <option value="confirmed">Confirmed broadcaster</option>
+        <option value="blackout">Confirmed blackout</option>
+        <option value="tbd">TBD (awaiting announcement)</option>
       </select>
       
       <button onclick="loadFixtures()" class="save-btn">🔄 Refresh</button>
@@ -311,7 +311,7 @@
       </div>
       <div class="stats-card">
         <div class="stats-number pending" id="stats-pending-number">0</div>
-        <div class="stats-label">Pending</div>
+        <div class="stats-label">TBD</div>
       </div>
     </div>
 
@@ -320,7 +320,7 @@
       <div class="month-breakdown">
         <span id="month-confirmed">Confirmed: 0</span>
         <span id="month-blackout">Blackout: 0</span>
-        <span id="month-pending">Pending: 0</span>
+        <span id="month-pending">TBD: 0</span>
         <span id="month-total">Total: 0</span>
       </div>
     </div>
@@ -367,7 +367,7 @@
 
     /** Broadcaster options */
     const BROADCASTERS = [
-      { id: '', name: 'None', type: 'none' },
+      { id: '', name: 'TBD (To Be Determined)', type: 'tbd' },
       { id: 1, name: 'Sky Sports', type: 'tv' },
       { id: 2, name: 'TNT Sports', type: 'tv' },
       { id: 3, name: 'BBC Sport', type: 'tv' },
@@ -393,6 +393,26 @@
     /** Check if fixture is pending (no broadcaster and not blackout) */
     function isFixturePending(fixture) {
       return !fixture.broadcast && !isFixtureBlackout(fixture.id);
+    }
+
+    /** Get appropriate explanation text for TBD fixtures */
+    function getTBDExplanationText(fixture) {
+      if (isFixtureBlackout(fixture.id)) {
+        return ''; // No explanation needed for blackout fixtures
+      }
+      
+      if (!fixture.broadcast || !fixture.broadcast.provider_id) {
+        // Check if fixture is in the near future (within 3 weeks)
+        const fixtureDate = new Date(fixture.utc_kickoff);
+        const now = new Date();
+        const threeWeeksFromNow = new Date(now.getTime() + (21 * 24 * 60 * 60 * 1000));
+        
+        if (fixtureDate > now && fixtureDate <= threeWeeksFromNow) {
+          return '<small style="color: #666; font-style: italic;">Broadcast details typically announced 2-3 weeks before matchday</small>';
+        }
+      }
+      
+      return '';
     }
 
     /** API helper function */
@@ -622,7 +642,7 @@
         filteredFixtures = filteredFixtures.filter(f => isFixtureConfirmed(f));
       } else if (statusFilter === 'blackout') {
         filteredFixtures = filteredFixtures.filter(f => isFixtureBlackout(f.id));
-      } else if (statusFilter === 'pending') {
+      } else if (statusFilter === 'tbd') {
         filteredFixtures = filteredFixtures.filter(f => isFixturePending(f));
       }
       
@@ -652,7 +672,7 @@
           statusText = 'Confirmed';
         } else {
           statusClass = 'status-pending';
-          statusText = 'Pending';
+          statusText = 'TBD';
         }
         
         // Broadcaster select options - check blackout status from localStorage
@@ -684,6 +704,7 @@
             <td>
               <span class="status-indicator ${statusClass}"></span>
               ${statusText}
+              ${getTBDExplanationText(fixture)}
             </td>
             <td>
               <div class="broadcast-editor">
@@ -726,7 +747,7 @@
         } else if (providerId === '' || providerId === '0') {
           showMessage(`Removed broadcaster for fixture ${fixtureId}`, 'success');
         } else {
-          const broadcasterName = BROADCASTERS.find(b => b.id == providerId)?.name || 'None';
+          const broadcasterName = BROADCASTERS.find(b => b.id == providerId)?.name || 'TBD';
           showMessage(`Set broadcaster to ${broadcasterName} for fixture ${fixtureId}`, 'success');
         }
         
@@ -780,7 +801,7 @@
         filteredFixtures = filteredFixtures.filter(f => isFixtureConfirmed(f));
       } else if (statusFilter === 'blackout') {
         filteredFixtures = filteredFixtures.filter(f => isFixtureBlackout(f.id));
-      } else if (statusFilter === 'pending') {
+      } else if (statusFilter === 'tbd') {
         filteredFixtures = filteredFixtures.filter(f => isFixturePending(f));
       }
       
@@ -812,7 +833,7 @@
       document.getElementById('month-total').textContent = `Total: ${monthTotal}`;
       document.getElementById('month-confirmed').textContent = `Confirmed: ${monthConfirmed}`;
       document.getElementById('month-blackout').textContent = `Blackout: ${monthBlackout}`;
-      document.getElementById('month-pending').textContent = `Pending: ${monthPending}`;
+      document.getElementById('month-pending').textContent = `TBD: ${monthPending}`;
     }
 
     /** Get current month in YYYY-MM format */

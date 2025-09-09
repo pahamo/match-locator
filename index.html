@@ -760,12 +760,25 @@
       localStorage.setItem('blackoutFixtures', JSON.stringify([...set]));
     }
     /** Returns the correct banner/card content when no provider is present */
-    function getBlackoutOrNoProviderMessage(broadcasts, fixtureId) {
+    function getBlackoutOrNoProviderMessage(broadcasts, fixtureId, fixture = null) {
       const hasBlackout = isBlackoutFixture(fixtureId);
       if (hasBlackout) {
         return `<div class="card"><span class="muted">🚫 3pm blackout - this match is not televised in the UK due to broadcasting regulations.</span></div>`;
       }
-      return `<div class="card"><span class="muted">No UK broadcaster listed yet.</span></div>`;
+      
+      // For TBD fixtures, provide helpful context if fixture data is available
+      let tbdMessage = 'No UK broadcaster listed yet.';
+      if (fixture && fixture.utc_kickoff) {
+        const fixtureDate = new Date(fixture.utc_kickoff);
+        const now = new Date();
+        const threeWeeksFromNow = new Date(now.getTime() + (21 * 24 * 60 * 60 * 1000));
+        
+        if (fixtureDate > now && fixtureDate <= threeWeeksFromNow) {
+          tbdMessage += '<br><small style="color: #888; font-style: italic;">Broadcast details typically announced 2-3 weeks before matchday</small>';
+        }
+      }
+      
+      return `<div class="card"><span class="muted">${tbdMessage}</span></div>`;
     }
 
     /** Team name aliases for compact display */
@@ -1439,7 +1452,7 @@ function renderFootballSubnav(competition){
           buttonText = 'Watch options';
           buttonClass = 'btn small right';
         } else {
-          buttonText = 'Broadcast TBC';
+          buttonText = 'Broadcast TBD';
           buttonClass = 'btn small right disabled broadcast-status';
         }
         
@@ -1683,7 +1696,7 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
           buttonText = 'Watch options';
           buttonClass = 'btn small right';
         } else {
-          buttonText = 'Broadcast TBC';
+          buttonText = 'Broadcast TBD';
           buttonClass = 'btn small right disabled broadcast-status';
         }
         
@@ -1982,7 +1995,7 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
             <div class=\"muted\" style=\"margin-top:4px\">${verify}</div>
             ${showBtn ? `<a class=\"btn\" href=\"${affUrl}\" target=\"_blank\" rel=\"nofollow noopener\">Watch on ${providerName}</a>` : ``}
           </div>`;
-      }).join("") : getBlackoutOrNoProviderMessage(bcasts, fixture.id);
+      }).join("") : getBlackoutOrNoProviderMessage(bcasts, fixture.id, fixture);
     }
     // ---- Clubs and About views ----
     async function clubsIndexView(params, competitionSlug = 'premier-league'){
