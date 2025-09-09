@@ -175,8 +175,9 @@ Before any navigation-related OR data-related changes, test ALL of these:
 1. **Check debug page** - No fixture IDs ≤30 should appear
 2. **Check console logs** - Should see filtering messages
 3. **Check fixture dates** - Only current season fixtures (2025-08-01+)
-4. **Check matchdays** - Only 1-38 for Premier League
-5. **Test all views** - Home, fixtures, clubs, debug all use filtered data
+4. **Check matchdays** - Only 1-38 for Premier League, null for FA Cup knockout rounds
+5. **Test all competitions** - Premier League and FA Cup data loads correctly
+6. **Test all views** - Home, fixtures, clubs, debug all use filtered data for each competition
 
 ### Blackout System Tests
 1. **Admin interface** - Set fixture to "🚫 Blackout (No TV)" saves without API errors
@@ -192,12 +193,15 @@ Before any navigation-related OR data-related changes, test ALL of these:
 https://site.com#/
 https://site.com#/fixtures  
 https://site.com#/premier-league/clubs
+https://site.com#/fa-cup/fixtures
 https://site.com#/matches/123-arsenal-vs-chelsea-2024-12-01
 https://site.com#/premier-league/clubs/arsenal
+https://site.com#/fa-cup/debug
 
 # These should NOT be generated:
 https://site.com/football/fixtures        # Server routing
 https://site.com/premier-league/clubs     # Will 404
+https://site.com/fa-cup/fixtures          # Will 404
 ```
 
 ## 📋 Code Review Checklist

@@ -4,7 +4,11 @@
   "description": "Premier League fixtures and UK broadcaster listings",
   "main": "src/index.html",
   "scripts": {
-    "version": "node scripts/version-manager.js"
+    "version": "node scripts/version-manager.js",
+    "import-fa-cup": "node scripts/import-fa-cup.js",
+    "import-fa-cup-teams": "node scripts/import-fa-cup.js --teams-only",
+    "import-fa-cup-fixtures": "node scripts/import-fa-cup.js --fixtures-only",
+    "verify-competition": "node scripts/verify-competition.js"
   },
   "keywords": [
     "football",
@@ -21,6 +25,7 @@
   },
   "dependencies": {
     "@supabase/mcp-server-supabase": "^0.5.2",
-    "@supabase/supabase-js": "^2.57.2"
+    "@supabase/supabase-js": "^2.57.2",
+    "dotenv": "^17.2.2"
   }
 }

@@ -1,6 +1,6 @@
 # Premier League TV Schedule UK
 
-A fast, reliable single-page application for finding which UK broadcaster shows Premier League matches.
+A fast, reliable single-page application for finding which UK broadcaster shows Premier League and FA Cup matches.
 
 ## 🏗️ Architecture Overview
 
@@ -12,6 +12,7 @@ This is a **hash-based SPA** with no build step, designed for maximum reliabilit
 2. **Single HTML file** - All code in one file for simplicity
 3. **No external dependencies** - Pure vanilla JavaScript
 4. **Database-driven content** - All data from Supabase API
+5. **Multi-competition support** - Premier League (league) and FA Cup (knockout tournament)
 
 ## 📊 Data Architecture
 
@@ -69,9 +70,22 @@ function isBlackoutFixture(fixtureId) {
 - **Proper frontend display**: "3pm blackout" messages instead of "Broadcast TBC"
 - **UI differences**: Blackout button shown as a red disabled pill; unknown broadcasts shown as a yellow disabled pill
 
+### Competition Support
+
+#### Premier League (League Format)
+- 20 teams competing in a 38-matchday season
+- Fixtures show logo-only badge using official Premier League symbol
+- Standard league table with points, goals, and standings
+
+#### FA Cup (Knockout Tournament)
+- 124 teams from across the English football pyramid
+- Knockout format with rounds: First Round through Final
+- Stage-based fixtures (no matchdays) with varying team participation per round
+- Uses colored pill badge with "FAC" short name
+
 ### Competition Badges
-- Premier League fixtures show a logo-only badge (no text) using the official symbol.
-- Other competitions use a small colored pill with the competition short name.
+- Premier League fixtures show a logo-only badge (no text) using the official symbol
+- FA Cup and other competitions use a small colored pill with the competition short name
 
 ### Match Page Layout
 - Uses a hero card (`.match-hero`) with larger crests (`.crest-lg`) and bold names.
@@ -186,10 +200,17 @@ src/
   index.html        # Source file (copied to root)
   css/main.css      # Styling (embedded in HTML)
 data/               # Static data files
-config/             # Configuration files
+config/             # Configuration files and environment variables
+  .env              # Environment variables (API keys, database URLs)
+  package.json      # Node.js dependencies and scripts
+scripts/            # Data import and management scripts
+  import-fa-cup.js  # FA Cup data import from Football-Data.org API
+  update-schema-fa-cup.sql  # Database schema updates for knockout tournaments
+  fix-data-integrity.sql    # Data cleanup and integrity fixes
 seo.md              # SEO implementation status and strategy
 DEVELOPMENT.md      # Development guidelines and critical rules
 README.md           # Architecture overview and usage guide
+CHANGELOG.md        # Version history and feature updates
 ```
 
 ### Key Files Explained
@@ -197,6 +218,9 @@ README.md           # Architecture overview and usage guide
 - **`index.html`** - Hash-based SPA with pure vanilla JavaScript, no build step
 - **`admin.html`** - Independent admin panel with localStorage-based blackout system
 - **`netlify.toml`** - Handles SPA redirects while preserving admin.html access
+- **`config/.env`** - Environment variables for API keys and database configuration
+- **`scripts/import-fa-cup.js`** - Node.js script for importing FA Cup teams and fixtures
+- **`scripts/update-schema-fa-cup.sql`** - Database schema updates for knockout tournament support
 - **`DEVELOPMENT.md`** - Critical development rules to prevent routing/data regressions
 
 ## 🧪 Testing Navigation
