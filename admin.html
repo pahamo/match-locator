@@ -275,16 +275,7 @@
       <label>Month:</label>
       <select id="month-filter">
         <option value="">All months</option>
-        <option value="2024-08">August 2024</option>
-        <option value="2024-09">September 2024</option>
-        <option value="2024-10">October 2024</option>
-        <option value="2024-11">November 2024</option>
-        <option value="2024-12">December 2024</option>
-        <option value="2025-01">January 2025</option>
-        <option value="2025-02">February 2025</option>
-        <option value="2025-03">March 2025</option>
-        <option value="2025-04">April 2025</option>
-        <option value="2025-05">May 2025</option>
+        <!-- Options will be populated dynamically based on fixture data -->
       </select>
       
       <label>Status:</label>
@@ -590,6 +581,7 @@
           };
         });
         
+        populateMonthSelector();
         renderFixtures();
         updateStats();
         
@@ -822,6 +814,49 @@
       const year = now.getFullYear();
       const month = String(now.getMonth() + 1).padStart(2, '0');
       return `${year}-${month}`;
+    }
+
+    /** Populate month selector based on actual fixture data */
+    function populateMonthSelector() {
+      const monthSelect = document.getElementById('month-filter');
+      const currentSelection = monthSelect.value; // Preserve current selection
+      
+      // Extract unique months from fixture data
+      const months = new Set();
+      allFixtures.forEach(fixture => {
+        if (fixture.utc_kickoff) {
+          const monthKey = fixture.utc_kickoff.substring(0, 7); // Extract YYYY-MM
+          months.add(monthKey);
+        }
+      });
+      
+      // Sort months chronologically
+      const sortedMonths = Array.from(months).sort();
+      
+      // Clear existing options except "All months"
+      monthSelect.innerHTML = '<option value="">All months</option>';
+      
+      // Add month options
+      sortedMonths.forEach(monthKey => {
+        const date = new Date(monthKey + '-01');
+        const monthName = date.toLocaleDateString('en-US', { 
+          month: 'long', 
+          year: 'numeric' 
+        });
+        
+        const option = document.createElement('option');
+        option.value = monthKey;
+        option.textContent = monthName;
+        
+        // Restore selection if it was previously selected
+        if (monthKey === currentSelection) {
+          option.selected = true;
+        }
+        
+        monthSelect.appendChild(option);
+      });
+      
+      console.log(`Populated month selector with ${sortedMonths.length} months:`, sortedMonths);
     }
 
     /** Event listeners */
