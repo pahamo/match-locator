@@ -45,7 +45,16 @@ Views Used:
 fixtures_with_teams - Fixtures with team data joined
 Recent Changes (comprehensive match day experience + fixtures management)
 
-**Latest Update (Match Day Experience)**:
+**Latest Update (fixtures.app Branding & Unified Header)**:
+- **Complete Rebranding to fixtures.app**: Site now branded as "fixtures.app" with custom logo and consistent identity
+- **Unified Header Navigation**: Created reusable Header component used across all pages (except admin)
+- **Custom Logo Design**: SVG football icon with gradient styling and professional appearance
+- **Consistent Navigation Bar**: Right-aligned navigation menu with hover effects and proper responsive behavior
+- **Brand Identity**: Updated HTML titles, meta descriptions, manifest.json with fixtures.app branding
+- **Theme Colors**: Applied brand purple (#6366f1) throughout site with consistent color scheme
+- **Header Component Architecture**: Flexible header with logo, main title ("fixtures.app"), and optional page subtitles
+
+**Previous Update (Match Day Experience)**:
 - **Match Day Home Page**: Completely redesigned home page to show current/upcoming match day with smart date detection
 - **Comprehensive Fixtures Page**: New `/fixtures` page with advanced filtering by team, matchweek, competition, and viewing location
 - **Clubs Grid Page**: Beautiful responsive grid showing all 20 Premier League teams with official crests
@@ -182,14 +191,21 @@ Database schema is stable and well-designed
 Admin interface is critical for daily operations
 Key Files:
 
+src/components/Header.tsx - Reusable header component with logo, title, and navigation
 src/services/supabase.ts - All database interactions
 src/services/supabase-simple.ts - Simple admin/home fixtures + save helpers
-src/pages/AdminPage.tsx - Broadcast data management
-src/pages/HomePage.tsx - Main fixtures display
-src/pages/TeamsPage.tsx - Club index grid
+src/pages/AdminPage.tsx - Broadcast data management (keeps original header)
+src/pages/HomePage.tsx - Main fixtures display with Header component
+src/pages/FixturesPage.tsx - Comprehensive fixtures page with filtering
+src/pages/ClubsPage.tsx - Club grid page with team crests
+src/pages/TeamsPage.tsx - Club index grid (alternative layout)
 src/pages/ClubPage.tsx - Team fixtures and viewing guide
+src/pages/MatchPage.tsx - Individual match details page
 src/pages/AboutPage.tsx - Project overview and notes
 src/types/index.ts - TypeScript definitions
+public/logo.svg - fixtures.app SVG logo icon
+public/index.html - Updated with fixtures.app branding
+public/manifest.json - PWA manifest with fixtures.app details
 Common Issues:
 
 Database view inconsistencies between environments
