@@ -21,12 +21,40 @@ const FixturesPage: React.FC = () => {
   const [competitionFilter, setCompetitionFilter] = useState<FilterCompetition>('');
   const [locationFilter, setLocationFilter] = useState<FilterLocation>('');
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     loadData();
   }, []);
 
   useEffect(() => {
-    applyFilters();
+    let filtered = [...fixtures];
+
+    if (teamFilter) {
+      filtered = filtered.filter(f => f.home.slug === teamFilter || f.away.slug === teamFilter);
+    }
+
+    if (matchweekFilter) {
+      const week = parseInt(matchweekFilter);
+      filtered = filtered.filter(f => f.matchweek === week);
+    }
+
+    if (competitionFilter) {
+      filtered = filtered.filter(f => f.competition === competitionFilter);
+    }
+
+    if (locationFilter) {
+      if (locationFilter === 'tv') {
+        filtered = filtered.filter(f => f.providers_uk.some(p => p.type === 'tv'));
+      } else if (locationFilter === 'streaming') {
+        filtered = filtered.filter(f => f.providers_uk.some(p => p.type === 'streaming'));
+      } else if (locationFilter === 'blackout') {
+        filtered = filtered.filter(f => f.blackout?.is_blackout === true);
+      } else if (locationFilter === 'tbd') {
+        filtered = filtered.filter(f => f.providers_uk.length === 0 && !f.blackout?.is_blackout);
+      }
+    }
+
+    setFilteredFixtures(filtered);
   }, [fixtures, teamFilter, matchweekFilter, competitionFilter, locationFilter]);
 
   const loadData = async () => {
@@ -52,48 +80,7 @@ const FixturesPage: React.FC = () => {
     }
   };
 
-  const applyFilters = () => {
-    let filtered = [...fixtures];
-
-    // Team filter
-    if (teamFilter) {
-      filtered = filtered.filter(f => 
-        f.home.slug === teamFilter || f.away.slug === teamFilter
-      );
-    }
-
-    // Matchweek filter
-    if (matchweekFilter) {
-      const week = parseInt(matchweekFilter);
-      filtered = filtered.filter(f => f.matchweek === week);
-    }
-
-    // Competition filter
-    if (competitionFilter) {
-      filtered = filtered.filter(f => f.competition === competitionFilter);
-    }
-
-    // Location/watching filter
-    if (locationFilter) {
-      if (locationFilter === 'tv') {
-        filtered = filtered.filter(f => 
-          f.providers_uk.some(p => p.type === 'tv')
-        );
-      } else if (locationFilter === 'streaming') {
-        filtered = filtered.filter(f => 
-          f.providers_uk.some(p => p.type === 'streaming')
-        );
-      } else if (locationFilter === 'blackout') {
-        filtered = filtered.filter(f => f.blackout?.is_blackout === true);
-      } else if (locationFilter === 'tbd') {
-        filtered = filtered.filter(f => 
-          f.providers_uk.length === 0 && !f.blackout?.is_blackout
-        );
-      }
-    }
-
-    setFilteredFixtures(filtered);
-  };
+  
 
   const getMatchweekOptions = () => {
     const weeks = new Set<number>();

@@ -30,6 +30,7 @@ const AdminPage: React.FC = () => {
     }
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     // In React StrictMode (dev), components mount/unmount/mount; reset flag on each mount
     isMountedRef.current = true;
@@ -44,7 +45,19 @@ const AdminPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    applyFilters();
+    let filtered = [...fixtures];
+
+    if (monthFilter) {
+      filtered = filtered.filter(f => f.kickoff_utc.startsWith(monthFilter));
+    }
+
+    if (statusFilter === 'confirmed') {
+      filtered = filtered.filter(f => !!f.broadcaster);
+    } else if (statusFilter === 'tbd') {
+      filtered = filtered.filter(f => !f.broadcaster);
+    }
+
+    setFilteredFixtures(filtered);
   }, [fixtures, statusFilter, monthFilter]);
 
   const loadFixtures = async (confirmIfPending: boolean = false) => {
@@ -70,32 +83,7 @@ const AdminPage: React.FC = () => {
     }
   };
 
-  const applyFilters = () => {
-    let filtered = [...fixtures];
-
-    // Month filter
-    if (monthFilter) {
-      filtered = filtered.filter(f => 
-        f.kickoff_utc.startsWith(monthFilter)
-      );
-    }
-
-    // Matchweek filter - Simple fixtures don't have matchweek, so skip this
-    // if (matchweekFilter) {
-    //   filtered = filtered.filter(f => 
-    //     f.matchweek === parseInt(matchweekFilter)
-    //   );
-    // }
-
-    // Status filter
-    if (statusFilter === 'confirmed') {
-      filtered = filtered.filter(f => !!f.broadcaster);
-    } else if (statusFilter === 'tbd') {
-      filtered = filtered.filter(f => !f.broadcaster);
-    }
-
-    setFilteredFixtures(filtered);
-  };
+  
 
   const getMonthOptions = () => {
     const months = new Set<string>();

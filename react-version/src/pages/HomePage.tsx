@@ -17,7 +17,26 @@ const HomePage: React.FC = () => {
   const [blackoutIds, setBlackoutIds] = useState<number[]>([]);
 
   useEffect(() => {
-    loadMatchDay();
+    let isCancelled = false;
+    (async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const fixturesData = await getSimpleFixtures();
+        const currentMatchDay = getCurrentOrUpcomingMatchDay(fixturesData);
+        if (!isCancelled) setMatchDay(currentMatchDay);
+        try {
+          const stored = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
+          if (!isCancelled && Array.isArray(stored)) setBlackoutIds(stored);
+        } catch { /* ignore */ }
+      } catch (err) {
+        console.error('Failed to load fixtures:', err);
+        if (!isCancelled) setError('Failed to load fixtures. Please try again later.');
+      } finally {
+        if (!isCancelled) setLoading(false);
+      }
+    })();
+    return () => { isCancelled = true; };
   }, []);
 
   const loadMatchDay = async () => {
