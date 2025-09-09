@@ -391,3 +391,27 @@ export function isFixtureConfirmed(fixture: AdminFixture): boolean {
 export function isFixturePending(fixture: AdminFixture): boolean {
   return !fixture.broadcast && !isFixtureBlackout(fixture.id);
 }
+
+// Teams API
+export async function getTeams(): Promise<Team[]> {
+  try {
+    const { data, error } = await supabase
+      .from('teams')
+      .select('id,name,slug,crest')
+      .order('name', { ascending: true });
+
+    if (error) {
+      console.warn('[Supabase] getTeams error', error);
+      return [];
+    }
+    return (data || []).map((t: any) => ({
+      id: t.id,
+      name: t.name,
+      slug: t.slug,
+      crest: t.crest ?? null,
+    }));
+  } catch (e) {
+    console.warn('[Supabase] getTeams error', e);
+    return [];
+  }
+}

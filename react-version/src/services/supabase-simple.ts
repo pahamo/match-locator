@@ -23,57 +23,73 @@ export const SIMPLE_BROADCASTERS = [
 // Get fixtures with basic team info using simple JOINs
 export async function getSimpleFixtures(): Promise<SimpleFixture[]> {
   try {
-    console.log('[Supabase] Loading fixtures with basic table JOINs...');
-    
-    // Use basic tables with simple JOINs - no views
+    console.log('[Supabase] Loading fixtures (no JOINs)...');
+
+    // Step 1: Load fixture basics only
+    // Use a dynamic season start (Aug 1 of current season year)
+    const now = new Date();
+    const seasonYear = now.getUTCMonth() >= 6 ? now.getUTCFullYear() : now.getUTCFullYear() - 1;
+    const seasonStartIso = `${seasonYear}-08-01T00:00:00.000Z`;
+
     const { data: fixtures, error } = await supabase
       .from('fixtures')
-      .select(`
-        id,
-        utc_kickoff,
-        home_team_id,
-        away_team_id,
-        home_team:home_team_id(name),
-        away_team:away_team_id(name)
-      `)
-      .gte('utc_kickoff', '2024-08-01T00:00:00.000Z')
+      .select('id, utc_kickoff, home_team_id, away_team_id')
+      .gte('utc_kickoff', seasonStartIso)
       .order('utc_kickoff', { ascending: true })
       .limit(20);
-      
+
     if (error) {
       console.error('[Supabase] Error loading fixtures:', error);
-      return [];
+      throw error;
     }
-    
-    if (!fixtures) {
+    if (!fixtures || fixtures.length === 0) {
       console.warn('[Supabase] No fixtures returned');
       return [];
     }
-    
-    console.log(`[Supabase] Loaded ${fixtures.length} fixtures successfully`);
-    
-    // Get broadcast data for these fixtures
-    const fixtureIds = fixtures.map(f => f.id);
+
+    // Step 2: Load team names in one query
+    const teamIds = Array.from(
+      new Set([
+        ...fixtures.map((f: any) => f.home_team_id),
+        ...fixtures.map((f: any) => f.away_team_id),
+      ].filter(Boolean))
+    );
+
+    let teamNameById: Record<number, string> = {};
+    if (teamIds.length > 0) {
+      const { data: teams, error: teamError } = await supabase
+        .from('teams')
+        .select('id, name')
+        .in('id', teamIds);
+      if (teamError) {
+        console.warn('[Supabase] Error loading teams:', teamError);
+      } else {
+        (teams || []).forEach((t: any) => {
+          teamNameById[t.id] = t.name;
+        });
+      }
+    }
+
+    // Step 3: Load broadcasts for these fixtures
+    const fixtureIds = fixtures.map((f: any) => f.id);
     const { data: broadcasts } = await supabase
       .from('broadcasts')
       .select('fixture_id, provider_id')
       .in('fixture_id', fixtureIds);
-    
-    // Create broadcast lookup
+
     const broadcastLookup: Record<number, number> = {};
-    (broadcasts || []).forEach(b => {
+    (broadcasts || []).forEach((b: any) => {
       broadcastLookup[b.fixture_id] = b.provider_id;
     });
-    
-    // Map to simple format
-    return fixtures.map(fixture => ({
+
+    // Step 4: Map to simple format
+    return fixtures.map((fixture: any) => ({
       id: fixture.id,
       kickoff_utc: fixture.utc_kickoff,
-      home_team: (fixture as any).home_team?.name || 'Unknown',
-      away_team: (fixture as any).away_team?.name || 'Unknown',
-      broadcaster: SIMPLE_BROADCASTERS.find(b => b.id === broadcastLookup[fixture.id])?.name || undefined
+      home_team: teamNameById[fixture.home_team_id] || 'Unknown',
+      away_team: teamNameById[fixture.away_team_id] || 'Unknown',
+      broadcaster: SIMPLE_BROADCASTERS.find(b => b.id === broadcastLookup[fixture.id])?.name || undefined,
     }));
-    
   } catch (error) {
     console.error('[Supabase] Unexpected error:', error);
     return [];

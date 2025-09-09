@@ -43,6 +43,14 @@ providers - Sky Sports, TNT Sports, etc.
 Views Used:
 
 fixtures_with_teams - Fixtures with team data joined
+Recent Changes (beta content + admin stability)
+
+- Admin page stability: fixed StrictMode double-mount loading issue, added safe cleanup for message timers, and guarded state updates after unmount
+- Admin UX: detects pending changes, inline "Save" per row, refresh confirmation when there are unsaved edits, disabled controls during save, success/error messaging
+- Simple data service: replaced PostgREST-style JOINs with a robust two-step fetch (fixtures → team names → broadcasts), added dynamic season window (Aug 1 of season year)
+- New pages: About page with project overview; Teams index grid; Team page with upcoming fixtures and a simple "How to watch" section
+- Routing updates: added routes for `/clubs` and `/clubs/:slug`; legacy `/club/:clubId` still supported
+- Navigation: added header links on the homepage (Clubs, About, Admin)
 Migration Status
 Completed
 React project setup with TypeScript
@@ -50,14 +58,18 @@ Supabase connection and API services
 Basic fixtures display
 Admin interface for broadcast editing
 Component-based architecture
+About page, Teams index, Team pages
+Admin page resiliency improvements
 Known Issues
 Some database views/columns may not exist in new project
 Blackout system may need reimplementation
 Complex filtering features may need simplification
+Supabase keys currently hardcoded in services (move to env)
 In Progress
 Stripping down to minimal working version
 Removing problematic inherited features
 Building up features incrementally
+Implementing match detail pages and linking from fixtures
 Development Workflow
 Running the Applications
 Original SPA (backup version):
@@ -70,8 +82,8 @@ bash
 cd react-version
 npm install
 npm start
-# Runs on http://localhost:3000
-# Admin at http://localhost:3000/admin
+# Runs on http://localhost:3000 (or next available port e.g. 3001)
+# Admin at /admin; Teams index at /clubs; Team pages at /clubs/:slug; About at /about
 AI-Assisted Development Guidelines
 With React version:
 
@@ -97,6 +109,7 @@ API Patterns:
 Use JOIN queries instead of complex views when possible
 Handle errors gracefully with try/catch
 Implement loading states for better UX
+For admin/simple views, prefer simple table queries and follow-up lookups over embedded joins (more portable across environments)
 Key Learnings
 Architecture Decisions:
 
@@ -110,6 +123,22 @@ Keep original version as backup during migration
 Build features incrementally rather than all at once
 Strip problematic features and rebuild cleanly
 Test each component independently
+Admin Interface Notes
+
+Summary of fixes and behavior:
+
+- Dropdown Logic: robust handling of empty/null broadcaster states
+- Pending Changes: detects when selection differs from current assignment
+- Save UX: per-row save button, disabled while saving, success/error messages
+- Loading and Unmount Safety: guards to avoid state updates after unmount; resolves StrictMode loading hang
+- Refresh Behavior: prompts when unsaved changes exist; clears stale pending state on reload
+
+Data service specifics (simple mode):
+
+- Fixtures: `fixtures` table only (`id, utc_kickoff, home_team_id, away_team_id`)
+- Team names: fetched via a single `teams` query using `.in('id', [...])`
+- Broadcasts: fetched via `broadcasts` for loaded fixture IDs; mapped to Sky/TNT labels
+- Season window: dynamic from Aug 1 of the current PL season (adjust if your dataset is older)
 Future Development
 Next Steps:
 
@@ -117,6 +146,11 @@ Complete minimal working version
 Add features back incrementally
 Implement proper testing
 Consider adding more competitions (FA Cup, etc.)
+Implement match detail page `/matches/:id` using `getFixtureById`
+Link fixture cards to match details
+Move Supabase URL/key to env (`REACT_APP_SUPABASE_URL`, `REACT_APP_SUPABASE_ANON_KEY`)
+Unify broadcaster constants and consider reintroducing blackout option
+Prep Netlify build for React app (`react-version/build`) and SPA redirects
 Expansion Considerations:
 
 Multi-sport support (original vision)
@@ -133,14 +167,18 @@ Admin interface is critical for daily operations
 Key Files:
 
 src/services/supabase.ts - All database interactions
+src/services/supabase-simple.ts - Simple admin/home fixtures + save helpers
 src/pages/AdminPage.tsx - Broadcast data management
 src/pages/HomePage.tsx - Main fixtures display
+src/pages/TeamsPage.tsx - Club index grid
+src/pages/ClubPage.tsx - Team fixtures and viewing guide
+src/pages/AboutPage.tsx - Project overview and notes
 src/types/index.ts - TypeScript definitions
 Common Issues:
 
 Database view inconsistencies between environments
 Column name mismatches in queries
 API rate limiting with Supabase free tier
+If no fixtures render on admin: check season date window and team FK IDs; optionally remove date filter for debugging
 Contact & Feedback
 This migration was driven by practical development challenges with AI-assisted coding in the original architecture. The React version should provide a more maintainable foundation for future development.
-

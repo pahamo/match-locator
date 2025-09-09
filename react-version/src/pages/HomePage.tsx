@@ -63,8 +63,15 @@ const HomePage: React.FC = () => {
   return (
     <div className="home-page">
       <header>
-        <h1>Premier League TV Schedule UK</h1>
-        <p>Find which broadcaster shows every match: Sky Sports, TNT Sports, BBC</p>
+        <div>
+          <h1 style={{ margin: 0 }}>Premier League TV Schedule UK</h1>
+          <p style={{ margin: 0, color: 'var(--color-muted)' }}>Find which broadcaster shows every match: Sky Sports, TNT Sports, BBC</p>
+        </div>
+        <nav style={{ display: 'flex', gap: '12px' }}>
+          <a href="/clubs" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>Clubs</a>
+          <a href="/about" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>About</a>
+          <a href="/admin" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>Admin</a>
+        </nav>
       </header>
       
       <main>

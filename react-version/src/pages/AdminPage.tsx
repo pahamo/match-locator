@@ -17,6 +17,8 @@ const AdminPage: React.FC = () => {
   const isMountedRef = useRef(true);
 
   useEffect(() => {
+    // In React StrictMode (dev), components mount/unmount/mount; reset flag on each mount
+    isMountedRef.current = true;
     loadFixtures();
     return () => {
       isMountedRef.current = false;
