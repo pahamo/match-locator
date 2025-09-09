@@ -5,7 +5,8 @@ import MatchPage from './pages/MatchPage';
 import ClubPage from './pages/ClubPage';
 import AboutPage from './pages/AboutPage';
 import AdminPage from './pages/AdminPage';
-import TeamsPage from './pages/TeamsPage';
+import ClubsPage from './pages/ClubsPage';
+import FixturesPage from './pages/FixturesPage';
 import './App.css';
 
 function App() {
@@ -14,10 +15,11 @@ function App() {
       <div className="App">
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/fixtures" element={<FixturesPage />} />
           <Route path="/matches/:matchId" element={<MatchPage />} />
           <Route path="/match/:matchId" element={<MatchPage />} />
           <Route path="/club/:clubId" element={<ClubPage />} />
-          <Route path="/clubs" element={<TeamsPage />} />
+          <Route path="/clubs" element={<ClubsPage />} />
           <Route path="/clubs/:slug" element={<ClubPage />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/about" element={<AboutPage />} />

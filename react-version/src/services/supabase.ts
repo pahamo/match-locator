@@ -19,11 +19,11 @@ interface FixtureRow {
   venue?: string | null;
   status?: string;
   home_team_id: number;
-  home_name: string;
+  home_team: string;
   home_slug: string;
   home_crest?: string | null;
   away_team_id: number;
-  away_name: string;
+  away_team: string;
   away_slug: string;
   away_crest?: string | null;
 }
@@ -47,13 +47,13 @@ function mapFixtureRow(row: FixtureRow, providersByFixture: Record<number, Provi
   const mw = row.matchday ?? null;
   const home: Team = {
     id: row.home_team_id,
-    name: row.home_name,
+    name: row.home_team,
     slug: row.home_slug,
     crest: row.home_crest || null,
   };
   const away: Team = {
     id: row.away_team_id,
-    name: row.away_name,
+    name: row.away_team,
     slug: row.away_slug,
     crest: row.away_crest || null,
   };
@@ -148,8 +148,8 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
       .from('fixtures_with_teams')
       .select(`
         id,matchday,utc_kickoff,venue,status,
-        home_team_id,home_name,home_slug,home_crest,
-        away_team_id,away_name,away_slug,away_crest
+        home_team_id,home_team,home_slug,home_crest,
+        away_team_id,away_team,away_slug,away_crest
       `)
       .order('utc_kickoff', { ascending: order === 'asc' })
       .limit(limit);
@@ -218,8 +218,8 @@ export async function getFixtureById(id: number): Promise<Fixture | undefined> {
       .from('fixtures_with_teams')
       .select(`
         id,matchday,utc_kickoff,venue,status,
-        home_team_id,home_name,home_slug,home_crest,
-        away_team_id,away_name,away_slug,away_crest
+        home_team_id,home_team,home_slug,home_crest,
+        away_team_id,away_team,away_slug,away_crest
       `)
       .eq('id', id)
       .limit(1);
@@ -277,8 +277,8 @@ export async function getAdminFixtures(competitionId: number = 1): Promise<Admin
       .from('fixtures_with_teams')
       .select(`
         id,matchday,utc_kickoff,venue,status,
-        home_team_id,home_name,home_slug,home_crest,
-        away_team_id,away_name,away_slug,away_crest
+        home_team_id,home_team,home_slug,home_crest,
+        away_team_id,away_team,away_slug,away_crest
       `)
       .eq('competition_id', competitionId)
       .gte('utc_kickoff', currentSeasonStart)
@@ -403,7 +403,8 @@ export async function getTeams(): Promise<Team[]> {
   try {
     const { data, error } = await supabase
       .from('teams')
-      .select('id,name,slug,crest')
+      .select('id,name,slug,crest_url')
+      .eq('is_active', true)
       .order('name', { ascending: true });
 
     if (error) {
@@ -414,7 +415,7 @@ export async function getTeams(): Promise<Team[]> {
       id: t.id,
       name: t.name,
       slug: t.slug,
-      crest: t.crest ?? null,
+      crest: t.crest_url ?? null,
     }));
   } catch (e) {
     console.warn('[Supabase] getTeams error', e);
