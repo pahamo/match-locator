@@ -8,6 +8,7 @@ import AdminPage from './pages/AdminPage';
 import ClubsPage from './pages/ClubsPage';
 import FixturesPage from './pages/FixturesPage';
 import './App.css';
+import NotFoundPage from './pages/NotFoundPage';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/clubs/:slug" element={<ClubPage />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>
     </Router>

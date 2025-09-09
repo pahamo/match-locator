@@ -89,17 +89,17 @@ Known Issues
 Some database views/columns may not exist in new project
 Blackout system may need reimplementation
 Complex filtering features may need simplification
-Supabase keys currently hardcoded in services (move to env)
+Supabase env now required in services; inline fallbacks removed
 
 Bug Tracker (Beta)
 
-- Provider mismatch across pages (Fixed, needs QA)
+- Provider mismatch across pages (Fixed, verified)
   - Symptom: Admin/home show TNT or Sky, but match page showed "TBC".
   - Root cause: Providers table may be incomplete or missing some columns (e.g., `url`, `slug`), causing the providers lookup to fail.
   - Fix: Adjusted provider query to only select existing columns; added robust fallback mapping for UK providers (ID 1 = Sky, 2 = TNT) so match page shows correct broadcaster even if the table is sparse.
   - Files: src/services/supabase.ts
 
-- Missing blackout option in Admin (Fixed, needs QA)
+- Missing blackout option in Admin (Fixed, verified)
   - Symptom: No way to mark fixtures as UK blackout from admin.
   - Solution: Added "🚫 Blackout (No UK TV)" option; saving sets/removes localStorage blackout flag and clears broadcaster rows.
   - Files: src/pages/AdminPage.tsx, src/services/supabase-simple.ts
@@ -113,10 +113,38 @@ Bug Tracker (Beta)
   - Fix: Reset isMounted flag on mount, cleanup timers on unmount.
   - File: src/pages/AdminPage.tsx
 
-- Netlify config not yet set up (Pending)
-  - Added netlify.toml to build React app (base=react-version, publish=build) with SPA redirect.
-  - Next: Connect site in Netlify UI, set env vars (Supabase URL/key), trigger build.
-  - File: netlify.toml
+- Netlify deployment (Completed)
+  - netlify.toml builds the React app (base=react-version, publish=build) with SPA redirect.
+  - Site live at: https://fixturesapp.netlify.app/
+  - Env vars set: REACT_APP_SUPABASE_URL, REACT_APP_SUPABASE_ANON_KEY
+  - Build command uses `CI=` to prevent CRA warning-as-error in CI.
+  - Files: netlify.toml, config/netlify.toml
+
+- Supabase credentials fallback (Security hardening)
+  - Change: Removed hardcoded fallback URL/key from client; env is required now.
+  - Impact: Local dev must have `react-version/.env`; Netlify must have env vars.
+  - File: src/services/supabase.ts
+
+- 404 Handling (UX improvement)
+  - Added NotFound route with links back to key pages.
+  - Files: src/pages/NotFoundPage.tsx, src/App.tsx
+
+Deployment
+
+- Live URL: https://fixturesapp.netlify.app/
+- Platform: Netlify
+- Build settings (from netlify.toml):
+  - base: react-version
+  - command: CI= npm run build
+  - publish: build
+  - redirect: /* → /index.html (status 200)
+- Environment variables:
+  - REACT_APP_SUPABASE_URL
+  - REACT_APP_SUPABASE_ANON_KEY
+  - Optional: NODE_VERSION=18 or 20
+- Notes:
+  - Local dev also uses react-version/.env (ignored by git).
+  - Consider rotating Supabase anon key and removing inline fallbacks in services once env is everywhere.
 Supabase keys currently hardcoded in services (move to env)
 In Progress
 Stripping down to minimal working version
