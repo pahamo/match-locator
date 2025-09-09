@@ -82,12 +82,12 @@ const HomePage: React.FC = () => {
             </div>
           ) : (
             <div className="fixtures-list">
-              <h2>Upcoming Fixtures ({fixtures.length}) 
+              <h2>Upcoming Fixtures ({Math.min(50, fixtures.length)} of {fixtures.length}) 
                 <a href="/admin" style={{ marginLeft: '15px', color: '#6366f1', textDecoration: 'underline', fontSize: '0.8rem' }}>
                   🔧 Admin
                 </a>
               </h2>
-              {fixtures.map(fixture => (
+              {fixtures.slice(0, 50).map(fixture => (
                 <div key={fixture.id} className="fixture-card">
                   <div className="fixture-datetime">
                     {new Date(fixture.kickoff_utc).toLocaleDateString('en-GB', {

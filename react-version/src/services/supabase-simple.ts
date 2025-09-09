@@ -29,7 +29,7 @@ export const SIMPLE_BROADCASTERS = [
 // Get fixtures with basic team info using simple JOINs
 export async function getSimpleFixtures(): Promise<SimpleFixture[]> {
   try {
-    console.log('[Supabase] Loading fixtures (no JOINs)...');
+    console.log('[Supabase] Loading full season fixtures (no JOINs)...');
 
     // Step 1: Load fixture basics only
     // Use a dynamic season start (Aug 1 of current season year)
@@ -41,8 +41,7 @@ export async function getSimpleFixtures(): Promise<SimpleFixture[]> {
       .from('fixtures')
       .select('id, utc_kickoff, home_team_id, away_team_id')
       .gte('utc_kickoff', seasonStartIso)
-      .order('utc_kickoff', { ascending: true })
-      .limit(20);
+      .order('utc_kickoff', { ascending: true });
 
     if (error) {
       console.error('[Supabase] Error loading fixtures:', error);
