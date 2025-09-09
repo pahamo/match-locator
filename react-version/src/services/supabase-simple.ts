@@ -95,17 +95,35 @@ export async function saveBroadcaster(fixtureId: number, providerId: number | nu
   try {
     console.log(`[Supabase] Saving broadcaster for fixture ${fixtureId}: provider ${providerId}`);
     
-    if (!providerId) {
-      // Remove broadcaster
+    if (providerId === -1) {
+      // Blackout: remove any broadcaster and mark blackout in localStorage
+      const { error } = await supabase
+        .from('broadcasts')
+        .delete()
+        .eq('fixture_id', fixtureId);
+      if (error) throw error;
+
+      const blackoutFixtures = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
+      if (!blackoutFixtures.includes(fixtureId)) {
+        blackoutFixtures.push(fixtureId);
+        localStorage.setItem('blackoutFixtures', JSON.stringify(blackoutFixtures));
+      }
+      console.log(`[Supabase] Set blackout for fixture ${fixtureId}`);
+
+    } else if (!providerId) {
+      // Remove broadcaster and clear blackout flag
       const { error } = await supabase
         .from('broadcasts')
         .delete()
         .eq('fixture_id', fixtureId);
         
       if (error) throw error;
+      const blackoutFixtures = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
+      const updated = blackoutFixtures.filter((id: number) => id !== fixtureId);
+      localStorage.setItem('blackoutFixtures', JSON.stringify(updated));
       console.log(`[Supabase] Removed broadcaster for fixture ${fixtureId}`);
     } else {
-      // Add/update broadcaster
+      // Add/update broadcaster and clear blackout flag
       const { error } = await supabase
         .from('broadcasts')
         .upsert({
@@ -114,6 +132,9 @@ export async function saveBroadcaster(fixtureId: number, providerId: number | nu
         });
         
       if (error) throw error;
+      const blackoutFixtures = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
+      const updated = blackoutFixtures.filter((id: number) => id !== fixtureId);
+      localStorage.setItem('blackoutFixtures', JSON.stringify(updated));
       console.log(`[Supabase] Saved broadcaster for fixture ${fixtureId}`);
     }
   } catch (error) {

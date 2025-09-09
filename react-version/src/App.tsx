@@ -17,6 +17,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/fixtures" element={<FixturesPage />} />
           <Route path="/matches/:matchId" element={<MatchPage />} />
+          <Route path="/matches/:id" element={<MatchPage />} />
           <Route path="/match/:matchId" element={<MatchPage />} />
           <Route path="/club/:clubId" element={<ClubPage />} />
           <Route path="/clubs" element={<ClubsPage />} />

@@ -5,21 +5,22 @@ import type { Fixture } from '../types';
 import Header from '../components/Header';
 
 const MatchPage: React.FC = () => {
-  const { matchId } = useParams<{ matchId: string }>();
+  const { matchId, id } = useParams<{ matchId?: string; id?: string }>();
   const [fixture, setFixture] = useState<Fixture | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadFixture = async () => {
-      if (!matchId) {
+      const raw = matchId ?? id;
+      if (!raw) {
         setError('No match ID provided');
         setLoading(false);
         return;
       }
 
-      const id = parseInt(matchId, 10);
-      if (isNaN(id)) {
+      const parsed = parseInt(raw, 10);
+      if (isNaN(parsed)) {
         setError('Invalid match ID');
         setLoading(false);
         return;
@@ -28,7 +29,7 @@ const MatchPage: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-        const fixtureData = await getFixtureById(id);
+        const fixtureData = await getFixtureById(parsed);
         
         if (!fixtureData) {
           setError('Match not found');
@@ -44,7 +45,7 @@ const MatchPage: React.FC = () => {
     };
 
     loadFixture();
-  }, [matchId]);
+  }, [matchId, id]);
 
   const formatDateTime = (utcKickoff: string) => {
     const date = new Date(utcKickoff);
@@ -254,6 +255,12 @@ const MatchPage: React.FC = () => {
                 </div>
               )}
             </div>
+          </div>
+
+          <div style={{ marginTop: '8px' }}>
+            <a href="/" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.95rem' }}>
+              ← Back to Schedule
+            </a>
           </div>
         </div>
       </main>

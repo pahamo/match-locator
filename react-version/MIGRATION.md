@@ -90,6 +90,34 @@ Some database views/columns may not exist in new project
 Blackout system may need reimplementation
 Complex filtering features may need simplification
 Supabase keys currently hardcoded in services (move to env)
+
+Bug Tracker (Beta)
+
+- Provider mismatch across pages (Fixed, needs QA)
+  - Symptom: Admin/home show TNT or Sky, but match page showed "TBC".
+  - Root cause: Providers table may be incomplete or missing some columns (e.g., `url`, `slug`), causing the providers lookup to fail.
+  - Fix: Adjusted provider query to only select existing columns; added robust fallback mapping for UK providers (ID 1 = Sky, 2 = TNT) so match page shows correct broadcaster even if the table is sparse.
+  - Files: src/services/supabase.ts
+
+- Missing blackout option in Admin (Fixed, needs QA)
+  - Symptom: No way to mark fixtures as UK blackout from admin.
+  - Solution: Added "🚫 Blackout (No UK TV)" option; saving sets/removes localStorage blackout flag and clears broadcaster rows.
+  - Files: src/pages/AdminPage.tsx, src/services/supabase-simple.ts
+
+- Back to Schedule not visible on Match page (Fixed)
+  - Added clear "← Back to Schedule" link under details.
+  - File: src/pages/MatchPage.tsx
+
+- Admin stuck on Loading (Fixed)
+  - Cause: StrictMode double-mount guards blocked state updates.
+  - Fix: Reset isMounted flag on mount, cleanup timers on unmount.
+  - File: src/pages/AdminPage.tsx
+
+- Netlify config not yet set up (Pending)
+  - Added netlify.toml to build React app (base=react-version, publish=build) with SPA redirect.
+  - Next: Connect site in Netlify UI, set env vars (Supabase URL/key), trigger build.
+  - File: netlify.toml
+Supabase keys currently hardcoded in services (move to env)
 In Progress
 Stripping down to minimal working version
 Removing problematic inherited features

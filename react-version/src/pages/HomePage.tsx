@@ -14,6 +14,7 @@ const HomePage: React.FC = () => {
   const [matchDay, setMatchDay] = useState<MatchDay | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [blackoutIds, setBlackoutIds] = useState<number[]>([]);
 
   useEffect(() => {
     loadMatchDay();
@@ -27,6 +28,14 @@ const HomePage: React.FC = () => {
       const fixturesData = await getSimpleFixtures();
       const currentMatchDay = getCurrentOrUpcomingMatchDay(fixturesData);
       setMatchDay(currentMatchDay);
+
+      // Load blackout flags from localStorage
+      try {
+        const stored = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
+        if (Array.isArray(stored)) setBlackoutIds(stored);
+      } catch {
+        // ignore
+      }
     } catch (err) {
       console.error('Failed to load fixtures:', err);
       setError('Failed to load fixtures. Please try again later.');
@@ -193,7 +202,9 @@ const HomePage: React.FC = () => {
                   </div>
                 </div>
                 <div className="broadcaster-info">
-                  {fixture.broadcaster ? (
+                  {blackoutIds.includes(fixture.id) ? (
+                    <span className="provider blackout">🚫 Blackout</span>
+                  ) : fixture.broadcaster ? (
                     <span className="provider confirmed">{fixture.broadcaster}</span>
                   ) : (
                     <span className="tbd-text">TBD</span>

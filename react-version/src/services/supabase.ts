@@ -35,7 +35,6 @@ interface BroadcastRow {
 
 interface ProviderRow {
   id: number;
-  slug?: string;
   display_name?: string;
   name?: string;
   type?: string;
@@ -103,34 +102,47 @@ async function getBroadcastsForFixtures(ids: number[]): Promise<BroadcastRow[]> 
 }
 
 async function getProvidersByIds(ids: number[] = []): Promise<Provider[]> {
+  let rows: ProviderRow[] | null = null;
   try {
     let query = supabase
       .from('providers')
-      .select('id,slug,display_name,type,url')
+      .select('id,display_name,name,type')
       .order('display_name', { ascending: true });
-      
+
     if (ids.length > 0) {
       query = query.in('id', ids);
     }
-    
-    const { data: rows, error } = await query;
-    
-    if (error) {
-      console.warn('[Supabase] getProvidersByIds error', error);
-      return [];
+
+    const resp = await query;
+    if (resp.error) {
+      console.warn('[Supabase] getProvidersByIds error', resp.error);
+    } else {
+      rows = resp.data as any;
     }
-    
-    return (rows || []).map((p: ProviderRow) => ({
-      id: p.slug || String(p.id),
-      name: p.display_name || p.name || 'Unknown',
-      type: p.type || 'unknown',
-      href: p.url || undefined,
-      status: 'confirmed',
-    }));
   } catch (e) {
-    console.warn('[Supabase] getProvidersByIds error', e);
-    return [];
+    console.warn('[Supabase] getProvidersByIds exception', e);
   }
+
+  const mapped = (rows || []).map((p: ProviderRow) => ({
+    id: String(p.id),
+    name: p.display_name || p.name || 'Unknown',
+    type: p.type || 'unknown',
+    href: undefined,
+    status: 'confirmed',
+  }));
+
+  // Fallbacks for common UK providers in case providers table is incomplete
+  const byId = new Map<string, Provider>(mapped.map(p => [p.id, p]));
+  const ensure = (numId: number, name: string, href: string) => {
+    const key = String(numId);
+    if (!byId.has(key) && ids.includes(numId)) {
+      byId.set(key, { id: key, name, type: 'tv', href, status: 'confirmed' });
+    }
+  };
+  ensure(1, 'Sky Sports', 'https://www.skysports.com/football/fixtures-results');
+  ensure(2, 'TNT Sports', 'https://tntsports.co.uk/football');
+
+  return Array.from(byId.values());
 }
 
 export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixture[]> {
@@ -182,11 +194,12 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
       const providerIds = Array.from(new Set(bcasts.map(b => b.provider_id).filter(Boolean)));
       const provs = providerIds.length ? await getProvidersByIds(providerIds) : [];
       const byPk = Object.fromEntries(provs.map(p => [p.id, p]));
-      
+
       for (const b of bcasts) {
         const fId = b.fixture_id;
-        const p = byPk[String(b.provider_id)];
-        const entry = p ? { ...p } : null;
+        const key = String(b.provider_id);
+        const p = byPk[key];
+        const entry = p ? { ...p } : undefined;
         if (!providersByFixture[fId]) providersByFixture[fId] = [];
         if (entry) providersByFixture[fId].push(entry);
       }
@@ -236,7 +249,7 @@ export async function getFixtureById(id: number): Promise<Fixture | undefined> {
     const providerIds = Array.from(new Set(bcasts.map(b => b.provider_id).filter(Boolean)));
     const provs = providerIds.length ? await getProvidersByIds(providerIds) : [];
     const byPk = Object.fromEntries(provs.map(p => [p.id, p]));
-    
+
     const providersByFixture: Record<number, Provider[]> = {};
     providersByFixture[row.id] = bcasts.map(b => {
       const p = byPk[String(b.provider_id)];
