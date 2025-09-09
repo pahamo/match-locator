@@ -295,7 +295,7 @@
       { id: 2, name: 'TNT Sports', type: 'tv' },
       { id: 3, name: 'BBC Sport', type: 'tv' },
       { id: 4, name: 'Amazon Prime Video', type: 'streaming' },
-      { id: 'blackout', name: '🚫 Blackout (No TV)', type: 'blackout' }
+      { id: 99, name: '🚫 Blackout (No TV)', type: 'blackout' }
     ];
 
     let allFixtures = [];
@@ -515,9 +515,9 @@
       }
       
       if (statusFilter === 'confirmed') {
-        filteredFixtures = filteredFixtures.filter(f => f.broadcast && f.broadcast.provider_id && f.broadcast.provider_id !== 'blackout');
+        filteredFixtures = filteredFixtures.filter(f => f.broadcast && f.broadcast.provider_id && f.broadcast.provider_id != 99);
       } else if (statusFilter === 'blackout') {
-        filteredFixtures = filteredFixtures.filter(f => f.broadcast && f.broadcast.provider_id === 'blackout');
+        filteredFixtures = filteredFixtures.filter(f => f.broadcast && f.broadcast.provider_id == 99);
       } else if (statusFilter === 'pending') {
         filteredFixtures = filteredFixtures.filter(f => !f.broadcast || !f.broadcast.provider_id);
       }
@@ -537,7 +537,7 @@
         
         // Status indicator
         const hasProvider = currentProviderId && currentProviderId !== '';
-        const isBlackout = currentProviderId === 'blackout';
+        const isBlackout = currentProviderId == 99;
         
         let statusClass, statusText;
         if (isBlackout) {
@@ -618,10 +618,10 @@
           showMessage(`Removed broadcaster for fixture ${fixtureId}`, 'success');
           
         } else {
-          // Add/update broadcaster - handle both numeric IDs and string IDs like 'blackout'
+          // Add/update broadcaster - all provider IDs are now numeric
           const broadcastData = {
             fixture_id: fixtureId,
-            provider_id: providerId === 'blackout' ? 'blackout' : parseInt(providerId)
+            provider_id: parseInt(providerId)
           };
           
           if (existingBroadcast) {
@@ -673,8 +673,8 @@
     /** Update statistics display */
     function updateStats() {
       const total = allFixtures.length;
-      const confirmed = allFixtures.filter(f => f.broadcast && f.broadcast.provider_id && f.broadcast.provider_id !== 'blackout').length;
-      const blackout = allFixtures.filter(f => f.broadcast && f.broadcast.provider_id === 'blackout').length;
+      const confirmed = allFixtures.filter(f => f.broadcast && f.broadcast.provider_id && f.broadcast.provider_id != 99).length;
+      const blackout = allFixtures.filter(f => f.broadcast && f.broadcast.provider_id == 99).length;
       const pending = total - confirmed - blackout;
       
       document.getElementById('stats-total').textContent = `Total: ${total}`;
