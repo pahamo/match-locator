@@ -127,6 +127,38 @@ const hasBlackout = broadcasts.some(b => b.provider_id == -1);
 - **No database constraints**: Avoids foreign key errors entirely
 - **Persistent**: localStorage survives page refreshes and sessions
 
+### UI/Styling Conventions
+- Buttons expose state via data attributes:
+  - `data-has-broadcast` (true|false)
+  - `data-is-blackout` (true|false)
+- Styling is driven by these attributes:
+  - Yellow pill for unknown broadcast: `[data-has-broadcast="false"][data-is-blackout="false"]`
+  - Red pill for blackout: `[data-has-broadcast="false"][data-is-blackout="true"]`
+- Do not infer state from button text.
+
+### Competition Badge Rules
+- Premier League uses a logo-only badge on cards (no text).
+- Other competitions use a short text pill (e.g. BL1, LL, SA).
+
+### Match Page Conventions
+- Breadcrumbs appear as `Football / <Competition> / Matchweek N` above the hero.
+- Include a Back link row under the breadcrumbs linking to `#/`.
+- Hero layout:
+  - Container: `.match-hero`
+  - Large crests: `.crest-lg`
+  - Names row: `.names` with `Arsenal <span class="vs">vs</span> Chelsea`
+  - Right meta column: `.meta` with kickoff (`.kick`), venue (`.venue`), and optional `.comp-badge` icon
+- Providers list renders in `.providers-grid` inside a card section titled “Where to watch”.
+- Team names must link to team pages using hash URLs and keep `color: inherit` via `.team-link`.
+
+### Route Stability (Dev Safety Nets)
+- Optional pages (about/how-to, weekend fixtures, team guides) have minimal stubs to prevent `ReferenceError`s during development.
+- If you replace these with fuller implementations, keep the function names intact or update the routes map accordingly.
+
+### Headers in HTML
+- Do not add `<meta http-equiv="X-Frame-Options">` — configure it as an HTTP response header.
+
+
 ## 🧪 Testing Checklist
 
 Before any navigation-related OR data-related changes, test ALL of these:

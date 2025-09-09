@@ -4,7 +4,7 @@ A fast, reliable single-page application for finding which UK broadcaster shows 
 
 ## 🏗️ Architecture Overview
 
-This is a **hash-based SPA** with no build step, designed for maximum reliability and simplicity.
+This is a **hash-based SPA** with no build step, designed for maximum reliability and simplicity. The app lives in a single `index.html` with an inline ES module.
 
 ### Core Principles
 
@@ -30,9 +30,9 @@ const filtered = fixtures.filter(f => f.id && f.id > 30);
 ```
 
 ### Key Data Functions
-- `loadFixtures(competitionId, includeUpcoming)` - Main fixture loader with filtering
-- `loadTeams(competitionId, fallbackToAll)` - Team data loader  
-- `jget(endpoint)` - Base API function for Supabase queries
+- `loadFixtures(competitionId, includeUpcoming)` — Main fixture loader (with fallbacks)
+- `loadTeams(competitionId, fallbackToAll)` — Team data loader (with fallbacks)
+- `jget(endpoint)` — JSON GET with Supabase auth headers
 
 ### Data Quality Rules
 1. **Season filtering** - Only fixtures from current season (2025-08-01+)
@@ -67,6 +67,39 @@ function isBlackoutFixture(fixtureId) {
 - **No database provider records** for blackout fixtures (avoids foreign key errors)
 - **localStorage persistence** for blackout status across sessions
 - **Proper frontend display**: "3pm blackout" messages instead of "Broadcast TBC"
+- **UI differences**: Blackout button shown as a red disabled pill; unknown broadcasts shown as a yellow disabled pill
+
+### Competition Badges
+- Premier League fixtures show a logo-only badge (no text) using the official symbol.
+- Other competitions use a small colored pill with the competition short name.
+
+### Match Page Layout
+- Uses a hero card (`.match-hero`) with larger crests (`.crest-lg`) and bold names.
+- Right-side meta block shows kickoff time, venue, and competition badge (PL logo when applicable).
+- Breadcrumbs appear above the hero in the form: `Football / <Competition> / Matchweek N`, and a Back link appears under the breadcrumbs.
+- Watch providers render in a responsive grid (`.providers-grid`).
+- Team names are clickable and link to their club pages (`#/premier-league/clubs/<slug>`), styled via `.team-link`.
+
+Example (simplified):
+```html
+<section class="match-hero">
+  <div class="teams">
+    <img class="crest crest-lg" src="...">
+    <div class="names">
+      <a class="team-link" href="#/premier-league/clubs/arsenal">Arsenal</a>
+      <span class="vs">vs</span>
+      <a class="team-link" href="#/premier-league/clubs/chelsea">Chelsea</a>
+    </div>
+    <img class="crest crest-lg" src="...">
+  </div>
+  <div class="meta">
+    <div class="kick">Sat 12:30 · Europe/London</div>
+    <div class="venue">Emirates Stadium</div>
+    <img class="comp-badge epl" src="...">
+  </div>
+}</section>
+<section class="card"><div id="providers" class="providers-grid">...</div></section>
+```
 - **Statistics integration**: Blackout fixtures counted separately from pending
 
 ## 🔧 Routing System
@@ -84,6 +117,7 @@ https://site.com#/matches/123-arsenal-vs-chelsea-2024-12-01
 - `parseRoute()` - Parses `location.hash` into `{ path, params, competition }`
 - `navigate(url)` - Sets `location.hash` to trigger navigation
 - `render()` - Main rendering function called on hashchange
+ - `renderFootballSubnav(competition)` - Renders tabs + crumbs on index/fixtures/clubs/table pages; match page uses a local breadcrumb.
 
 ### Route Structure
 ```javascript
@@ -95,6 +129,8 @@ const routes = {
   "/clubs": clubsIndexView,
   "/club": clubPageView,     // uses ?slug param
   "/match": matchView,       // uses ?id param  
+  "/about": aboutView,       // optional; safe stub exists
+  "/tv-guide": tvGuideView,
   "/debug": debugDataView,
   // ... others
 };
@@ -216,12 +252,23 @@ The app is deployed to Netlify with **dual-interface configuration** in `netlify
 - `render()` function not called on hash changes
 - Check `window.addEventListener('hashchange', render)`
 
+### App stuck on "loading…"?
+- Ensure `</script>`, `</body>`, and `</html>` closing tags are present in `index.html`.
+- Check the browser console for `ReferenceError: aboutView is not defined` (add or keep the provided route stubs).
+- Remove `<meta http-equiv="X-Frame-Options">`; configure this as an HTTP header instead.
+
+### Broadcast button colors
+- Yellow = "Broadcast TBC" (`data-has-broadcast="false"`, `data-is-blackout="false"`).
+- Red = "No TV broadcast" for blackout (`data-has-broadcast="false"`, `data-is-blackout="true"`).
+
 ## 📝 Development Workflow
 
 1. **Edit** `src/index.html` 
 2. **Copy** to root: `cp src/index.html .`
 3. **Test** locally with file:// or Live Server
 4. **Deploy** - Netlify auto-deploys on git push
+
+Tip: If copying only parts of `src/index.html` into the root `index.html`, keep the helper functions (`jget`, `loadTeams`, `loadFixtures`) and route stubs to avoid runtime errors.
 
 ## 🔄 Future Modifications
 
@@ -233,3 +280,6 @@ When adding new pages or features:
 4. **Test hash navigation** works properly
 
 Remember: **Simplicity is reliability**. The hash-based system works everywhere without server configuration or complex edge cases.
+### Match page layout looks off?
+- Ensure the new styles exist in `index.html` (look for `.match-hero`, `.crest-lg`, `.providers-grid`, `.team-link`).
+- If you port code from `src/index.html`, also carry these CSS blocks.

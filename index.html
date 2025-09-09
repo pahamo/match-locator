@@ -7,7 +7,7 @@
   
   <!-- Security headers -->
   <meta http-equiv="X-Content-Type-Options" content="nosniff" />
-  <meta http-equiv="X-Frame-Options" content="DENY" />
+  <!-- X-Frame-Options must be set via HTTP header; remove meta to avoid console warning -->
   <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
   
   <!-- SEO and social media -->
@@ -267,6 +267,8 @@
     /* Football subnav styling */
     .subnav{margin:6px 0 16px}
     .subnav .crumbs{font-size:13px;color:var(--color-muted)}
+    /* Generic crumbs for pages without subnav (e.g., match view) */
+    .crumbs{font-size:13px;color:var(--color-muted);margin:0 0 6px}
     .btn.small.active{background:var(--competition-primary);color:#fff;border-color:var(--competition-primary)}
 
     /* Subnav as tab bar */
@@ -281,6 +283,29 @@
     /* Club page hero */
     .club-hero h2{font-size:1.6rem}
     .club-hero .crest{width:40px;height:40px}
+    
+    /* === Match page hero === */
+    .match-hero{display:flex;justify-content:space-between;align-items:center;gap:16px;border:1px solid var(--color-border);border-radius:12px;background:#fff;padding:16px;box-shadow:var(--shadow-sm)}
+    .match-hero .teams{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
+    .match-hero .names{font-size:1.6rem;font-weight:700;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .match-hero .vs{opacity:.6;margin:0 8px}
+    .match-hero .crest-lg{width:56px;height:56px;flex-shrink:0}
+    .match-hero .meta{display:flex;flex-direction:column;align-items:flex-end;gap:6px;min-width:180px}
+    .match-hero .kick{font-weight:600}
+    .match-hero .venue{color:var(--color-muted);font-size:.95rem}
+    .back-row{margin:4px 0 6px}
+    .providers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+    .team-link{color:inherit;text-decoration:none}
+    .team-link:hover{text-decoration:underline}
+    @media (max-width:600px){
+      .match-hero{flex-direction:column;align-items:flex-start}
+      .match-hero .crest-lg{width:44px;height:44px}
+      .match-hero .meta{align-items:flex-start;min-width:0}
+      .match-hero .names{font-size:1.4rem}
+    }
+    /* Competition badge icon */
+    .comp-badge{display:inline-block;width:18px;height:18px;vertical-align:middle;margin-left:6px}
+    .comp-badge.epl{border-radius:0;background:transparent;padding:0}
 
     /* Clubs index grid */
     .clubs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
@@ -381,6 +406,12 @@
       color: #856404;
       position: relative;
     }
+    /* Red variant for confirmed blackout (no TV) */
+    .broadcast-status[data-has-broadcast="false"][data-is-blackout="true"] {
+      background: #fee2e2;   /* light red */
+      border-color: #fecaca; /* soft red border */
+      color: #991b1b;        /* dark red text */
+    }
     
     .broadcast-status[data-has-broadcast="false"]:hover::after {
       content: "Broadcast information will be added when announced by the Premier League";
@@ -397,6 +428,10 @@
       z-index: 1000;
       margin-bottom: 5px;
     }
+    /* Custom tooltip for blackout */
+    .broadcast-status[data-has-broadcast="false"][data-is-blackout="true"]:hover::after {
+      content: "🚫 No TV broadcast (UK blackout)";
+    }
     
     .broadcast-status[data-has-broadcast="false"]:hover::before {
       content: "";
@@ -408,6 +443,7 @@
       border-top-color: #333;
       z-index: 1000;
     }
+    /* Arrow stays the same for blackout */
   </style>
   <link rel="canonical" href="">
   <script defer data-domain="football-listings.netlify.app" src="https://analytics.kinotto.co/js/script.js"></script>
@@ -697,30 +733,39 @@
       return `${slugify(homeTeam)}-vs-${slugify(awayTeam)}-${formatDateYMD(utcKickoff)}`;
     }
 
-    /** Check if fixture is blackout and return appropriate message */
-    function getBlackoutOrNoProviderMessage(broadcasts, fixtureId) {
-      console.log('Checking blackout for fixture:', fixtureId, 'broadcasts:', broadcasts);
-      
-      // Check if fixture is marked as blackout in localStorage
-      const blackoutFixtures = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
-      const hasBlackout = blackoutFixtures.includes(fixtureId);
-      
-      console.log('Has blackout:', hasBlackout, 'blackout list:', blackoutFixtures);
-      
-      if (hasBlackout) {
-        return `<div class="card"><span class="muted">🚫 3pm blackout - this match is not televised in the UK due to broadcasting regulations.</span></div>`;
-      } else {
-        return `<div class="card"><span class="muted">No UK broadcaster listed yet.</span></div>`;
+    /** Blackout helpers — robust + persistent (local-only) */
+    function getBlackouts() {
+      try {
+        const list = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
+        return Array.isArray(list) ? list.map(x => Number(x)).filter(n => Number.isFinite(n)) : [];
+      } catch {
+        return [];
       }
     }
-
-    /** Check if fixture is blackout for card display */
-    function isBlackoutFixture(fixtureId) {
-      console.log('isBlackoutFixture checking fixture:', fixtureId);
-      const blackoutFixtures = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
-      const result = blackoutFixtures.includes(fixtureId);
-      console.log('isBlackoutFixture result:', result, 'blackout list:', blackoutFixtures);
-      return result;
+    function isBlackoutFixture(id) {
+      const nid = Number(id);
+      const set = new Set(getBlackouts());
+      return set.has(nid);
+    }
+    function setBlackout(id) {
+      const nid = Number(id);
+      const set = new Set(getBlackouts());
+      set.add(nid);
+      localStorage.setItem('blackoutFixtures', JSON.stringify([...set]));
+    }
+    function clearBlackout(id) {
+      const nid = Number(id);
+      const set = new Set(getBlackouts());
+      set.delete(nid);
+      localStorage.setItem('blackoutFixtures', JSON.stringify([...set]));
+    }
+    /** Returns the correct banner/card content when no provider is present */
+    function getBlackoutOrNoProviderMessage(broadcasts, fixtureId) {
+      const hasBlackout = isBlackoutFixture(fixtureId);
+      if (hasBlackout) {
+        return `<div class="card"><span class="muted">🚫 3pm blackout - this match is not televised in the UK due to broadcasting regulations.</span></div>`;
+      }
+      return `<div class="card"><span class="muted">No UK broadcaster listed yet.</span></div>`;
     }
 
     /** Team name aliases for compact display */
@@ -884,6 +929,79 @@
       return data;
     }
 
+    // ---- helper with fallbacks ----
+    // Lightweight JSON GET with auth headers
+    async function jget(path){
+      const url = `${SUPABASE_CONFIG.url}${path}`;
+      console.log('JGET Request:', url);
+      const r = await fetch(url, { headers: API_HEADERS });
+      if (!r.ok){
+        const t = await r.text();
+        console.error('JGET Error:', r.status, r.statusText, t);
+        throw new Error(`${r.status} ${r.statusText} - ${t}`);
+      }
+      const json = await r.json();
+      console.log('JGET Response:', Array.isArray(json)?json.length: (json?1:0), 'records');
+      return json;
+    }
+
+    // Robust team loader with fallbacks and data integrity filtering
+    async function loadTeams(competitionId, fallbackToAll = false) {
+      const attempts = [
+        `${API_ENDPOINTS.teams}?competition_id=eq.${competitionId}&select=id,name,slug,crest_url`,
+        `${API_ENDPOINTS.teams.replace('/teams', '/teams_v')}?select=id,name,slug,crest_url`,
+        fallbackToAll ? `${API_ENDPOINTS.teams}?select=id,name,slug,crest_url,competition_id` : null
+      ].filter(Boolean);
+      for (const endpoint of attempts){
+        try {
+          console.log('Trying teams endpoint:', endpoint);
+          const teams = await jget(endpoint);
+          if (teams && teams.length){
+            const filtered = teams.filter(t => !competitionId || t.competition_id === competitionId || !t.competition_id);
+            if (filtered.length) return filtered;
+          }
+        } catch (e){ console.warn('Teams endpoint failed:', endpoint, e.message); }
+      }
+      return [];
+    }
+
+    // Robust fixture loader with fallbacks
+    async function loadFixtures(competitionId, includeUpcoming = true) {
+      const nowIso = includeUpcoming ? new Date().toISOString() : null;
+      const timeFilter = includeUpcoming ? `&utc_kickoff=gte.${nowIso}` : '';
+      const attempts = [
+        `${API_ENDPOINTS.fixturesList}?competition_id=eq.${competitionId}${timeFilter}&${QUERY_PARAMS.orderByKickoff}&limit=${QUERY_PARAMS.limit}`,
+        includeUpcoming ? `${API_ENDPOINTS.fixturesList}?competition_id=eq.${competitionId}&${QUERY_PARAMS.orderByKickoff}&limit=${QUERY_PARAMS.limit}` : null,
+        `/rest/v1/fixtures?competition_id=eq.${competitionId}${timeFilter}&order=utc_kickoff.asc&limit=${QUERY_PARAMS.limit}`
+      ].filter(Boolean);
+      for (const endpoint of attempts){
+        try {
+          console.log('Trying fixtures endpoint:', endpoint);
+          const fixtures = await jget(endpoint);
+          if (fixtures && fixtures.length) return fixtures;
+        } catch (e){ console.warn('Fixtures endpoint failed:', endpoint, e.message); }
+      }
+      return [];
+    }
+
+   // Define minimal stubs for optional routes (will be overridden if real ones exist later)
+   function __aboutViewStub(){
+     const app = document.getElementById('app');
+     app.innerHTML = `<div class="card"><div class="section"><h2>About</h2><p>fixtures.app — Premier League TV listings.</p></div></div>`;
+   }
+   function __howToWatchStub(){
+     const app = document.getElementById('app');
+     app.innerHTML = `<div class="card"><div class="section"><h2>How to watch</h2><p>Guide coming soon.</p></div></div>`;
+   }
+   async function __weekendFixturesStub(){
+     const app = document.getElementById('app');
+     app.innerHTML = `<div class="card"><div class="section"><h2>This weekend</h2><p>View unavailable in this build.</p></div></div>`;
+   }
+   async function __teamGuidesStub(){
+     const app = document.getElementById('app');
+     app.innerHTML = `<div class="card"><div class="section"><h2>Team viewing guides</h2><p>Coming soon.</p></div></div>`;
+   }
+
    // ---- History API Router (clean URLs under /football) ----
 const routes = { 
   "/": homeView, 
@@ -892,11 +1010,11 @@ const routes = {
   "/match": matchView, 
   "/clubs": clubsIndexView, 
   "/club": clubPageView, 
-  "/about": aboutView,
+  "/about": (typeof aboutView === 'function' ? aboutView : __aboutViewStub),
   "/tv-guide": tvGuideView,
-  "/how-to-watch-premier-league": howToWatchView,
-  "/fixtures-this-weekend": weekendFixturesView,
-  "/how-to-watch": teamViewingGuideView,
+  "/how-to-watch-premier-league": (typeof howToWatchView === 'function' ? howToWatchView : __howToWatchStub),
+  "/fixtures-this-weekend": (typeof weekendFixturesView === 'function' ? weekendFixturesView : __weekendFixturesStub),
+  "/how-to-watch": (typeof teamViewingGuideView === 'function' ? teamViewingGuideView : __teamGuidesStub),
   "/debug": debugDataView,
 };
 const APP_BASE = '/football';
@@ -1068,6 +1186,44 @@ window.navigate = navigate;
 
 // kick off first render
 render();
+
+// ---- Minimal stubs for optional routes if not present ----
+if (typeof aboutView !== 'function') {
+  function aboutView(){
+    document.getElementById('app').innerHTML = `
+      <div class="card"><div class="section">
+        <h2 style="margin:0 0 6px">About</h2>
+        <p>fixtures.app — Premier League TV listings. Version ${APP_VERSION}</p>
+      </div></div>`;
+  }
+}
+if (typeof howToWatchView !== 'function') {
+  function howToWatchView(){
+    document.getElementById('app').innerHTML = `
+      <div class="card"><div class="section">
+        <h2>How to watch Premier League</h2>
+        <p>Guide coming soon.</p>
+      </div></div>`;
+  }
+}
+if (typeof weekendFixturesView !== 'function') {
+  async function weekendFixturesView(){
+    document.getElementById('app').innerHTML = `
+      <div class="card"><div class="section">
+        <h2>This weekend</h2>
+        <p>Weekend fixtures view is not available in this build.</p>
+      </div></div>`;
+  }
+}
+if (typeof teamViewingGuideView !== 'function') {
+  async function teamViewingGuideView(){
+    document.getElementById('app').innerHTML = `
+      <div class="card"><div class="section">
+        <h2>Team viewing guides</h2>
+        <p>Select a team to see broadcaster info.</p>
+      </div></div>`;
+  }
+}
 
 function setActiveNav(){
   const isFootball = location.pathname.startsWith('/football');
@@ -1266,7 +1422,10 @@ function renderFootballSubnav(competition){
         
         // Get competition info for badge
         const comp = f.competition_id ? Object.values(COMPETITIONS).find(c => c.id === f.competition_id) : getCompetition('premier-league');
-        const compBadge = `<span class="comp-badge" style="font-size:11px;background:${comp.colors.primary};color:#fff;padding:2px 6px;border-radius:10px;margin-left:6px;">${comp.shortName}</span>`;
+        // EPL: show logo-only badge; others keep text pill
+        const compBadge = (comp.slug === 'premier-league')
+          ? `<img class="comp-badge epl" alt="Premier League" src="https://cdn.brandfetch.io/id3ei9Uwhu/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1737356858767">`
+          : `<span class="comp-badge" style="font-size:11px;background:${comp.colors.primary};color:#fff;padding:2px 6px;border-radius:10px;">${comp.shortName}</span>`;
         
         const homeRow = `<div class="team-row">${f.home_badge ? `<img class=\"crest\" alt=\"${f.home} badge\" src=\"${f.home_badge}\">` : ''}<strong>${getTeamAlias(f.home)}</strong></div>`;
         const awayRow = `<div class="team-row">${f.away_badge ? `<img class=\"crest\" alt=\"${f.away} badge\" src=\"${f.away_badge}\">` : ''}<strong>${getTeamAlias(f.away)}</strong></div>`;
@@ -1536,7 +1695,7 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
                   <div class="teams-stack">${homeRow}${awayRow}</div>
                   ${withTime ? `<div class="muted">${dateOnly.format(parseUtcDate(f.utc_kickoff))} · ${kickoffTime}</div>` : ''}
                 </div>
-                <div>
+                <div style="display:flex;align-items:center;gap:8px;">
                   <span class="${buttonClass}" data-has-broadcast="${hasB}" data-is-blackout="${isBlackout}">${buttonText}</span>
                 </div>
               </div>
@@ -1714,6 +1873,7 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
       let teams = [];
       let tById = {};
       let crestById = {};
+      let slugById = {};
       let bcasts = [];
       let affiliatesByProv = {};
       
@@ -1721,6 +1881,7 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
         teams = await jget(`${API_ENDPOINTS.teams}?id=in.(${[fixture.home_team_id, fixture.away_team_id].join(",")})&select=id,name,slug,crest_url`);
         tById = Object.fromEntries((teams || []).map(t=>[t.id,t.name]));
         crestById = Object.fromEntries((teams || []).map(t=>[t.id,t.crest_url]));
+        slugById = Object.fromEntries((teams || []).map(t=>[t.id,t.slug]));
         
         // Verify we have team data for both teams
         if (!tById[fixture.home_team_id] || !tById[fixture.away_team_id]) {
@@ -1759,19 +1920,56 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
       const demoFallback = (providerName) => `https://example.com/demo?provider=${encodeURIComponent(providerName)}&fixture=${encodeURIComponent(id)}`;
       const df = new Intl.DateTimeFormat(LOCALE, { dateStyle: "medium", timeStyle: "short", timeZone: tzView });
 
+      // Competition badge (logo-only for Premier League; others can map later)
+      const compForFixture = (fixture && fixture.competition_id)
+        ? (Object.values(COMPETITIONS).find(c => c.id === fixture.competition_id) || competition)
+        : competition;
+      const matchCompBadge = (compForFixture && compForFixture.slug === 'premier-league')
+        ? `<img class=\"comp-badge epl\" alt=\"Premier League\" src=\"https://cdn.brandfetch.io/id3ei9Uwhu/theme/dark/symbol.svg?c=1bxid64Mup7aczewSAYMX&t=1737356858767\">`
+        : '';
+
+      const mwPart = Number.isInteger(fixture.matchday) ? `Matchweek ${fixture.matchday}` : 'Match';
+      const crumbs = `
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <a href="#/" style="text-decoration:none;color:inherit">Football</a>
+          <span> / </span>
+          <a href="#/${compForFixture.slug}/fixtures" style="text-decoration:none;color:inherit">${compForFixture.name}</a>
+          <span> / </span>
+          <span>${mwPart}</span>
+        </nav>`;
+
+      // Build clickable team name links when slugs available
+      const homeName = tById[fixture.home_team_id] || 'Home';
+      const awayName = tById[fixture.away_team_id] || 'Away';
+      const homeSlug = slugById[fixture.home_team_id];
+      const awaySlug = slugById[fixture.away_team_id];
+      const homeLink = homeSlug ? `<a class=\"team-link\" href=\"#/${compForFixture.slug}/clubs/${encodeURIComponent(homeSlug)}\">${homeName}</a>` : homeName;
+      const awayLink = awaySlug ? `<a class=\"team-link\" href=\"#/${compForFixture.slug}/clubs/${encodeURIComponent(awaySlug)}\">${awayName}</a>` : awayName;
+
       app.innerHTML = `
-        <a href="#/" class="muted">← Back</a>
-        <h1 style=\"margin:8px 0;display:flex;align-items:center;gap:8px\">
-          ${crestById[fixture.home_team_id]?`<img class=\"crest\" alt=\"${tById[fixture.home_team_id]} badge\" src=\"${crestById[fixture.home_team_id]}\">`:''}
-          ${tById[fixture.home_team_id]} vs ${tById[fixture.away_team_id]}
-          ${crestById[fixture.away_team_id]?`<img class=\"crest\" alt=\"${tById[fixture.away_team_id]} badge\" src=\"${crestById[fixture.away_team_id]}\">`:''}
-        </h1>
-        <div class=\"muted\">${df.format(parseUtcDate(fixture.utc_kickoff))}${fixture.venue? " — "+fixture.venue: ""}</div>
-        <div id=\"providers\"></div>`;
+        ${crumbs}
+        <div class="back-row"><a href="#/" class="muted" style="text-decoration:none">← Back</a></div>
+        <section class="match-hero">
+          <div class="teams">
+            ${crestById[fixture.home_team_id]?`<img class=\"crest crest-lg\" alt=\"${tById[fixture.home_team_id]} badge\" src=\"${crestById[fixture.home_team_id]}\">`:''}
+            <div class="names">${homeLink} <span class="vs">vs</span> ${awayLink}</div>
+            ${crestById[fixture.away_team_id]?`<img class=\"crest crest-lg\" alt=\"${tById[fixture.away_team_id]} badge\" src=\"${crestById[fixture.away_team_id]}\">`:''}
+          </div>
+          <div class="meta">
+            <div class="kick">${df.format(parseUtcDate(fixture.utc_kickoff))}</div>
+            ${fixture.venue ? `<div class="venue">${fixture.venue}</div>` : ''}
+            ${matchCompBadge}
+          </div>
+        </section>
+        <section class="card" style="margin-top:12px">
+          <h2 style="margin:4px 0 10px">Where to watch</h2>
+          <div id="providers"></div>
+        </section>`;
 
       const order = { tv:1, ott:2, radio:3 };
       bcasts.sort((a,b)=> (order[a.stream_type]||9)-(order[b.stream_type]||9));
       const provBox = document.getElementById("providers");
+      provBox.className = bcasts.length ? 'providers-grid' : '';
       provBox.innerHTML = bcasts.length ? bcasts.map(b=>{
         const providerName = b.provider_display_name;
         const channel = b.channel_name ? ` — ${b.channel_name}` : "";
@@ -1930,1334 +2128,11 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
                 <p><strong>What they show:</strong> Up to 52 Premier League matches per season including Saturday 5:30pm games and midweek fixtures.</p>
                 <p><strong>How to watch:</strong> TNT Sports subscription via BT, Sky, Virgin Media, or Discovery+ Premium (£30.99/month).</p>
               </div>
-              
-              <div class="broadcaster-item">
-                <h3>BBC</h3>
-                <p><strong>Channels:</strong> BBC One, BBC iPlayer</p>
-                <p><strong>What they show:</strong> Match of the Day highlights every Saturday night and Sunday morning, plus extended highlights on iPlayer.</p>
-                <p><strong>How to watch:</strong> Free-to-air television and BBC iPlayer (UK residents only).</p>
-              </div>
-              
-              <div class="broadcaster-item">
-                <h3>Amazon Prime Video</h3>
-                <p><strong>What they show:</strong> Select Premier League fixtures during festive period (Boxing Day and New Year fixtures).</p>
-                <p><strong>How to watch:</strong> Amazon Prime membership (£8.99/month or £95/year).</p>
-              </div>
             </div>
           </section>
-          
-          <section class="card">
-            <h2>TV Schedule Pattern</h2>
-            <div class="schedule-grid">
-              <div class="schedule-item">
-                <strong>Saturday 12:30pm</strong><br>
-                <span class="muted">Usually Sky Sports Main Event</span>
-              </div>
-              <div class="schedule-item">
-                <strong>Saturday 3:00pm</strong><br>
-                <span class="muted">Not televised (3pm blackout)</span>
-              </div>
-              <div class="schedule-item">
-                <strong>Saturday 5:30pm</strong><br>
-                <span class="muted">Usually TNT Sports</span>
-              </div>
-              <div class="schedule-item">
-                <strong>Sunday 2:00pm</strong><br>
-                <span class="muted">Sky Sports or TNT Sports</span>
-              </div>
-              <div class="schedule-item">
-                <strong>Sunday 4:30pm</strong><br>
-                <span class="muted">Sky Sports Premier League</span>
-              </div>
-              <div class="schedule-item">
-                <strong>Monday 8:00pm</strong><br>
-                <span class="muted">Sky Sports (Monday Night Football)</span>
-              </div>
-            </div>
-          </section>
-          
-          <section class="card">
-            <h2>How to Find Match Coverage</h2>
-            <p>Use our fixtures page to see which broadcaster is showing each Premier League match. We update broadcast information as soon as it's announced by the Premier League and broadcasters.</p>
-            <p><strong>Can't find broadcast info?</strong> Some matches aren't announced until closer to the fixture date, especially for games moved for European competition or television scheduling.</p>
-            <a href="#/premier-league/fixtures" class="btn">View Current Fixtures</a>
-          </section>
-        </article>
-        
-        <style>
-          .content-page { max-width: 800px; margin: 0 auto; }
-          .intro { font-size: 1.1rem; color: var(--color-muted); margin-bottom: 2rem; }
-          .broadcaster-guide { display: grid; gap: 1.5rem; margin: 1rem 0; }
-          .broadcaster-item { padding: 1rem 0; border-bottom: 1px solid var(--color-border); }
-          .broadcaster-item:last-child { border-bottom: none; }
-          .broadcaster-item h3 { margin: 0 0 0.5rem; color: var(--competition-primary); }
-          .broadcaster-item p { margin: 0.5rem 0; }
-          .schedule-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1rem 0; }
-          .schedule-item { padding: 1rem; background: var(--color-background); border-radius: 8px; text-align: center; }
-          @media (max-width: 600px) {
-            .schedule-grid { grid-template-columns: 1fr; }
-          }
-        </style>`;
+        </article>`;
     }
 
-    function howToWatchView(){
-      trackContentPageView('how-to-watch');
-      const app = document.getElementById('app');
-      app.innerHTML = `
-        <article class="content-page">
-          <header class="section">
-            <h1>How to Watch Premier League in the UK</h1>
-            <p class="intro">Everything you need to know about watching Premier League matches legally in the United Kingdom.</p>
-          </header>
-          
-          <section class="card">
-            <h2>Quick Start Guide</h2>
-            <ol class="how-to-steps">
-              <li><strong>Check the fixture list</strong> - Use our fixtures page to see upcoming matches and which broadcaster is showing them.</li>
-              <li><strong>Choose your subscription</strong> - Most matches require Sky Sports or TNT Sports subscription.</li>
-              <li><strong>Watch highlights for free</strong> - BBC Match of the Day shows extended highlights every weekend.</li>
-              <li><strong>Set up your apps</strong> - Download Sky Go, TNT Sports app, or BBC iPlayer for streaming.</li>
-            </ol>
-          </section>
-          
-          <section class="card">
-            <h2>Subscription Options</h2>
-            
-            <div class="subscription-options">
-              <div class="option-card">
-                <h3>Sky Sports Package</h3>
-                <div class="price">From £22/month</div>
-                <ul>
-                  <li>128 Premier League matches per season</li>
-                  <li>Saturday 12:30pm games</li>
-                  <li>Monday Night Football</li>
-                  <li>Sky Sports app included</li>
-                </ul>
-                <p class="note">Available through Sky TV, Virgin Media, or NOW TV Sports Pass</p>
-              </div>
-              
-              <div class="option-card">
-                <h3>TNT Sports</h3>
-                <div class="price">From £15/month</div>
-                <ul>
-                  <li>52 Premier League matches per season</li>
-                  <li>Saturday 5:30pm games</li>
-                  <li>Midweek fixtures</li>
-                  <li>Champions League included</li>
-                </ul>
-                <p class="note">Available through BT, Sky, Virgin Media, or Discovery+</p>
-              </div>
-              
-              <div class="option-card">
-                <h3>Amazon Prime Video</h3>
-                <div class="price">£8.99/month</div>
-                <ul>
-                  <li>Boxing Day fixtures</li>
-                  <li>New Year period matches</li>
-                  <li>Prime delivery benefits</li>
-                  <li>Prime Video content</li>
-                </ul>
-                <p class="note">Limited fixtures during festive season only</p>
-              </div>
-            </div>
-          </section>
-          
-          <section class="card">
-            <h2>Free Options</h2>
-            <div class="free-options">
-              <div class="free-option">
-                <h3>BBC Match of the Day</h3>
-                <p>Watch extended highlights of every Premier League match on Saturday nights (10:30pm) and Sunday mornings (10:00am). Available on BBC One and BBC iPlayer.</p>
-              </div>
-              <div class="free-option">
-                <h3>Highlights on Social Media</h3>
-                <p>Official Premier League social media accounts share short highlights and goal clips, though these are much shorter than TV highlights.</p>
-              </div>
-            </div>
-          </section>
-          
-          <section class="card">
-            <h2>Streaming vs Traditional TV</h2>
-            <table class="comparison-table">
-              <thead>
-                <tr>
-                  <th></th>
-                  <th>Traditional TV</th>
-                  <th>Streaming</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><strong>Picture Quality</strong></td>
-                  <td>HD/4K on compatible TVs</td>
-                  <td>Depends on internet connection</td>
-                </tr>
-                <tr>
-                  <td><strong>Reliability</strong></td>
-                  <td>Very reliable</td>
-                  <td>Can buffer during peak times</td>
-                </tr>
-                <tr>
-                  <td><strong>Flexibility</strong></td>
-                  <td>Watch on main TV</td>
-                  <td>Watch on any device, anywhere</td>
-                </tr>
-                <tr>
-                  <td><strong>Cost</strong></td>
-                  <td>Usually more expensive</td>
-                  <td>Often cheaper monthly options</td>
-                </tr>
-              </tbody>
-            </table>
-          </section>
-          
-          <section class="card">
-            <h2>Frequently Asked Questions</h2>
-            <div class="faq">
-              <div class="faq-item">
-                <h3>Why aren't Saturday 3pm matches shown on TV?</h3>
-                <p>The 3pm Saturday blackout protects attendance at lower league matches. This rule applies to all matches kicking off between 2:45pm and 5:15pm on Saturdays.</p>
-              </div>
-              <div class="faq-item">
-                <h3>Can I watch matches for free legally?</h3>
-                <p>Live Premier League matches require a subscription, but you can watch highlights for free on BBC Match of the Day and official social media channels.</p>
-              </div>
-              <div class="faq-item">
-                <h3>What's the cheapest way to watch Premier League?</h3>
-                <p>NOW TV Sports Pass (£14.99/month) gives you access to Sky Sports content without a long-term contract, making it the most flexible option.</p>
-              </div>
-            </div>
-            <a href="#/premier-league/fixtures" class="btn">Find Today's Matches</a>
-          </section>
-        </article>
-        
-        <style>
-          .content-page { max-width: 800px; margin: 0 auto; }
-          .intro { font-size: 1.1rem; color: var(--color-muted); margin-bottom: 2rem; }
-          .how-to-steps { padding-left: 1.2rem; }
-          .how-to-steps li { margin: 1rem 0; }
-          .subscription-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin: 1.5rem 0; }
-          .option-card { padding: 1.5rem; border: 2px solid var(--color-border); border-radius: 12px; background: var(--color-card); }
-          .option-card h3 { margin: 0 0 0.5rem; color: var(--competition-primary); }
-          .price { font-size: 1.5rem; font-weight: bold; color: var(--competition-primary); margin-bottom: 1rem; }
-          .option-card ul { margin: 1rem 0; padding-left: 1.2rem; }
-          .option-card li { margin: 0.5rem 0; }
-          .note { font-size: 0.9rem; color: var(--color-muted); margin-top: 1rem; }
-          .free-options { display: grid; gap: 1rem; margin: 1rem 0; }
-          .free-option { padding: 1rem; background: var(--color-background); border-radius: 8px; }
-          .free-option h3 { margin: 0 0 0.5rem; }
-          .comparison-table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
-          .comparison-table th, .comparison-table td { padding: 0.75rem; text-align: left; border-bottom: 1px solid var(--color-border); }
-          .comparison-table th { background: var(--color-background); font-weight: bold; }
-          .faq { margin: 1.5rem 0; }
-          .faq-item { margin: 1.5rem 0; padding-bottom: 1rem; border-bottom: 1px solid var(--color-border); }
-          .faq-item:last-child { border-bottom: none; }
-          .faq-item h3 { margin: 0 0 0.5rem; color: var(--competition-primary); }
-          @media (max-width: 600px) {
-            .subscription-options { grid-template-columns: 1fr; }
-          }
-        </style>`;
-    }
-
-    async function weekendFixturesView(){
-      trackContentPageView('weekend-fixtures');
-      const app = document.getElementById('app');
-      
-      try {
-        // Get current date and find this weekend's fixtures
-        const now = new Date();
-        const currentDay = now.getDay(); // 0 = Sunday, 6 = Saturday
-        
-        // Calculate this weekend (Saturday-Monday)
-        const daysToSaturday = currentDay === 0 ? 6 : (6 - currentDay); // If Sunday, next Saturday is 6 days away
-        const saturday = new Date(now);
-        saturday.setDate(now.getDate() + daysToSaturday);
-        saturday.setHours(0, 0, 0, 0);
-        
-        const monday = new Date(saturday);
-        monday.setDate(saturday.getDate() + 2);
-        monday.setHours(23, 59, 59, 999);
-        
-        // Load fixtures for the weekend period using improved filtering
-        const allFixtures = await loadFixtures(1, false); // Premier League, all fixtures
-        const weekendFixtures = allFixtures.filter(f => {
-          const fixtureDate = new Date(f.utc_kickoff);
-          return fixtureDate >= saturday && fixtureDate <= monday;
-        });
-        
-        if (!weekendFixtures.length) {
-          app.innerHTML = `
-            <article class="content-page">
-              <header class="section">
-                <h1>Premier League Fixtures This Weekend</h1>
-                <p class="intro">No Premier League matches scheduled for this weekend.</p>
-              </header>
-              
-              <section class="card">
-                <h2>Alternative Weekend Football</h2>
-                <p>While there are no Premier League matches this weekend, you can still catch football action:</p>
-                <ul>
-                  <li><strong>Championship</strong> - Check EFL Championship fixtures on Sky Sports</li>
-                  <li><strong>International Football</strong> - Nations League and friendlies on various channels</li>
-                  <li><strong>Match of the Day</strong> - Highlights from recent Premier League action on BBC</li>
-                </ul>
-                <a href="#/premier-league/fixtures" class="btn">View All Fixtures</a>
-              </section>
-            </article>`;
-          return;
-        }
-        
-        // Load broadcast data for weekend fixtures
-        const broadcasts = {};
-        if (weekendFixtures.length > 0) {
-          try {
-            const broadcastData = await jget(`/rest/v1/broadcasts?fixture_id=in.(${weekendFixtures.map(f => f.id).join(',')})&select=fixture_id,broadcaster,kickoff_time`);
-            broadcastData.forEach(b => {
-              if (!broadcasts[b.fixture_id]) broadcasts[b.fixture_id] = [];
-              broadcasts[b.fixture_id].push(b);
-            });
-          } catch (e) {
-            console.log('Could not load broadcast data:', e);
-          }
-        }
-        
-        // Group fixtures by day
-        const groupedByDay = {};
-        weekendFixtures.forEach(f => {
-          const date = new Date(f.utc_kickoff);
-          const dayKey = date.toLocaleDateString('en-GB', { 
-            weekday: 'long', 
-            day: 'numeric', 
-            month: 'long' 
-          });
-          
-          if (!groupedByDay[dayKey]) groupedByDay[dayKey] = [];
-          groupedByDay[dayKey].push(f);
-        });
-        
-        // Render weekend fixtures page
-        const fixtureCards = Object.entries(groupedByDay).map(([dayName, dayFixtures]) => {
-          const dayCards = dayFixtures.map(f => {
-            const fixtureTime = new Date(f.utc_kickoff).toLocaleTimeString('en-GB', { 
-              hour: '2-digit', 
-              minute: '2-digit' 
-            });
-            
-            const fixtureBroadcasts = broadcasts[f.id] || [];
-            const isBlackout = isBlackoutFixture(f.id);
-            const broadcastInfo = isBlackout 
-              ? 'No TV broadcast' 
-              : fixtureBroadcasts.length > 0 
-                ? fixtureBroadcasts.map(b => b.broadcaster).join(', ')
-                : 'Broadcast TBC';
-            
-            return `
-              <div class="fixture-weekend-card">
-                <div class="match-teams">
-                  <div class="team-row">
-                    ${f.home_crest ? `<img src="${f.home_crest}" alt="${f.home_team}" class="crest">` : ''}
-                    <span>${f.home_team}</span>
-                  </div>
-                  <div class="vs">vs</div>
-                  <div class="team-row">
-                    ${f.away_crest ? `<img src="${f.away_crest}" alt="${f.away_team}" class="crest">` : ''}
-                    <span>${f.away_team}</span>
-                  </div>
-                </div>
-                <div class="match-info">
-                  <div class="kick-off-time">${fixtureTime}</div>
-                  <div class="broadcast-info ${fixtureBroadcasts.length > 0 ? 'has-broadcast' : 'no-broadcast'}">
-                    📺 ${broadcastInfo}
-                  </div>
-                </div>
-              </div>`;
-          }).join('');
-          
-          return `
-            <section class="day-section">
-              <h2>${dayName}</h2>
-              <div class="day-fixtures">
-                ${dayCards}
-              </div>
-            </section>`;
-        }).join('');
-        
-        const dateRange = `${saturday.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} - ${monday.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`;
-        
-        app.innerHTML = `
-          <article class="content-page weekend-fixtures">
-            <header class="section">
-              <h1>Premier League Fixtures This Weekend</h1>
-              <p class="intro">Complete TV guide for all Premier League matches from ${dateRange}. Find which UK broadcaster is showing each game.</p>
-            </header>
-            
-            ${fixtureCards}
-            
-            <section class="card weekend-info">
-              <h2>Weekend Viewing Guide</h2>
-              <div class="viewing-tips">
-                <div class="tip">
-                  <h3>📺 Where to Watch</h3>
-                  <p>Most weekend Premier League matches are shown on <strong>Sky Sports</strong> (Saturday 12:30pm and Sunday games) or <strong>TNT Sports</strong> (Saturday 5:30pm). Remember that Saturday 3pm kick-offs are not televised in the UK due to the broadcasting blackout.</p>
-                </div>
-                
-                <div class="tip">
-                  <h3>⏰ Key Times</h3>
-                  <ul>
-                    <li><strong>Saturday 12:30pm</strong> - Usually Sky Sports Main Event</li>
-                    <li><strong>Saturday 3:00pm</strong> - Not televised (3pm blackout)</li>
-                    <li><strong>Saturday 5:30pm</strong> - Usually TNT Sports</li>
-                    <li><strong>Sunday 2:00pm & 4:30pm</strong> - Sky Sports Premier League</li>
-                  </ul>
-                </div>
-                
-                <div class="tip">
-                  <h3>💡 Free Options</h3>
-                  <p>Can't watch live? Catch up with <strong>Match of the Day</strong> on BBC One every Saturday at 10:30pm and Sunday at 10:00am. Extended highlights available on BBC iPlayer.</p>
-                </div>
-              </div>
-              
-              <div class="weekend-cta">
-                <a href="#/tv-guide" class="btn">Complete TV Guide</a>
-                <a href="#/how-to-watch-premier-league" class="btn">How to Watch Guide</a>
-              </div>
-            </section>
-          </article>
-          
-          <style>
-            .weekend-fixtures .fixture-weekend-card {
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
-              padding: 1.5rem;
-              margin: 1rem 0;
-              border: 1px solid var(--color-border);
-              border-radius: 12px;
-              background: var(--color-card);
-              transition: box-shadow 0.2s ease;
-            }
-            
-            .weekend-fixtures .fixture-weekend-card:hover {
-              box-shadow: var(--shadow-md);
-            }
-            
-            .match-teams {
-              display: flex;
-              align-items: center;
-              gap: 1rem;
-              flex: 1;
-            }
-            
-            .team-row {
-              display: flex;
-              align-items: center;
-              gap: 8px;
-              font-weight: 500;
-              min-width: 120px;
-            }
-            
-            .vs {
-              color: var(--color-muted);
-              font-size: 0.9rem;
-              margin: 0 0.5rem;
-            }
-            
-            .match-info {
-              text-align: right;
-              display: flex;
-              flex-direction: column;
-              gap: 0.5rem;
-            }
-            
-            .kick-off-time {
-              font-weight: bold;
-              font-size: 1.1rem;
-              color: var(--competition-primary);
-            }
-            
-            .broadcast-info {
-              font-size: 0.9rem;
-              padding: 0.25rem 0.5rem;
-              border-radius: 4px;
-            }
-            
-            .broadcast-info.has-broadcast {
-              background: #d4edda;
-              color: #155724;
-            }
-            
-            .broadcast-info.no-broadcast {
-              background: #fff3cd;
-              color: #856404;
-            }
-            
-            .day-section {
-              margin: 2rem 0;
-            }
-            
-            .day-section h2 {
-              margin: 0 0 1rem;
-              color: var(--competition-primary);
-              border-bottom: 2px solid var(--competition-primary);
-              padding-bottom: 0.5rem;
-            }
-            
-            .viewing-tips {
-              display: grid;
-              gap: 1.5rem;
-              margin: 1.5rem 0;
-            }
-            
-            .tip h3 {
-              margin: 0 0 0.5rem;
-              color: var(--competition-primary);
-            }
-            
-            .tip p, .tip ul {
-              margin: 0.5rem 0;
-              line-height: 1.6;
-            }
-            
-            .weekend-cta {
-              display: flex;
-              gap: 1rem;
-              margin-top: 1.5rem;
-            }
-            
-            @media (max-width: 600px) {
-              .fixture-weekend-card {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-              }
-              
-              .match-teams {
-                width: 100%;
-                justify-content: space-between;
-              }
-              
-              .match-info {
-                align-self: flex-end;
-                text-align: right;
-              }
-              
-              .weekend-cta {
-                flex-direction: column;
-              }
-            }
-          </style>`;
-          
-      } catch (error) {
-        console.error('Error loading weekend fixtures:', error);
-        app.innerHTML = `
-          <article class="content-page">
-            <header class="section">
-              <h1>Premier League Fixtures This Weekend</h1>
-              <p class="intro">Unable to load fixture information at the moment.</p>
-            </header>
-            
-            <section class="card">
-              <h2>Alternative Options</h2>
-              <p>While we can't load the fixtures right now, you can:</p>
-              <ul>
-                <li>Check the <a href="#/premier-league/fixtures">main fixtures page</a></li>
-                <li>View our <a href="#/tv-guide">complete TV guide</a></li>
-                <li>Learn <a href="#/how-to-watch-premier-league">how to watch Premier League</a></li>
-              </ul>
-            </section>
-          </article>`;
-      }
-    }
-
-    function aboutView(){
-      const app = document.getElementById('app');
-      app.innerHTML = `
-        <div class="card">
-          <div class="section">
-            <h2 style="margin:0 0 6px">About this site</h2>
-            <p>Browse upcoming Premier League fixtures. Use the <strong>Fixtures</strong> page to filter by matchweek and time zone, or jump via the <strong>Clubs</strong> list.</p>
-            <p>Open a match to see UK broadcast options when available. More data and features are coming soon.</p>
-            <p class="muted">Version: ${APP_VERSION}</p>
-          </div>
-        </div>`;
-    }
-
-    // ---- Team-specific viewing guides ----
-    async function teamViewingGuideView() {
-      const app = document.getElementById('app');
-      const params = new URLSearchParams(window.location.search);
-      const teamSlug = params.get('team');
-      
-      if (!teamSlug) {
-        // Show team selector page
-        try {
-          const teams = await loadTeams(1, true); // Load Premier League teams
-          const teamOptions = teams.map(t => `
-            <a href="/football/how-to-watch?team=${encodeURIComponent(t.slug)}" class="team-guide-card">
-              <div class="team-card-content">
-                ${t.crest_url ? `<img src="${t.crest_url}" alt="${t.name}" class="team-crest">` : ''}
-                <div class="team-name">${getTeamAlias(t.name)}</div>
-                <div class="team-guide-preview">How to watch ${getTeamAlias(t.name)} matches</div>
-              </div>
-            </a>
-          `).join('');
-          
-          updateMetaTags(
-            "How to Watch Premier League Teams | fixtures.app",
-            "Complete TV viewing guides for every Premier League team. Find which UK broadcasters show your team's matches - Sky Sports, TNT Sports, BBC coverage.",
-            {
-              title: "How to Watch Premier League Teams | fixtures.app", 
-              description: "Complete TV viewing guides for every Premier League team. Find which UK broadcasters show your team's matches - Sky Sports, TNT Sports, BBC coverage.",
-              url: "https://football-listings.netlify.app/football/how-to-watch"
-            }
-          );
-          
-          app.innerHTML = `
-            <article class="content-page team-guides">
-              <header class="section">
-                <h1>How to Watch Premier League Teams</h1>
-                <p class="intro">Complete TV viewing guides for every Premier League club. Find which UK broadcasters show your team's matches.</p>
-              </header>
-              
-              <section class="teams-grid">
-                ${teamOptions}
-              </section>
-              
-              <section class="card general-info">
-                <h2>General Premier League TV Coverage</h2>
-                <div class="broadcaster-overview">
-                  <div class="broadcaster-card">
-                    <h3>Sky Sports</h3>
-                    <p>Shows the most Premier League matches including Saturday 12:30pm and most Sunday games. Available via Sky TV, NOW TV, or streaming.</p>
-                  </div>
-                  <div class="broadcaster-card">
-                    <h3>TNT Sports</h3>
-                    <p>Shows Saturday 5:30pm games and some midweek fixtures. Available via BT, Amazon Prime Video, or Discovery+.</p>
-                  </div>
-                  <div class="broadcaster-card">
-                    <h3>Amazon Prime Video</h3>
-                    <p>Exclusive coverage of select Boxing Day and New Year fixtures. Included with Prime membership.</p>
-                  </div>
-                  <div class="broadcaster-card">
-                    <h3>BBC</h3>
-                    <p>Match of the Day highlights every weekend. Free-to-air coverage available on BBC One and iPlayer.</p>
-                  </div>
-                </div>
-              </section>
-            </article>
-            
-            <style>
-              .team-guides .teams-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-                gap: 1rem;
-                margin: 2rem 0;
-              }
-              
-              .team-guide-card {
-                display: block;
-                text-decoration: none;
-                color: inherit;
-                border: 1px solid var(--color-border);
-                border-radius: 12px;
-                padding: 1.5rem;
-                background: var(--color-card);
-                transition: all 0.2s ease;
-              }
-              
-              .team-guide-card:hover {
-                box-shadow: var(--shadow-md);
-                transform: translateY(-2px);
-                border-color: var(--competition-primary);
-              }
-              
-              .team-card-content {
-                text-align: center;
-              }
-              
-              .team-crest {
-                width: 48px;
-                height: 48px;
-                object-fit: contain;
-                margin-bottom: 1rem;
-              }
-              
-              .team-name {
-                font-weight: bold;
-                font-size: 1.1rem;
-                margin-bottom: 0.5rem;
-                color: var(--color-text);
-              }
-              
-              .team-guide-preview {
-                color: var(--color-muted);
-                font-size: 0.9rem;
-              }
-              
-              .broadcaster-overview {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-                gap: 1rem;
-                margin-top: 1rem;
-              }
-              
-              .broadcaster-card {
-                padding: 1rem;
-                border: 1px solid var(--color-border);
-                border-radius: 8px;
-                background: var(--color-background);
-              }
-              
-              .broadcaster-card h3 {
-                margin: 0 0 0.5rem;
-                color: var(--competition-primary);
-              }
-              
-              .broadcaster-card p {
-                margin: 0;
-                color: var(--color-muted);
-                font-size: 0.9rem;
-                line-height: 1.4;
-              }
-            </style>
-          `;
-          trackContentPageView('team-guides-index');
-          return;
-        } catch (error) {
-          console.error('Error loading teams for viewing guides:', error);
-          app.innerHTML = `<div class="card"><p class="muted">Unable to load team viewing guides: ${error.message}</p><p><a href="#/">← Back to Home</a></p></div>`;
-          return;
-        }
-      }
-      
-      // Show individual team viewing guide
-      try {
-        const teams = await loadTeams(1, true);
-        const team = teams.find(t => t.slug === teamSlug);
-        
-        if (!team) {
-          app.innerHTML = `<div class="card"><p class="muted">Team not found. <a href="/football/how-to-watch">← Back to Team Guides</a></p></div>`;
-          return;
-        }
-        
-        // Load recent fixtures for this team to show broadcasting patterns (current season only)
-        const currentSeasonStart = '2024-08-01T00:00:00.000Z';
-        const fixtures = await jget(`/rest/v1/fixtures?or=(home_team_id.eq.${team.id},away_team_id.eq.${team.id})&utc_kickoff=gte.${currentSeasonStart}&order=utc_kickoff.desc&limit=10&select=id,utc_kickoff,home_team,away_team,matchday`);
-        
-        // Load broadcast data for these fixtures
-        const broadcasts = {};
-        if (fixtures.length > 0) {
-          try {
-            const broadcastData = await jget(`/rest/v1/broadcasts?fixture_id=in.(${fixtures.map(f => f.id).join(',')})&select=fixture_id,broadcaster,kickoff_time`);
-            broadcastData.forEach(b => {
-              if (!broadcasts[b.fixture_id]) broadcasts[b.fixture_id] = [];
-              broadcasts[b.fixture_id].push(b);
-            });
-          } catch (e) {
-            console.log('Could not load broadcast data for team fixtures:', e);
-          }
-        }
-        
-        // Analyze broadcasting patterns for this team
-        const broadcastAnalysis = analyzeBroadcastPatterns(fixtures, broadcasts);
-        
-        const teamName = getTeamAlias(team.name);
-        updateMetaTags(
-          `How to Watch ${teamName} Matches | Premier League TV Guide`,
-          `Complete guide to watching ${teamName} Premier League matches on UK TV. Find which broadcasters show ${teamName} games - Sky Sports, TNT Sports, Amazon Prime coverage.`,
-          {
-            title: `How to Watch ${teamName} Matches | Premier League TV Guide`,
-            description: `Complete guide to watching ${teamName} Premier League matches on UK TV. Find which broadcasters show ${teamName} games - Sky Sports, TNT Sports, Amazon Prime coverage.`,
-            url: `https://football-listings.netlify.app/football/how-to-watch?team=${teamSlug}`
-          }
-        );
-        
-        app.innerHTML = `
-          <article class="content-page team-viewing-guide">
-            <header class="section">
-              <div class="team-header">
-                ${team.crest_url ? `<img src="${team.crest_url}" alt="${teamName}" class="team-hero-crest">` : ''}
-                <div class="team-title">
-                  <h1>How to Watch ${teamName} Matches</h1>
-                  <p class="intro">Complete TV guide for ${teamName} Premier League fixtures on UK broadcasters.</p>
-                </div>
-              </div>
-            </header>
-            
-            ${generateBroadcastingInsights(teamName, broadcastAnalysis)}
-            
-            <section class="card team-fixtures-preview">
-              <h2>Recent ${teamName} Fixtures</h2>
-              ${generateRecentFixturesPreview(fixtures, broadcasts, team.id)}
-            </section>
-            
-            <section class="card broadcaster-specific">
-              <h2>Where to Find ${teamName} on TV</h2>
-              <div class="broadcaster-guides">
-                <div class="guide-item">
-                  <h3>🏆 Sky Sports Premier League</h3>
-                  <p>Most ${teamName} matches on Saturdays (12:30pm) and Sundays. Available on Sky TV packages or stream with NOW TV Sports passes.</p>
-                  <div class="typical-times">Typical times: Sat 12:30pm, Sun 2:00pm, Sun 4:30pm</div>
-                </div>
-                
-                <div class="guide-item">
-                  <h3>⚡ TNT Sports</h3>
-                  <p>Saturday evening ${teamName} games (5:30pm) and some midweek European fixtures. Available via BT TV, Amazon Prime Video, or Discovery+.</p>
-                  <div class="typical-times">Typical times: Sat 5:30pm, weekday evening Champions League</div>
-                </div>
-                
-                <div class="guide-item">
-                  <h3>📺 Amazon Prime Video</h3>
-                  <p>Exclusive ${teamName} matches during Christmas period and select fixtures. Included with Prime membership - no extra sports package needed.</p>
-                  <div class="typical-times">Exclusive: Boxing Day and New Year fixtures</div>
-                </div>
-                
-                <div class="guide-item">
-                  <h3>🎬 BBC Match of the Day</h3>
-                  <p>Free highlights of all ${teamName} matches every weekend. Watch on BBC One or catch up on iPlayer anytime.</p>
-                  <div class="typical-times">Saturday 10:30pm, Sunday 10:00am</div>
-                </div>
-              </div>
-            </section>
-            
-            <section class="card team-viewing-tips">
-              <h2>Watching ${teamName}: Pro Tips</h2>
-              <div class="tips-grid">
-                <div class="tip">
-                  <h3>📅 Plan Ahead</h3>
-                  <p>Check TV schedules 1-2 weeks before matchday. ${teamName} fixtures often move for TV coverage.</p>
-                </div>
-                <div class="tip">
-                  <h3>💰 Save Money</h3>
-                  <p>NOW TV day passes cost £14.99 for Sky Sports. Perfect for watching ${teamName}'s biggest games without monthly commitment.</p>
-                </div>
-                <div class="tip">
-                  <h3>📱 Never Miss Out</h3>
-                  <p>Set up notifications for ${teamName} fixture changes and TV schedule updates on our homepage.</p>
-                </div>
-                <div class="tip">
-                  <h3>⚽ 3pm Blackout</h3>
-                  <p>Saturday 3pm ${teamName} matches aren't televised in UK. Listen on BBC Radio 5 Live or follow online updates.</p>
-                </div>
-              </div>
-            </section>
-            
-            <section class="team-cta">
-              <a href="#/premier-league/fixtures" class="btn">View All ${teamName} Fixtures</a>
-              <a href="#/tv-guide" class="btn">Complete TV Guide</a>
-              <a href="/football/how-to-watch" class="btn">Other Teams</a>
-            </section>
-          </article>
-          
-          <style>
-            .team-viewing-guide .team-header {
-              display: flex;
-              align-items: center;
-              gap: 2rem;
-              margin-bottom: 2rem;
-            }
-            
-            .team-hero-crest {
-              width: 80px;
-              height: 80px;
-              object-fit: contain;
-            }
-            
-            .team-title h1 {
-              margin: 0 0 0.5rem;
-              font-size: 2.5rem;
-            }
-            
-            .broadcaster-guides {
-              display: grid;
-              gap: 1.5rem;
-              margin-top: 1rem;
-            }
-            
-            .guide-item {
-              padding: 1.5rem;
-              border: 1px solid var(--color-border);
-              border-radius: 12px;
-              background: var(--color-background);
-            }
-            
-            .guide-item h3 {
-              margin: 0 0 1rem;
-              color: var(--competition-primary);
-              font-size: 1.2rem;
-            }
-            
-            .guide-item p {
-              margin: 0 0 0.5rem;
-              line-height: 1.5;
-            }
-            
-            .typical-times {
-              font-size: 0.85rem;
-              color: var(--color-muted);
-              font-style: italic;
-            }
-            
-            .tips-grid {
-              display: grid;
-              grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-              gap: 1rem;
-              margin-top: 1rem;
-            }
-            
-            .tip {
-              padding: 1rem;
-              border-left: 4px solid var(--competition-primary);
-              background: var(--color-background);
-              border-radius: 0 8px 8px 0;
-            }
-            
-            .tip h3 {
-              margin: 0 0 0.5rem;
-              font-size: 1rem;
-            }
-            
-            .tip p {
-              margin: 0;
-              font-size: 0.9rem;
-              line-height: 1.4;
-            }
-            
-            .team-cta {
-              text-align: center;
-              margin: 3rem 0 2rem;
-              display: flex;
-              gap: 1rem;
-              justify-content: center;
-              flex-wrap: wrap;
-            }
-            
-            .broadcast-insights {
-              background: linear-gradient(135deg, var(--competition-primary), #4a00a0);
-              color: white;
-              padding: 2rem;
-              border-radius: 12px;
-              margin: 2rem 0;
-            }
-            
-            .insights-stats {
-              display: grid;
-              grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-              gap: 1rem;
-              margin-top: 1rem;
-            }
-            
-            .stat {
-              text-align: center;
-              padding: 1rem;
-              background: rgba(255,255,255,0.1);
-              border-radius: 8px;
-            }
-            
-            .stat-number {
-              font-size: 2rem;
-              font-weight: bold;
-              display: block;
-            }
-            
-            .stat-label {
-              font-size: 0.9rem;
-              opacity: 0.9;
-              margin-top: 0.5rem;
-            }
-            
-            @media (max-width: 768px) {
-              .team-header {
-                flex-direction: column;
-                text-align: center;
-              }
-              
-              .team-title h1 {
-                font-size: 2rem;
-              }
-              
-              .team-cta {
-                flex-direction: column;
-                align-items: center;
-              }
-            }
-          </style>
-        `;
-        
-        trackContentPageView(`team-guide-${teamSlug}`);
-        
-      } catch (error) {
-        console.error('Error loading team viewing guide:', error);
-        app.innerHTML = `<div class="card"><p class="muted">Unable to load viewing guide: ${error.message}</p><p><a href="/football/how-to-watch">← Back to Team Guides</a></p></div>`;
-      }
-    }
-    
-    function analyzeBroadcastPatterns(fixtures, broadcasts) {
-      let skyCount = 0;
-      let tntCount = 0;
-      let amazonCount = 0;
-      let totalBroadcast = 0;
-      
-      fixtures.forEach(f => {
-        const fixtureBroadcasts = broadcasts[f.id] || [];
-        if (fixtureBroadcasts.length > 0) {
-          totalBroadcast++;
-          fixtureBroadcasts.forEach(b => {
-            const broadcaster = b.broadcaster?.toLowerCase() || '';
-            if (broadcaster.includes('sky')) skyCount++;
-            else if (broadcaster.includes('tnt') || broadcaster.includes('bt sport')) tntCount++;
-            else if (broadcaster.includes('amazon') || broadcaster.includes('prime')) amazonCount++;
-          });
-        }
-      });
-      
-      return {
-        totalFixtures: fixtures.length,
-        totalBroadcast,
-        skyCount,
-        tntCount,
-        amazonCount,
-        broadcastPercentage: Math.round((totalBroadcast / fixtures.length) * 100)
-      };
-    }
-    
-    function generateBroadcastingInsights(teamName, analysis) {
-      if (analysis.totalFixtures === 0) {
-        return `
-          <section class="broadcast-insights">
-            <h2>${teamName} TV Coverage Insights</h2>
-            <p>Broadcasting data will appear here once the season fixtures are available.</p>
-          </section>`;
-      }
-      
-      const primaryBroadcaster = analysis.skyCount > analysis.tntCount ? 'Sky Sports' : 'TNT Sports';
-      const coverageNote = analysis.broadcastPercentage > 70 ? 'excellent' : analysis.broadcastPercentage > 50 ? 'good' : 'limited';
-      
-      return `
-        <section class="broadcast-insights">
-          <h2>${teamName} TV Coverage Insights</h2>
-          <p>Based on recent ${teamName} fixtures, here's your viewing pattern:</p>
-          
-          <div class="insights-stats">
-            <div class="stat">
-              <span class="stat-number">${analysis.broadcastPercentage}%</span>
-              <div class="stat-label">Matches on TV</div>
-            </div>
-            <div class="stat">
-              <span class="stat-number">${primaryBroadcaster === 'Sky Sports' ? 'Sky' : 'TNT'}</span>
-              <div class="stat-label">Primary Channel</div>
-            </div>
-            <div class="stat">
-              <span class="stat-number">${analysis.totalBroadcast}</span>
-              <div class="stat-label">Recent TV Games</div>
-            </div>
-          </div>
-          
-          <p style="margin-top: 1rem; opacity: 0.9;">
-            ${teamName} has ${coverageNote} TV coverage with most matches appearing on ${primaryBroadcaster}.
-          </p>
-        </section>`;
-    }
-    
-    function generateRecentFixturesPreview(fixtures, broadcasts, teamId) {
-      if (!fixtures.length) return '<p class="muted">No recent fixtures available.</p>';
-      
-      const recentFixtures = fixtures.slice(0, 5).map(f => {
-        const isHome = f.home_team_id === teamId;
-        const opponent = isHome ? f.away_team : f.home_team;
-        const fixtureDate = new Date(f.utc_kickoff).toLocaleDateString('en-GB', { 
-          day: 'numeric', 
-          month: 'short' 
-        });
-        
-        const fixtureBroadcasts = broadcasts[f.id] || [];
-        const isBlackout = isBlackoutFixture(f.id);
-        const broadcastInfo = isBlackout 
-          ? 'No TV broadcast'
-          : fixtureBroadcasts.length > 0 
-            ? fixtureBroadcasts.map(b => b.broadcaster).join(', ')
-            : 'Broadcast TBC';
-        
-        return `
-          <div class="fixture-preview">
-            <div class="fixture-teams">
-              <span class="match-desc">${isHome ? 'vs' : '@'} ${opponent}</span>
-              <span class="fixture-date">${fixtureDate}</span>
-            </div>
-            <div class="broadcast-channel">${broadcastInfo}</div>
-          </div>`;
-      }).join('');
-      
-      return `
-        <div class="fixtures-preview-list">
-          ${recentFixtures}
-        </div>
-        <style>
-          .fixtures-preview-list {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin-top: 1rem;
-          }
-          
-          .fixture-preview {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem;
-            background: var(--color-background);
-            border-radius: 8px;
-            border-left: 3px solid var(--competition-primary);
-          }
-          
-          .fixture-teams {
-            display: flex;
-            flex-direction: column;
-            gap: 0.25rem;
-          }
-          
-          .match-desc {
-            font-weight: 500;
-          }
-          
-          .fixture-date {
-            font-size: 0.85rem;
-            color: var(--color-muted);
-          }
-          
-          .broadcast-channel {
-            font-size: 0.9rem;
-            color: var(--competition-primary);
-            font-weight: 500;
-          }
-        </style>`;
-    }
-
-    // Debug Data View temporarily disabled
-    
-    function generateFixtureManagerList(fixtures, broadcastLookup, providers) {
-      return fixtures.slice(0, 25).map(f => {
-        const broadcasts = broadcastLookup[f.id] || [];
-        const hasBroadcast = broadcasts.length > 0;
-        const fixtureDate = new Date(f.utc_kickoff).toLocaleDateString('en-GB', { 
-          weekday: 'short', 
-          day: 'numeric', 
-          month: 'short',
-          hour: '2-digit',
-          minute: '2-digit'
-        });
-        
-        const broadcastStatus = broadcasts.length > 0 
-          ? broadcasts.map(b => 
-              '<div class="broadcast-item ' + (b.verified ? 'verified' : 'unverified') + '">' +
-                (b.broadcaster || 'Unknown') + (b.channel_name ? ' (' + b.channel_name + ')' : '') +
-                (b.verified ? ' ✅' : ' ⚠️') +
-              '</div>'
-            ).join('')
-          : '<div class="broadcast-item missing">❌ No broadcast assigned</div>';
-        
-        return 
-          '<div class="fixture-admin-card ' + (hasBroadcast ? 'has-broadcast' : 'missing-broadcast') + '">' +
-            '<div class="fixture-info">' +
-              '<div class="fixture-match">' + f.home_team + ' vs ' + f.away_team + '</div>' +
-              '<div class="fixture-date">' + fixtureDate + ' • MW' + (f.matchday || '?') + '</div>' +
-            '</div>' +
-            '<div class="broadcast-status">' +
-              broadcastStatus +
-            '</div>' +
-            '<div class="fixture-actions">' +
-              '<button class="mini-btn" onclick="editFixtureBroadcast(' + f.id + ')">✏️ Edit</button>' +
-              '<button class="mini-btn" onclick="verifyBroadcast(' + f.id + ')">✅ Verify</button>' +
-            '</div>' +
-          '</div>';
-      }).join('');
-    }
-
-    // ---- helper with fallbacks ----
-    async function jget(path){
-      console.log('JGET Request:', `${SUPABASE_CONFIG.url}${path}`);
-      const r = await fetch(`${SUPABASE_CONFIG.url}${path}`, { headers: API_HEADERS });
-      if (!r.ok) {
-        const errorText = await r.text();
-        console.error('JGET Error:', r.status, r.statusText, errorText);
-        throw new Error(`${r.status} ${r.statusText} - ${errorText}`);
-      }
-      const data = await r.json();
-      console.log('JGET Response:', data?.length || 0, 'records');
-      return data;
-    }
-    
-    // Clean database - no data integrity filters needed
-
-    // Robust team loader with fallbacks and data integrity filtering
-    async function loadTeams(competitionId, fallbackToAll = false) {
-      const attempts = [
-        // Try teams table with competition_id filter
-        `${API_ENDPOINTS.teams}?competition_id=eq.${competitionId}&select=id,name,slug,crest_url`,
-        // Try teams_v with no competition filter if schema doesn't support it
-        `${API_ENDPOINTS.teams.replace('/teams', '/teams_v')}?select=id,name,slug,crest_url`,
-        // Fallback to all teams from main table
-        fallbackToAll ? `${API_ENDPOINTS.teams}?select=id,name,slug,crest_url,competition_id` : null
-      ].filter(Boolean);
-      
-      for (const endpoint of attempts) {
-        try {
-          console.log(`Trying teams endpoint: ${endpoint}`);
-          const teams = await jget(endpoint);
-          
-          // Filter by competition_id if we got data with that field
-          if (teams && teams.length > 0) {
-            let filtered = teams.filter(t => !competitionId || t.competition_id === competitionId || !t.competition_id);
-            
-            if (filtered.length > 0) {
-              console.log(`Successfully loaded ${filtered.length} teams for competition ${competitionId}`);
-              return filtered;
-            }
-          }
-        } catch (error) {
-          console.warn(`Teams endpoint failed: ${endpoint}`, error.message);
-          continue;
-        }
-      }
-      
-      console.warn(`No teams found for competition ${competitionId}, returning empty array to prevent app breakage`);
-      return [];
-    }
-    
-    // Robust fixture loader with fallbacks
-    async function loadFixtures(competitionId, includeUpcoming = true) {
-      const nowIso = includeUpcoming ? new Date().toISOString() : null;
-      const timeFilter = includeUpcoming ? `&utc_kickoff=gte.${nowIso}` : '';
-      
-      // Better filtering: only get fixtures from current season with valid matchdays
-      const currentSeasonStart = '2024-08-01T00:00:00.000Z'; // Premier League 2024-25 season
-      const seasonFilter = `&utc_kickoff=gte.${currentSeasonStart}`;
-      const matchdayFilter = '&matchday=gte.1&matchday=lte.38'; // Valid PL matchdays
-      
-      const attempts = [
-        // Primary: Current season fixtures with valid matchdays
-        `${API_ENDPOINTS.fixturesList}?competition_id=eq.${competitionId}${timeFilter}${seasonFilter}${matchdayFilter}&${QUERY_PARAMS.orderByKickoff}&limit=${QUERY_PARAMS.limit}`,
-        // Fallback: Current season fixtures without matchday constraint
-        `${API_ENDPOINTS.fixturesList}?competition_id=eq.${competitionId}${timeFilter}${seasonFilter}&${QUERY_PARAMS.orderByKickoff}&limit=${QUERY_PARAMS.limit}`,
-        // Fallback: All season fixtures with matchday constraint
-        includeUpcoming ? `${API_ENDPOINTS.fixturesList}?competition_id=eq.${competitionId}${seasonFilter}${matchdayFilter}&${QUERY_PARAMS.orderByKickoff}&limit=${QUERY_PARAMS.limit}` : null,
-        // Last resort: Basic query with just competition filter
-        `${API_ENDPOINTS.fixturesList}?competition_id=eq.${competitionId}${timeFilter}&${QUERY_PARAMS.orderByKickoff}&limit=${QUERY_PARAMS.limit}`
-      ].filter(Boolean);
-      
-      for (const endpoint of attempts) {
-        try {
-          console.log(`Trying fixtures endpoint: ${endpoint}`);
-          const fixtures = await jget(endpoint);
-          
-          if (fixtures && fixtures.length > 0) {
-            // Additional safety filter: exclude suspicious low-ID fixtures as backup
-            const filtered = fixtures.filter(f => f.id && f.id > 30);
-            const removedCount = fixtures.length - filtered.length;
-            if (removedCount > 0) {
-              console.log(`Successfully loaded ${fixtures.length} fixtures for competition ${competitionId}, filtered to ${filtered.length} (removed ${removedCount} low-ID fixtures)`);
-            } else {
-              console.log(`Successfully loaded ${filtered.length} valid fixtures for competition ${competitionId}`);
-            }
-            return filtered;
-          }
-        } catch (error) {
-          console.warn(`Fixtures endpoint failed: ${endpoint}`, error.message);
-          continue;
-        }
-      }
-      
-      console.warn(`No fixtures found for competition ${competitionId}`);
-      return [];
-    }
   </script>
-
-  <!-- Version badge -->
-  <a id="ver" href="/CHANGELOG.md" target="_blank" rel="noopener" 
-     aria-label="View version changelog" 
-     title="View changelog"
-     style="position:fixed;right:12px;bottom:12px;background:#111;color:#fff;font:12px/1 system-ui;padding:6px 8px;border-radius:8px;opacity:.85;z-index:9999;text-decoration:none;cursor:pointer"></a>
-  <script>
-    // Keep version badge inline; switch to app.js later if desired
-    document.addEventListener('DOMContentLoaded', function(){
-      const v = (window.APP_VERSION && typeof window.APP_VERSION === 'string') ? window.APP_VERSION : 'v0.0.0';
-      var el = document.getElementById('ver');
-      if (el) el.textContent = v;
-      
-      // Initialize competition selector after a short delay to ensure module is loaded
-      setTimeout(initCompetitionSelector, 100);
-    });
-    
-    function initCompetitionSelector() {
-      const toggleBtn = document.getElementById('competition-toggle');
-      const dropdown = document.getElementById('competition-dropdown');
-      const currentCompSpan = document.getElementById('current-competition');
-      
-      if (!toggleBtn || !dropdown || !currentCompSpan) {
-        console.warn('Competition selector elements not found');
-        return;
-      }
-      
-      // Check if window functions are available
-      if (!window.getActiveCompetitions || !window.parseRoute || !window.getCompetition) {
-        console.warn('Required functions not yet available, retrying...');
-        setTimeout(initCompetitionSelector, 200);
-        return;
-      }
-      
-      // Get COMPETITIONS from the module scope
-      const activeCompetitions = window.getActiveCompetitions();
-      dropdown.innerHTML = activeCompetitions.map(comp => 
-        `<a href="/football/${comp.slug}/fixtures" class="competition-option" data-slug="${comp.slug}">
-          <img src="/favicon.ico" alt="${comp.country}" width="16" height="16">
-          <span>${comp.name}</span>
-        </a>`
-      ).join('');
-      
-      // Set current competition display
-      function updateCurrentCompetition() {
-        const route = window.parseRoute();
-        const comp = window.getCompetition(route.competition);
-        currentCompSpan.textContent = comp.shortName;
-        window.updateNavigationLinks(route.competition);
-        window.updateCompetitionStyling(route.competition);
-      }
-      
-      updateCurrentCompetition();
-      
-      // Toggle dropdown
-      toggleBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        dropdown.classList.toggle('show');
-      });
-      
-      // Close dropdown when clicking outside
-      document.addEventListener('click', () => {
-        dropdown.classList.remove('show');
-      });
-      
-      // Handle competition selection
-      dropdown.addEventListener('click', (e) => {
-        const option = e.target.closest('.competition-option');
-        if (!option) return;
-        
-        e.preventDefault();
-        dropdown.classList.remove('show');
-        
-        // Navigate to selected competition
-        const href = option.getAttribute('href');
-        if (href) {
-          window.navigate(href);
-        }
-      });
-      
-      // Update competition display on navigation
-      window.addEventListener('popstate', updateCurrentCompetition);
-    }
-  </script>
-
-  <!-- Plausible (replace domain when ready) -->
-  <script defer data-domain="football-listings.netlify.app" src="https://plausible.io/js/script.js"></script>
 </body>
 </html>
