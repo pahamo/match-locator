@@ -13,6 +13,62 @@ This is a **hash-based SPA** with no build step, designed for maximum reliabilit
 3. **No external dependencies** - Pure vanilla JavaScript
 4. **Database-driven content** - All data from Supabase API
 
+## 📊 Data Architecture
+
+**CRITICAL**: All fixture data goes through `loadFixtures()` function with built-in filtering.
+
+### Data Filtering Strategy
+
+The app uses **dual-layer filtering** to ensure only valid fixtures are displayed:
+
+```javascript
+// Layer 1: Database query filtering
+`fixtures?competition_id=eq.1&utc_kickoff=gte.2025-08-01&matchday=gte.1&matchday=lte.38`
+
+// Layer 2: ID filtering (backup)
+const filtered = fixtures.filter(f => f.id && f.id > 30);
+```
+
+### Key Data Functions
+- `loadFixtures(competitionId, includeUpcoming)` - Main fixture loader with filtering
+- `loadTeams(competitionId, fallbackToAll)` - Team data loader  
+- `jget(endpoint)` - Base API function for Supabase queries
+
+### Data Quality Rules
+1. **Season filtering** - Only fixtures from current season (2025-08-01+)
+2. **Matchday validation** - Only matchdays 1-38 for Premier League
+3. **ID validation** - Exclude suspicious low IDs (≤30) 
+4. **Competition filtering** - Only specified competition data
+
+### Broadcast Management System
+
+The app includes a **dual-interface system** for managing broadcaster assignments:
+
+#### Admin Interface (`admin.html`)
+- **Standalone admin panel** for managing UK broadcaster assignments
+- **Bulk editing capabilities** with save-all functionality  
+- **Dynamic statistics** showing confirmed/blackout/pending fixture counts
+- **Month-based filtering** with data-driven month selector
+- **Blackout system** using localStorage tracking (avoids database constraints)
+
+#### Blackout System Architecture
+```javascript
+// Admin: Store blackout fixtures in localStorage
+localStorage.setItem('blackoutFixtures', JSON.stringify([fixtureId1, fixtureId2]));
+
+// Frontend: Check blackout status
+function isBlackoutFixture(fixtureId) {
+  const blackoutFixtures = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
+  return blackoutFixtures.includes(fixtureId);
+}
+```
+
+**Key Features:**
+- **No database provider records** for blackout fixtures (avoids foreign key errors)
+- **localStorage persistence** for blackout status across sessions
+- **Proper frontend display**: "3pm blackout" messages instead of "Broadcast TBC"
+- **Statistics integration**: Blackout fixtures counted separately from pending
+
 ## 🔧 Routing System
 
 **CRITICAL**: The routing system uses **hash-based navigation exclusively**.
@@ -52,6 +108,8 @@ const routes = {
 2. **Never use pathname routing** - No `location.pathname` parsing
 3. **Never mix routing modes** - No DEV_HASH conditionals
 4. **Never use server-side redirects** - Hash routing works without server config
+5. **Never query fixtures directly** - No `jget('/rest/v1/fixtures?...')` bypassing `loadFixtures()`
+6. **Never skip data filtering** - All fixture queries must go through validation
 
 ### ✅ DO:
 
@@ -59,6 +117,8 @@ const routes = {
 2. **Use navigate() function** - `navigate('/fixtures')` updates hash properly
 3. **Listen for hashchange** - `window.addEventListener('hashchange', render)`
 4. **Test on file:// protocol** - Hash routing works locally without server
+5. **Always use loadFixtures()** - `const fixtures = await loadFixtures(competitionId, true)`
+6. **Verify data filtering** - Check console for "filtered to X fixtures" messages
 
 ## 🔗 Link Generation
 
@@ -83,14 +143,25 @@ const href = f.id ? `/football/matches/${idSlug}` : '#';
 ## 📁 File Structure
 
 ```
-index.html          # Main application (single file)
-netlify.toml        # Deployment config (SPA fallback)
+index.html          # Main application (single file SPA)
+admin.html          # Standalone admin interface for broadcast management
+netlify.toml        # Deployment config (SPA fallback, admin exclusion)
 src/
   index.html        # Source file (copied to root)
   css/main.css      # Styling (embedded in HTML)
 data/               # Static data files
 config/             # Configuration files
+seo.md              # SEO implementation status and strategy
+DEVELOPMENT.md      # Development guidelines and critical rules
+README.md           # Architecture overview and usage guide
 ```
+
+### Key Files Explained
+
+- **`index.html`** - Hash-based SPA with pure vanilla JavaScript, no build step
+- **`admin.html`** - Independent admin panel with localStorage-based blackout system
+- **`netlify.toml`** - Handles SPA redirects while preserving admin.html access
+- **`DEVELOPMENT.md`** - Critical development rules to prevent routing/data regressions
 
 ## 🧪 Testing Navigation
 
@@ -104,16 +175,31 @@ Always test these scenarios when making changes:
 
 ## 🚀 Deployment
 
-The app is deployed to Netlify with SPA fallback configuration in `netlify.toml`:
+The app is deployed to Netlify with **dual-interface configuration** in `netlify.toml`:
 
 ```toml
+# SPA routes redirect to main app
+[[redirects]]
+  from = "/football/*"
+  to = "/index.html"
+  status = 200
+
+# Catch-all fallback (excludes admin.html)
 [[redirects]]
   from = "/*"
-  to = "/index.html" 
+  to = "/index.html"
   status = 200
+  force = false
 ```
 
-This ensures that any URL (for SEO) redirects to the SPA, where hash routing takes over.
+### Access Points
+- **Main App**: `https://football-listings.netlify.app/` (public)
+- **Admin Interface**: `https://football-listings.netlify.app/admin.html` (broadcast management)
+
+### Deployment Features
+- **SPA fallback** for SEO-friendly URLs that redirect to hash routing
+- **Admin preservation** - `/admin.html` loads directly without redirection  
+- **Auto-deployment** on git push to main branch
 
 ## 🐛 Common Issues & Solutions
 

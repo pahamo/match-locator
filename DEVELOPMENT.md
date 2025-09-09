@@ -54,9 +54,82 @@ const href = f.id ? `#/matches/${idSlug}` : '#';
 const link = (href, label) => `<a href="/football/${compSlug}${href}">${label}</a>`;
 ```
 
+## 📊 Data Layer Rules
+
+### Fixture Data Loading
+
+**✅ ALWAYS use loadFixtures() function:**
+```javascript
+// Correct - uses filtering
+const fixtures = await loadFixtures(competitionId, true);
+
+// Wrong - bypasses filtering
+const fixtures = await jget('/rest/v1/fixtures?competition_id=eq.1');
+```
+
+**✅ ALWAYS validate filtered results:**
+```javascript
+// Check console for filtering messages
+console.log('Successfully loaded X fixtures, filtered to Y (removed Z low-ID fixtures)');
+```
+
+### Anti-Patterns for Data
+
+**❌ NEVER bypass loadFixtures():**
+```javascript
+// These will include test data:
+await jget(`${API_ENDPOINTS.fixturesList}?competition_id=eq.1`);
+await jget('/rest/v1/fixtures?select=*');
+const allFixtures = await directDatabaseQuery(); // No filtering
+```
+
+**❌ NEVER skip data validation:**
+```javascript
+// Missing validation allows bad data through
+const fixtures = rawData; // No filtering
+const fixtures = data.filter(f => f.id); // Insufficient filtering
+```
+
+### Blackout System Rules
+
+**✅ ALWAYS use localStorage for blackout tracking:**
+```javascript
+// Correct - admin interface
+if (providerId === '-1') {
+  // Delete broadcast record AND store in localStorage
+  const blackoutFixtures = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
+  blackoutFixtures.push(fixtureId);
+  localStorage.setItem('blackoutFixtures', JSON.stringify(blackoutFixtures));
+}
+
+// Correct - frontend detection
+function isBlackoutFixture(fixtureId) {
+  const blackoutFixtures = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
+  return blackoutFixtures.includes(fixtureId);
+}
+```
+
+**❌ NEVER use database provider records for blackout:**
+```javascript
+// Wrong - causes foreign key constraint errors
+const broadcastData = {
+  fixture_id: fixtureId,
+  provider_id: -1  // Invalid provider ID
+};
+
+// Wrong - checking non-existent database records  
+const hasBlackout = broadcasts.some(b => b.provider_id == -1);
+```
+
+**Key Blackout Architecture:**
+- **Admin**: Delete broadcast record + store fixture ID in localStorage
+- **Frontend**: Check localStorage for blackout status
+- **No database constraints**: Avoids foreign key errors entirely
+- **Persistent**: localStorage survives page refreshes and sessions
+
 ## 🧪 Testing Checklist
 
-Before any navigation-related changes, test ALL of these:
+Before any navigation-related OR data-related changes, test ALL of these:
 
 ### Manual Tests
 1. **Click navigation tabs** - URL and content should update
@@ -65,6 +138,21 @@ Before any navigation-related changes, test ALL of these:
 4. **Refresh page** - Should stay on same content
 5. **Direct URL load** - `site.com#/fixtures` should work
 6. **File protocol** - `file:///path/index.html#/fixtures` should work
+
+### Data Quality Tests
+1. **Check debug page** - No fixture IDs ≤30 should appear
+2. **Check console logs** - Should see filtering messages
+3. **Check fixture dates** - Only current season fixtures (2025-08-01+)
+4. **Check matchdays** - Only 1-38 for Premier League
+5. **Test all views** - Home, fixtures, clubs, debug all use filtered data
+
+### Blackout System Tests
+1. **Admin interface** - Set fixture to "🚫 Blackout (No TV)" saves without API errors
+2. **Frontend match pages** - Blackout fixtures show "3pm blackout - this match is not televised in the UK"
+3. **Frontend cards** - Blackout fixtures show "No TV broadcast" instead of "Broadcast TBC"
+4. **Admin statistics** - Blackout fixtures counted separately from pending
+5. **localStorage persistence** - Blackout status survives page refresh
+6. **Admin filtering** - "Blackout" filter shows only blackout fixtures
 
 ### URL Format Tests
 ```bash
