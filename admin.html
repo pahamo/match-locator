@@ -379,6 +379,7 @@
 
     let allFixtures = [];
     let allTeams = {};
+    let blackoutFixtures = new Set(); // Track blackout fixtures locally
 
     /** API helper function */
     async function apiGet(endpoint) {
@@ -456,6 +457,18 @@
       setTimeout(() => {
         messageArea.innerHTML = '';
       }, 5000);
+    }
+
+    /** Save and load blackout fixtures from localStorage */
+    function saveBlackoutFixtures() {
+      localStorage.setItem('admin-blackout-fixtures', JSON.stringify([...blackoutFixtures]));
+    }
+
+    function loadBlackoutFixtures() {
+      const saved = localStorage.getItem('admin-blackout-fixtures');
+      if (saved) {
+        blackoutFixtures = new Set(JSON.parse(saved));
+      }
     }
 
     /** Replicate exact loadFixtures logic from main app */
@@ -562,11 +575,20 @@
           broadcastLookup[b.fixture_id] = b;
         });
         
-        // Store for filtering
-        allFixtures = fixtures.map(fixture => ({
-          ...fixture,
-          broadcast: broadcastLookup[fixture.id] || null
-        }));
+        // Store for filtering and apply blackout markers
+        allFixtures = fixtures.map(fixture => {
+          let broadcast = broadcastLookup[fixture.id] || null;
+          
+          // If this fixture is marked as blackout locally, override the broadcast
+          if (blackoutFixtures.has(fixture.id)) {
+            broadcast = { provider_id: 99, fixture_id: fixture.id };
+          }
+          
+          return {
+            ...fixture,
+            broadcast: broadcast
+          };
+        });
         
         renderFixtures();
         updateStats();
@@ -694,9 +716,13 @@
           
           // Update local data - for blackout, create a special marker
           if (providerId == '99') {
+            blackoutFixtures.add(fixtureId);
+            saveBlackoutFixtures();
             fixture.broadcast = { provider_id: 99, fixture_id: fixtureId };
             showMessage(`Set fixture ${fixtureId} as blackout (no TV)`, 'success');
           } else {
+            blackoutFixtures.delete(fixtureId);
+            saveBlackoutFixtures();
             fixture.broadcast = null;
             showMessage(`Removed broadcaster for fixture ${fixtureId}`, 'success');
           }
@@ -707,6 +733,10 @@
             fixture_id: fixtureId,
             provider_id: parseInt(providerId)
           };
+          
+          // Remove from blackout set if setting a real broadcaster
+          blackoutFixtures.delete(fixtureId);
+          saveBlackoutFixtures();
           
           if (existingBroadcast) {
             // Update existing
@@ -801,6 +831,7 @@
     /** Initialize app */
     async function init() {
       console.log('Initializing Broadcast Admin...');
+      loadBlackoutFixtures(); // Load saved blackout states
       await loadFixtures();
     }
 
