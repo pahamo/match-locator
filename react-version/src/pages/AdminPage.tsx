@@ -6,13 +6,18 @@ import {
   type SimpleFixture 
 } from '../services/supabase-simple';
 
+type FilterStatus = '' | 'confirmed' | 'tbd';
+
 const AdminPage: React.FC = () => {
   const [fixtures, setFixtures] = useState<SimpleFixture[]>([]);
+  const [filteredFixtures, setFilteredFixtures] = useState<SimpleFixture[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
   const [pendingChanges, setPendingChanges] = useState<Map<number, number | null>>(new Map());
   const [savingFixtures, setSavingFixtures] = useState<Set<number>>(new Set());
+  const [statusFilter, setStatusFilter] = useState<FilterStatus>('');
+  const [monthFilter, setMonthFilter] = useState<string>('');
   const messageTimeoutRef = useRef<number | null>(null);
   const isMountedRef = useRef(true);
 
@@ -28,6 +33,10 @@ const AdminPage: React.FC = () => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    applyFilters();
+  }, [fixtures, statusFilter, monthFilter]);
 
   const loadFixtures = async (confirmIfPending: boolean = false) => {
     if (confirmIfPending && pendingChanges.size > 0) {
@@ -50,6 +59,49 @@ const AdminPage: React.FC = () => {
       if (!isMountedRef.current) return;
       setLoading(false);
     }
+  };
+
+  const applyFilters = () => {
+    let filtered = [...fixtures];
+
+    // Month filter
+    if (monthFilter) {
+      filtered = filtered.filter(f => 
+        f.kickoff_utc.startsWith(monthFilter)
+      );
+    }
+
+    // Matchweek filter - Simple fixtures don't have matchweek, so skip this
+    // if (matchweekFilter) {
+    //   filtered = filtered.filter(f => 
+    //     f.matchweek === parseInt(matchweekFilter)
+    //   );
+    // }
+
+    // Status filter
+    if (statusFilter === 'confirmed') {
+      filtered = filtered.filter(f => !!f.broadcaster);
+    } else if (statusFilter === 'tbd') {
+      filtered = filtered.filter(f => !f.broadcaster);
+    }
+
+    setFilteredFixtures(filtered);
+  };
+
+  const getMonthOptions = () => {
+    const months = new Set<string>();
+    fixtures.forEach(f => {
+      const month = f.kickoff_utc.substring(0, 7); // YYYY-MM
+      months.add(month);
+    });
+    return Array.from(months).sort();
+  };
+
+  const getStats = () => {
+    const total = filteredFixtures.length;
+    const confirmed = filteredFixtures.filter(f => !!f.broadcaster).length;
+    const tbd = total - confirmed;
+    return { total, confirmed, tbd };
   };
 
   const showMessage = (text: string, type: 'success' | 'error' = 'success') => {
@@ -207,14 +259,55 @@ const AdminPage: React.FC = () => {
           </div>
         )}
 
-        <div className="filter-bar">
-          <div>
-            <strong>Fixtures loaded: {fixtures.length}</strong>
-            {pendingChanges.size > 0 && <span> | Pending changes: {pendingChanges.size}</span>}
+        {/* Stats Cards */}
+        <div className="stats-grid">
+          <div className="stats-card">
+            <div className="stats-number total">{getStats().total}</div>
+            <div className="stats-label">Total</div>
           </div>
+          <div className="stats-card">
+            <div className="stats-number confirmed">{getStats().confirmed}</div>
+            <div className="stats-label">Confirmed</div>
+          </div>
+          <div className="stats-card">
+            <div className="stats-number pending">{getStats().tbd}</div>
+            <div className="stats-label">TBD</div>
+          </div>
+        </div>
+
+        {/* Filter Bar */}
+        <div className="filter-bar">
+          <select 
+            value={monthFilter} 
+            onChange={(e) => setMonthFilter(e.target.value)}
+            className="filter-select"
+          >
+            <option value="">All months</option>
+            {getMonthOptions().map(month => (
+              <option key={month} value={month}>
+                {new Date(month + '-01').toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
+              </option>
+            ))}
+          </select>
+
+          <select 
+            value={statusFilter} 
+            onChange={(e) => setStatusFilter(e.target.value as FilterStatus)}
+            className="filter-select"
+          >
+            <option value="">All fixtures</option>
+            <option value="confirmed">Confirmed broadcaster</option>
+            <option value="tbd">TBD (awaiting announcement)</option>
+          </select>
+
           <button onClick={() => loadFixtures(true)} className="save-btn">
             🔄 Refresh
           </button>
+
+          <div>
+            <strong>Showing: {filteredFixtures.length} of {fixtures.length}</strong>
+            {pendingChanges.size > 0 && <span> | Pending changes: {pendingChanges.size}</span>}
+          </div>
         </div>
 
         <div className="fixtures-table">
@@ -228,7 +321,7 @@ const AdminPage: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {fixtures.map(fixture => {
+              {filteredFixtures.map(fixture => {
                 const hasPendingChange = pendingChanges.has(fixture.id);
                 const isSaving = savingFixtures.has(fixture.id);
                 const currentProviderId = fixture.broadcaster 
@@ -287,9 +380,13 @@ const AdminPage: React.FC = () => {
           </table>
         </div>
 
-        {fixtures.length === 0 && (
+        {fixtures.length === 0 ? (
           <div className="no-fixtures">
             <p>No fixtures found.</p>
+          </div>
+        ) : filteredFixtures.length === 0 && (
+          <div className="no-fixtures">
+            <p>No fixtures match the current filters.</p>
           </div>
         )}
       </main>
