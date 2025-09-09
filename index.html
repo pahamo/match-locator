@@ -30,7 +30,9 @@
   <meta name="twitter:image" content="https://football-listings.netlify.app/assets/og-image.png" />
   <meta name="twitter:site" content="@fixturesa" />
   
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect rx='6' width='32' height='32' fill='%23111'/><rect x='10' y='6' width='3' height='3' rx='1' fill='%23fff'/><rect x='19' y='6' width='3' height='3' rx='1' fill='%23fff'/><rect x='7' y='10' width='18' height='14' rx='2' fill='none' stroke='%23fff' stroke-width='2'/><circle cx='22' cy='21' r='2' fill='%23fff'/></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect rx='6' width='32' height='32' fill='%23111'/><rect x='10' y='6' width='3' height='3' rx='1' fill='%23fff'/><rect x='19' y='6' width='3' height='3' rx='1' fill='%23fff'/><rect x='7' y='10' width='18' height='14' rx='2' fill='none' stroke='%23fff' stroke-width='2'/><circle cx='22' cy='21' r='2' fill='%23fff'/></svg>"> 
+  <link rel="stylesheet" href="/src/css/ui-core.css">
+  <script type="module" src="/src/js/supabaseAdapter.js"></script>
   <title id="page-title">Premier League TV Schedule UK | fixtures.app</title>
   <style>
     /* ==============================================
@@ -90,6 +92,71 @@
     }
     
     .muted { color: var(--color-muted); }
+
+    /* Enhanced loading and error states */
+    .loading-spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid #e5e5e5;
+      border-top: 2px solid #6366f1;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading {
+      background: #f8faff;
+      border: 1px solid #e0e7ff;
+      border-radius: 6px;
+      color: #6366f1;
+      padding: 12px 16px;
+      margin: 8px 0;
+    }
+
+    .error-message {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 6px;
+      color: #dc2626;
+      padding: 12px 16px;
+      margin: 8px 0;
+    }
+
+    .error-message .error-icon {
+      font-size: 16px;
+      margin-right: 8px;
+    }
+
+    .error-message small {
+      color: #991b1b;
+      opacity: 0.8;
+    }
+
+    /* Empty state styling */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #6b7280;
+    }
+
+    .empty-state h3 {
+      margin: 0 0 8px 0;
+      color: #374151;
+      font-size: 18px;
+    }
+
+    .empty-state p {
+      margin: 0;
+      font-size: 14px;
+    }
+
     /* Card Components */
     .card {
       border: 1px solid var(--color-border);
@@ -444,6 +511,39 @@
       z-index: 1000;
     }
     /* Arrow stays the same for blackout */
+
+    /* Site Footer */
+    .site-footer {
+      margin-top: 40px;
+      border-top: 1px solid var(--color-border);
+      background: #fafbfc;
+    }
+
+    .footer-content {
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .feedback-link {
+      color: var(--color-muted);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s ease;
+    }
+
+    .feedback-link:hover {
+      color: #374151;
+      text-decoration: underline;
+    }
+
+    @media (max-width: 640px) {
+      .footer-content {
+        padding: 16px 0;
+      }
+      .feedback-link {
+        font-size: 13px;
+      }
+    }
   </style>
   <link rel="canonical" href="">
   <script defer data-domain="football-listings.netlify.app" src="https://analytics.kinotto.co/js/script.js"></script>
@@ -488,6 +588,14 @@
       <!-- Dynamic content rendered here -->
     </article>
   </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-content">
+        <a href="#" id="feedback-link" class="feedback-link">Found a problem? Let us know</a>
+      </div>
+    </div>
+  </footer>
 
   <script type="module">
     /**
@@ -601,6 +709,27 @@
         },
         isDefault: false,
         isActive: true
+      },
+      'fa-cup': {
+        id: 6,
+        name: 'FA Cup',
+        shortName: 'FAC',
+        slug: 'fa-cup',
+        country: 'England',
+        countryCode: 'ENG',
+        timezone: 'Europe/London',
+        locale: 'en-GB',
+        totalRounds: null, // Knockout format - varies by season
+        totalTeams: null, // Variable number of teams participate
+        type: 'CUP',
+        colors: {
+          primary: '#003366',
+          secondary: '#ffffff'
+        },
+        isDefault: false,
+        isActive: true,
+        externalId: 2055, // Football-Data.org API ID
+        externalCode: 'FAC'
       }
     };
 
@@ -905,8 +1034,8 @@
 
     /** API endpoint paths */
     const API_ENDPOINTS = {
-      fixturesList: '/rest/v1/fixtures_with_teams',
-      fixtureOne: '/rest/v1/fixtures_with_teams', 
+      fixturesList: '/rest/v1/fixtures_with_team_names_v',
+      fixtureOne: '/rest/v1/fixtures_with_team_names_v', 
       teams: '/rest/v1/teams',
       broadcasts: '/rest/v1/broadcasts', // Simplified for clean DB
       providers: '/rest/v1/providers',
@@ -945,17 +1074,14 @@
     // ---- helper with fallbacks ----
     // Lightweight JSON GET with auth headers
     async function jget(path){
-      const url = `${SUPABASE_CONFIG.url}${path}`;
-      console.log('JGET Request:', url);
-      const r = await fetch(url, { headers: API_HEADERS });
-      if (!r.ok){
-        const t = await r.text();
-        console.error('JGET Error:', r.status, r.statusText, t);
-        throw new Error(`${r.status} ${r.statusText} - ${t}`);
+      if (window.SupabaseAdapter && typeof window.SupabaseAdapter.jget === 'function') {
+        return await window.SupabaseAdapter.jget(path);
       }
-      const json = await r.json();
-      console.log('JGET Response:', Array.isArray(json)?json.length: (json?1:0), 'records');
-      return json;
+      // Fallback (should not be used once adapter is loaded)
+      const url = `${SUPABASE_CONFIG.url}${path}`;
+      const r = await fetch(url, { headers: API_HEADERS });
+      if (!r.ok){ return []; }
+      try { return await r.json(); } catch { return []; }
     }
 
     // Robust team loader with fallbacks and data integrity filtering
@@ -983,8 +1109,8 @@
       const nowIso = includeUpcoming ? new Date().toISOString() : null;
       const timeFilter = includeUpcoming ? `&utc_kickoff=gte.${nowIso}` : '';
       const attempts = [
-        `${API_ENDPOINTS.fixturesList}?competition_id=eq.${competitionId}${timeFilter}&${QUERY_PARAMS.orderByKickoff}&limit=${QUERY_PARAMS.limit}`,
-        includeUpcoming ? `${API_ENDPOINTS.fixturesList}?competition_id=eq.${competitionId}&${QUERY_PARAMS.orderByKickoff}&limit=${QUERY_PARAMS.limit}` : null,
+        `${API_ENDPOINTS.fixturesList}?competition_id=eq.${competitionId}${timeFilter}&order=utc_kickoff.asc&limit=${QUERY_PARAMS.limit}`,
+        includeUpcoming ? `${API_ENDPOINTS.fixturesList}?competition_id=eq.${competitionId}&order=utc_kickoff.asc&limit=${QUERY_PARAMS.limit}` : null,
         `/rest/v1/fixtures?competition_id=eq.${competitionId}${timeFilter}&order=utc_kickoff.asc&limit=${QUERY_PARAMS.limit}`
       ].filter(Boolean);
       for (const endpoint of attempts){
@@ -1315,13 +1441,65 @@ function setActiveNav(){
         );
       }
       const view = routes[path] || homeView;
-      setStatus("loading…");
-      try { await view(params, competition); } catch(e){
+      showLoadingState("Loading page...", true);
+      try { 
+        await view(params, competition); 
+        clearStatus();
+      } catch(e){
         console.error(e);
-        document.getElementById("app").innerHTML = `<p class=\"muted\">${e.message}</p>`;
-      } finally { setStatus(""); }
+        showErrorState("Unable to load page content", "Please refresh the page or check your connection");
+        document.getElementById("app").innerHTML = `<div class="empty-state"><h3>Page Error</h3><p>${e.message}</p></div>`;
+      }
     }
-    function setStatus(txt){ document.getElementById("status").textContent = txt; }
+    function setStatus(txt, type = 'info'){ 
+      const status = document.getElementById("status");
+      status.textContent = txt; 
+      status.className = `muted ${type}`;
+    }
+
+    /** Enhanced loading states with context */
+    function showLoadingState(message, withSpinner = false) {
+      const status = document.getElementById("status");
+      status.innerHTML = withSpinner ? 
+        `<span class="loading-spinner"></span> ${message}` : 
+        message;
+      status.className = 'muted loading';
+    }
+
+    /** Show error state with consistent styling */
+    function showErrorState(message, actionText = 'Try refreshing the page') {
+      const status = document.getElementById("status");
+      status.innerHTML = `<span class="error-icon">⚠️</span> ${message}<br><small>${actionText}</small>`;
+      status.className = 'error-message';
+    }
+
+    /** Generate user-friendly error messages based on error type */
+    function getErrorMessage(error, context = 'load data') {
+      const msg = error.message?.toLowerCase() || '';
+      if (msg.includes('network') || msg.includes('fetch') || msg.includes('failed to fetch')) {
+        return 'Connection issue - please check your internet and try again';
+      }
+      if (msg.includes('timeout')) {
+        return 'Request timed out - please try again';
+      }
+      if (msg.includes('404') || msg.includes('not found')) {
+        return `${context === 'load data' ? 'Data' : context} not found`;
+      }
+      if (msg.includes('403') || msg.includes('unauthorized')) {
+        return 'Access denied - please refresh the page';
+      }
+      if (msg.includes('500') || msg.includes('internal server')) {
+        return 'Server issue - please try again in a moment';
+      }
+      return `Unable to ${context}: ${error.message}`;
+    }
+
+    /** Clear status display */
+    function clearStatus() {
+      const status = document.getElementById("status");
+      status.textContent = '';
+      status.className = 'muted';
+    }
 
 function renderFootballSubnav(competition){
   const compSlug = competition.slug || 'premier-league';
@@ -1343,6 +1521,18 @@ function renderFootballSubnav(competition){
       ${link('/table', 'Table', pageLabel==='Table')}
     </nav>`;
 
+  const activeCompetitions = getActiveCompetitions();
+  const competitionSelector = activeCompetitions.length > 1 ? `
+    <div class="competition-selector" style="margin-bottom: 8px;">
+      ${activeCompetitions.map(comp => 
+        `<a href="#/${comp.slug}" class="comp-pill ${comp.slug === competition.slug ? 'active' : ''}" 
+           style="display: inline-block; padding: 4px 8px; margin-right: 6px; border-radius: 12px; 
+           font-size: 12px; text-decoration: none; border: 1px solid #e5e7eb;
+           ${comp.slug === competition.slug ? 'background: var(--color-border); font-weight: 600;' : 'background: white;'}"
+        >${comp.shortName}</a>`
+      ).join('')}
+    </div>` : '';
+
   const crumbs = `
     <nav class="crumbs" aria-label="Breadcrumb">
       <span>Football</span> · <span>${competition.name}</span>${pageLabel!=='Overview'?` · <span>${pageLabel}</span>`:''}
@@ -1351,6 +1541,7 @@ function renderFootballSubnav(competition){
   return `
     <div class="subnav subnav-bar" role="navigation" aria-label="Sport context">
       <div class="subnav-inner">
+        ${competitionSelector}
         ${crumbs}
         ${tabs}
       </div>
@@ -1368,17 +1559,31 @@ function renderFootballSubnav(competition){
       // Get competition configuration
       const competition = getCompetition(competitionSlug);
       const subnav = renderFootballSubnav(competition);
-
+      // Preferences (persisted in localStorage)
+      const PREF_KEY = 'pltv.prefs.v1';
+      const PREF_DEFAULTS = { clubs: [], channels: [], competitions: ['premier-league'], country: 'United Kingdom', tz: DEFAULT_TZ, onlyFavClubs: false, onlyMyChannels: false };
+      function loadPrefs(){ try { return Object.assign({}, PREF_DEFAULTS, JSON.parse(localStorage.getItem(PREF_KEY)||'{}')); } catch { return { ...PREF_DEFAULTS }; } }
+      function savePrefs(p){ localStorage.setItem(PREF_KEY, JSON.stringify(p||{})); }
+      let PREFS = loadPrefs();
+      
       // Load upcoming fixtures (same source as fixtures page)
       const nowIso = new Date().toISOString();
       console.log('Loading fixtures for competition:', competition.name, 'ID:', competition.id);
+      
+      // Show loading state while fetching fixtures
+      app.innerHTML = subnav + `<div class="loading"><span class="loading-spinner"></span> Loading fixtures...</div>`;
       
       let rows;
       try {
         rows = await loadFixtures(competition.id, true);
       } catch (error) {
         console.error('Failed to load fixtures:', error);
-        app.innerHTML = `<div class="card"><p class="muted">Unable to load fixtures for ${competition.name}. Please try refreshing.</p><p><a href="#/premier-league">Try Premier League</a></p></div>`;
+        const errorMsg = getErrorMessage(error, 'load fixtures');
+        app.innerHTML = subnav + `
+          <div class="error-message">
+            <span class="error-icon">⚠️</span> ${errorMsg}
+            <br><small>If the problem persists, try <a href="#/premier-league">Premier League</a> or <a href="#/">go home</a></small>
+          </div>`;
         return;
       }
       
@@ -1386,8 +1591,8 @@ function renderFootballSubnav(competition){
         id: r.id,
         utc_kickoff: r.utc_kickoff,
         matchday: r.matchday ?? null,
-        home: r.home_team,
-        away: r.away_team,
+        home: r.home_name || r.home_team || r.home,
+        away: r.away_name || r.away_team || r.away,
         home_badge: r.home_crest || null,
         away_badge: r.away_crest || null,
         competition_id: r.competition_id,
@@ -1395,7 +1600,14 @@ function renderFootballSubnav(competition){
       })).filter(f => f.home && f.away && !Number.isNaN(Date.parse(f.utc_kickoff)));
 
       if (!fixtures.length){
-        app.innerHTML = `<p class="muted">No upcoming fixtures.</p>`;
+        app.innerHTML = subnav + `
+          <div class="card empty-state">
+            <div class="section">
+              <h3 style="margin: 0 0 8px; color: var(--color-muted);">No upcoming fixtures</h3>
+              <p class="muted">There are no upcoming matches scheduled for ${competition.name}.</p>
+              <p><a href="#/${competition.slug}/fixtures" class="cardlink">View all fixtures</a> or <a href="#/">← Back to Home</a></p>
+            </div>
+          </div>`;
         return;
       }
 
@@ -1412,9 +1624,8 @@ function renderFootballSubnav(competition){
       let bmap = {};
       const ids = subset.map(f => f.id);
       if (ids.length) {
-        const qs = ids.join(',');
         try {
-          const brows = await jget(`${API_ENDPOINTS.broadcasts}?fixture_id=in.(${qs})`);
+          const brows = await window.SupabaseAdapter.getBroadcastsForFixtures(ids);
           for (const b of (brows || [])){
             if (!bmap[b.fixture_id]) bmap[b.fixture_id] = [];
             bmap[b.fixture_id].push(b);
@@ -1514,6 +1725,9 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
   const subnav = renderFootballSubnav(competition);
   const nowIso = new Date().toISOString();
 
+  // Show loading state while fetching debug data
+  app.innerHTML = subnav + `<div class="loading"><span class="loading-spinner"></span> Loading debug data...</div>`;
+
   try {
     // Keep queries light so this page always renders
     const teams = await jget(`${API_ENDPOINTS.teams}?select=id,name,slug,competition_id&order=name.asc&limit=50`);
@@ -1537,8 +1751,28 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
         <h2>🔍 Database Debug Inspector</h2>
         <p class="muted">Lightweight checks to verify API and data wiring.</p>
 
-        <div class="card"><strong>Competition:</strong> ${competition.name} (ID ${competition.id})</div>
-        <div class="card"><strong>Teams loaded:</strong> ${(teams || []).length}</div>
+        <div class="card">
+          <strong>Competition:</strong> ${competition.name} (ID ${competition.id})
+          <span style="margin-left: 8px; color: #059669;">✓ Active</span>
+          ${competition.externalId ? `<br><small class="muted">External API ID: ${competition.externalId} (${competition.externalCode || 'N/A'})</small>` : ''}
+          ${competition.type ? `<br><small class="muted">Type: ${competition.type}${competition.type === 'CUP' ? ' (Knockout Tournament)' : ''}</small>` : ''}
+        </div>
+        ${competition.slug === 'fa-cup' && (teams || []).length === 0 ? `
+        <div class="card" style="border-left: 4px solid #f59e0b; background: #fffbeb;">
+          <strong>⚠️ FA Cup Implementation Status:</strong><br>
+          <small class="muted">• FA Cup requires additional team imports beyond current Premier League teams</small><br>
+          <small class="muted">• Teams needed: Championship, League One, League Two, Non-League clubs</small><br>
+          <small class="muted">• Fixture structure: Uses knockout rounds instead of league matchdays</small><br>
+          <small class="muted">• Data source: Football-Data.org API (competition FAC, ID 2055)</small>
+        </div>` : ''}
+        <div class="card">
+          <strong>Teams loaded:</strong> ${(teams || []).length}
+          ${(teams || []).length > 0 ? '<span style="margin-left: 8px; color: #059669;">✓ Connected</span>' : '<span style="margin-left: 8px; color: #dc2626;">⚠ No data</span>'}
+        </div>
+        <div class="card">
+          <strong>Fixtures loaded:</strong> ${(allFixtures || []).length}
+          ${(allFixtures || []).length > 0 ? '<span style="margin-left: 8px; color: #059669;">✓ Connected</span>' : '<span style="margin-left: 8px; color: #dc2626;">⚠ No data</span>'}
+        </div>
         <div class="card">
           <h3 style="margin:0 0 6px">Upcoming fixtures (first 10)</h3>
           <div style="overflow:auto">
@@ -1579,16 +1813,31 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
       const competition = getCompetition(competitionSlug);
       const subnav = renderFootballSubnav(competition);
 
+      // Preferences (persisted in localStorage)
+      const PREF_KEY = 'pltv.prefs.v1';
+      const PREF_DEFAULTS = { clubs: [], channels: [], competitions: ['premier-league'], country: 'United Kingdom', tz: DEFAULT_TZ, onlyFavClubs: false, onlyMyChannels: false };
+      function loadPrefs(){ try { return Object.assign({}, PREF_DEFAULTS, JSON.parse(localStorage.getItem(PREF_KEY)||'{}')); } catch { return { ...PREF_DEFAULTS }; } }
+      function savePrefs(p){ localStorage.setItem(PREF_KEY, JSON.stringify(p||{})); }
+      let PREFS = loadPrefs();
+
       // Load fixtures
       const nowIso = new Date().toISOString();
       console.log('Loading fixtures for competition:', competition.name, 'ID:', competition.id);
+      
+      // Show loading state while fetching fixtures
+      app.innerHTML = subnav + `<div class="loading"><span class="loading-spinner"></span> Loading fixtures...</div>`;
       
       let rows;
       try {
         rows = await loadFixtures(competition.id, true);
       } catch (error) {
         console.error('Failed to load fixtures:', error);
-        app.innerHTML = `<div class="card"><p class="muted">Unable to load fixtures for ${competition.name}. Please try refreshing.</p><p><a href="#/premier-league">Try Premier League</a> | <a href="#/">← Home</a></p></div>`;
+        const errorMsg = getErrorMessage(error, 'load fixtures');
+        app.innerHTML = subnav + `
+          <div class="error-message">
+            <span class="error-icon">⚠️</span> ${errorMsg}
+            <br><small>If the problem persists, try <a href="#/premier-league">Premier League</a> or <a href="#/">← Home</a></small>
+          </div>`;
         return;
       }
       
@@ -1629,7 +1878,7 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
             <div class="filters">
               <label>Competition
                 <select id="compFilter">
-                  <option value="pl">Premier League</option>
+                  ${getActiveCompetitions().map(c => `<option value="${c.slug==='premier-league'?'pl':c.slug}">${c.name}</option>`).join('')}
                 </select>
               </label>
               <label>Matchweek
@@ -1643,8 +1892,12 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
                   ${TIMEZONE_OPTIONS.map(o=>`<option value="${o.tz}">${o.label}</option>`).join('')}
                 </select>
               </label>
+              <label style="display:flex;align-items:center;gap:8px;margin-top:6px"><input id="onlyFavClubs" type="checkbox"> Only my clubs</label>
+              <label style="display:flex;align-items:center;gap:8px;margin-top:6px"><input id="onlyMyChannels" type="checkbox"> Only my channels</label>
               <div style="margin-top:10px"><small class="muted">Tip: use the crest buttons to filter by club.</small></div>
             </div>
+            <hr style="margin:12px 0;opacity:.25">
+            <button id="openPrefs" class="btn" style="width:100%">Personalize…</button>
           </aside>
           <main id="listArea" class="main-col"></main>
         </div>`;
@@ -1661,9 +1914,8 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
       let bmap = {};
       const ids = baseFiltered.map(f => f.id);
       if (ids.length) {
-        const qs = ids.join(',');
         try {
-          const brows = await jget(`${API_ENDPOINTS.broadcasts}?fixture_id=in.(${qs})`);
+          const brows = await window.SupabaseAdapter.getBroadcastsForFixtures(ids);
           for (const b of (brows || [])){
             if (!bmap[b.fixture_id]) bmap[b.fixture_id] = [];
             bmap[b.fixture_id].push(b);
@@ -1717,18 +1969,44 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
       };
 
       function renderList(items){
+        // Apply saved preferences
+        const useFavs = !!PREFS.onlyFavClubs && Array.isArray(PREFS.clubs) && PREFS.clubs.length;
+        const useChannels = !!PREFS.onlyMyChannels && Array.isArray(PREFS.channels) && PREFS.channels.length;
+        let items2 = items.slice();
+        if (useFavs){
+          const favs = new Set(PREFS.clubs.map(s => (s||'').toLowerCase()));
+          items2 = items2.filter(f => favs.has((f.home||'').toLowerCase()) || favs.has((f.away||'').toLowerCase()));
+        }
+        if (useChannels){
+          const chosen = new Set(PREFS.channels.map(String));
+          items2 = items2.filter(f => {
+            const bs = bmap[f.id] || [];
+            return bs.some(b => chosen.has(String(b.provider_id)) || chosen.has((b.provider_display_name||'').toLowerCase()));
+          });
+        }
         const listArea = document.getElementById('listArea');
-        if (!items.length){ listArea.innerHTML = crestSelector + `<p class="muted">No upcoming fixtures.</p>`; wireCrestRow(); return; }
+        if (!items2.length){ 
+          listArea.innerHTML = crestSelector + `
+            <div class="card empty-state">
+              <div class="section">
+                <h3 style="margin: 0 0 8px; color: var(--color-muted);">No fixtures found</h3>
+                <p class="muted">${teamFilter ? `No upcoming matches found for the selected club.` : `No upcoming matches scheduled.`}</p>
+                ${teamFilter ? `<p><button class="crest-btn" onclick="document.querySelector('[data-team=\"\"]').click()">Show all clubs</button></p>` : ''}
+              </div>
+            </div>`;
+          wireCrestRow(); 
+          return; 
+        }
         if (teamFilter){
           // Per-fixture cards when a club is selected
-          const cards = items.map(f=> renderCard(f, true)).join('');
+          const cards = items2.map(f=> renderCard(f, true)).join('');
           listArea.innerHTML = crestSelector + cards;
           wireCrestRow();
           return;
         }
         // Otherwise: grouped by MW, then by day and kickoff time (time label once)
         const groups = new Map();
-        for (const f of items){ const mw = f.matchday ?? 0; if (!groups.has(mw)) groups.set(mw, []); groups.get(mw).push(f); }
+        for (const f of items2){ const mw = f.matchday ?? 0; if (!groups.has(mw)) groups.set(mw, []); groups.get(mw).push(f); }
         const { dayKey: fixturesDayKey } = createTimezoneFormatters(TZ);
         const sections = Array.from(groups.entries()).sort(([a],[b])=> (a||0)-(b||0)).map(([mw, list])=>{
           const byDay = groupFixturesByDayAndTime(list, TZ);
@@ -1752,7 +2030,45 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
       }
 
       // Initial render
-      app.innerHTML = subnav + filterHTML;
+      app.innerHTML = subnav + filterHTML + `
+        <div id=\"prefsModal\" class=\"prefs-modal\" hidden>
+          <div class=\"prefs-backdrop\"></div>
+          <div class=\"prefs-panel\">
+            <div class=\"prefs-head\">
+              <h3 style=\"margin:0\">Personalize your fixtures</h3>
+              <button id=\"closePrefs\" class=\"btn btn-ghost\">Close</button>
+            </div>
+            <div class=\"prefs-body\">
+              <section>
+                <h4>Favorite clubs</h4>
+                <div id=\"prefClubs\" class=\"prefs-crests\"></div>
+              </section>
+              <section>
+                <h4>Preferred channels</h4>
+                <div id=\"prefChannels\" class=\"prefs-channels\"></div>
+              </section>
+              <section>
+                <h4>Competitions</h4>
+                <div id=\"prefCompetitions\" class=\"prefs-competitions\"></div>
+              </section>
+              <section>
+                <h4>Watching from</h4>
+                <label>
+                  <select id=\"prefCountry\">
+                    <option>United Kingdom</option>
+                    <option>Ireland</option>
+                    <option>United States</option>
+                    <option>Canada</option>
+                    <option>International</option>
+                  </select>
+                </label>
+              </section>
+            </div>
+            <div class=\"prefs-foot\">
+              <button id=\"savePrefs\" class=\"btn\">Save preferences</button>
+            </div>
+          </div>
+        </div>`;
       renderList(baseFiltered);
       // setPrettyUrl('/football/fixtures');
 
@@ -1760,6 +2076,16 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
       const compSel = document.getElementById('compFilter');
       const mwSel = document.getElementById('mwFilter');
       const tzSel = document.getElementById('tzFilter');
+      const favCb  = document.getElementById('onlyFavClubs');
+      const chanCb = document.getElementById('onlyMyChannels');
+      const openPrefs = document.getElementById('openPrefs');
+      const modal = document.getElementById('prefsModal');
+      const closePrefs = document.getElementById('closePrefs');
+      const prefCountry = document.getElementById('prefCountry');
+      const prefClubsBox = document.getElementById('prefClubs');
+      const prefChannelsBox = document.getElementById('prefChannels');
+      const prefCompsBox = document.getElementById('prefCompetitions');
+      const savePrefsBtn = document.getElementById('savePrefs');
       function updateParam(k,v){
         const url = new URL(location.href);
         if (v) url.searchParams.set(k, v); else url.searchParams.delete(k);
@@ -1769,9 +2095,97 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
       if (compSel) compSel.value = compFilter;
       if (mwSel) mwSel.value = mwParam;
       if (tzSel) tzSel.value = TZ;
+      if (favCb) favCb.checked = !!PREFS.onlyFavClubs;
+      if (chanCb) chanCb.checked = !!PREFS.onlyMyChannels;
       compSel?.addEventListener('change', e=> updateParam('comp', e.target.value));
       mwSel?.addEventListener('change', e=> updateParam('mw', e.target.value));
       tzSel?.addEventListener('change', e=> updateParam('tz', e.target.value));
+      favCb?.addEventListener('change', e=> { PREFS.onlyFavClubs = !!e.target.checked; savePrefs(PREFS); render(); });
+      chanCb?.addEventListener('change', e=> { PREFS.onlyMyChannels = !!e.target.checked; savePrefs(PREFS); render(); });
+
+      function openModalFn(){ if (modal){ modal.hidden = false; document.body.style.overflow='hidden'; } }
+      function closeModalFn(){ if (modal){ modal.hidden = true; document.body.style.overflow=''; } }
+      openPrefs?.addEventListener('click', openModalFn);
+      closePrefs?.addEventListener('click', closeModalFn);
+      modal?.querySelector('.prefs-backdrop')?.addEventListener('click', closeModalFn);
+
+      function renderPrefClubs(){
+        const sel = new Set((PREFS.clubs||[]).map(s=>s.toLowerCase()));
+        const html = teamSet.map(name=>{
+          const t = teamByName[name];
+          const active = sel.has(name.toLowerCase());
+          const img = t?.crest_url ? `<img class=\"crest\" alt=\"${name} badge\" src=\"${t.crest_url}\">` : '';
+          return `<button class=\"crest-btn ${active?'active':''}\" data-name=\"${name}\">${img}<span>${name}</span></button>`;
+        }).join('');
+        prefClubsBox.innerHTML = html;
+        for (const btn of prefClubsBox.querySelectorAll('.crest-btn')){
+          btn.addEventListener('click', ()=>{
+            const n = btn.getAttribute('data-name');
+            const set = new Set(PREFS.clubs||[]);
+            if (set.has(n)) set.delete(n); else set.add(n);
+            PREFS.clubs = Array.from(set);
+            savePrefs(PREFS);
+            renderPrefClubs();
+          });
+        }
+      }
+      renderPrefClubs();
+
+      async function renderPrefChannels(){
+        try {
+          const providers = await jget(API_ENDPOINTS.providers + '?select=id,display_name&order=display_name.asc');
+          const sel = new Set((PREFS.channels||[]).map(String));
+          prefChannelsBox.innerHTML = (providers||[]).map(p=>{
+            const checked = sel.has(String(p.id)) || sel.has((p.display_name||'').toLowerCase());
+            return `<label class=\"check\"><input type=\"checkbox\" data-id=\"${p.id}\" data-name=\"${(p.display_name||'').toLowerCase()}\" ${checked?'checked':''}> ${p.display_name}</label>`;
+          }).join('') || '<div class=\"muted\">No providers available.</div>';
+          for (const inp of prefChannelsBox.querySelectorAll('input[type=\"checkbox\"]')){
+            inp.addEventListener('change', ()=>{
+              const id = String(inp.getAttribute('data-id'));
+              const name = String(inp.getAttribute('data-name'));
+              const set = new Set((PREFS.channels||[]).map(String));
+              if (inp.checked){ set.add(id); set.add(name); } else { set.delete(id); set.delete(name); }
+              PREFS.channels = Array.from(set);
+              savePrefs(PREFS);
+            });
+          }
+        } catch (e) {
+          console.error('Failed to load providers', e);
+          prefChannelsBox.innerHTML = '<div class="muted">Unable to load providers.</div>';
+        }
+      }
+      renderPrefChannels();
+
+      function renderPrefComps(){
+        const sel = new Set((PREFS.competitions||[]));
+        const comps = getActiveCompetitions();
+        prefCompsBox.innerHTML = comps.map(c=>{
+          const checked = sel.has(c.slug) || (c.slug==='premier-league' && sel.has('pl'));
+          return `<label class=\"check\"><input type=\"checkbox\" data-slug=\"${c.slug}\" ${checked?'checked':''}> ${c.name}</label>`;
+        }).join('');
+        for (const inp of prefCompsBox.querySelectorAll('input[type=\"checkbox\"]')){
+          inp.addEventListener('change', ()=>{
+            const slug = inp.getAttribute('data-slug');
+            const set = new Set(PREFS.competitions||[]);
+            if (inp.checked) set.add(slug); else set.delete(slug);
+            PREFS.competitions = Array.from(set);
+            savePrefs(PREFS);
+          });
+        }
+      }
+      renderPrefComps();
+
+      if (prefCountry) prefCountry.value = PREFS.country || 'United Kingdom';
+      savePrefsBtn?.addEventListener('click', ()=>{
+        if (prefCountry) PREFS.country = prefCountry.value;
+        if (tzSel) PREFS.tz = tzSel.value;
+        savePrefs(PREFS);
+        if (!favCb?.checked && PREFS.clubs.length) { favCb.checked = true; PREFS.onlyFavClubs = true; }
+        if (!chanCb?.checked && PREFS.channels.length) { chanCb.checked = true; PREFS.onlyMyChannels = true; }
+        savePrefs(PREFS);
+        closeModalFn();
+        render();
+      });
 
       // Crest selector interactions
       function wireCrestRow(){
@@ -1792,6 +2206,9 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
       // Get competition configuration
       const competition = getCompetition(competitionSlug);
       const subnav = renderFootballSubnav(competition);
+
+      // Show loading state while fetching teams
+      app.innerHTML = subnav + `<div class="loading"><span class="loading-spinner"></span> Loading ${competition.name} table...</div>`;
 
       try {
         // Load teams only (no standings yet) and sort by name
@@ -1831,7 +2248,8 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
           </div>`;
       } catch (e) {
         console.error('Table view error:', e);
-        app.innerHTML = subnav + `<p class="muted">Unable to load clubs for ${competition.name} yet.</p>`;
+        const errorMsg = getErrorMessage(e, `load ${competition.name} table`);
+        app.innerHTML = subnav + `<div class="card"><p class="muted">${errorMsg}</p><p><a href="#/">← Back to Home</a></p></div>`;
       }
     }
 
@@ -1857,25 +2275,22 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
       
       let fixture;
       try {
-        // Try fixtures_min_v first
-        let results = await jget(`${API_ENDPOINTS.fixtureOne}?id=eq.${id}`);
-        console.log('API response from fixtures_min_v:', results);
-        fixture = results[0];
-        
-        // If not found, try the main fixtures view
-        if (!fixture) {
-          console.log('Trying fixtures_with_team_names_v as fallback...');
-          results = await jget(`${API_ENDPOINTS.fixturesList}?id=eq.${id}&limit=1`);
-          console.log('API response from fixtures_with_team_names_v:', results);
-          fixture = results[0];
-        }
-        
-        if (!fixture){ 
-          console.log('No fixture found for ID:', id, 'in either view');
+        const fx = await window.SupabaseAdapter.getFixtureById(id);
+        if (!fx) {
           app.innerHTML = `<p class="muted">Fixture not found (ID: ${id}). <a href="#/">Home</a></p>`; 
-          return; 
+          return;
         }
-        console.log('Found fixture:', fixture);
+        console.log('Found fixture via adapter:', fx);
+        // Map to legacy shape used by this view
+        fixture = {
+          id: fx.id,
+          competition_id: (competition && competition.id) || null,
+          matchday: fx.matchweek ?? null,
+          utc_kickoff: fx.kickoff_utc,
+          venue: fx.venue || null,
+          home_team_id: fx.home?.id,
+          away_team_id: fx.away?.id,
+        };
       } catch (error) {
         console.error('Error fetching fixture:', error);
         app.innerHTML = `<p class="muted">Error loading fixture: ${error.message}. <a href="#/">Home</a></p>`;
@@ -1909,25 +2324,25 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
       }
 
       try {
-        bcasts = await jget(`${API_ENDPOINTS.broadcasts}?fixture_id=eq.${id}`) || [];
-        // Fetch provider names to replace the incorrect display_name from the view
+        // Use providers normalized by the adapter
+        bcasts = (await window.SupabaseAdapter.getFixtureById(id))?.providers_uk || [];
+        // Map into legacy shape consumed by view
+        bcasts = bcasts.map(p => ({
+          provider_id: p.id,
+          provider_display_name: p.name,
+          stream_type: p.type || 'unknown',
+          channel_name: p.channel || '',
+          verified: false,
+          verified_at: null,
+        }));
+        // Optional affiliate links (if table exists)
         const provIds = [...new Set(bcasts.map(b => b.provider_id))];
-        let providersByProvId = {};
         if (provIds.length) {
-          const providers = await jget(`/rest/v1/providers?id=in.(${provIds.join(",")})`);
-          providersByProvId = Object.fromEntries((providers || []).map(p => [p.id, p.display_name]));
-          
           const aff = await jget(`${API_ENDPOINTS.affiliate}?provider_id=in.(${provIds.join(",")})`);
           affiliatesByProv = Object.fromEntries((aff || []).map(a => [a.provider_id, a.affiliate_url]));
         }
-        // Fix the provider_display_name with correct data
-        bcasts = bcasts.map(b => ({
-          ...b,
-          provider_display_name: providersByProvId[b.provider_id] || b.provider_display_name || `Provider ${b.provider_id}`
-        }));
       } catch (error) {
         console.error('Error fetching broadcast data:', error);
-        // Continue with empty broadcast data rather than failing
         bcasts = [];
       }
       const demoFallback = (providerName) => `https://example.com/demo?provider=${encodeURIComponent(providerName)}&fixture=${encodeURIComponent(id)}`;
@@ -1980,6 +2395,14 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
         </section>`;
 
       const order = { tv:1, ott:2, radio:3 };
+      const providerClass = (name) => {
+        const n = (name||'').toLowerCase();
+        if (n.includes('sky')) return 'btn-sky';
+        if (n.includes('tnt')) return 'btn-tnt';
+        if (n.includes('bbc')) return 'btn-bbc';
+        if (n.includes('prime') || n.includes('amazon')) return 'btn-prime';
+        return '';
+      };
       bcasts.sort((a,b)=> (order[a.stream_type]||9)-(order[b.stream_type]||9));
       const provBox = document.getElementById("providers");
       provBox.className = bcasts.length ? 'providers-grid' : '';
@@ -1989,11 +2412,12 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
         const verify = b.verified ? `✅ Verified ${b.verified_at ?? ""}` : "Unverified";
         const affUrl = affiliatesByProv[b.provider_id] || demoFallback(providerName);
         const showBtn = (b.stream_type !== "radio");
+        const btnClass = providerClass(providerName);
         return `
           <div class=\"card\">
             <div><strong>${providerName}${channel}</strong> <span class=\"muted\">(${b.stream_type})</span></div>
             <div class=\"muted\" style=\"margin-top:4px\">${verify}</div>
-            ${showBtn ? `<a class=\"btn\" href=\"${affUrl}\" target=\"_blank\" rel=\"nofollow noopener\">Watch on ${providerName}</a>` : ``}
+            ${showBtn ? `<a class=\"btn ${btnClass}\" href=\"${affUrl}\" target=\"_blank\" rel=\"nofollow noopener\">Watch on ${providerName}</a>` : ``}
           </div>`;
       }).join("") : getBlackoutOrNoProviderMessage(bcasts, fixture.id, fixture);
     }
@@ -2004,6 +2428,9 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
       // Get competition configuration
       const competition = getCompetition(competitionSlug);
       const subnav = renderFootballSubnav(competition);
+      
+      // Show loading state while fetching clubs
+      app.innerHTML = subnav + `<div class="loading"><span class="loading-spinner"></span> Loading ${competition.name} clubs...</div>`;
       
       let teams;
       try {
@@ -2039,6 +2466,9 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
       const competition = getCompetition(competitionSlug);
       const subnav = renderFootballSubnav(competition);
       
+      // Show loading state while fetching club data
+      app.innerHTML = subnav + `<div class="loading"><span class="loading-spinner"></span> Loading club information...</div>`;
+      
       // Try to find team with fallbacks
       let team = null;
       try {
@@ -2046,6 +2476,9 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
         team = teams.find(t => t.slug === slug);
       } catch (error) {
         console.error('Failed to load team:', error);
+        const errorMsg = getErrorMessage(error, 'load club data');
+        app.innerHTML = subnav + `<div class="card"><p class="muted">${errorMsg}</p><p><a href="#/${competition.slug}/clubs">← Back to Clubs</a></p></div>`;
+        return;
       }
       
       if (!team) { 
@@ -2109,7 +2542,13 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
 
       const body = fixtures.length
         ? `<div class="club-feed">${fixtures.map((f,i)=>renderCard(f, i===0)).join('')}</div>`
-        : '<p class="muted">No upcoming fixtures.</p>';
+        : `<div class="card empty-state">
+            <div class="section">
+              <h3 style="margin: 0 0 8px; color: var(--color-muted);">No upcoming fixtures</h3>
+              <p class="muted">No upcoming matches scheduled for ${team.name}.</p>
+              <p><a href="#/${competition.slug}/fixtures" class="cardlink">View all fixtures</a></p>
+            </div>
+          </div>`;
 
       app.innerHTML = subnav + header + body;
     }
@@ -2146,6 +2585,70 @@ async function debugDataView(params, competitionSlug = 'premier-league') {
         </article>`;
     }
 
-  </script>
+    // ---- Feedback Email Functionality ----
+    function initializeFeedbackLink() {
+      const feedbackLink = document.getElementById('feedback-link');
+      if (!feedbackLink) return;
+
+      feedbackLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Get current page context
+        const currentUrl = window.location.href;
+        const currentHash = window.location.hash || '#/';
+        let currentPage = 'Home';
+        
+        // Determine current page name based on hash
+        if (currentHash.includes('/fixtures')) currentPage = 'Fixtures';
+        else if (currentHash.includes('/table')) currentPage = 'Table'; 
+        else if (currentHash.includes('/clubs')) currentPage = 'Clubs';
+        else if (currentHash.includes('/matches/') || currentHash.includes('/match')) currentPage = 'Match Details';
+        else if (currentHash.includes('/debug')) currentPage = 'Debug';
+        else if (currentHash.includes('/tv-guide')) currentPage = 'TV Guide';
+        else if (currentHash !== '#/' && currentHash !== '') currentPage = 'Other';
+        
+        // Create mailto URL with dynamic context
+        const subject = encodeURIComponent(`Site Feedback - ${currentPage}`);
+        const body = encodeURIComponent(`Page: ${currentUrl}
+
+Issue description:
+
+
+`);
+        
+        const mailtoUrl = `mailto:fixtures@kinotto.co?subject=${subject}&body=${body}`;
+        
+        // Open email client
+        window.location.href = mailtoUrl;
+      });
+    }
+
+    // Initialize feedback link when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initializeFeedbackLink);
+    } else {
+      initializeFeedbackLink();
+    }
+
+</script>
+<style>
+  .prefs-modal{ position:fixed; inset:0; display:block; }
+  .prefs-modal[hidden]{ display:none; }
+  .prefs-backdrop{ position:absolute; inset:0; background:rgba(0,0,0,.4); backdrop-filter:saturate(120%) blur(1px); }
+  .prefs-panel{ position:relative; z-index:2; max-width:720px; margin:5vh auto; background:#fff; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.2); padding:16px; }
+  .prefs-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+  .prefs-body{ display:grid; grid-template-columns:1fr; gap:12px; max-height:60vh; overflow:auto; padding-right:4px; }
+  @media(min-width:800px){ .prefs-body{ grid-template-columns:1fr 1fr; } }
+  .prefs-crests{ display:flex; flex-wrap:wrap; gap:8px; }
+  .prefs-crests .crest-btn{ display:flex; align-items:center; gap:6px; padding:6px 8px; border:1px solid #e5e7eb; border-radius:999px; background:#fff; cursor:pointer; }
+  .prefs-crests .crest-btn.active{ border-color: var(--competition-primary, #111); background: rgba(0,0,0,.03); }
+  .prefs-channels .check, .prefs-competitions .check{ display:block; margin:6px 0; }
+  .prefs-foot{ display:flex; justify-content:flex-end; gap:8px; margin-top:8px; }
+  .btn-ghost{ background:transparent; border:1px solid #e5e7eb; }
+  .btn-sky{ background:#004b9b; color:#fff; }
+  .btn-tnt{ background:#ff0050; color:#fff; }
+  .btn-bbc{ background:#111; color:#fff; }
+  .btn-prime{ background:#00a8e1; color:#fff; }
+</style>
 </body>
 </html>
