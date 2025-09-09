@@ -1,8 +1,14 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Fixture, FixturesApiParams, Provider, Team } from '../types';
 
-const supabaseUrl = 'https://nkfuzkrazehjivzmdrvt.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5rZnV6a3JhemVoaml2em1kcnZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyNjI5MzAsImV4cCI6MjA3MjgzODkzMH0.CNW1EUtcC4JWfDy-WzOIVDfv7rnXzsz1qqQyRTZVyXU';
+// Get credentials from environment variables with fallbacks
+const supabaseUrl = process.env.REACT_APP_SUPABASE_URL || 'https://nkfuzkrazehjivzmdrvt.supabase.co';
+const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5rZnV6a3JhemVoaml2em1kcnZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyNjI5MzAsImV4cCI6MjA3MjgzODkzMH0.CNW1EUtcC4JWfDy-WzOIVDfv7rnXzsz1qqQyRTZVyXU';
+
+// Log a warning if using fallback credentials
+if (!process.env.REACT_APP_SUPABASE_URL || !process.env.REACT_APP_SUPABASE_ANON_KEY) {
+  console.warn('[Supabase] Using fallback credentials. Consider setting REACT_APP_SUPABASE_URL and REACT_APP_SUPABASE_ANON_KEY in your .env file.');
+}
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
@@ -13,11 +19,11 @@ interface FixtureRow {
   venue?: string | null;
   status?: string;
   home_team_id: number;
-  home_name: string;
+  home_team: string;
   home_slug: string;
   home_crest?: string | null;
   away_team_id: number;
-  away_name: string;
+  away_team: string;
   away_slug: string;
   away_crest?: string | null;
 }
@@ -29,7 +35,6 @@ interface BroadcastRow {
 
 interface ProviderRow {
   id: number;
-  slug?: string;
   display_name?: string;
   name?: string;
   type?: string;
@@ -41,13 +46,13 @@ function mapFixtureRow(row: FixtureRow, providersByFixture: Record<number, Provi
   const mw = row.matchday ?? null;
   const home: Team = {
     id: row.home_team_id,
-    name: row.home_name,
+    name: row.home_team,
     slug: row.home_slug,
     crest: row.home_crest || null,
   };
   const away: Team = {
     id: row.away_team_id,
-    name: row.away_name,
+    name: row.away_team,
     slug: row.away_slug,
     crest: row.away_crest || null,
   };
@@ -97,34 +102,47 @@ async function getBroadcastsForFixtures(ids: number[]): Promise<BroadcastRow[]> 
 }
 
 async function getProvidersByIds(ids: number[] = []): Promise<Provider[]> {
+  let rows: ProviderRow[] | null = null;
   try {
     let query = supabase
       .from('providers')
-      .select('id,slug,display_name,type,url')
+      .select('id,display_name,name,type')
       .order('display_name', { ascending: true });
-      
+
     if (ids.length > 0) {
       query = query.in('id', ids);
     }
-    
-    const { data: rows, error } = await query;
-    
-    if (error) {
-      console.warn('[Supabase] getProvidersByIds error', error);
-      return [];
+
+    const resp = await query;
+    if (resp.error) {
+      console.warn('[Supabase] getProvidersByIds error', resp.error);
+    } else {
+      rows = resp.data as any;
     }
-    
-    return (rows || []).map((p: ProviderRow) => ({
-      id: p.slug || String(p.id),
-      name: p.display_name || p.name || 'Unknown',
-      type: p.type || 'unknown',
-      href: p.url || undefined,
-      status: 'confirmed',
-    }));
   } catch (e) {
-    console.warn('[Supabase] getProvidersByIds error', e);
-    return [];
+    console.warn('[Supabase] getProvidersByIds exception', e);
   }
+
+  const mapped = (rows || []).map((p: ProviderRow) => ({
+    id: String(p.id),
+    name: p.display_name || p.name || 'Unknown',
+    type: p.type || 'unknown',
+    href: undefined,
+    status: 'confirmed',
+  }));
+
+  // Fallbacks for common UK providers in case providers table is incomplete
+  const byId = new Map<string, Provider>(mapped.map(p => [p.id, p]));
+  const ensure = (numId: number, name: string, href: string) => {
+    const key = String(numId);
+    if (!byId.has(key) && ids.includes(numId)) {
+      byId.set(key, { id: key, name, type: 'tv', href, status: 'confirmed' });
+    }
+  };
+  ensure(1, 'Sky Sports', 'https://www.skysports.com/football/fixtures-results');
+  ensure(2, 'TNT Sports', 'https://tntsports.co.uk/football');
+
+  return Array.from(byId.values());
 }
 
 export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixture[]> {
@@ -142,8 +160,8 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
       .from('fixtures_with_teams')
       .select(`
         id,matchday,utc_kickoff,venue,status,
-        home_team_id,home_name,home_slug,home_crest,
-        away_team_id,away_name,away_slug,away_crest
+        home_team_id,home_team,home_slug,home_crest,
+        away_team_id,away_team,away_slug,away_crest
       `)
       .order('utc_kickoff', { ascending: order === 'asc' })
       .limit(limit);
@@ -176,11 +194,12 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
       const providerIds = Array.from(new Set(bcasts.map(b => b.provider_id).filter(Boolean)));
       const provs = providerIds.length ? await getProvidersByIds(providerIds) : [];
       const byPk = Object.fromEntries(provs.map(p => [p.id, p]));
-      
+
       for (const b of bcasts) {
         const fId = b.fixture_id;
-        const p = byPk[String(b.provider_id)];
-        const entry = p ? { ...p } : null;
+        const key = String(b.provider_id);
+        const p = byPk[key];
+        const entry = p ? { ...p } : undefined;
         if (!providersByFixture[fId]) providersByFixture[fId] = [];
         if (entry) providersByFixture[fId].push(entry);
       }
@@ -212,8 +231,8 @@ export async function getFixtureById(id: number): Promise<Fixture | undefined> {
       .from('fixtures_with_teams')
       .select(`
         id,matchday,utc_kickoff,venue,status,
-        home_team_id,home_name,home_slug,home_crest,
-        away_team_id,away_name,away_slug,away_crest
+        home_team_id,home_team,home_slug,home_crest,
+        away_team_id,away_team,away_slug,away_crest
       `)
       .eq('id', id)
       .limit(1);
@@ -230,7 +249,7 @@ export async function getFixtureById(id: number): Promise<Fixture | undefined> {
     const providerIds = Array.from(new Set(bcasts.map(b => b.provider_id).filter(Boolean)));
     const provs = providerIds.length ? await getProvidersByIds(providerIds) : [];
     const byPk = Object.fromEntries(provs.map(p => [p.id, p]));
-    
+
     const providersByFixture: Record<number, Provider[]> = {};
     providersByFixture[row.id] = bcasts.map(b => {
       const p = byPk[String(b.provider_id)];
@@ -271,8 +290,8 @@ export async function getAdminFixtures(competitionId: number = 1): Promise<Admin
       .from('fixtures_with_teams')
       .select(`
         id,matchday,utc_kickoff,venue,status,
-        home_team_id,home_name,home_slug,home_crest,
-        away_team_id,away_name,away_slug,away_crest
+        home_team_id,home_team,home_slug,home_crest,
+        away_team_id,away_team,away_slug,away_crest
       `)
       .eq('competition_id', competitionId)
       .gte('utc_kickoff', currentSeasonStart)
@@ -397,7 +416,8 @@ export async function getTeams(): Promise<Team[]> {
   try {
     const { data, error } = await supabase
       .from('teams')
-      .select('id,name,slug,crest')
+      .select('id,name,slug,crest_url')
+      .eq('is_active', true)
       .order('name', { ascending: true });
 
     if (error) {
@@ -408,7 +428,7 @@ export async function getTeams(): Promise<Team[]> {
       id: t.id,
       name: t.name,
       slug: t.slug,
-      crest: t.crest ?? null,
+      crest: t.crest_url ?? null,
     }));
   } catch (e) {
     console.warn('[Supabase] getTeams error', e);

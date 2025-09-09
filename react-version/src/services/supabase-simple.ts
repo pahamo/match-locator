@@ -1,9 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = 'https://nkfuzkrazehjivzmdrvt.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5rZnV6a3JhemVoaml2em1kcnZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcyNjI5MzAsImV4cCI6MjA3MjgzODkzMH0.CNW1EUtcC4JWfDy-WzOIVDfv7rnXzsz1qqQyRTZVyXU';
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+import { supabase } from './supabase';
 
 // Simple, minimal types
 export interface SimpleFixture {
@@ -23,7 +18,7 @@ export const SIMPLE_BROADCASTERS = [
 // Get fixtures with basic team info using simple JOINs
 export async function getSimpleFixtures(): Promise<SimpleFixture[]> {
   try {
-    console.log('[Supabase] Loading fixtures (no JOINs)...');
+    console.log('[Supabase] Loading full season fixtures (no JOINs)...');
 
     // Step 1: Load fixture basics only
     // Use a dynamic season start (Aug 1 of current season year)
@@ -35,8 +30,7 @@ export async function getSimpleFixtures(): Promise<SimpleFixture[]> {
       .from('fixtures')
       .select('id, utc_kickoff, home_team_id, away_team_id')
       .gte('utc_kickoff', seasonStartIso)
-      .order('utc_kickoff', { ascending: true })
-      .limit(20);
+      .order('utc_kickoff', { ascending: true });
 
     if (error) {
       console.error('[Supabase] Error loading fixtures:', error);
@@ -101,17 +95,35 @@ export async function saveBroadcaster(fixtureId: number, providerId: number | nu
   try {
     console.log(`[Supabase] Saving broadcaster for fixture ${fixtureId}: provider ${providerId}`);
     
-    if (!providerId) {
-      // Remove broadcaster
+    if (providerId === -1) {
+      // Blackout: remove any broadcaster and mark blackout in localStorage
+      const { error } = await supabase
+        .from('broadcasts')
+        .delete()
+        .eq('fixture_id', fixtureId);
+      if (error) throw error;
+
+      const blackoutFixtures = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
+      if (!blackoutFixtures.includes(fixtureId)) {
+        blackoutFixtures.push(fixtureId);
+        localStorage.setItem('blackoutFixtures', JSON.stringify(blackoutFixtures));
+      }
+      console.log(`[Supabase] Set blackout for fixture ${fixtureId}`);
+
+    } else if (!providerId) {
+      // Remove broadcaster and clear blackout flag
       const { error } = await supabase
         .from('broadcasts')
         .delete()
         .eq('fixture_id', fixtureId);
         
       if (error) throw error;
+      const blackoutFixtures = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
+      const updated = blackoutFixtures.filter((id: number) => id !== fixtureId);
+      localStorage.setItem('blackoutFixtures', JSON.stringify(updated));
       console.log(`[Supabase] Removed broadcaster for fixture ${fixtureId}`);
     } else {
-      // Add/update broadcaster
+      // Add/update broadcaster and clear blackout flag
       const { error } = await supabase
         .from('broadcasts')
         .upsert({
@@ -120,6 +132,9 @@ export async function saveBroadcaster(fixtureId: number, providerId: number | nu
         });
         
       if (error) throw error;
+      const blackoutFixtures = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
+      const updated = blackoutFixtures.filter((id: number) => id !== fixtureId);
+      localStorage.setItem('blackoutFixtures', JSON.stringify(updated));
       console.log(`[Supabase] Saved broadcaster for fixture ${fixtureId}`);
     }
   } catch (error) {

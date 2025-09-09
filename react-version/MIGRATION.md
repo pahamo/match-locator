@@ -43,8 +43,28 @@ providers - Sky Sports, TNT Sports, etc.
 Views Used:
 
 fixtures_with_teams - Fixtures with team data joined
-Recent Changes (beta content + admin stability)
+Recent Changes (comprehensive match day experience + fixtures management)
 
+**Latest Update (fixtures.app Branding & Unified Header)**:
+- **Complete Rebranding to fixtures.app**: Site now branded as "fixtures.app" with custom logo and consistent identity
+- **Unified Header Navigation**: Created reusable Header component used across all pages (except admin)
+- **Custom Logo Design**: SVG football icon with gradient styling and professional appearance
+- **Consistent Navigation Bar**: Right-aligned navigation menu with hover effects and proper responsive behavior
+- **Brand Identity**: Updated HTML titles, meta descriptions, manifest.json with fixtures.app branding
+- **Theme Colors**: Applied brand purple (#6366f1) throughout site with consistent color scheme
+- **Header Component Architecture**: Flexible header with logo, main title ("fixtures.app"), and optional page subtitles
+
+**Previous Update (Match Day Experience)**:
+- **Match Day Home Page**: Completely redesigned home page to show current/upcoming match day with smart date detection
+- **Comprehensive Fixtures Page**: New `/fixtures` page with advanced filtering by team, matchweek, competition, and viewing location
+- **Clubs Grid Page**: Beautiful responsive grid showing all 20 Premier League teams with official crests
+- **Database Schema Fixes**: Resolved column name mismatches (`teams.crest_url`, `fixtures_with_teams` structure)
+- **Supabase Client Consolidation**: Eliminated multiple client warnings by sharing single instance
+- **Full Navigation Integration**: Complete interconnected navigation between all pages
+- **Statistics Dashboard**: Live stats showing TV/streaming/blackout/TBD fixture counts
+- **Visual Enhancements**: Team crests, match day indicators, responsive layouts, provider type icons
+
+**Previous Updates (beta content + admin stability)**:
 - Admin page stability: fixed StrictMode double-mount loading issue, added safe cleanup for message timers, and guarded state updates after unmount
 - Admin UX: detects pending changes, inline "Save" per row, refresh confirmation when there are unsaved edits, disabled controls during save, success/error messaging
 - Simple data service: replaced PostgREST-style JOINs with a robust two-step fetch (fixtures → team names → broadcasts), added dynamic season window (Aug 1 of season year)
@@ -60,10 +80,43 @@ Admin interface for broadcast editing
 Component-based architecture
 About page, Teams index, Team pages
 Admin page resiliency improvements
+Match detail pages with full fixture information
+Match day focused home page with smart date detection
+Comprehensive fixtures page with advanced filtering
+Clubs grid with team crests and responsive layout
+Database schema fixes and Supabase client consolidation
 Known Issues
 Some database views/columns may not exist in new project
 Blackout system may need reimplementation
 Complex filtering features may need simplification
+Supabase keys currently hardcoded in services (move to env)
+
+Bug Tracker (Beta)
+
+- Provider mismatch across pages (Fixed, needs QA)
+  - Symptom: Admin/home show TNT or Sky, but match page showed "TBC".
+  - Root cause: Providers table may be incomplete or missing some columns (e.g., `url`, `slug`), causing the providers lookup to fail.
+  - Fix: Adjusted provider query to only select existing columns; added robust fallback mapping for UK providers (ID 1 = Sky, 2 = TNT) so match page shows correct broadcaster even if the table is sparse.
+  - Files: src/services/supabase.ts
+
+- Missing blackout option in Admin (Fixed, needs QA)
+  - Symptom: No way to mark fixtures as UK blackout from admin.
+  - Solution: Added "🚫 Blackout (No UK TV)" option; saving sets/removes localStorage blackout flag and clears broadcaster rows.
+  - Files: src/pages/AdminPage.tsx, src/services/supabase-simple.ts
+
+- Back to Schedule not visible on Match page (Fixed)
+  - Added clear "← Back to Schedule" link under details.
+  - File: src/pages/MatchPage.tsx
+
+- Admin stuck on Loading (Fixed)
+  - Cause: StrictMode double-mount guards blocked state updates.
+  - Fix: Reset isMounted flag on mount, cleanup timers on unmount.
+  - File: src/pages/AdminPage.tsx
+
+- Netlify config not yet set up (Pending)
+  - Added netlify.toml to build React app (base=react-version, publish=build) with SPA redirect.
+  - Next: Connect site in Netlify UI, set env vars (Supabase URL/key), trigger build.
+  - File: netlify.toml
 Supabase keys currently hardcoded in services (move to env)
 In Progress
 Stripping down to minimal working version
@@ -166,14 +219,21 @@ Database schema is stable and well-designed
 Admin interface is critical for daily operations
 Key Files:
 
+src/components/Header.tsx - Reusable header component with logo, title, and navigation
 src/services/supabase.ts - All database interactions
 src/services/supabase-simple.ts - Simple admin/home fixtures + save helpers
-src/pages/AdminPage.tsx - Broadcast data management
-src/pages/HomePage.tsx - Main fixtures display
-src/pages/TeamsPage.tsx - Club index grid
+src/pages/AdminPage.tsx - Broadcast data management (keeps original header)
+src/pages/HomePage.tsx - Main fixtures display with Header component
+src/pages/FixturesPage.tsx - Comprehensive fixtures page with filtering
+src/pages/ClubsPage.tsx - Club grid page with team crests
+src/pages/TeamsPage.tsx - Club index grid (alternative layout)
 src/pages/ClubPage.tsx - Team fixtures and viewing guide
+src/pages/MatchPage.tsx - Individual match details page
 src/pages/AboutPage.tsx - Project overview and notes
 src/types/index.ts - TypeScript definitions
+public/logo.svg - fixtures.app SVG logo icon
+public/index.html - Updated with fixtures.app branding
+public/manifest.json - PWA manifest with fixtures.app details
 Common Issues:
 
 Database view inconsistencies between environments
