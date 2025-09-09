@@ -701,10 +701,10 @@
     function getBlackoutOrNoProviderMessage(broadcasts) {
       console.log('Checking blackout for broadcasts:', broadcasts);
       
-      // Check if any broadcast has provider_id = 99 (blackout)
+      // Check if any broadcast has provider_id = -1 (blackout)
       const hasBlackout = broadcasts && broadcasts.some(b => {
         console.log('Broadcast provider_id:', b.provider_id, 'type:', typeof b.provider_id);
-        return b.provider_id == 99;
+        return b.provider_id == -1;
       });
       
       console.log('Has blackout:', hasBlackout);
@@ -721,7 +721,7 @@
       console.log('isBlackoutFixture checking:', broadcasts);
       const result = broadcasts && broadcasts.some(b => {
         console.log('Card checking provider_id:', b.provider_id, 'type:', typeof b.provider_id);
-        return b.provider_id == 99;
+        return b.provider_id == -1;
       });
       console.log('isBlackoutFixture result:', result);
       return result;
