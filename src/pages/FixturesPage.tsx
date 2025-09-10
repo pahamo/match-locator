@@ -115,12 +115,10 @@ const FixturesPage: React.FC = () => {
   if (loading) {
     return (
       <div className="fixtures-page">
-        <Header 
-          title="Premier League Fixtures"
-          subtitle="All upcoming matches with TV schedule information"
-        />
+        <Header />
         <main>
           <div className="wrap">
+            <h1 style={{ marginTop: 0 }}>Premier League Fixtures</h1>
             <div className="loading">Loading fixtures...</div>
           </div>
         </main>
@@ -131,12 +129,10 @@ const FixturesPage: React.FC = () => {
   if (error) {
     return (
       <div className="fixtures-page">
-        <Header 
-          title="Premier League Fixtures"
-          subtitle="All upcoming matches with TV schedule information"
-        />
+        <Header />
         <main>
           <div className="wrap">
+            <h1 style={{ marginTop: 0 }}>Premier League Fixtures</h1>
             <div className="error">{error}</div>
             <button onClick={loadData}>Retry</button>
           </div>
@@ -148,13 +144,11 @@ const FixturesPage: React.FC = () => {
 
   return (
     <div className="fixtures-page">
-      <Header 
-        title="Premier League Fixtures"
-        subtitle="All upcoming matches with TV schedule information"
-      />
+      <Header />
       
       <main>
         <div className="wrap">
+          <h1 style={{ marginTop: 0 }}>Premier League Fixtures</h1>
 
           {/* Filters */}
           <div 

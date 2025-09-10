@@ -27,7 +27,6 @@ const ProviderPage: React.FC = () => {
       <Header title={provider.name} subtitle="Official links and viewing options" />
       <main>
         <div className="wrap">
-          <AffiliateDisclosure position="inline" providerName={provider.name} />
 
           <section className="card" style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 12, padding: 24, boxShadow: 'var(--shadow-sm, 0 1px 3px rgba(0,0,0,.06))', marginBottom: 24 }}>
             <h2 style={{ marginTop: 0 }}>Official website</h2>
@@ -57,4 +56,3 @@ const ProviderPage: React.FC = () => {
 };
 
 export default ProviderPage;
-

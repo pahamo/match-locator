@@ -9,7 +9,7 @@ const Footer: React.FC<FooterProps> = ({ onOpenCookieSettings }) => {
     <footer aria-label="Site footer" style={{ borderTop: '1px solid #e5e7eb', background: '#fff', marginTop: 32 }}>
       <div className="wrap" style={{ display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ color: '#6b7280', fontSize: 14 }}>
-          © {new Date().getFullYear()} fixtures.app
+          © {new Date().getFullYear()} Match Locator
         </div>
         <nav aria-label="Footer navigation" style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
           <a href="/" style={{ color: '#6366f1' }}>Home</a>
@@ -26,4 +26,3 @@ const Footer: React.FC<FooterProps> = ({ onOpenCookieSettings }) => {
 };
 
 export default Footer;
-
