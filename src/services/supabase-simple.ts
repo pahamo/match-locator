@@ -31,7 +31,8 @@ export async function getSimpleFixtures(): Promise<SimpleFixture[]> {
 
     const { data: fixtures, error } = await supabase
       .from('fixtures_with_teams')
-      .select('id, utc_kickoff, home_team_id, away_team_id, home_team, away_team, home_crest, away_crest, matchday')
+      .select('id, utc_kickoff, home_team_id, away_team_id, home_team, away_team, home_crest, away_crest, matchday, competition_id')
+      .eq('competition_id', 1) // Only Premier League fixtures
       .gte('utc_kickoff', seasonStartIso)
       .order('utc_kickoff', { ascending: true });
 

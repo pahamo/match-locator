@@ -152,7 +152,7 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
       dateTo,
       limit = 100,
       order = 'asc',
-      competitionId
+      competitionId = 1 // Default to Premier League
     } = params;
 
     let query = supabase
