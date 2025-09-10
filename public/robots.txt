@@ -1,3 +1,4 @@
 # https://www.robotstxt.org/robotstxt.html
+# TEMP: Block all crawling until the site is ready to launch.
 User-agent: *
-Disallow:
+Disallow: /
