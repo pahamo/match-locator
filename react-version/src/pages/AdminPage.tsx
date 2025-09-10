@@ -7,6 +7,7 @@ import {
 } from '../services/supabase-simple';
 
 type FilterStatus = '' | 'confirmed' | 'tbd';
+type TimeFilter = '' | 'upcoming' | 'all';
 
 const AdminPage: React.FC = () => {
   const [fixtures, setFixtures] = useState<SimpleFixture[]>([]);
@@ -18,6 +19,8 @@ const AdminPage: React.FC = () => {
   const [savingFixtures, setSavingFixtures] = useState<Set<number>>(new Set());
   const [statusFilter, setStatusFilter] = useState<FilterStatus>('');
   const [monthFilter, setMonthFilter] = useState<string>('');
+  const [matchweekFilter, setMatchweekFilter] = useState<string>('');
+  const [timeFilter, setTimeFilter] = useState<TimeFilter>('upcoming');
   const messageTimeoutRef = useRef<number | null>(null);
   const isMountedRef = useRef(true);
 
@@ -47,8 +50,26 @@ const AdminPage: React.FC = () => {
   useEffect(() => {
     let filtered = [...fixtures];
 
+    // Time filter (default to upcoming)
+    if (timeFilter === 'upcoming') {
+      const now = new Date();
+      filtered = filtered.filter(f => new Date(f.kickoff_utc) > now);
+    }
+
     if (monthFilter) {
       filtered = filtered.filter(f => f.kickoff_utc.startsWith(monthFilter));
+    }
+
+    if (matchweekFilter) {
+      const matchweek = parseInt(matchweekFilter, 10);
+      if (!isNaN(matchweek)) {
+        // Calculate matchweek based on chronological fixture order (10 fixtures per matchweek)
+        filtered = filtered.filter(f => {
+          const originalIndex = fixtures.findIndex(fixture => fixture.id === f.id);
+          const calculatedMatchweek = Math.ceil((originalIndex + 1) / 10);
+          return calculatedMatchweek === matchweek;
+        });
+      }
     }
 
     if (statusFilter === 'confirmed') {
@@ -58,7 +79,7 @@ const AdminPage: React.FC = () => {
     }
 
     setFilteredFixtures(filtered);
-  }, [fixtures, statusFilter, monthFilter]);
+  }, [fixtures, statusFilter, monthFilter, matchweekFilter, timeFilter]);
 
   const loadFixtures = async (confirmIfPending: boolean = false) => {
     if (confirmIfPending && pendingChanges.size > 0) {
@@ -194,6 +215,69 @@ const AdminPage: React.FC = () => {
     }
   };
 
+  const getMatchweekOptions = () => {
+    // Calculate total matchweeks based on fixture count (38 matchweeks in PL season)
+    const totalFixtures = fixtures.length;
+    const estimatedMatchweeks = Math.min(38, Math.ceil(totalFixtures / 10));
+    return Array.from({ length: estimatedMatchweeks }, (_, i) => i + 1);
+  };
+
+  const handleSaveAll = async () => {
+    if (pendingChanges.size === 0) return;
+    
+    const changeEntries = Array.from(pendingChanges.entries());
+    let successCount = 0;
+    let errorCount = 0;
+    
+    // Set all pending fixtures as saving
+    setSavingFixtures(prev => {
+      const newSet = new Set(prev);
+      changeEntries.forEach(([fixtureId]) => newSet.add(fixtureId));
+      return newSet;
+    });
+    
+    // Process all changes
+    for (const [fixtureId, providerId] of changeEntries) {
+      try {
+        await saveBroadcaster(fixtureId, providerId);
+        successCount++;
+        
+        // Update local fixture data
+        if (isMountedRef.current) {
+          setFixtures(prev => prev.map(f => {
+            if (f.id === fixtureId) {
+              const broadcaster = (providerId && providerId > 0)
+                ? SIMPLE_BROADCASTERS.find(b => b.id === providerId)?.name
+                : undefined;
+              return { ...f, broadcaster };
+            }
+            return f;
+          }));
+        }
+      } catch (err) {
+        console.error(`Failed to save fixture ${fixtureId}:`, err);
+        errorCount++;
+      }
+    }
+    
+    if (isMountedRef.current) {
+      // Clear all pending changes after processing
+      setPendingChanges(new Map());
+      
+      // Clear saving state
+      setSavingFixtures(new Set());
+      
+      // Show summary message
+      if (errorCount === 0) {
+        showMessage(`Successfully saved all ${successCount} changes`, 'success');
+      } else if (successCount === 0) {
+        showMessage(`Failed to save ${errorCount} changes`, 'error');
+      } else {
+        showMessage(`Saved ${successCount} changes, ${errorCount} failed`, 'error');
+      }
+    }
+  };
+
   const formatDateTime = (utcKickoff: string) => {
     const date = new Date(utcKickoff);
     return date.toLocaleDateString('en-GB', {
@@ -281,6 +365,15 @@ const AdminPage: React.FC = () => {
         {/* Filter Bar */}
         <div className="filter-bar">
           <select 
+            value={timeFilter} 
+            onChange={(e) => setTimeFilter(e.target.value as TimeFilter)}
+            className="filter-select"
+          >
+            <option value="upcoming">Upcoming fixtures</option>
+            <option value="all">All fixtures</option>
+          </select>
+
+          <select 
             value={monthFilter} 
             onChange={(e) => setMonthFilter(e.target.value)}
             className="filter-select"
@@ -289,6 +382,19 @@ const AdminPage: React.FC = () => {
             {getMonthOptions().map(month => (
               <option key={month} value={month}>
                 {new Date(month + '-01').toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })}
+              </option>
+            ))}
+          </select>
+
+          <select 
+            value={matchweekFilter} 
+            onChange={(e) => setMatchweekFilter(e.target.value)}
+            className="filter-select"
+          >
+            <option value="">All matchweeks</option>
+            {getMatchweekOptions().map(week => (
+              <option key={week} value={week}>
+                Matchweek {week}
               </option>
             ))}
           </select>
@@ -306,6 +412,12 @@ const AdminPage: React.FC = () => {
           <button onClick={() => loadFixtures(true)} className="save-btn">
             🔄 Refresh
           </button>
+
+          {pendingChanges.size > 1 && (
+            <button onClick={handleSaveAll} className="save-btn save-all-btn">
+              💾 Save All ({pendingChanges.size})
+            </button>
+          )}
 
           <div>
             <strong>Showing: {filteredFixtures.length} of {fixtures.length}</strong>
