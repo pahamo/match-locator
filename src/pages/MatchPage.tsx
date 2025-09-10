@@ -5,6 +5,7 @@ import type { Fixture } from '../types';
 import Header from '../components/Header';
 import StructuredData from '../components/StructuredData';
 import { parseMatchSlug, generateMatchMeta, updateDocumentMeta } from '../utils/seo';
+import AffiliateDisclosure, { withAffiliateAriaLabel } from '../components/legal/AffiliateDisclosure';
 
 const MatchPage: React.FC = () => {
   const { matchSlug, matchId, id } = useParams<{ matchSlug?: string; matchId?: string; id?: string }>();
@@ -204,6 +205,9 @@ const MatchPage: React.FC = () => {
             )}
 
             {/* Broadcasters */}
+            {/* Inline affiliate disclosure shown above CTAs */}
+            <AffiliateDisclosure position="inline" />
+
             <div className="broadcaster-info">
               {fixture.blackout?.is_blackout ? (
                 <div className="blackout">
@@ -229,7 +233,8 @@ const MatchPage: React.FC = () => {
                           key={provider.id}
                           href={link}
                           target="_blank"
-                          rel="noopener noreferrer"
+                          rel="noreferrer"
+                          {...withAffiliateAriaLabel(provider.name)}
                           className="provider"
                           style={{
                             padding: '8px 16px',
@@ -277,6 +282,9 @@ const MatchPage: React.FC = () => {
               ← Back to Schedule
             </a>
           </div>
+
+          {/* Footer affiliate disclosure, visible near end of content */}
+          <AffiliateDisclosure position="footer" />
         </div>
       </main>
     </div>
