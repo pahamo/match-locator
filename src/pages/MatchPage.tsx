@@ -5,6 +5,7 @@ import type { Fixture } from '../types';
 import Header from '../components/Header';
 import StructuredData from '../components/StructuredData';
 import { parseMatchSlug, generateMatchMeta, updateDocumentMeta } from '../utils/seo';
+import AffiliateDisclosure, { withAffiliateAriaLabel } from '../components/legal/AffiliateDisclosure';
 
 const MatchPage: React.FC = () => {
   const { matchSlug, matchId, id } = useParams<{ matchSlug?: string; matchId?: string; id?: string }>();
@@ -221,6 +222,8 @@ const MatchPage: React.FC = () => {
                   <div style={{ fontWeight: '600', marginBottom: '8px', color: '#059669' }}>
                     📺 Available on:
                   </div>
+                  {/* Inline disclosure above CTAs */}
+                  <AffiliateDisclosure position="inline" />
                   <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                     {fixture.providers_uk.map((provider) => {
                       const link = getBroadcasterLink(provider.name, provider.href);
@@ -229,7 +232,7 @@ const MatchPage: React.FC = () => {
                           key={provider.id}
                           href={link}
                           target="_blank"
-                          rel="noopener noreferrer"
+                          {...withAffiliateAriaLabel(provider.name)}
                           className="provider"
                           style={{
                             padding: '8px 16px',
@@ -277,6 +280,8 @@ const MatchPage: React.FC = () => {
               ← Back to Schedule
             </a>
           </div>
+          {/* Footer disclosure */}
+          <AffiliateDisclosure position="footer" />
         </div>
       </main>
     </div>
