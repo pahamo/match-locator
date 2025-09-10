@@ -10,12 +10,14 @@ import FixturesPage from './pages/FixturesPage';
 import './App.css';
 import NotFoundPage from './pages/NotFoundPage';
 import ProviderPage from './pages/ProviderPage';
+import CookieSettingsModal from './components/cookies/CookieSettingsModal';
 import Footer from './components/Footer';
 import PrivacyPolicy from './pages/legal/PrivacyPolicy';
 import CookiePolicy from './pages/legal/CookiePolicy';
 import Terms from './pages/legal/Terms';
 
 function App() {
+  const [cookieOpen, setCookieOpen] = React.useState(false);
   return (
     <Router>
       <div className="App">
@@ -41,11 +43,8 @@ function App() {
           <Route path="/legal/terms" element={<Terms />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
-        <Footer onOpenCookieSettings={() => {
-          // Stub: replace with cookie preference manager
-          // eslint-disable-next-line no-alert
-          alert('Cookie settings coming soon.');
-        }} />
+        <Footer onOpenCookieSettings={() => setCookieOpen(true)} />
+        <CookieSettingsModal open={cookieOpen} onClose={() => setCookieOpen(false)} />
       </div>
     </Router>
   );
