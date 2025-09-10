@@ -98,21 +98,6 @@ const FixturesPage: React.FC = () => {
     return Array.from(competitions).sort();
   };
 
-  const getStats = () => {
-    const total = filteredFixtures.length;
-    const withTV = filteredFixtures.filter(f => 
-      f.providers_uk.some(p => p.type === 'tv')
-    ).length;
-    const withStreaming = filteredFixtures.filter(f => 
-      f.providers_uk.some(p => p.type === 'streaming')
-    ).length;
-    const blackout = filteredFixtures.filter(f => f.blackout?.is_blackout === true).length;
-    const tbd = filteredFixtures.filter(f => 
-      f.providers_uk.length === 0 && !f.blackout?.is_blackout
-    ).length;
-
-    return { total, withTV, withStreaming, blackout, tbd };
-  };
 
   const formatDateTime = (kickoffUtc: string) => {
     const date = new Date(kickoffUtc);
@@ -186,7 +171,6 @@ const FixturesPage: React.FC = () => {
     );
   }
 
-  const stats = getStats();
 
   return (
     <div className="fixtures-page">
@@ -197,39 +181,6 @@ const FixturesPage: React.FC = () => {
       
       <main>
         <div className="wrap">
-          {/* Stats Bar */}
-          <div 
-            style={{ 
-              display: 'grid', 
-              gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))', 
-              gap: '12px', 
-              marginBottom: '24px',
-              padding: '16px',
-              background: '#f8fafc',
-              borderRadius: '8px'
-            }}
-          >
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#1e293b' }}>{stats.total}</div>
-              <div style={{ fontSize: '12px', color: '#64748b' }}>Total</div>
-            </div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#059669' }}>{stats.withTV}</div>
-              <div style={{ fontSize: '12px', color: '#64748b' }}>TV</div>
-            </div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#7c3aed' }}>{stats.withStreaming}</div>
-              <div style={{ fontSize: '12px', color: '#64748b' }}>Stream</div>
-            </div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#dc2626' }}>{stats.blackout}</div>
-              <div style={{ fontSize: '12px', color: '#64748b' }}>Blackout</div>
-            </div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#d97706' }}>{stats.tbd}</div>
-              <div style={{ fontSize: '12px', color: '#64748b' }}>TBD</div>
-            </div>
-          </div>
 
           {/* Filters */}
           <div 

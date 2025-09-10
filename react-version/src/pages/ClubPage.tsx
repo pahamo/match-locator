@@ -17,7 +17,12 @@ const ClubPage: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-        const data = await getFixtures({ teamSlug: teamSlug, limit: 50, order: 'asc' });
+        const data = await getFixtures({ 
+          teamSlug: teamSlug, 
+          dateFrom: new Date().toISOString(),
+          limit: 500, 
+          order: 'asc' 
+        });
         if (!ignore) setFixtures(data);
       } catch (e) {
         if (!ignore) setError('Failed to load team fixtures. Please try again later.');
