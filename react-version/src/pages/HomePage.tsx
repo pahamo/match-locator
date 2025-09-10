@@ -223,11 +223,25 @@ const HomePage: React.FC = () => {
                 </div>
                 <div className="fixture-teams">
                   <div className="team">
+                    {fixture.home_crest && (
+                      <img 
+                        src={fixture.home_crest} 
+                        alt={`${fixture.home_team} crest`}
+                        style={{ width: '20px', height: '20px', marginRight: '8px', objectFit: 'contain' }}
+                      />
+                    )}
                     <span className="team-name">{fixture.home_team}</span>
                   </div>
                   <div className="vs">vs</div>
                   <div className="team away-team">
                     <span className="team-name">{fixture.away_team}</span>
+                    {fixture.away_crest && (
+                      <img 
+                        src={fixture.away_crest} 
+                        alt={`${fixture.away_team} crest`}
+                        style={{ width: '20px', height: '20px', marginLeft: '8px', objectFit: 'contain' }}
+                      />
+                    )}
                   </div>
                 </div>
                 <div className="broadcaster-info">

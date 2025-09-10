@@ -6,6 +6,8 @@ export interface SimpleFixture {
   kickoff_utc: string;
   home_team: string;
   away_team: string;
+  home_crest?: string;
+  away_crest?: string;
   broadcaster?: string;
   matchweek?: number;
 }
@@ -29,7 +31,7 @@ export async function getSimpleFixtures(): Promise<SimpleFixture[]> {
 
     const { data: fixtures, error } = await supabase
       .from('fixtures_with_teams')
-      .select('id, utc_kickoff, home_team_id, away_team_id, home_team, away_team, matchday')
+      .select('id, utc_kickoff, home_team_id, away_team_id, home_team, away_team, home_crest, away_crest, matchday')
       .gte('utc_kickoff', seasonStartIso)
       .order('utc_kickoff', { ascending: true });
 
@@ -62,6 +64,8 @@ export async function getSimpleFixtures(): Promise<SimpleFixture[]> {
       kickoff_utc: fixture.utc_kickoff,
       home_team: fixture.home_team || 'Unknown',
       away_team: fixture.away_team || 'Unknown',
+      home_crest: fixture.home_crest || undefined,
+      away_crest: fixture.away_crest || undefined,
       matchweek: fixture.matchday || undefined,
       broadcaster: SIMPLE_BROADCASTERS.find(b => b.id === broadcastLookup[fixture.id])?.name || undefined,
     }));
