@@ -124,9 +124,16 @@ export async function saveBroadcaster(fixtureId: number, providerId: number | nu
       console.log(`[Supabase] Removed broadcaster for fixture ${fixtureId}`);
     } else {
       // Add/update broadcaster and clear blackout flag
+      // First delete any existing broadcasts for this fixture to avoid conflicts
+      await supabase
+        .from('broadcasts')
+        .delete()
+        .eq('fixture_id', fixtureId);
+
+      // Then insert the new broadcast
       const { error } = await supabase
         .from('broadcasts')
-        .upsert({
+        .insert({
           fixture_id: fixtureId,
           provider_id: providerId
         });
