@@ -63,12 +63,8 @@ const AdminPage: React.FC = () => {
     if (matchweekFilter) {
       const matchweek = parseInt(matchweekFilter, 10);
       if (!isNaN(matchweek)) {
-        // Calculate matchweek based on chronological fixture order (10 fixtures per matchweek)
-        filtered = filtered.filter(f => {
-          const originalIndex = fixtures.findIndex(fixture => fixture.id === f.id);
-          const calculatedMatchweek = Math.ceil((originalIndex + 1) / 10);
-          return calculatedMatchweek === matchweek;
-        });
+        // Use actual matchweek data from database
+        filtered = filtered.filter(f => f.matchweek === matchweek);
       }
     }
 
@@ -216,10 +212,12 @@ const AdminPage: React.FC = () => {
   };
 
   const getMatchweekOptions = () => {
-    // Calculate total matchweeks based on fixture count (38 matchweeks in PL season)
-    const totalFixtures = fixtures.length;
-    const estimatedMatchweeks = Math.min(38, Math.ceil(totalFixtures / 10));
-    return Array.from({ length: estimatedMatchweeks }, (_, i) => i + 1);
+    // Get actual matchweeks from fixture data
+    const matchweeks = new Set<number>();
+    fixtures.forEach(f => {
+      if (f.matchweek) matchweeks.add(f.matchweek);
+    });
+    return Array.from(matchweeks).sort((a, b) => a - b);
   };
 
   const handleSaveAll = async () => {
@@ -458,6 +456,11 @@ const AdminPage: React.FC = () => {
                     </td>
                     <td className="match-info">
                       <div>{fixture.home_team} vs {fixture.away_team}</div>
+                      {fixture.matchweek && (
+                        <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '2px' }}>
+                          MW {fixture.matchweek}
+                        </div>
+                      )}
                     </td>
                     <td>
                       <div className="broadcast-status">

@@ -7,6 +7,7 @@ export interface SimpleFixture {
   home_team: string;
   away_team: string;
   broadcaster?: string;
+  matchweek?: number;
 }
 
 // Only Sky Sports and TNT Sports for simplicity
@@ -27,8 +28,8 @@ export async function getSimpleFixtures(): Promise<SimpleFixture[]> {
     const seasonStartIso = `${seasonYear}-08-01T00:00:00.000Z`;
 
     const { data: fixtures, error } = await supabase
-      .from('fixtures')
-      .select('id, utc_kickoff, home_team_id, away_team_id')
+      .from('fixtures_with_teams')
+      .select('id, utc_kickoff, home_team_id, away_team_id, home_team, away_team, matchday')
       .gte('utc_kickoff', seasonStartIso)
       .order('utc_kickoff', { ascending: true });
 
@@ -41,28 +42,7 @@ export async function getSimpleFixtures(): Promise<SimpleFixture[]> {
       return [];
     }
 
-    // Step 2: Load team names in one query
-    const teamIds = Array.from(
-      new Set([
-        ...fixtures.map((f: any) => f.home_team_id),
-        ...fixtures.map((f: any) => f.away_team_id),
-      ].filter(Boolean))
-    );
-
-    let teamNameById: Record<number, string> = {};
-    if (teamIds.length > 0) {
-      const { data: teams, error: teamError } = await supabase
-        .from('teams')
-        .select('id, name')
-        .in('id', teamIds);
-      if (teamError) {
-        console.warn('[Supabase] Error loading teams:', teamError);
-      } else {
-        (teams || []).forEach((t: any) => {
-          teamNameById[t.id] = t.name;
-        });
-      }
-    }
+    // Team names are now included directly from fixtures_with_teams view
 
     // Step 3: Load broadcasts for these fixtures
     const fixtureIds = fixtures.map((f: any) => f.id);
@@ -80,8 +60,9 @@ export async function getSimpleFixtures(): Promise<SimpleFixture[]> {
     return fixtures.map((fixture: any) => ({
       id: fixture.id,
       kickoff_utc: fixture.utc_kickoff,
-      home_team: teamNameById[fixture.home_team_id] || 'Unknown',
-      away_team: teamNameById[fixture.away_team_id] || 'Unknown',
+      home_team: fixture.home_team || 'Unknown',
+      away_team: fixture.away_team || 'Unknown',
+      matchweek: fixture.matchday || undefined,
       broadcaster: SIMPLE_BROADCASTERS.find(b => b.id === broadcastLookup[fixture.id])?.name || undefined,
     }));
   } catch (error) {
