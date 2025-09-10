@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { getFixtures } from '../services/supabase';
 import type { Fixture } from '../types';
 import Header from '../components/Header';
@@ -119,8 +119,8 @@ const ClubPage: React.FC = () => {
                         <div className="fixture-venue">{fx.venue}</div>
                       )}
                       <div style={{ marginTop: '12px', textAlign: 'right' }}>
-                        <a 
-                          href={generateMatchUrl(fx)} 
+                        <Link 
+                          to={generateMatchUrl(fx)} 
                           style={{ 
                             color: '#6366f1', 
                             textDecoration: 'underline', 
@@ -129,7 +129,7 @@ const ClubPage: React.FC = () => {
                           }}
                         >
                           Details →
-                        </a>
+                        </Link>
                       </div>
                     </div>
                   ))

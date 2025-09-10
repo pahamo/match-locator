@@ -572,18 +572,76 @@ textarea:focus {
   }
   
   .fixture-teams {
-    flex-direction: column;
-    gap: var(--spacing-sm);
-    text-align: center;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(4px, 1vw, 8px);
+    flex-wrap: nowrap;
+  }
+  
+  .team {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: clamp(4px, 1vw, 6px);
   }
   
   .away-team {
-    justify-content: center;
-    text-align: center;
+    justify-content: flex-end;
+    flex-direction: row-reverse;
   }
   
   .vs {
-    order: -1;
+    flex-shrink: 0;
+    font-size: clamp(12px, 3vw, 14px);
+    font-weight: 600;
+    color: var(--color-muted);
+    min-width: 20px;
+    text-align: center;
+  }
+  
+  .team-name {
+    font-size: clamp(13px, 3.5vw, 14px);
+    font-weight: 500;
+    line-height: 1.2;
+  }
+  
+  /* Bigger crests on mobile */
+  .fixture-card img[alt*="crest"],
+  .match-page img[alt*="crest"] {
+    width: clamp(24px, 6vw, 28px) !important;
+    height: clamp(24px, 6vw, 28px) !important;
+    object-fit: contain;
+  }
+  
+  /* Match page mobile improvements */
+  .match-page .fixture-teams {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: clamp(8px, 2vw, 12px);
+    margin-bottom: 16px;
+  }
+  
+  .match-page .team {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: clamp(6px, 2vw, 8px);
+  }
+  
+  .match-page .away-team {
+    justify-content: flex-end;
+    flex-direction: row-reverse;
+  }
+  
+  .match-page .vs {
+    flex-shrink: 0;
+    font-size: clamp(14px, 4vw, 16px);
+    font-weight: 600;
+    color: var(--color-muted);
+    min-width: 24px;
+    text-align: center;
   }
 
   /* Admin responsive */
@@ -616,5 +674,25 @@ textarea:focus {
 
   .broadcast-select {
     min-width: 100%;
+  }
+
+  /* Mobile filter display logic */
+  .mobile-filter-trigger {
+    display: block !important;
+  }
+
+  .desktop-filters {
+    display: none !important;
+  }
+}
+
+/* Desktop filter display logic */
+@media (min-width: 769px) {
+  .mobile-filter-trigger {
+    display: none !important;
+  }
+
+  .desktop-filters {
+    display: grid !important;
   }
 }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { getSimpleFixtures, type SimpleFixture } from '../services/supabase-simple';
 import Header from '../components/Header';
 import StructuredData from '../components/StructuredData';
@@ -270,8 +271,8 @@ const HomePage: React.FC = () => {
                   )}
                 </div>
                 <div style={{ marginTop: '12px', textAlign: 'right' }}>
-                  <a 
-                    href={generateSimpleMatchUrl(fixture)} 
+                  <Link 
+                    to={generateSimpleMatchUrl(fixture)} 
                     style={{ 
                       color: '#6366f1', 
                       textDecoration: 'underline', 
@@ -280,7 +281,7 @@ const HomePage: React.FC = () => {
                     }}
                   >
                     Details →
-                  </a>
+                  </Link>
                 </div>
               </div>
             ))}

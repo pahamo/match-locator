@@ -144,32 +144,6 @@ const Header: React.FC<HeaderProps> = ({
         >
           About
         </a>
-        <a 
-          href="/admin" 
-          style={{ 
-            color: '#64748b', 
-            textDecoration: 'none', 
-            fontSize: 'clamp(12px, 3vw, 14px)',
-            fontWeight: '400',
-            padding: 'clamp(8px, 2vw, 10px) clamp(10px, 2.5vw, 12px)',
-            borderRadius: '4px',
-            border: '1px solid #e2e8f0',
-            transition: 'all 0.2s',
-            minHeight: '44px',
-            display: 'flex',
-            alignItems: 'center'
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.backgroundColor = '#f1f5f9';
-            e.currentTarget.style.borderColor = '#cbd5e1';
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.backgroundColor = 'transparent';
-            e.currentTarget.style.borderColor = '#e2e8f0';
-          }}
-        >
-          Admin
-        </a>
       </nav>
     </header>
   );

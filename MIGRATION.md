@@ -1,298 +1,90 @@
-React Migration Documentation
-Overview
-This documents the migration from a single-page application (SPA) to React for the Football Listings project. The migration addresses reliability issues with AI-assisted development in the original hash-based SPA architecture.
+# Match Locator Development Documentation
 
-Project Structure
-football-listings/
-├── [original SPA files]     # Original working version (kept as backup)
-└── react-version/           # New React application
-    ├── src/
-    │   ├── components/       # Reusable React components
-    │   ├── pages/           # Page-level components    
-    │   ├── services/        # API and data services
-    │   ├── types/           # TypeScript type definitions
-    │   └── utils/           # Helper functions
-    ├── package.json
-    └── README.md
-Why We Migrated
-Primary Issue: The single-file SPA architecture became unreliable for AI-assisted development
+## Project Overview
+React + TypeScript application for UK Premier League TV schedule, deployed at https://matchlocator.com
 
-Changes to one feature frequently broke unrelated functionality
-Hash-based routing was fragile and error-prone
-Manual DOM manipulation led to state management issues
-No isolation between features made debugging difficult
-Solution: React provides:
+## Database Architecture
+**Backend**: Supabase
 
-Component isolation (changes contained within components)
-Predictable patterns that AI tools understand better
-Type safety with TypeScript
-Proper state management
-Standard routing with React Router
-Database Architecture
-Backend: Supabase (unchanged)
+**Key Tables**:
+- `fixtures` - Match data
+- `teams` - Team information  
+- `broadcasts` - Broadcaster assignments
+- `providers` - Sky Sports, TNT Sports, etc.
 
-Same database schema and data
-Same API endpoints
-Admin workflow preserved
-Key Tables:
+**Views Used**:
+- `fixtures_with_teams` - Fixtures with team data joined
 
-fixtures - Match data
-teams - Team information
-broadcasts - Broadcaster assignments
-providers - Sky Sports, TNT Sports, etc.
-Views Used:
+## Development Workflow
 
-fixtures_with_teams - Fixtures with team data joined
-Recent Changes (comprehensive match day experience + fixtures management)
-
-**Latest Update (fixtures.app Branding & Unified Header)**:
-- **Complete Rebranding to fixtures.app**: Site now branded as "fixtures.app" with custom logo and consistent identity
-- **Unified Header Navigation**: Created reusable Header component used across all pages (except admin)
-- **Custom Logo Design**: SVG football icon with gradient styling and professional appearance
-- **Consistent Navigation Bar**: Right-aligned navigation menu with hover effects and proper responsive behavior
-- **Brand Identity**: Updated HTML titles, meta descriptions, manifest.json with fixtures.app branding
-- **Theme Colors**: Applied brand purple (#6366f1) throughout site with consistent color scheme
-- **Header Component Architecture**: Flexible header with logo, main title ("fixtures.app"), and optional page subtitles
-
-**Previous Update (Match Day Experience)**:
-- **Match Day Home Page**: Completely redesigned home page to show current/upcoming match day with smart date detection
-- **Comprehensive Fixtures Page**: New `/fixtures` page with advanced filtering by team, matchweek, competition, and viewing location
-- **Clubs Grid Page**: Beautiful responsive grid showing all 20 Premier League teams with official crests
-- **Database Schema Fixes**: Resolved column name mismatches (`teams.crest_url`, `fixtures_with_teams` structure)
-- **Supabase Client Consolidation**: Eliminated multiple client warnings by sharing single instance
-- **Full Navigation Integration**: Complete interconnected navigation between all pages
-- **Statistics Dashboard**: Live stats showing TV/streaming/blackout/TBD fixture counts
-- **Visual Enhancements**: Team crests, match day indicators, responsive layouts, provider type icons
-
-**Previous Updates (beta content + admin stability)**:
-- Admin page stability: fixed StrictMode double-mount loading issue, added safe cleanup for message timers, and guarded state updates after unmount
-- Admin UX: detects pending changes, inline "Save" per row, refresh confirmation when there are unsaved edits, disabled controls during save, success/error messaging
-- Simple data service: replaced PostgREST-style JOINs with a robust two-step fetch (fixtures → team names → broadcasts), added dynamic season window (Aug 1 of season year)
-- New pages: About page with project overview; Teams index grid; Team page with upcoming fixtures and a simple "How to watch" section
-- Routing updates: added routes for `/clubs` and `/clubs/:slug`; legacy `/club/:clubId` still supported
-- Navigation: added header links on the homepage (Clubs, About, Admin)
-Migration Status
-Completed
-React project setup with TypeScript
-Supabase connection and API services
-Basic fixtures display
-Admin interface for broadcast editing
-Component-based architecture
-About page, Teams index, Team pages
-Admin page resiliency improvements
-Match detail pages with full fixture information
-Match day focused home page with smart date detection
-Comprehensive fixtures page with advanced filtering
-Clubs grid with team crests and responsive layout
-Database schema fixes and Supabase client consolidation
-Known Issues
-Some database views/columns may not exist in new project
-Blackout system may need reimplementation
-Complex filtering features may need simplification
-Supabase env now required in services; inline fallbacks removed
-
-Bug Tracker (Beta)
-
-- Provider mismatch across pages (Fixed, verified)
-  - Symptom: Admin/home show TNT or Sky, but match page showed "TBC".
-  - Root cause: Providers table may be incomplete or missing some columns (e.g., `url`, `slug`), causing the providers lookup to fail.
-  - Fix: Adjusted provider query to only select existing columns; added robust fallback mapping for UK providers (ID 1 = Sky, 2 = TNT) so match page shows correct broadcaster even if the table is sparse.
-  - Files: src/services/supabase.ts
-
-- Missing blackout option in Admin (Fixed, verified)
-  - Symptom: No way to mark fixtures as UK blackout from admin.
-  - Solution: Added "🚫 Blackout (No UK TV)" option; saving sets/removes localStorage blackout flag and clears broadcaster rows.
-  - Files: src/pages/AdminPage.tsx, src/services/supabase-simple.ts
-
-- Back to Schedule not visible on Match page (Fixed)
-  - Added clear "← Back to Schedule" link under details.
-  - File: src/pages/MatchPage.tsx
-
-- Admin stuck on Loading (Fixed)
-  - Cause: StrictMode double-mount guards blocked state updates.
-  - Fix: Reset isMounted flag on mount, cleanup timers on unmount.
-  - File: src/pages/AdminPage.tsx
-
-- Netlify deployment (Completed)
-  - Root `netlify.toml` builds the React app with SPA redirect.
-  - Site live at: https://fixturesapp.netlify.app/
-  - Env vars set: REACT_APP_SUPABASE_URL, REACT_APP_SUPABASE_ANON_KEY
-  - Build command uses `CI=` to prevent CRA warning-as-error in CI.
-  - Contexts: production, deploy-preview, and branch-deploy send `X-Robots-Tag: noindex` until launch.
-
-- Supabase credentials fallback (Security hardening)
-  - Change: Removed hardcoded fallback URL/key from client; env is required now.
-  - Impact: Local dev must have `react-version/.env`; Netlify must have env vars.
-  - File: src/services/supabase.ts
-
-- 404 Handling (UX improvement)
-  - Added NotFound route with links back to key pages.
-  - Files: src/pages/NotFoundPage.tsx, src/App.tsx
-
-Deployment
-
-- Live URL: https://fixturesapp.netlify.app/
-- Platform: Netlify
-- Build settings (from netlify.toml):
-  - command: `CI= npm run build`
-  - publish: `build/`
-  - redirect: `/*` → `/index.html` (status 200)
-- Environment variables:
-  - `REACT_APP_SUPABASE_URL`
-  - `REACT_APP_SUPABASE_ANON_KEY`
-  - Optional: `REACT_APP_CANONICAL_BASE` (defaults to fixturesapp.netlify.app)
-- Production indexing toggle:
-  - While staging, `[context.production]` sets `X-Robots-Tag = noindex`.
-  - For go‑live, remove that block (see `release/go-live` branch).
-- Notes:
-  - React app now lives at repo root (no `react-version/` base).
-  - Rotate Supabase keys if any were exposed; client uses env only.
-In Progress
-Stripping down to minimal working version
-Removing problematic inherited features
-Building up features incrementally
-Implementing match detail pages and linking from fixtures
-Development Workflow
-Running the Applications
-Original SPA (backup version):
-
-Open index.html directly or use Live Server
-Admin interface at /admin.html
-React App (root):
-
-```
+### Running the Application
+```bash
 npm install
 npm start
 # http://localhost:3000 (or next available port)
-# Admin at /admin; Teams index at /clubs; Team at /clubs/:slug; About at /about
 ```
-AI-Assisted Development Guidelines
-With React version:
 
-Changes should be more contained and predictable
-Component isolation reduces breaking changes
-TypeScript provides error catching
-Test individual components before integration
-Best Practices:
+### Environment Variables
+```bash
+REACT_APP_SUPABASE_URL=https://[project-id].supabase.co
+REACT_APP_SUPABASE_ANON_KEY=[anon-key]
+REACT_APP_CANONICAL_BASE=https://matchlocator.com
+```
 
-Make small, incremental changes
-Test immediately after each AI-generated change
-Use git commits as checkpoints
-Focus on one feature at a time
-Database Connection
-Supabase Configuration:
+## Key Files
+- `src/components/Header.tsx` - Reusable header with navigation
+- `src/services/supabase.ts` - Database interactions
+- `src/services/supabase-simple.ts` - Admin/home fixtures + save helpers
+- `src/pages/AdminPage.tsx` - Broadcast data management
+- `src/pages/HomePage.tsx` - Main fixtures display
+- `src/pages/FixturesPage.tsx` - Comprehensive fixtures with filtering
+- `src/pages/ClubsPage.tsx` - Club grid with team crests
+- `src/pages/ClubPage.tsx` - Individual team pages
+- `src/pages/MatchPage.tsx` - Match details pages
+- `src/types/index.ts` - TypeScript definitions
 
-typescript
-// In services/supabase.ts
-const supabaseUrl = 'https://[project-id].supabase.co'
-const supabaseKey = '[anon-key]'
-API Patterns:
+## Deployment
 
-Use JOIN queries instead of complex views when possible
-Handle errors gracefully with try/catch
-Implement loading states for better UX
-For admin/simple views, prefer simple table queries and follow-up lookups over embedded joins (more portable across environments)
-Key Learnings
-Architecture Decisions:
+**Platform**: Netlify
+**Live URL**: https://matchlocator.com
 
-React's component model works better with AI assistance
-TypeScript catches errors before they reach production
-Proper routing eliminates hash-based URL issues
-File separation makes debugging easier
-Migration Strategy:
+**Build Settings**:
+```toml
+command = "CI= npm run build"
+publish = "build/"
+redirects = "/* /index.html 200"
+```
 
-Keep original version as backup during migration
-Build features incrementally rather than all at once
-Strip problematic features and rebuild cleanly
-Test each component independently
-Admin Interface Notes
+**Environment Variables**:
+- `REACT_APP_SUPABASE_URL`
+- `REACT_APP_SUPABASE_ANON_KEY`
+- `REACT_APP_CANONICAL_BASE`
 
-Summary of fixes and behavior:
+## Development Guidelines
 
-- Dropdown Logic: robust handling of empty/null broadcaster states
-- Pending Changes: detects when selection differs from current assignment
-- Save UX: per-row save button, disabled while saving, success/error messages
-- Loading and Unmount Safety: guards to avoid state updates after unmount; resolves StrictMode loading hang
-- Hooks Dependencies: uses `useCallback` wrappers for async loaders invoked in `useEffect`.
-- Refresh Behavior: prompts when unsaved changes exist; clears stale pending state on reload
+### Best Practices
+- Make small, incremental changes
+- Test immediately after each change
+- Use git commits as checkpoints
+- Component isolation reduces breaking changes
 
-Data service specifics (simple mode):
+### Database Patterns
+- Use JOIN queries when possible
+- Handle errors gracefully with try/catch
+- Implement loading states for better UX
+- For admin views, prefer simple queries over complex joins
 
-- Fixtures: `fixtures` table only (`id, utc_kickoff, home_team_id, away_team_id`)
-- Team names: fetched via a single `teams` query using `.in('id', [...])`
-- Broadcasts: fetched via `broadcasts` for loaded fixture IDs; mapped to Sky/TNT labels
-- Season window: dynamic from Aug 1 of the current PL season (adjust if your dataset is older)
-Future Development
-Next Steps:
+## Common Issues
+- Database view inconsistencies between environments
+- Column name mismatches in queries
+- API rate limiting with Supabase free tier
+- If no fixtures render: check season date window and team FK IDs
 
-Complete minimal working version
-Add features back incrementally
-Implement proper testing
-Consider adding more competitions (FA Cup, etc.)
-Implement match detail page `/matches/:id` using `getFixtureById`
-Link fixture cards to match details
-Move Supabase URL/key to env (`REACT_APP_SUPABASE_URL`, `REACT_APP_SUPABASE_ANON_KEY`)
-Unify broadcaster constants and consider reintroducing blackout option
-Prep Netlify build for React app (`react-version/build`) and SPA redirects
-Lift production noindex and submit sitemaps after launch
-Expansion Considerations:
+## Architecture Notes
+- React's component model works well with AI assistance
+- TypeScript catches errors before production
+- Proper routing eliminates hash-based URL issues
+- File separation makes debugging easier
 
-Multi-sport support (original vision)
-Multiple territories (US, EU)
-Advanced filtering and search
-Mobile app wrapper
-Developer Handoff Notes
-For New Developers:
-
-Focus on React version going forward
-Original SPA kept for reference only
-Database schema is stable and well-designed
-Admin interface is critical for daily operations
-Key Files:
-
-src/components/Header.tsx - Reusable header component with logo, title, and navigation
-src/services/supabase.ts - All database interactions
-src/services/supabase-simple.ts - Simple admin/home fixtures + save helpers
-src/pages/AdminPage.tsx - Broadcast data management (keeps original header)
-src/pages/HomePage.tsx - Main fixtures display with Header component
-src/pages/FixturesPage.tsx - Comprehensive fixtures page with filtering
-src/pages/ClubsPage.tsx - Club grid page with team crests
-src/pages/TeamsPage.tsx - Club index grid (alternative layout)
-src/pages/ClubPage.tsx - Team fixtures and viewing guide
-src/pages/MatchPage.tsx - Individual match details page
-src/pages/AboutPage.tsx - Project overview and notes
-src/types/index.ts - TypeScript definitions
-public/logo.svg - fixtures.app SVG logo icon
-public/index.html - Updated with fixtures.app branding
-public/manifest.json - PWA manifest with fixtures.app details
-Common Issues:
-
-Database view inconsistencies between environments
-Column name mismatches in queries
-API rate limiting with Supabase free tier
-If no fixtures render on admin: check season date window and team FK IDs; optionally remove date filter for debugging
-Contact & Feedback
-This migration was driven by practical development challenges with AI-assisted coding in the original architecture. The React version should provide a more maintainable foundation for future development.
-
-Deploy bump: 2025-09-10T14:40:09Z
-
-Deploy bump: 2025-09-10T14:42:49Z
-
-Go Live Toggle (Indexing)
-
-- Prelaunch (hidden):
-  - netlify.toml: add production header to send X-Robots-Tag: noindex for /*
-  - public/robots.txt: Disallow: /
-- Live (indexable):
-  - Remove the production noindex header from netlify.toml
-  - public/robots.txt: Allow by leaving Disallow empty
-
-Go Live Checklist
-- Netlify primary domain: matchlocator.com with HTTPS issued
-- Env: REACT_APP_CANONICAL_BASE=https://matchlocator.com
-- Clear cache & deploy site
-- Verify:
-  - /robots.txt shows Allow
-  - curl -I https://matchlocator.com | grep -i x-robots (should NOT return noindex)
-  - Canonical tags point to matchlocator.com
-  - Submit sitemap (if enabled) in Google Search Console
+---
+*Migration completed September 2025. Original SPA archived.*

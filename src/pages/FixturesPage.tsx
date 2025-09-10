@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { getFixtures, getTeams } from '../services/supabase';
 import type { Fixture, Team } from '../types';
 import Header from '../components/Header';
+import MobileFilterModal from '../components/MobileFilterModal';
 import { generateFixturesMeta, updateDocumentMeta, generateMatchUrl } from '../utils/seo';
 
 type FilterTeam = '' | string;
@@ -21,6 +23,7 @@ const FixturesPage: React.FC = () => {
   const [matchweekFilter, setMatchweekFilter] = useState<FilterMatchweek>('');
   const [competitionFilter, setCompetitionFilter] = useState<FilterCompetition>('');
   const [locationFilter, setLocationFilter] = useState<FilterLocation>('');
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
@@ -150,8 +153,158 @@ const FixturesPage: React.FC = () => {
         <div className="wrap">
           <h1 style={{ marginTop: 0 }}>Premier League Fixtures</h1>
 
-          {/* Filters */}
+          {/* Mobile filter button */}
+          <div className="mobile-filter-trigger">
+            <button
+              onClick={() => setShowMobileFilters(true)}
+              style={{
+                width: '100%',
+                background: 'var(--color-card)',
+                border: '1px solid var(--color-border)',
+                borderRadius: '8px',
+                padding: '12px 16px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                fontSize: '1rem',
+                color: 'var(--color-text)',
+                marginBottom: '16px',
+                cursor: 'pointer',
+                minHeight: '44px'
+              }}
+            >
+              <span>🔍 Filter fixtures</span>
+              <span>⚙️</span>
+            </button>
+          </div>
+
+          {/* Mobile Filter Modal */}
+          <MobileFilterModal 
+            isOpen={showMobileFilters} 
+            onClose={() => setShowMobileFilters(false)}
+          >
+            <div style={{ display: 'grid', gap: '16px' }}>
+              <div>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', marginBottom: '6px', color: '#374151' }}>
+                  Team
+                </label>
+                <select
+                  value={teamFilter}
+                  onChange={(e) => setTeamFilter(e.target.value)}
+                  style={{ 
+                    width: '100%', 
+                    padding: '12px', 
+                    border: '1px solid var(--color-border)', 
+                    borderRadius: '8px',
+                    fontSize: '16px',
+                    minHeight: '44px'
+                  }}
+                >
+                  <option value="">All teams</option>
+                  {teams.map(team => (
+                    <option key={team.slug} value={team.slug}>
+                      {team.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', marginBottom: '6px', color: '#374151' }}>
+                  Matchweek
+                </label>
+                <select
+                  value={matchweekFilter}
+                  onChange={(e) => setMatchweekFilter(e.target.value)}
+                  style={{ 
+                    width: '100%', 
+                    padding: '12px', 
+                    border: '1px solid var(--color-border)', 
+                    borderRadius: '8px',
+                    fontSize: '16px',
+                    minHeight: '44px'
+                  }}
+                >
+                  <option value="">All matchweeks</option>
+                  {getMatchweekOptions().map(week => (
+                    <option key={week} value={week}>
+                      Matchweek {week}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', marginBottom: '6px', color: '#374151' }}>
+                  Competition
+                </label>
+                <select
+                  value={competitionFilter}
+                  onChange={(e) => setCompetitionFilter(e.target.value)}
+                  style={{ 
+                    width: '100%', 
+                    padding: '12px', 
+                    border: '1px solid var(--color-border)', 
+                    borderRadius: '8px',
+                    fontSize: '16px',
+                    minHeight: '44px'
+                  }}
+                >
+                  <option value="">All competitions</option>
+                  {getCompetitionOptions().map(comp => (
+                    <option key={comp} value={comp}>
+                      {comp === 'premier-league' ? 'Premier League' : comp}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label style={{ display: 'block', fontSize: '14px', fontWeight: '500', marginBottom: '6px', color: '#374151' }}>
+                  Where to Watch
+                </label>
+                <select
+                  value={locationFilter}
+                  onChange={(e) => setLocationFilter(e.target.value as FilterLocation)}
+                  style={{ 
+                    width: '100%', 
+                    padding: '12px', 
+                    border: '1px solid var(--color-border)', 
+                    borderRadius: '8px',
+                    fontSize: '16px',
+                    minHeight: '44px'
+                  }}
+                >
+                  <option value="">All locations</option>
+                  <option value="tv">📺 TV (Sky, TNT, BBC)</option>
+                  <option value="streaming">💻 Streaming (Prime, etc)</option>
+                  <option value="blackout">🚫 Not shown (blackout)</option>
+                  <option value="tbd">❓ TBD (awaiting announcement)</option>
+                </select>
+              </div>
+
+              <button
+                onClick={clearFilters}
+                style={{
+                  width: '100%',
+                  padding: '12px 16px',
+                  background: '#f3f4f6',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: '8px',
+                  fontSize: '16px',
+                  cursor: 'pointer',
+                  color: '#374151',
+                  minHeight: '44px'
+                }}
+              >
+                Clear Filters
+              </button>
+            </div>
+          </MobileFilterModal>
+
+          {/* Desktop Filters */}
           <div 
+            className="desktop-filters"
             style={{ 
               display: 'grid', 
               gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
@@ -348,8 +501,8 @@ const FixturesPage: React.FC = () => {
                     )}
                   </div>
                   <div style={{ marginTop: '12px', textAlign: 'right' }}>
-                    <a 
-                      href={generateMatchUrl(fixture)} 
+                    <Link 
+                      to={generateMatchUrl(fixture)} 
                       style={{ 
                         color: '#6366f1', 
                         textDecoration: 'underline', 
@@ -358,7 +511,7 @@ const FixturesPage: React.FC = () => {
                       }}
                     >
                       Details →
-                    </a>
+                    </Link>
                   </div>
                 </div>
               ))}

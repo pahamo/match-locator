@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { getFixtureById } from '../services/supabase';
 import type { Fixture } from '../types';
 import Header from '../components/Header';
@@ -278,9 +278,9 @@ const MatchPage: React.FC = () => {
           </div>
 
           <div style={{ marginTop: '8px' }}>
-            <a href="/" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.95rem' }}>
+            <Link to="/" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.95rem' }}>
               ← Back to Schedule
-            </a>
+            </Link>
           </div>
           {/* Footer disclosure */}
           <AffiliateDisclosure position="footer" />

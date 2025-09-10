@@ -57,7 +57,12 @@ export const updateDocumentMeta = (meta: {
 }) => {
   // Update title
   if (meta.title) {
-    document.title = meta.title;
+    // Only update if different from site name to avoid overriding
+    if (!meta.title.includes('Match Locator')) {
+      document.title = `${meta.title} | Match Locator`;
+    } else {
+      document.title = meta.title;
+    }
   }
 
   // Helper function to update or create meta tag
