@@ -270,3 +270,5 @@ API rate limiting with Supabase free tier
 If no fixtures render on admin: check season date window and team FK IDs; optionally remove date filter for debugging
 Contact & Feedback
 This migration was driven by practical development challenges with AI-assisted coding in the original architecture. The React version should provide a more maintainable foundation for future development.
+
+Deploy bump: 2025-09-10T14:40:09Z
