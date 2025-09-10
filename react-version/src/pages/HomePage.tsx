@@ -209,7 +209,7 @@ const HomePage: React.FC = () => {
                 <div className="fixture-datetime">
                   {new Date(fixture.kickoff_utc).toLocaleDateString('en-GB', {
                     weekday: 'short',
-                    month: 'short', 
+                    month: 'short',
                     day: 'numeric',
                     hour: '2-digit',
                     minute: '2-digit',

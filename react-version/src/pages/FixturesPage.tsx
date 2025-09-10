@@ -99,37 +99,6 @@ const FixturesPage: React.FC = () => {
   };
 
 
-  const formatDateTime = (kickoffUtc: string) => {
-    const date = new Date(kickoffUtc);
-    return date.toLocaleDateString('en-GB', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      timeZone: 'Europe/London'
-    });
-  };
-
-  const getProviderDisplay = (fixture: Fixture) => {
-    if (fixture.blackout?.is_blackout) {
-      return <span className="provider blackout">🚫 Blackout</span>;
-    }
-    
-    if (fixture.providers_uk.length === 0) {
-      return <span className="tbd-text">TBD</span>;
-    }
-
-    return fixture.providers_uk.map(provider => (
-      <span 
-        key={provider.id} 
-        className={`provider confirmed ${provider.type}`}
-        title={provider.type}
-      >
-        {provider.name}
-      </span>
-    ));
-  };
 
   const clearFilters = () => {
     setTeamFilter('');
@@ -325,7 +294,14 @@ const FixturesPage: React.FC = () => {
               {filteredFixtures.map(fixture => (
                 <div key={fixture.id} className="fixture-card">
                   <div className="fixture-datetime">
-                    {formatDateTime(fixture.kickoff_utc)}
+                    {new Date(fixture.kickoff_utc).toLocaleDateString('en-GB', {
+                      weekday: 'short',
+                      month: 'short',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      timeZone: 'Europe/London'
+                    })}
                     {fixture.matchweek && (
                       <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '2px' }}>
                         MW {fixture.matchweek}
@@ -356,7 +332,21 @@ const FixturesPage: React.FC = () => {
                     </div>
                   </div>
                   <div className="broadcaster-info">
-                    {getProviderDisplay(fixture)}
+                    {fixture.blackout?.is_blackout ? (
+                      <span className="provider blackout">🚫 Blackout</span>
+                    ) : fixture.providers_uk.length === 0 ? (
+                      <span className="tbd-text">TBD</span>
+                    ) : (
+                      fixture.providers_uk.map(provider => (
+                        <span 
+                          key={provider.id} 
+                          className={`provider confirmed ${provider.type}`}
+                          title={provider.type}
+                        >
+                          {provider.name}
+                        </span>
+                      ))
+                    )}
                   </div>
                   <div style={{ marginTop: '12px', textAlign: 'right' }}>
                     <a 
