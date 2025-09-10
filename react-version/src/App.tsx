@@ -11,6 +11,7 @@ import './App.css';
 import NotFoundPage from './pages/NotFoundPage';
 import ProviderPage from './pages/ProviderPage';
 import CookieSettingsModal from './components/cookies/CookieSettingsModal';
+import PrivacyRequestPage from './pages/privacy/Request';
 import Footer from './components/Footer';
 import PrivacyPolicy from './pages/legal/PrivacyPolicy';
 import CookiePolicy from './pages/legal/CookiePolicy';
@@ -37,6 +38,7 @@ function App() {
           <Route path="/providers/:slug" element={<ProviderPage />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/privacy/request" element={<PrivacyRequestPage />} />
           {/* Legal */}
           <Route path="/legal/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/legal/cookie-policy" element={<CookiePolicy />} />
