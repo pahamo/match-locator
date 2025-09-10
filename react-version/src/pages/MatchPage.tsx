@@ -233,6 +233,7 @@ const MatchPage: React.FC = () => {
                           key={provider.id}
                           href={link}
                           target="_blank"
+                          rel="noreferrer"
                           {...withAffiliateAriaLabel(provider.name)}
                           className="provider"
                           style={{
