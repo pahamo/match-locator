@@ -55,6 +55,14 @@ Recent Changes (comprehensive match day experience + fixtures management)
 - **Search Engine Optimization**: All pages now have appropriate meta descriptions and titles for search engines
 - **Production SEO**: Browser history routing confirmed, all internal links use new SEO format, ready for Friday launch
 
+**Recent Update (Legal Compliance & Affiliate Disclosure)**:
+- **Legal Pages**: Added Privacy Policy, Cookie Policy, and Terms of Service pages
+- **Affiliate Disclosure**: Transparent disclosure for external broadcaster links (Sky Sports, TNT Sports)
+- **Compliance Components**: Reusable affiliate disclosure with inline and footer positions
+- **Site Footer**: Added with legal navigation and cookie settings placeholder
+- **ARIA Labels**: Accessibility-compliant affiliate link labeling
+- **Legal Routing**: Clean URLs like `/legal/privacy-policy` for legal content
+
 **Previous Update (fixtures.app Branding & Unified Header)**:
 - **Complete Rebranding to fixtures.app**: Site now branded as "fixtures.app" with custom logo and consistent identity
 - **Unified Header Navigation**: Created reusable Header component used across all pages (except admin)
@@ -252,6 +260,37 @@ Data service specifics (simple mode):
 - Team names: fetched via a single `teams` query using `.in('id', [...])`
 - Broadcasts: fetched via `broadcasts` for loaded fixture IDs; mapped to Sky/TNT labels
 - Season window: dynamic from Aug 1 of the current PL season (adjust if your dataset is older)
+SEO Implementation Details
+
+**URL Structure:**
+- **SEO-Friendly Match URLs**: `/matches/123-arsenal-vs-chelsea-2025-09-13`
+- **Legacy Compatibility**: `/match/:id` and `/matches/:id` still supported
+- **Clean Team URLs**: `/clubs/arsenal` (existing)
+- **Legal Pages**: `/legal/privacy-policy`, `/legal/cookie-policy`, `/legal/terms`
+
+**Meta Tags & Social Media:**
+- **Dynamic Titles**: "Arsenal vs Chelsea - Premier League TV Guide"
+- **Rich Descriptions**: Include team names, dates, broadcasters, and viewing info
+- **Open Graph Tags**: Facebook/Twitter sharing with team crests as images
+- **Canonical URLs**: Prevent duplicate content, support custom domains
+
+**Structured Data (JSON-LD):**
+- **SportsEvent Schema**: Match pages with teams, venues, dates, organizer
+- **Organization Schema**: Site branding and description for search engines
+- **WebSite Schema**: Search action and site metadata
+
+**Technical SEO:**
+- **Browser History Routing**: React Router (not hash-based)
+- **Sitemap Support**: Reference in HTML head for search engines
+- **Affiliate Compliance**: Legal disclosures for external broadcaster links
+- **Performance**: Production build optimized, gzipped assets
+
+**Implementation Files:**
+- `src/utils/seo.ts`: Core SEO utility functions
+- `src/components/StructuredData.tsx`: JSON-LD structured data component
+- `public/index.html`: Base meta tags and canonical link
+- All page components: Dynamic meta tag updates
+
 Future Development
 Next Steps:
 
@@ -259,11 +298,11 @@ Complete minimal working version
 Add features back incrementally
 Implement proper testing
 Consider adding more competitions (FA Cup, etc.)
-Implement match detail page `/matches/:id` using `getFixtureById`
-Link fixture cards to match details
-Move Supabase URL/key to env (`REACT_APP_SUPABASE_URL`, `REACT_APP_SUPABASE_ANON_KEY`)
+~~Implement match detail page `/matches/:id` using `getFixtureById`~~ ✅ Complete
+~~Link fixture cards to match details~~ ✅ Complete
+~~Move Supabase URL/key to env (`REACT_APP_SUPABASE_URL`, `REACT_APP_SUPABASE_ANON_KEY`)~~ ✅ Complete
 Unify broadcaster constants and consider reintroducing blackout option
-Prep Netlify build for React app (`react-version/build`) and SPA redirects
+~~Prep Netlify build for React app (`react-version/build`) and SPA redirects~~ ✅ Complete
 Expansion Considerations:
 
 Multi-sport support (original vision)
@@ -279,6 +318,7 @@ Database schema is stable and well-designed
 Admin interface is critical for daily operations
 Key Files:
 
+**Core Application:**
 src/components/Header.tsx - Reusable header component with logo, title, and navigation
 src/services/supabase.ts - All database interactions
 src/services/supabase-simple.ts - Simple admin/home fixtures + save helpers
@@ -288,17 +328,43 @@ src/pages/FixturesPage.tsx - Comprehensive fixtures page with filtering
 src/pages/ClubsPage.tsx - Club grid page with team crests
 src/pages/TeamsPage.tsx - Club index grid (alternative layout)
 src/pages/ClubPage.tsx - Team fixtures and viewing guide
-src/pages/MatchPage.tsx - Individual match details page
+src/pages/MatchPage.tsx - Individual match details page with affiliate compliance
 src/pages/AboutPage.tsx - Project overview and notes
 src/types/index.ts - TypeScript definitions
+
+**SEO & Technical:**
+src/utils/seo.ts - SEO utility functions for URLs, meta tags, and canonical links
+src/components/StructuredData.tsx - JSON-LD structured data for search engines
+src/App.tsx - Updated routing with SEO-friendly URLs and legal pages
+public/index.html - SEO meta tags, canonical link, sitemap reference
+public/sitemap.xml - Search engine sitemap (if present)
+
+**Legal & Compliance:**
+src/pages/legal/PrivacyPolicy.tsx - Privacy policy page
+src/pages/legal/CookiePolicy.tsx - Cookie policy page
+src/pages/legal/Terms.tsx - Terms of service page
+src/components/legal/AffiliateDisclosure.tsx - Affiliate link compliance
+src/components/Footer.tsx - Site footer with legal links
+
+**Assets & Configuration:**
 public/logo.svg - fixtures.app SVG logo icon
-public/index.html - Updated with fixtures.app branding
 public/manifest.json - PWA manifest with fixtures.app details
 Common Issues:
 
-Database view inconsistencies between environments
-Column name mismatches in queries
-API rate limiting with Supabase free tier
-If no fixtures render on admin: check season date window and team FK IDs; optionally remove date filter for debugging
+**Database & API:**
+- Database view inconsistencies between environments
+- Column name mismatches in queries
+- API rate limiting with Supabase free tier
+- If no fixtures render on admin: check season date window and team FK IDs; optionally remove date filter for debugging
+
+**SEO & Routing:**
+- SEO URLs work in dev but 404 in production: ensure Netlify redirects are configured (`/* /index.html 200`)
+- Meta tags not updating on navigation: check that `updateDocumentMeta()` is called in useEffect
+- Structured data validation errors: use Google's Rich Results Test tool to verify JSON-LD
+- Canonical URLs pointing to wrong domain: verify `REACT_APP_CANONICAL_BASE` environment variable
+
+**Legal & Compliance:**
+- Affiliate disclosures not appearing: check `AffiliateDisclosure` component placement in match pages
+- Cookie settings not functional: placeholder implementation needs cookie management integration
 Contact & Feedback
 This migration was driven by practical development challenges with AI-assisted coding in the original architecture. The React version should provide a more maintainable foundation for future development.

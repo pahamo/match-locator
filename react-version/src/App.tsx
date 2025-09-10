@@ -9,6 +9,7 @@ import ClubsPage from './pages/ClubsPage';
 import FixturesPage from './pages/FixturesPage';
 import './App.css';
 import NotFoundPage from './pages/NotFoundPage';
+import ProviderPage from './pages/ProviderPage';
 import Footer from './components/Footer';
 import PrivacyPolicy from './pages/legal/PrivacyPolicy';
 import CookiePolicy from './pages/legal/CookiePolicy';
@@ -31,6 +32,7 @@ function App() {
           <Route path="/club/:clubId" element={<ClubPage />} />
           <Route path="/clubs" element={<ClubsPage />} />
           <Route path="/clubs/:slug" element={<ClubPage />} />
+          <Route path="/providers/:slug" element={<ProviderPage />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/about" element={<AboutPage />} />
           {/* Legal */}
