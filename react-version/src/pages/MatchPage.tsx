@@ -3,24 +3,34 @@ import { useParams } from 'react-router-dom';
 import { getFixtureById } from '../services/supabase';
 import type { Fixture } from '../types';
 import Header from '../components/Header';
+import StructuredData from '../components/StructuredData';
+import { parseMatchSlug, generateMatchMeta, updateDocumentMeta } from '../utils/seo';
 
 const MatchPage: React.FC = () => {
-  const { matchId, id } = useParams<{ matchId?: string; id?: string }>();
+  const { matchSlug, matchId, id } = useParams<{ matchSlug?: string; matchId?: string; id?: string }>();
   const [fixture, setFixture] = useState<Fixture | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadFixture = async () => {
-      const raw = matchId ?? id;
-      if (!raw) {
-        setError('No match ID provided');
-        setLoading(false);
-        return;
+      let parsedId: number;
+      
+      // Handle new SEO-friendly URLs with slugs
+      if (matchSlug) {
+        parsedId = parseMatchSlug(matchSlug) || 0;
+      } else {
+        // Handle legacy URLs
+        const raw = matchId ?? id;
+        if (!raw) {
+          setError('No match ID provided');
+          setLoading(false);
+          return;
+        }
+        parsedId = parseInt(raw, 10);
       }
 
-      const parsed = parseInt(raw, 10);
-      if (isNaN(parsed)) {
+      if (!parsedId || isNaN(parsedId)) {
         setError('Invalid match ID');
         setLoading(false);
         return;
@@ -29,12 +39,16 @@ const MatchPage: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-        const fixtureData = await getFixtureById(parsed);
+        const fixtureData = await getFixtureById(parsedId);
         
         if (!fixtureData) {
           setError('Match not found');
         } else {
           setFixture(fixtureData);
+          
+          // Update SEO meta tags
+          const meta = generateMatchMeta(fixtureData);
+          updateDocumentMeta(meta);
         }
       } catch (err) {
         console.error('Failed to load fixture:', err);
@@ -45,7 +59,7 @@ const MatchPage: React.FC = () => {
     };
 
     loadFixture();
-  }, [matchId, id]);
+  }, [matchSlug, matchId, id]);
 
   const formatDateTime = (utcKickoff: string) => {
     const date = new Date(utcKickoff);
@@ -129,6 +143,7 @@ const MatchPage: React.FC = () => {
 
   return (
     <div className="match-page">
+      <StructuredData type="match" data={fixture} />
       <Header 
         title={`${fixture.home.name} vs ${fixture.away.name}`}
         subtitle="Match details and viewing information"

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getFixtures, getTeams } from '../services/supabase';
 import type { Fixture, Team } from '../types';
 import Header from '../components/Header';
+import { generateFixturesMeta, updateDocumentMeta, generateMatchUrl } from '../utils/seo';
 
 type FilterTeam = '' | string;
 type FilterMatchweek = '' | string;
@@ -72,6 +73,10 @@ const FixturesPage: React.FC = () => {
       
       setFixtures(fixturesData);
       setTeams(teamsData);
+      
+      // Update SEO meta tags for fixtures page
+      const meta = generateFixturesMeta();
+      updateDocumentMeta(meta);
     } catch (err) {
       console.error('Failed to load data:', err);
       setError('Failed to load fixtures. Please try again later.');
@@ -350,7 +355,7 @@ const FixturesPage: React.FC = () => {
                   </div>
                   <div style={{ marginTop: '12px', textAlign: 'right' }}>
                     <a 
-                      href={`/matches/${fixture.id}`} 
+                      href={generateMatchUrl(fixture)} 
                       style={{ 
                         color: '#6366f1', 
                         textDecoration: 'underline', 

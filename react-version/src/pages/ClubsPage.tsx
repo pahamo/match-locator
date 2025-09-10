@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getTeams } from '../services/supabase';
 import type { Team } from '../types';
 import Header from '../components/Header';
+import { generateClubsMeta, updateDocumentMeta } from '../utils/seo';
 
 const ClubsPage: React.FC = () => {
   const [teams, setTeams] = useState<Team[]>([]);
@@ -18,6 +19,10 @@ const ClubsPage: React.FC = () => {
       setError(null);
       const teamsData = await getTeams();
       setTeams(teamsData);
+      
+      // Update SEO meta tags for clubs page
+      const meta = generateClubsMeta();
+      updateDocumentMeta(meta);
     } catch (err) {
       console.error('Failed to load teams:', err);
       setError('Failed to load teams. Please try again later.');

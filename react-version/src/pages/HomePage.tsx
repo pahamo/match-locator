@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { getSimpleFixtures, type SimpleFixture } from '../services/supabase-simple';
 import Header from '../components/Header';
+import StructuredData from '../components/StructuredData';
+import { generateHomeMeta, updateDocumentMeta, generateSimpleMatchUrl } from '../utils/seo';
 
 interface MatchWeek {
   matchweek: number;
@@ -24,7 +26,12 @@ const HomePage: React.FC = () => {
         setError(null);
         const fixturesData = await getSimpleFixtures();
         const currentMatchWeek = getCurrentOrUpcomingMatchWeek(fixturesData);
-        if (!isCancelled) setMatchWeek(currentMatchWeek);
+        if (!isCancelled) {
+          setMatchWeek(currentMatchWeek);
+          // Update SEO meta tags for homepage
+          const meta = generateHomeMeta();
+          updateDocumentMeta(meta);
+        }
         try {
           const stored = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
           if (!isCancelled && Array.isArray(stored)) setBlackoutIds(stored);
@@ -171,6 +178,8 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="home-page">
+      <StructuredData type="website" />
+      <StructuredData type="organization" />
       <Header />
       
       <main>
@@ -255,7 +264,7 @@ const HomePage: React.FC = () => {
                 </div>
                 <div style={{ marginTop: '12px', textAlign: 'right' }}>
                   <a 
-                    href={`/matches/${fixture.id}`} 
+                    href={generateSimpleMatchUrl(fixture)} 
                     style={{ 
                       color: '#6366f1', 
                       textDecoration: 'underline', 

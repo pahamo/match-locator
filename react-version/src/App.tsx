@@ -17,9 +17,11 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/fixtures" element={<FixturesPage />} />
-          <Route path="/matches/:matchId" element={<MatchPage />} />
-          <Route path="/matches/:id" element={<MatchPage />} />
+          {/* SEO-friendly match URLs with slugs */}
+          <Route path="/matches/:matchSlug" element={<MatchPage />} />
+          {/* Legacy support for simple match IDs */}
           <Route path="/match/:matchId" element={<MatchPage />} />
+          {/* Legacy club routes */}
           <Route path="/club/:clubId" element={<ClubPage />} />
           <Route path="/clubs" element={<ClubsPage />} />
           <Route path="/clubs/:slug" element={<ClubPage />} />

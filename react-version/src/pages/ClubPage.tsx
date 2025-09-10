@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { getFixtures } from '../services/supabase';
 import type { Fixture } from '../types';
 import Header from '../components/Header';
+import { generateTeamMeta, updateDocumentMeta, generateMatchUrl } from '../utils/seo';
 
 const ClubPage: React.FC = () => {
   const { slug, clubId } = useParams<{ slug?: string; clubId?: string }>();
@@ -23,7 +24,17 @@ const ClubPage: React.FC = () => {
           limit: 500, 
           order: 'asc' 
         });
-        if (!ignore) setFixtures(data);
+        if (!ignore) {
+          setFixtures(data);
+          
+          // Update SEO meta tags for team page once we have team data
+          if (data.length > 0) {
+            const firstFixture = data[0];
+            const teamData = firstFixture.home.slug === teamSlug ? firstFixture.home : firstFixture.away;
+            const meta = generateTeamMeta(teamData, data.length);
+            updateDocumentMeta(meta);
+          }
+        }
       } catch (e) {
         if (!ignore) setError('Failed to load team fixtures. Please try again later.');
       } finally {
@@ -109,6 +120,19 @@ const ClubPage: React.FC = () => {
                       {fx.venue && (
                         <div className="fixture-venue">{fx.venue}</div>
                       )}
+                      <div style={{ marginTop: '12px', textAlign: 'right' }}>
+                        <a 
+                          href={generateMatchUrl(fx)} 
+                          style={{ 
+                            color: '#6366f1', 
+                            textDecoration: 'underline', 
+                            fontSize: '0.9rem',
+                            fontWeight: '500'
+                          }}
+                        >
+                          Details →
+                        </a>
+                      </div>
                     </div>
                   ))
                 )}
