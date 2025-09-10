@@ -45,7 +45,17 @@ Views Used:
 fixtures_with_teams - Fixtures with team data joined
 Recent Changes (comprehensive match day experience + fixtures management)
 
-**Latest Update (fixtures.app Branding & Unified Header)**:
+**Latest Update (SEO Enhancement & Production Readiness)**:
+- **SEO-Friendly Match URLs**: Implemented descriptive URLs like `/matches/123-arsenal-vs-chelsea-2025-09-13` for better search visibility
+- **Dynamic Meta Tags**: Page-specific titles, descriptions, and Open Graph tags for social media sharing
+- **Structured Data**: JSON-LD markup for SportsEvent, Organization, and Website schemas to enable rich search results
+- **Canonical URLs**: Proper canonical tags on all pages to prevent duplicate content issues
+- **Backward Compatibility**: Legacy URLs `/match/:id` still supported while new SEO URLs are preferred
+- **Social Media Integration**: Open Graph tags include team crests and match details for rich social sharing
+- **Search Engine Optimization**: All pages now have appropriate meta descriptions and titles for search engines
+- **Production SEO**: Browser history routing confirmed, all internal links use new SEO format, ready for Friday launch
+
+**Previous Update (fixtures.app Branding & Unified Header)**:
 - **Complete Rebranding to fixtures.app**: Site now branded as "fixtures.app" with custom logo and consistent identity
 - **Unified Header Navigation**: Created reusable Header component used across all pages (except admin)
 - **Custom Logo Design**: SVG football icon with gradient styling and professional appearance
@@ -145,6 +155,28 @@ Deployment
 - Notes:
   - Local dev also uses react-version/.env (ignored by git).
   - Consider rotating Supabase anon key and removing inline fallbacks in services once env is everywhere.
+
+Launch Branding Plan (Match Locator)
+
+- Product name at launch: Match Locator
+- Primary domain at launch: matchlocator.com (not live yet)
+- Current staging site: https://fixturesapp.netlify.app/
+- Current in-app branding: "fixtures.app" (logo + header). This will be updated prior to launch.
+
+Planned changes for rebrand (no code changes made yet):
+- Update visible product name:
+  - Header title text in `react-version/src/components/Header.tsx`
+  - Any page copy that mentions "fixtures.app"
+- Update SEO/meta:
+  - Page title/description in `react-version/public/index.html`
+  - Manifest app name/short_name in `react-version/public/manifest.json`
+  - Canonical/OG tags or JSON-LD generators (if/when added) to point to `https://matchlocator.com`
+- Assets:
+  - Replace logo at `react-version/public/logo.svg` if new brand mark is provided
+- Deployment:
+  - Add custom domain `matchlocator.com` in Netlify → Domain management
+  - Point DNS (A/ALIAS/CNAME) to Netlify, enable HTTPS
+  - After cutover, verify deep-link refresh works on the custom domain
 Supabase keys currently hardcoded in services (move to env)
 In Progress
 Stripping down to minimal working version
