@@ -1,3 +1,9 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
-Disallow:
+Allow: /
+Disallow: /admin
+Disallow: /api/private
+
+# Sitemaps
+Sitemap: https://fixturesapp.netlify.app/sitemap.xml
+Sitemap: https://matchlocator.com/sitemap.xml

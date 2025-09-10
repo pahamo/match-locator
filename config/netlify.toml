@@ -10,6 +10,20 @@
   status = 200
   force = false
 
+# Enforce HTTPS
+[[redirects]]
+  from = "http://*"
+  to = "https://:splat"
+  status = 301
+  force = true
+
+# Preferred host (redirect www to apex domain if using matchlocator.com)
+[[redirects]]
+  from = "https://www.matchlocator.com/*"
+  to = "https://matchlocator.com/:splat"
+  status = 301
+  force = true
+
 # Always serve fresh copies of sitemap and robots
 [[headers]]
   for = "/sitemap.xml"

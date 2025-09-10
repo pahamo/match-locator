@@ -1,6 +1,9 @@
 import type { Fixture, Team } from '../types';
 import type { SimpleFixture } from '../services/supabase-simple';
 
+const CANONICAL_BASE = (process.env.REACT_APP_CANONICAL_BASE || (typeof window !== 'undefined' ? window.location.origin : ''))
+  .replace(/\/$/, '');
+
 export const slugify = (text: string): string => {
   return text
     .toLowerCase()
@@ -28,9 +31,7 @@ export const parseMatchSlug = (slug: string): number | null => {
   return match ? parseInt(match[1], 10) : null;
 };
 
-export const generateMatchUrl = (fixture: Fixture): string => {
-  return `/matches/${generateMatchSlug(fixture)}`;
-};
+export const generateMatchUrl = (fixture: Fixture): string => `/matches/${generateMatchSlug(fixture)}`;
 
 export const generateSimpleMatchSlug = (fixture: SimpleFixture): string => {
   const homeSlug = slugify(fixture.home_team);
@@ -40,9 +41,7 @@ export const generateSimpleMatchSlug = (fixture: SimpleFixture): string => {
   return `${fixture.id}-${homeSlug}-vs-${awaySlug}-${dateSlug}`;
 };
 
-export const generateSimpleMatchUrl = (fixture: SimpleFixture): string => {
-  return `/matches/${generateSimpleMatchSlug(fixture)}`;
-};
+export const generateSimpleMatchUrl = (fixture: SimpleFixture): string => `/matches/${generateSimpleMatchSlug(fixture)}`;
 
 export const updateDocumentMeta = (meta: {
   title?: string;
@@ -137,7 +136,7 @@ export const generateMatchMeta = (fixture: Fixture) => {
   } UK Premier League TV schedule.`;
 
   const ogImage = fixture.home.crest || fixture.away.crest || '/logo192.png';
-  const canonical = `https://fixturesapp.netlify.app${generateMatchUrl(fixture)}`;
+  const canonical = `${CANONICAL_BASE}${generateMatchUrl(fixture)}`;
 
   return {
     title,
@@ -153,7 +152,7 @@ export const generateMatchMeta = (fixture: Fixture) => {
 export const generateTeamMeta = (team: Team, upcomingCount: number = 0) => {
   const title = `${team.name} fixtures and TV schedule - Premier League`;
   const description = `${team.name} upcoming Premier League fixtures and TV schedule. ${upcomingCount} matches remaining. Sky Sports, TNT Sports, BBC viewing guide.`;
-  const canonical = `https://fixturesapp.netlify.app/clubs/${team.slug}`;
+  const canonical = `${CANONICAL_BASE}/clubs/${team.slug}`;
 
   return {
     title,
@@ -169,7 +168,7 @@ export const generateTeamMeta = (team: Team, upcomingCount: number = 0) => {
 export const generateHomeMeta = () => {
   const title = 'fixtures.app - Premier League TV Guide UK';
   const description = 'Premier League TV Guide UK - Sky Sports & TNT Sports fixtures. Find which broadcaster shows every Premier League match.';
-  const canonical = 'https://fixturesapp.netlify.app/';
+  const canonical = `${CANONICAL_BASE}/`;
 
   return {
     title,
@@ -185,7 +184,7 @@ export const generateHomeMeta = () => {
 export const generateFixturesMeta = () => {
   const title = 'Premier League Fixtures & TV Schedule - fixtures.app';
   const description = 'Complete Premier League fixtures and TV schedule. Filter by team, matchweek, and broadcaster. Sky Sports, TNT Sports, BBC viewing guide.';
-  const canonical = 'https://fixturesapp.netlify.app/fixtures';
+  const canonical = `${CANONICAL_BASE}/fixtures`;
 
   return {
     title,
@@ -201,7 +200,7 @@ export const generateFixturesMeta = () => {
 export const generateClubsMeta = () => {
   const title = 'Premier League Teams - fixtures.app';
   const description = 'All 20 Premier League teams. View fixtures, TV schedules, and viewing guides for every club.';
-  const canonical = 'https://fixturesapp.netlify.app/clubs';
+  const canonical = `${CANONICAL_BASE}/clubs`;
 
   return {
     title,
