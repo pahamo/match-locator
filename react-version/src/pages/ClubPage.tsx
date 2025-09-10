@@ -109,7 +109,7 @@ const ClubPage: React.FC = () => {
                       <div className="broadcaster-info">
                         {fx.providers_uk && fx.providers_uk.length > 0 ? (
                           fx.providers_uk.map(p => (
-                            <a key={p.id} href={p.href || (p.name.includes('Sky') ? 'https://www.skysports.com/football/fixtures-results' : p.name.includes('TNT') ? 'https://tntsports.co.uk/football' : undefined)} target="_blank" rel="noreferrer" className="provider confirmed" style={{ marginRight: 8, textDecoration: 'none', color: '#059669' }}>
+                            <a key={p.id} href={p.href || (p.name.includes('Sky') ? 'https://www.skysports.com/football/fixtures-results' : p.name.includes('TNT') ? 'https://tntsports.co.uk/football' : undefined)} target="_blank" rel="noreferrer" aria-label={`Affiliate link to ${p.name}`} className="provider confirmed" style={{ marginRight: 8, textDecoration: 'none', color: '#059669' }}>
                               {p.name}
                             </a>
                           ))

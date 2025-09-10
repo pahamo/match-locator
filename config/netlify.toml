@@ -34,3 +34,27 @@
   for = "/robots.txt"
   [headers.values]
     Cache-Control = "no-store"
+
+# Noindex sensitive routes
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+
+[[headers]]
+  for = "/api/private/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+
+# Staging contexts: add a global noindex header
+[context.deploy-preview]
+  [[context.deploy-preview.headers]]
+    for = "/*"
+    [context.deploy-preview.headers.values]
+      X-Robots-Tag = "noindex"
+
+[context.branch-deploy]
+  [[context.branch-deploy.headers]]
+    for = "/*"
+    [context.branch-deploy.headers.values]
+      X-Robots-Tag = "noindex"

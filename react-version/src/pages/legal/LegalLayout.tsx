@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef } from 'react';
+import { updateDocumentMeta } from '../../utils/seo';
 
 interface TocItem {
   id: string;
@@ -33,6 +34,10 @@ const LegalLayout: React.FC<LegalLayoutProps> = ({
   }, []);
 
   useEffect(() => {
+    // Set canonical for current URL
+    const href = typeof window !== 'undefined' ? window.location.href : undefined;
+    if (href) updateDocumentMeta({ canonical: href });
+
     // Optionally set robots meta for these pages
     const name = 'robots';
     let meta = document.querySelector(`meta[name="${name}"]`);
@@ -75,4 +80,3 @@ const LegalLayout: React.FC<LegalLayoutProps> = ({
 };
 
 export default LegalLayout;
-
