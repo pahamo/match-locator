@@ -152,6 +152,11 @@ const MatchPage: React.FC = () => {
       
       <main>
         <div className="wrap">
+          {fixture && (
+            <h1 style={{ marginTop: 0, marginBottom: 16 }}>
+              {fixture.home.name} vs {fixture.away.name}
+            </h1>
+          )}
           {/* Match Header */}
           <div className="fixture-card" style={{ marginBottom: '24px', padding: '24px' }}>
             <div className="fixture-datetime" style={{ fontSize: '1.1rem', marginBottom: '16px' }}>
@@ -219,11 +224,7 @@ const MatchPage: React.FC = () => {
                 </div>
               ) : fixture.providers_uk.length > 0 ? (
                 <div>
-                  <div style={{ fontWeight: '600', marginBottom: '8px', color: '#059669' }}>
-                    📺 Available on:
-                  </div>
-                  {/* Inline disclosure above CTAs */}
-                  <AffiliateDisclosure position="inline" />
+                  <div style={{ fontWeight: '600', marginBottom: '8px', color: '#059669' }}>📺 Available on:</div>
                   <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
                     {fixture.providers_uk.map((provider) => {
                       const link = getBroadcasterLink(provider.name, provider.href);
@@ -232,6 +233,7 @@ const MatchPage: React.FC = () => {
                           key={provider.id}
                           href={link}
                           target="_blank"
+                          rel="noreferrer noopener"
                           {...withAffiliateAriaLabel(provider.name)}
                           className="provider"
                           style={{

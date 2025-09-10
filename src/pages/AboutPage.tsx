@@ -4,14 +4,12 @@ import Header from '../components/Header';
 const AboutPage: React.FC = () => {
   return (
     <div className="about-page">
-      <Header 
-        title="About fixtures.app"
-        subtitle="Premier League TV Schedule for the UK"
-      />
+      <Header />
 
       <main>
         <div className="wrap">
           <section className="card" style={{ background: 'var(--color-card)', border: '1px solid var(--color-border)', borderRadius: 'var(--border-radius)', padding: 'var(--spacing-xl)', boxShadow: 'var(--shadow-sm)' }}>
+            <h1 style={{ marginTop: 0 }}>About Match Locator</h1>
             <p className="muted" style={{ marginTop: 0 }}>
               A simple, fast way to see who is broadcasting each Premier League match in the UK.
             </p>
@@ -66,4 +64,3 @@ const AboutPage: React.FC = () => {
 };
 
 export default AboutPage;
-

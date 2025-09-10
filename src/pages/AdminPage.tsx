@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
   getSimpleFixtures,
   saveBroadcaster,
@@ -33,11 +33,37 @@ const AdminPage: React.FC = () => {
     }
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const loadFixturesUnsafe = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const fixturesData = await getSimpleFixtures();
+      if (!isMountedRef.current) return;
+      setFixtures(fixturesData);
+      // Clear any pending changes after a fresh load to avoid stale state
+      setPendingChanges(new Map());
+    } catch (err) {
+      console.error('Failed to load fixtures:', err);
+      if (!isMountedRef.current) return;
+      setError('Failed to load fixtures. Please try again later.');
+    } finally {
+      if (!isMountedRef.current) return;
+      setLoading(false);
+    }
+  }, []);
+
+  const loadFixtures = useCallback(async (confirmIfPending: boolean = false) => {
+    if (confirmIfPending && pendingChanges.size > 0) {
+      const proceed = window.confirm('You have unsaved changes. Refreshing will discard them. Continue?');
+      if (!proceed) return;
+    }
+    await loadFixturesUnsafe();
+  }, [pendingChanges, loadFixturesUnsafe]);
+
   useEffect(() => {
     // In React StrictMode (dev), components mount/unmount/mount; reset flag on each mount
     isMountedRef.current = true;
-    loadFixtures();
+    loadFixturesUnsafe();
     return () => {
       isMountedRef.current = false;
       if (messageTimeoutRef.current) {
@@ -45,7 +71,7 @@ const AdminPage: React.FC = () => {
         messageTimeoutRef.current = null;
       }
     };
-  }, []);
+  }, [loadFixturesUnsafe]);
 
   useEffect(() => {
     let filtered = [...fixtures];
@@ -77,28 +103,7 @@ const AdminPage: React.FC = () => {
     setFilteredFixtures(filtered);
   }, [fixtures, statusFilter, monthFilter, matchweekFilter, timeFilter]);
 
-  const loadFixtures = async (confirmIfPending: boolean = false) => {
-    if (confirmIfPending && pendingChanges.size > 0) {
-      const proceed = window.confirm('You have unsaved changes. Refreshing will discard them. Continue?');
-      if (!proceed) return;
-    }
-    try {
-      setLoading(true);
-      setError(null);
-      const fixturesData = await getSimpleFixtures();
-      if (!isMountedRef.current) return;
-      setFixtures(fixturesData);
-      // Clear any pending changes after a fresh load to avoid stale state
-      setPendingChanges(new Map());
-    } catch (err) {
-      console.error('Failed to load fixtures:', err);
-      if (!isMountedRef.current) return;
-      setError('Failed to load fixtures. Please try again later.');
-    } finally {
-      if (!isMountedRef.current) return;
-      setLoading(false);
-    }
-  };
+  
 
   
 

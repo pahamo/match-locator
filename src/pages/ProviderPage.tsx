@@ -24,10 +24,10 @@ const ProviderPage: React.FC = () => {
 
   return (
     <div className="provider-page">
-      <Header title={provider.name} subtitle="Official links and viewing options" />
+      <Header />
       <main>
         <div className="wrap">
-          <AffiliateDisclosure position="inline" providerName={provider.name} />
+          <h1 style={{ marginTop: 0 }}>{provider.name}</h1>
 
           <section className="card" style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 12, padding: 24, boxShadow: 'var(--shadow-sm, 0 1px 3px rgba(0,0,0,.06))', marginBottom: 24 }}>
             <h2 style={{ marginTop: 0 }}>Official website</h2>
@@ -35,6 +35,7 @@ const ProviderPage: React.FC = () => {
               <a
                 href={provider.url}
                 target="_blank"
+                rel="noreferrer noopener"
                 {...withAffiliateAriaLabel(provider.name)}
                 style={{ display: 'inline-block', padding: '10px 16px', background: '#6366f1', color: '#fff', textDecoration: 'none', borderRadius: 8, fontWeight: 600 }}
               >
@@ -57,4 +58,3 @@ const ProviderPage: React.FC = () => {
 };
 
 export default ProviderPage;
-

@@ -134,16 +134,18 @@ Deployment
 - Live URL: https://fixturesapp.netlify.app/
 - Platform: Netlify
 - Build settings (from netlify.toml):
-  - base: react-version
-  - command: CI= npm run build
-  - publish: build
-  - redirect: /* → /index.html (status 200)
+  - command: `CI= npm run build`
+  - publish: `build/`
+  - redirect: `/*` → `/index.html` (status 200)
 - Environment variables:
-  - REACT_APP_SUPABASE_URL
-  - REACT_APP_SUPABASE_ANON_KEY
-  - Optional: NODE_VERSION=18 or 20
+  - `REACT_APP_SUPABASE_URL`
+  - `REACT_APP_SUPABASE_ANON_KEY`
+  - Optional: `REACT_APP_CANONICAL_BASE` (defaults to fixturesapp.netlify.app)
+- Production indexing toggle:
+  - While staging, `[context.production]` sets `X-Robots-Tag = noindex`.
+  - For go‑live, remove that block (see `release/go-live` branch).
 - Notes:
-  - Local dev also uses react-version/.env (ignored by git).
+  - React app now lives at repo root (no `react-version/` base).
   - Consider rotating Supabase anon key and removing inline fallbacks in services once env is everywhere.
 Supabase keys currently hardcoded in services (move to env)
 In Progress
@@ -157,14 +159,14 @@ Original SPA (backup version):
 
 Open index.html directly or use Live Server
 Admin interface at /admin.html
-React Version:
+React App (root):
 
-bash
-cd react-version
+```
 npm install
 npm start
-# Runs on http://localhost:3000 (or next available port e.g. 3001)
-# Admin at /admin; Teams index at /clubs; Team pages at /clubs/:slug; About at /about
+# http://localhost:3000 (or next available port)
+# Admin at /admin; Teams index at /clubs; Team at /clubs/:slug; About at /about
+```
 AI-Assisted Development Guidelines
 With React version:
 
@@ -212,6 +214,7 @@ Summary of fixes and behavior:
 - Pending Changes: detects when selection differs from current assignment
 - Save UX: per-row save button, disabled while saving, success/error messages
 - Loading and Unmount Safety: guards to avoid state updates after unmount; resolves StrictMode loading hang
+- Hooks Dependencies: uses `useCallback` wrappers for async loaders invoked in `useEffect`.
 - Refresh Behavior: prompts when unsaved changes exist; clears stale pending state on reload
 
 Data service specifics (simple mode):
@@ -232,6 +235,7 @@ Link fixture cards to match details
 Move Supabase URL/key to env (`REACT_APP_SUPABASE_URL`, `REACT_APP_SUPABASE_ANON_KEY`)
 Unify broadcaster constants and consider reintroducing blackout option
 Prep Netlify build for React app (`react-version/build`) and SPA redirects
+Lift production noindex and submit sitemaps after launch
 Expansion Considerations:
 
 Multi-sport support (original vision)
@@ -274,3 +278,22 @@ This migration was driven by practical development challenges with AI-assisted c
 Deploy bump: 2025-09-10T14:40:09Z
 
 Deploy bump: 2025-09-10T14:42:49Z
+
+Go Live Toggle (Indexing)
+
+- Prelaunch (hidden):
+  - netlify.toml: add production header to send X-Robots-Tag: noindex for /*
+  - public/robots.txt: Disallow: /
+- Live (indexable):
+  - Remove the production noindex header from netlify.toml
+  - public/robots.txt: Allow by leaving Disallow empty
+
+Go Live Checklist
+- Netlify primary domain: matchlocator.com with HTTPS issued
+- Env: REACT_APP_CANONICAL_BASE=https://matchlocator.com
+- Clear cache & deploy site
+- Verify:
+  - /robots.txt shows Allow
+  - curl -I https://matchlocator.com | grep -i x-robots (should NOT return noindex)
+  - Canonical tags point to matchlocator.com
+  - Submit sitemap (if enabled) in Google Search Console
