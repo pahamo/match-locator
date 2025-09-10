@@ -2,16 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { getSimpleFixtures, type SimpleFixture } from '../services/supabase-simple';
 import Header from '../components/Header';
 
-interface MatchDay {
-  date: string;
-  displayDate: string;
+interface MatchWeek {
+  matchweek: number;
   fixtures: SimpleFixture[];
-  isToday: boolean;
+  dateRange: string;
+  hasToday: boolean;
   isUpcoming: boolean;
 }
 
 const HomePage: React.FC = () => {
-  const [matchDay, setMatchDay] = useState<MatchDay | null>(null);
+  const [matchWeek, setMatchWeek] = useState<MatchWeek | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [blackoutIds, setBlackoutIds] = useState<number[]>([]);
@@ -23,8 +23,8 @@ const HomePage: React.FC = () => {
         setLoading(true);
         setError(null);
         const fixturesData = await getSimpleFixtures();
-        const currentMatchDay = getCurrentOrUpcomingMatchDay(fixturesData);
-        if (!isCancelled) setMatchDay(currentMatchDay);
+        const currentMatchWeek = getCurrentOrUpcomingMatchWeek(fixturesData);
+        if (!isCancelled) setMatchWeek(currentMatchWeek);
         try {
           const stored = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
           if (!isCancelled && Array.isArray(stored)) setBlackoutIds(stored);
@@ -39,14 +39,14 @@ const HomePage: React.FC = () => {
     return () => { isCancelled = true; };
   }, []);
 
-  const loadMatchDay = async () => {
+  const loadMatchWeek = async () => {
     try {
       setLoading(true);
       setError(null);
       
       const fixturesData = await getSimpleFixtures();
-      const currentMatchDay = getCurrentOrUpcomingMatchDay(fixturesData);
-      setMatchDay(currentMatchDay);
+      const currentMatchWeek = getCurrentOrUpcomingMatchWeek(fixturesData);
+      setMatchWeek(currentMatchWeek);
 
       // Load blackout flags from localStorage
       try {
@@ -63,57 +63,62 @@ const HomePage: React.FC = () => {
     }
   };
 
-  const getCurrentOrUpcomingMatchDay = (fixtures: SimpleFixture[]): MatchDay | null => {
+  const getCurrentOrUpcomingMatchWeek = (fixtures: SimpleFixture[]): MatchWeek | null => {
     if (!fixtures.length) return null;
 
     const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     
-    // Group fixtures by date
-    const fixturesByDate = new Map<string, SimpleFixture[]>();
+    // Group fixtures by matchweek
+    const fixturesByMatchweek = new Map<number, SimpleFixture[]>();
     
     fixtures.forEach(fixture => {
-      const fixtureDate = new Date(fixture.kickoff_utc);
-      const dateKey = fixtureDate.toISOString().split('T')[0]; // YYYY-MM-DD
-      
-      if (!fixturesByDate.has(dateKey)) {
-        fixturesByDate.set(dateKey, []);
+      if (fixture.matchweek) {
+        if (!fixturesByMatchweek.has(fixture.matchweek)) {
+          fixturesByMatchweek.set(fixture.matchweek, []);
+        }
+        fixturesByMatchweek.get(fixture.matchweek)!.push(fixture);
       }
-      fixturesByDate.get(dateKey)!.push(fixture);
     });
 
-    // Sort dates and find current/next match day
-    const sortedDates = Array.from(fixturesByDate.keys()).sort();
+    // Find current or upcoming matchweek
+    const sortedMatchweeks = Array.from(fixturesByMatchweek.keys()).sort((a, b) => a - b);
     
-    // First, check if there are matches today
-    const todayKey = today.toISOString().split('T')[0];
-    if (fixturesByDate.has(todayKey)) {
-      const todayFixtures = fixturesByDate.get(todayKey)!;
-      return {
-        date: todayKey,
-        displayDate: 'Today',
-        fixtures: todayFixtures.sort((a, b) => new Date(a.kickoff_utc).getTime() - new Date(b.kickoff_utc).getTime()),
-        isToday: true,
-        isUpcoming: false
-      };
-    }
-
-    // Otherwise, find the next upcoming match day
-    for (const dateKey of sortedDates) {
-      const matchDate = new Date(dateKey);
-      if (matchDate >= today) {
-        const fixtures = fixturesByDate.get(dateKey)!;
-        const displayDate = matchDate.toLocaleDateString('en-GB', {
-          weekday: 'long',
-          day: 'numeric',
-          month: 'long'
+    // First check if there's a matchweek with games today or in the future
+    for (const matchweek of sortedMatchweeks) {
+      const matchweekFixtures = fixturesByMatchweek.get(matchweek)!;
+      const upcomingFixtures = matchweekFixtures.filter(f => new Date(f.kickoff_utc) >= now);
+      
+      if (upcomingFixtures.length > 0) {
+        // Sort fixtures by kickoff time
+        const sortedFixtures = matchweekFixtures.sort((a, b) => 
+          new Date(a.kickoff_utc).getTime() - new Date(b.kickoff_utc).getTime()
+        );
+        
+        // Calculate date range
+        const firstDate = new Date(sortedFixtures[0].kickoff_utc);
+        const lastDate = new Date(sortedFixtures[sortedFixtures.length - 1].kickoff_utc);
+        
+        const dateRange = firstDate.toDateString() === lastDate.toDateString() 
+          ? firstDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })
+          : `${firstDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} - ${lastDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`;
+        
+        // Check if any fixtures are today
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        
+        const hasToday = matchweekFixtures.some(f => {
+          const fixtureDate = new Date(f.kickoff_utc);
+          fixtureDate.setHours(0, 0, 0, 0);
+          return fixtureDate.getTime() === today.getTime();
         });
         
         return {
-          date: dateKey,
-          displayDate,
-          fixtures: fixtures.sort((a, b) => new Date(a.kickoff_utc).getTime() - new Date(b.kickoff_utc).getTime()),
-          isToday: false,
+          matchweek,
+          fixtures: sortedFixtures,
+          dateRange,
+          hasToday,
           isUpcoming: true
         };
       }
@@ -128,7 +133,7 @@ const HomePage: React.FC = () => {
         <Header />
         <main>
           <div className="wrap">
-            <div className="loading">Loading match day...</div>
+            <div className="loading">Loading upcoming matches...</div>
           </div>
         </main>
       </div>
@@ -142,21 +147,21 @@ const HomePage: React.FC = () => {
         <main>
           <div className="wrap">
             <div className="error">{error}</div>
-            <button onClick={loadMatchDay}>Retry</button>
+            <button onClick={loadMatchWeek}>Retry</button>
           </div>
         </main>
       </div>
     );
   }
 
-  if (!matchDay) {
+  if (!matchWeek) {
     return (
       <div className="home-page">
         <Header />
         <main>
           <div className="wrap">
             <div className="no-fixtures">
-              <p>No upcoming match days found.</p>
+              <p>No upcoming matches found.</p>
             </div>
           </div>
         </main>
@@ -172,8 +177,8 @@ const HomePage: React.FC = () => {
         <div className="wrap">
           <div 
             style={{ 
-              background: matchDay.isToday ? '#f0f9ff' : '#fefce8', 
-              border: matchDay.isToday ? '2px solid #0ea5e9' : '2px solid #eab308',
+              background: matchWeek.hasToday ? '#f0f9ff' : '#fefce8', 
+              border: matchWeek.hasToday ? '2px solid #0ea5e9' : '2px solid #eab308',
               borderRadius: '12px', 
               padding: '24px', 
               marginBottom: '24px' 
@@ -181,35 +186,40 @@ const HomePage: React.FC = () => {
           >
             <h2 style={{ 
               margin: '0 0 8px 0', 
-              color: matchDay.isToday ? '#0c4a6e' : '#713f12',
+              color: matchWeek.hasToday ? '#0c4a6e' : '#713f12',
               fontSize: '24px',
               display: 'flex',
               alignItems: 'center',
               gap: '8px'
             }}>
-              {matchDay.isToday ? '🔴' : '📅'} {matchDay.displayDate}
+              {matchWeek.hasToday ? '🔴' : '📅'} Upcoming Matches
             </h2>
             <p style={{ 
               margin: 0, 
-              color: matchDay.isToday ? '#075985' : '#92400e',
+              color: matchWeek.hasToday ? '#075985' : '#92400e',
               fontSize: '14px'
             }}>
-              {matchDay.isToday 
-                ? `${matchDay.fixtures.length} match${matchDay.fixtures.length === 1 ? '' : 'es'} today`
-                : `Next Premier League match day • ${matchDay.fixtures.length} match${matchDay.fixtures.length === 1 ? '' : 'es'}`
-              }
+              <strong>Matchweek {matchWeek.matchweek}</strong> • {matchWeek.dateRange} • {matchWeek.fixtures.length} match{matchWeek.fixtures.length === 1 ? '' : 'es'}
             </p>
           </div>
 
           <div className="fixtures-list">
-            {matchDay.fixtures.map(fixture => (
+            {matchWeek.fixtures.map(fixture => (
               <div key={fixture.id} className="fixture-card">
                 <div className="fixture-datetime">
                   {new Date(fixture.kickoff_utc).toLocaleDateString('en-GB', {
+                    weekday: 'short',
+                    month: 'short', 
+                    day: 'numeric',
                     hour: '2-digit',
                     minute: '2-digit',
                     timeZone: 'Europe/London'
                   })}
+                  {fixture.matchweek && (
+                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '2px' }}>
+                      MW {fixture.matchweek}
+                    </div>
+                  )}
                 </div>
                 <div className="fixture-teams">
                   <div className="team">
