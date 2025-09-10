@@ -274,3 +274,23 @@ This migration was driven by practical development challenges with AI-assisted c
 Deploy bump: 2025-09-10T14:40:09Z
 
 Deploy bump: 2025-09-10T14:42:49Z
+
+Go Live Toggle (Indexing)
+
+- Prelaunch (hidden):
+  - netlify.toml: add production header to send X-Robots-Tag: noindex for /*
+  - public/robots.txt: Disallow: /
+- Live (indexable):
+  - Remove the production noindex header from netlify.toml
+  - public/robots.txt: Allow by leaving Disallow empty
+
+Go Live Checklist
+- Netlify primary domain: matchlocator.com with HTTPS issued
+- Env: REACT_APP_CANONICAL_BASE=https://matchlocator.com
+- Clear cache & deploy site
+- Verify:
+  - /robots.txt shows Allow
+  - curl -I https://matchlocator.com | grep -i x-robots (should NOT return noindex)
+  - Canonical tags point to matchlocator.com
+  - Submit sitemap (if enabled) in Google Search Console
+
