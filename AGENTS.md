@@ -44,13 +44,14 @@ Quality Checklist (before committing)
 - Netlify headers/redirects unchanged unless intentionally modified.
 
 Netlify / Deploy
-- Production indexing is currently disabled in `netlify.toml` under `[context.production]` with `X-Robots-Tag = "noindex"` while staging.
+- Indexing is disabled for production, preview, and branch deploys in `netlify.toml` via `X-Robots-Tag = "noindex"` while staging.
 - For go‑live, remove that context block (or use the `release/go-live` branch, which is prepared to lift noindex).
 - Typical deployment is via pushing to the configured branch; Netlify builds automatically.
 
 Data / Supabase
 - Uses anon key for read operations and a simple admin write. Rotate keys as needed.
 - Import sample data: see `scripts/import_sample_fixtures.mjs` (requires env vars).
+- Security: `config/.env` is ignored; do not commit any secrets. If any keys were pushed historically, rotate them in Supabase.
 
 Known Notes
 - A previous build error was fixed by adding optional `title` to `HeaderProps` and using it where pages pass a title.
@@ -66,4 +67,3 @@ Agent Tips
 - Prefer `rg` for fast search, small targeted edits, and incremental commits.
 - Validate with `tsc` and a full `npm run build` when changing component props, hooks, or SEO scripts.
 - Keep `netlify.toml` coherent: don’t loosen CSP unless necessary.
-

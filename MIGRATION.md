@@ -114,11 +114,11 @@ Bug Tracker (Beta)
   - File: src/pages/AdminPage.tsx
 
 - Netlify deployment (Completed)
-  - netlify.toml builds the React app (base=react-version, publish=build) with SPA redirect.
+  - Root `netlify.toml` builds the React app with SPA redirect.
   - Site live at: https://fixturesapp.netlify.app/
   - Env vars set: REACT_APP_SUPABASE_URL, REACT_APP_SUPABASE_ANON_KEY
   - Build command uses `CI=` to prevent CRA warning-as-error in CI.
-  - Files: netlify.toml, config/netlify.toml
+  - Contexts: production, deploy-preview, and branch-deploy send `X-Robots-Tag: noindex` until launch.
 
 - Supabase credentials fallback (Security hardening)
   - Change: Removed hardcoded fallback URL/key from client; env is required now.
@@ -146,8 +146,7 @@ Deployment
   - For go‑live, remove that block (see `release/go-live` branch).
 - Notes:
   - React app now lives at repo root (no `react-version/` base).
-  - Consider rotating Supabase anon key and removing inline fallbacks in services once env is everywhere.
-Supabase keys currently hardcoded in services (move to env)
+  - Rotate Supabase keys if any were exposed; client uses env only.
 In Progress
 Stripping down to minimal working version
 Removing problematic inherited features

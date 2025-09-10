@@ -26,3 +26,6 @@ node_modules
 
 # Ignore accidental duplicate node modules directory
 node_modules 2/
+
+# Local configuration (never commit secrets)
+config/.env
