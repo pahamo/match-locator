@@ -13,7 +13,20 @@ root.render(
   </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+// Core Web Vitals monitoring with Plausible integration
+reportWebVitals((metric) => {
+  // Send to Plausible if available
+  if (window.plausible) {
+    window.plausible('Core Web Vital', {
+      props: {
+        metric_name: metric.name,
+        metric_value: Math.round(metric.value)
+      }
+    });
+  }
+  
+  // Log to console in development
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Web Vital:', metric);
+  }
+});

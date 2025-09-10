@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getSimpleFixtures, type SimpleFixture } from '../services/supabase-simple';
 import Header from '../components/Header';
 import StructuredData from '../components/StructuredData';
+import { FixtureCardSkeleton } from '../components/SkeletonLoader';
 import { generateHomeMeta, updateDocumentMeta, generateSimpleMatchUrl } from '../utils/seo';
 
 interface MatchWeek {
@@ -140,7 +141,12 @@ const HomePage: React.FC = () => {
         <Header />
         <main>
           <div className="wrap">
-            <div className="loading">Loading upcoming matches...</div>
+            <h1 style={{ margin: '0 0 24px 0', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>
+              Upcoming Matches
+            </h1>
+            <FixtureCardSkeleton />
+            <FixtureCardSkeleton />
+            <FixtureCardSkeleton />
           </div>
         </main>
       </div>

@@ -3,17 +3,36 @@
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#6366f1" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Match Locator">
+    <meta property="og:title" content="Match Locator - UK football TV schedule">
+    <meta property="og:description" content="Find which broadcaster (Sky Sports, TNT Sports, BBC) shows every Premier League match.">
+    <meta property="og:url" content="https://matchlocator.com">
+    <meta property="og:image" content="https://matchlocator.com/logo192.png">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Match Locator - UK football TV schedule">
+    <meta name="twitter:description" content="Find which broadcaster shows every Premier League match.">
+    <meta name="twitter:image" content="https://matchlocator.com/logo192.png">
     <meta
       name="description"
-      content="fixtures.app - Premier League TV Schedule for UK. Find which broadcaster (Sky Sports, TNT Sports, BBC) shows every match."
+      content="Match Locator - UK football TV schedule. Find which broadcaster (Sky Sports, TNT Sports, BBC) shows every Premier League match."
     />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
+    
+    <!-- Preload critical resources -->
+    <link rel="preconnect" href="https://analytics.kinotto.co" crossorigin>
+    <link rel="preconnect" href="https://nkfuzkrazehjivzmdrvt.supabase.co" crossorigin>
+    
+    <!-- Web App Manifest -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
@@ -24,7 +43,25 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>fixtures.app - Premier League TV Schedule UK</title>
+    <title>Match Locator - UK football TV schedule</title>
+    
+    <!-- Plausible Analytics -->
+    <script defer data-domain="matchlocator.com" src="https://analytics.kinotto.co/js/script.js"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+              console.log('SW registered: ', registration);
+            })
+            .catch((registrationError) => {
+              console.log('SW registration failed: ', registrationError);
+            });
+        });
+      }
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

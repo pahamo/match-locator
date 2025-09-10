@@ -1,6 +1,6 @@
 {
-  "short_name": "fixtures.app",
-  "name": "fixtures.app - Premier League TV Schedule UK",
+  "short_name": "Match Locator",
+  "name": "Match Locator - UK football TV schedule",
   "icons": [
     {
       "src": "favicon.ico",

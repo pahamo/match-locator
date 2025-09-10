@@ -27,7 +27,7 @@ async function fetchFixtures() {
   const startIso = `${seasonYear}-08-01T00:00:00.000Z`;
   const { data, error } = await supabase
     .from('fixtures_with_teams')
-    .select('id,utc_kickoff,home_name,away_name')
+    .select('id,utc_kickoff,home_team,away_team')
     .gte('utc_kickoff', startIso)
     .order('utc_kickoff', { ascending: true })
     .limit(2000);
@@ -39,17 +39,11 @@ function ymd(iso) { return new Date(iso).toISOString().split('T')[0]; }
 
 async function fetchTeams() {
   if (!supabase) return [];
-  const { data, error } = await supabase.from('teams').select('slug,updated_at').order('name', { ascending: true });
+  const { data, error } = await supabase.from('teams').select('slug').order('name', { ascending: true });
   if (error) { console.warn('[sitemap] teams error', error); return []; }
   return data || [];
 }
 
-async function fetchProviders() {
-  if (!supabase) return [];
-  const { data, error } = await supabase.from('providers').select('slug,display_name,updated_at').order('display_name', { ascending: true });
-  if (error) { console.warn('[sitemap] providers error', error); return []; }
-  return (data || []).filter(p => p.slug);
-}
 
 async function build() {
   ensureDir(publicDir); ensureDir(sitemapsDir);
@@ -75,7 +69,7 @@ async function build() {
 
   // Matches
   const fixtures = await fetchFixtures();
-  const matchUrls = fixtures.map(f => `${CANONICAL_BASE}/matches/${f.id}-${slugify(f.home_name)}-vs-${slugify(f.away_name)}-${ymd(f.utc_kickoff)}`);
+  const matchUrls = fixtures.map(f => `${CANONICAL_BASE}/matches/${f.id}-${slugify(f.home_team)}-vs-${slugify(f.away_team)}-${ymd(f.utc_kickoff)}`);
   const matchesXml = [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
@@ -95,16 +89,7 @@ async function build() {
   ].join('\n');
   writeXml(path.join(sitemapsDir, 'sitemap-teams.xml'), teamsXml);
 
-  // Providers (optional)
-  const providers = await fetchProviders();
-  const providerUrls = providers.map(p => `${CANONICAL_BASE}/providers/${p.slug}`);
-  const providersXml = [
-    '<?xml version="1.0" encoding="UTF-8"?>',
-    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-    ...providerUrls.map(u => urlEntry(u, { changefreq: 'monthly', priority: '0.4' })),
-    '</urlset>'
-  ].join('\n');
-  writeXml(path.join(sitemapsDir, 'sitemap-providers.xml'), providersXml);
+  // Note: Providers are hardcoded in ProviderPage.tsx, not database-driven, so no sitemap needed
 
   // Index
   const indexXml = [
@@ -113,7 +98,6 @@ async function build() {
     `  <sitemap><loc>${CANONICAL_BASE}/sitemaps/sitemap-fixtures.xml</loc></sitemap>`,
     `  <sitemap><loc>${CANONICAL_BASE}/sitemaps/sitemap-matches.xml</loc></sitemap>`,
     `  <sitemap><loc>${CANONICAL_BASE}/sitemaps/sitemap-teams.xml</loc></sitemap>`,
-    `  <sitemap><loc>${CANONICAL_BASE}/sitemaps/sitemap-providers.xml</loc></sitemap>`,
     `  <sitemap><loc>${CANONICAL_BASE}/sitemaps/sitemap-legal.xml</loc></sitemap>`,
     '</sitemapindex>'
   ].join('\n');

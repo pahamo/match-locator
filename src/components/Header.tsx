@@ -15,13 +15,13 @@ const Header: React.FC<HeaderProps> = ({
     <header style={{
       background: 'white',
       borderBottom: '1px solid #e5e7eb',
-      padding: '16px 24px',
+      padding: 'clamp(12px, 4vw, 24px) clamp(16px, 4vw, 24px)',
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
-      flexWrap: 'nowrap',
-      gap: '16px',
-      minHeight: '64px'
+      flexWrap: 'wrap',
+      gap: 'clamp(12px, 3vw, 16px)',
+      minHeight: 'clamp(56px, 8vh, 64px)'
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         <a 
@@ -32,6 +32,7 @@ const Header: React.FC<HeaderProps> = ({
             textDecoration: 'none',
             color: 'inherit'
           }}
+          aria-label="Match Locator home page"
         >
           <img src="/logo.svg" alt="Match Locator logo" style={{ height: '32px', width: '32px' }} />
         </a>
@@ -42,17 +43,19 @@ const Header: React.FC<HeaderProps> = ({
               textDecoration: 'none',
               color: 'inherit'
             }}
+            aria-label="Match Locator home page"
           >
             <div style={{ 
               margin: 0, 
-              fontSize: '24px',
+              fontSize: 'clamp(18px, 5vw, 24px)',
               fontWeight: '700',
-              color: '#1f2937'
+              color: '#1f2937',
+              lineHeight: '1.2'
             }}>
               {title}
             </div>
           </a>
-          <p style={{ margin: 0, fontSize: '14px', color: '#6b7280', marginTop: '2px' }}>
+          <p style={{ margin: 0, fontSize: 'clamp(12px, 3vw, 14px)', color: '#6b7280', marginTop: '2px', lineHeight: '1.3' }}>
             {subtitle}
           </p>
         </div>
@@ -60,20 +63,24 @@ const Header: React.FC<HeaderProps> = ({
       
       <nav style={{ 
         display: 'flex', 
-        gap: '20px',
+        gap: 'clamp(12px, 3vw, 20px)',
         alignItems: 'center',
-        flexShrink: 0
+        flexShrink: 0,
+        flexWrap: 'wrap'
       }}>
         <a 
           href="/" 
           style={{ 
             color: '#6366f1', 
             textDecoration: 'none', 
-            fontSize: '15px',
+            fontSize: 'clamp(14px, 3.5vw, 15px)',
             fontWeight: '500',
-            padding: '8px 12px',
+            padding: 'clamp(10px, 2.5vw, 12px) clamp(12px, 3vw, 14px)',
             borderRadius: '6px',
-            transition: 'background-color 0.2s'
+            transition: 'background-color 0.2s',
+            minHeight: '44px',
+            display: 'flex',
+            alignItems: 'center'
           }}
           onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
           onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
@@ -85,11 +92,14 @@ const Header: React.FC<HeaderProps> = ({
           style={{ 
             color: '#6366f1', 
             textDecoration: 'none', 
-            fontSize: '15px',
+            fontSize: 'clamp(14px, 3.5vw, 15px)',
             fontWeight: '500',
-            padding: '8px 12px',
+            padding: 'clamp(10px, 2.5vw, 12px) clamp(12px, 3vw, 14px)',
             borderRadius: '6px',
-            transition: 'background-color 0.2s'
+            transition: 'background-color 0.2s',
+            minHeight: '44px',
+            display: 'flex',
+            alignItems: 'center'
           }}
           onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
           onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
@@ -101,11 +111,14 @@ const Header: React.FC<HeaderProps> = ({
           style={{ 
             color: '#6366f1', 
             textDecoration: 'none', 
-            fontSize: '15px',
+            fontSize: 'clamp(14px, 3.5vw, 15px)',
             fontWeight: '500',
-            padding: '8px 12px',
+            padding: 'clamp(10px, 2.5vw, 12px) clamp(12px, 3vw, 14px)',
             borderRadius: '6px',
-            transition: 'background-color 0.2s'
+            transition: 'background-color 0.2s',
+            minHeight: '44px',
+            display: 'flex',
+            alignItems: 'center'
           }}
           onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
           onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
@@ -117,11 +130,14 @@ const Header: React.FC<HeaderProps> = ({
           style={{ 
             color: '#6366f1', 
             textDecoration: 'none', 
-            fontSize: '15px',
+            fontSize: 'clamp(14px, 3.5vw, 15px)',
             fontWeight: '500',
-            padding: '8px 12px',
+            padding: 'clamp(10px, 2.5vw, 12px) clamp(12px, 3vw, 14px)',
             borderRadius: '6px',
-            transition: 'background-color 0.2s'
+            transition: 'background-color 0.2s',
+            minHeight: '44px',
+            display: 'flex',
+            alignItems: 'center'
           }}
           onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
           onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
@@ -133,12 +149,15 @@ const Header: React.FC<HeaderProps> = ({
           style={{ 
             color: '#64748b', 
             textDecoration: 'none', 
-            fontSize: '14px',
+            fontSize: 'clamp(12px, 3vw, 14px)',
             fontWeight: '400',
-            padding: '6px 10px',
+            padding: 'clamp(8px, 2vw, 10px) clamp(10px, 2.5vw, 12px)',
             borderRadius: '4px',
             border: '1px solid #e2e8f0',
-            transition: 'all 0.2s'
+            transition: 'all 0.2s',
+            minHeight: '44px',
+            display: 'flex',
+            alignItems: 'center'
           }}
           onMouseOver={(e) => {
             e.currentTarget.style.backgroundColor = '#f1f5f9';

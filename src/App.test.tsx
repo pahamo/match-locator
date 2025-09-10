@@ -4,6 +4,6 @@ import App from './App';
 
 test('renders app without crashing', () => {
   render(<App />);
-  const titleElement = screen.getByText(/Premier League TV Schedule UK/i);
+  const titleElement = screen.getByText(/Match Locator/i);
   expect(titleElement).toBeInTheDocument();
 });
