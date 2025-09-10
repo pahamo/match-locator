@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import StructuredData from '../components/StructuredData';
 import { FixtureCardSkeleton } from '../components/SkeletonLoader';
 import { generateHomeMeta, updateDocumentMeta, generateSimpleMatchUrl } from '../utils/seo';
+import { getDisplayTeamName, shouldUseShortNames } from '../utils/teamNames';
 
 interface MatchWeek {
   matchweek: number;
@@ -13,6 +14,47 @@ interface MatchWeek {
   hasToday: boolean;
   isUpcoming: boolean;
 }
+
+interface GroupedFixture {
+  date: string;
+  time: string;
+  fixtures: SimpleFixture[];
+}
+
+// Helper to group fixtures by date and time for compact display
+const groupFixturesByDateTime = (fixtures: SimpleFixture[]): GroupedFixture[] => {
+  const groups: Record<string, SimpleFixture[]> = {};
+  
+  fixtures.forEach(fixture => {
+    const date = new Date(fixture.kickoff_utc);
+    const dateKey = date.toLocaleDateString('en-GB', {
+      weekday: 'short',
+      month: 'short', 
+      day: 'numeric',
+      timeZone: 'Europe/London'
+    });
+    const timeKey = date.toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'Europe/London'
+    });
+    
+    const groupKey = `${dateKey}|${timeKey}`;
+    if (!groups[groupKey]) {
+      groups[groupKey] = [];
+    }
+    groups[groupKey].push(fixture);
+  });
+  
+  return Object.entries(groups).map(([key, fixtures]) => {
+    const [date, time] = key.split('|');
+    return { date, time, fixtures };
+  }).sort((a, b) => {
+    const aDateTime = new Date(a.fixtures[0].kickoff_utc);
+    const bDateTime = new Date(b.fixtures[0].kickoff_utc); 
+    return aDateTime.getTime() - bDateTime.getTime();
+  });
+};
 
 const HomePage: React.FC = () => {
   const [matchWeek, setMatchWeek] = useState<MatchWeek | null>(null);
@@ -194,95 +236,195 @@ const HomePage: React.FC = () => {
           <h1 style={{ marginTop: 0 }}>Premier League TV Schedule (UK)</h1>
           <div 
             style={{ 
-              background: matchWeek.hasToday ? '#f0f9ff' : '#fefce8', 
-              border: matchWeek.hasToday ? '2px solid #0ea5e9' : '2px solid #eab308',
-              borderRadius: '12px', 
-              padding: '24px', 
-              marginBottom: '24px' 
+              background: matchWeek.hasToday ? '#f8fafc' : '#fafaf9', 
+              border: '1px solid #e2e8f0',
+              borderRadius: '6px', 
+              padding: '12px 16px', 
+              marginBottom: '16px',
+              fontSize: '14px'
             }}
           >
-            <h2 style={{ 
-              margin: '0 0 8px 0', 
-              color: matchWeek.hasToday ? '#0c4a6e' : '#713f12',
-              fontSize: '24px',
+            <div style={{ 
               display: 'flex',
               alignItems: 'center',
-              gap: '8px'
+              justifyContent: 'space-between',
+              gap: '12px'
             }}>
-              {matchWeek.hasToday ? '🔴' : '📅'} Upcoming Matches
-            </h2>
-            <p style={{ 
-              margin: 0, 
-              color: matchWeek.hasToday ? '#075985' : '#92400e',
-              fontSize: '14px'
-            }}>
-              <strong>Matchweek {matchWeek.matchweek}</strong> • {matchWeek.dateRange} • {matchWeek.fixtures.length} match{matchWeek.fixtures.length === 1 ? '' : 'es'}
-            </p>
+              <span style={{ 
+                color: '#64748b',
+                fontWeight: '500'
+              }}>
+                Matchweek {matchWeek.matchweek} • {matchWeek.fixtures.length} match{matchWeek.fixtures.length === 1 ? '' : 'es'}
+              </span>
+              <span style={{ 
+                color: '#94a3b8',
+                fontSize: '12px'
+              }}>
+                {matchWeek.dateRange}
+              </span>
+            </div>
           </div>
 
           <div className="fixtures-list">
-            {matchWeek.fixtures.map(fixture => (
-              <div key={fixture.id} className="fixture-card">
-                <div className="fixture-datetime">
-                  {new Date(fixture.kickoff_utc).toLocaleDateString('en-GB', {
-                    weekday: 'short',
-                    month: 'short',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    timeZone: 'Europe/London'
-                  })}
-                  {fixture.matchweek && (
-                    <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '2px' }}>
-                      MW {fixture.matchweek}
+            {groupFixturesByDateTime(matchWeek.fixtures).map((group, groupIndex) => (
+              <div key={groupIndex} className="fixture-group">
+                {/* Date/Time Header for Group */}
+                <div style={{
+                  background: '#f8fafc',
+                  padding: '8px 12px',
+                  margin: '0 0 8px 0',
+                  borderRadius: '4px',
+                  fontSize: '13px',
+                  fontWeight: '600',
+                  color: '#475569',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}>
+                  <span>{group.date}</span>
+                  <span>{group.time}</span>
+                </div>
+                
+                {/* Compact Match Cards */}
+                {group.fixtures.map(fixture => (
+                  <div key={fixture.id} className="fixture-card-compact" style={{
+                    background: 'white',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '6px',
+                    padding: '12px',
+                    marginBottom: '6px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    minHeight: 'auto'
+                  }}>
+                    {/* Teams Section - More Compact */}
+                    <div className="fixture-teams-compact" style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      flex: '1',
+                      minWidth: '0'
+                    }}>
+                      <div className="team" style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        flex: '1',
+                        minWidth: '0'
+                      }}>
+                        {fixture.home_crest && (
+                          <img 
+                            src={fixture.home_crest} 
+                            alt={`${fixture.home_team} crest`}
+                            style={{ width: '18px', height: '18px', objectFit: 'contain', flexShrink: 0 }}
+                          />
+                        )}
+                        <span className="team-name" style={{
+                          fontSize: '14px',
+                          fontWeight: '500',
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap'
+                        }}>
+                          {getDisplayTeamName(fixture.home_team, shouldUseShortNames())}
+                        </span>
+                      </div>
+                      
+                      <div className="vs" style={{
+                        fontSize: '12px',
+                        color: '#9ca3af',
+                        fontWeight: '500',
+                        flexShrink: 0
+                      }}>vs</div>
+                      
+                      <div className="team away-team" style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        flex: '1',
+                        minWidth: '0',
+                        justifyContent: 'flex-end'
+                      }}>
+                        <span className="team-name" style={{
+                          fontSize: '14px',
+                          fontWeight: '500',
+                          textOverflow: 'ellipsis',
+                          overflow: 'hidden',
+                          whiteSpace: 'nowrap'
+                        }}>
+                          {getDisplayTeamName(fixture.away_team, shouldUseShortNames())}
+                        </span>
+                        {fixture.away_crest && (
+                          <img 
+                            src={fixture.away_crest} 
+                            alt={`${fixture.away_team} crest`}
+                            style={{ width: '18px', height: '18px', objectFit: 'contain', flexShrink: 0 }}
+                          />
+                        )}
+                      </div>
                     </div>
-                  )}
-                </div>
-                <div className="fixture-teams">
-                  <div className="team">
-                    {fixture.home_crest && (
-                      <img 
-                        src={fixture.home_crest} 
-                        alt={`${fixture.home_team} crest`}
-                        style={{ width: '20px', height: '20px', marginRight: '8px', objectFit: 'contain' }}
-                      />
-                    )}
-                    <span className="team-name">{fixture.home_team}</span>
+                    
+                    {/* Broadcaster Info - Compact */}
+                    <div className="broadcaster-info-compact" style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      flexShrink: 0
+                    }}>
+                      {blackoutIds.includes(fixture.id) ? (
+                        <span className="provider blackout" style={{
+                          fontSize: '12px',
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                          background: '#fee2e2',
+                          color: '#dc2626'
+                        }}>🚫</span>
+                      ) : fixture.broadcaster ? (
+                        <span className="provider confirmed" style={{
+                          fontSize: '12px',
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                          background: '#dcfce7',
+                          color: '#16a34a',
+                          fontWeight: '500'
+                        }}>{fixture.broadcaster}</span>
+                      ) : (
+                        <span className="tbd-text" style={{
+                          fontSize: '12px',
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                          background: '#fef3c7',
+                          color: '#d97706'
+                        }}>TBD</span>
+                      )}
+                      
+                      <Link 
+                        to={generateSimpleMatchUrl(fixture)} 
+                        style={{ 
+                          color: '#6366f1', 
+                          textDecoration: 'none',
+                          fontSize: '12px',
+                          fontWeight: '500',
+                          padding: '4px 8px',
+                          borderRadius: '4px',
+                          border: '1px solid #6366f1',
+                          transition: 'all 0.2s'
+                        }}
+                        onMouseOver={(e) => {
+                          e.currentTarget.style.background = '#6366f1';
+                          e.currentTarget.style.color = 'white';
+                        }}
+                        onMouseOut={(e) => {
+                          e.currentTarget.style.background = 'transparent';
+                          e.currentTarget.style.color = '#6366f1';
+                        }}
+                      >
+                        View
+                      </Link>
+                    </div>
                   </div>
-                  <div className="vs">vs</div>
-                  <div className="team away-team">
-                    <span className="team-name">{fixture.away_team}</span>
-                    {fixture.away_crest && (
-                      <img 
-                        src={fixture.away_crest} 
-                        alt={`${fixture.away_team} crest`}
-                        style={{ width: '20px', height: '20px', marginLeft: '8px', objectFit: 'contain' }}
-                      />
-                    )}
-                  </div>
-                </div>
-                <div className="broadcaster-info">
-                  {blackoutIds.includes(fixture.id) ? (
-                    <span className="provider blackout">🚫 Blackout</span>
-                  ) : fixture.broadcaster ? (
-                    <span className="provider confirmed">{fixture.broadcaster}</span>
-                  ) : (
-                    <span className="tbd-text">TBD</span>
-                  )}
-                </div>
-                <div style={{ marginTop: '12px', textAlign: 'right' }}>
-                  <Link 
-                    to={generateSimpleMatchUrl(fixture)} 
-                    style={{ 
-                      color: '#6366f1', 
-                      textDecoration: 'underline', 
-                      fontSize: '0.9rem',
-                      fontWeight: '500'
-                    }}
-                  >
-                    Details →
-                  </Link>
-                </div>
+                ))}
               </div>
             ))}
           </div>

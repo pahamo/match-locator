@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { getTeams } from '../services/supabase';
 import type { Team } from '../types';
 import Header from '../components/Header';
 import { generateClubsMeta, updateDocumentMeta } from '../utils/seo';
+import { getDisplayTeamName, shouldUseShortNames } from '../utils/teamNames';
 
 const ClubsPage: React.FC = () => {
   const [teams, setTeams] = useState<Team[]>([]);
@@ -34,12 +36,10 @@ const ClubsPage: React.FC = () => {
   if (loading) {
     return (
       <div className="clubs-page">
-        <Header 
-          title="Premier League Clubs"
-          subtitle="All 20 clubs in the Premier League"
-        />
+        <Header />
         <main>
           <div className="wrap">
+            <h1 style={{ marginTop: 0 }}>Premier League Clubs</h1>
             <div className="loading">Loading teams...</div>
           </div>
         </main>
@@ -50,12 +50,10 @@ const ClubsPage: React.FC = () => {
   if (error) {
     return (
       <div className="clubs-page">
-        <Header 
-          title="Premier League Clubs"
-          subtitle="All 20 clubs in the Premier League"
-        />
+        <Header />
         <main>
           <div className="wrap">
+            <h1 style={{ marginTop: 0 }}>Premier League Clubs</h1>
             <div className="error">{error}</div>
             <button onClick={loadTeams}>Retry</button>
           </div>
@@ -66,58 +64,82 @@ const ClubsPage: React.FC = () => {
 
   return (
     <div className="clubs-page">
-      <Header 
-        title="Premier League Clubs"
-        subtitle={`All ${teams.length} clubs in the Premier League`}
-      />
+      <Header />
       
       <main>
         <div className="wrap">
+          <h1 style={{ marginTop: 0, marginBottom: '16px' }}>Premier League Clubs</h1>
+          
+          {/* Compact Header */}
+          <div style={{
+            background: '#f8fafc',
+            padding: '12px 16px',
+            margin: '0 0 16px 0',
+            borderRadius: '6px',
+            fontSize: '14px',
+            color: '#64748b',
+            fontWeight: '500'
+          }}>
+            {teams.length} Premier League clubs
+          </div>
+          
+          {/* Compact Grid */}
           <div 
+            className="clubs-grid-compact"
             style={{ 
               display: 'grid', 
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
-              gap: '24px', 
-              marginTop: '24px' 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', 
+              gap: '12px', 
+              marginTop: '16px' 
             }}
           >
             {teams.map(team => (
-              <div 
-                key={team.id} 
-                style={{ 
-                  background: 'white', 
-                  border: '1px solid #e5e7eb', 
-                  borderRadius: '12px', 
-                  padding: '24px', 
-                  textAlign: 'center' as const, 
+              <Link
+                key={team.id}
+                to={`/clubs/${team.slug}`}
+                className="club-card-compact"
+                style={{
+                  background: 'white',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '8px',
+                  padding: '16px 12px',
+                  textAlign: 'center' as const,
+                  textDecoration: 'none',
+                  color: 'inherit',
                   transition: 'all 0.2s ease',
-                  cursor: 'pointer'
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  height: '120px',
+                  justifyContent: 'center'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.1)';
                   e.currentTarget.style.borderColor = '#6366f1';
+                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(99, 102, 241, 0.1)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
                 }}
                 onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = '#e2e8f0';
                   e.currentTarget.style.boxShadow = 'none';
-                  e.currentTarget.style.borderColor = '#e5e7eb';
+                  e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
-                <div 
-                  style={{ 
-                    marginBottom: '16px', 
-                    height: '80px', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center' 
-                  }}
-                >
+                {/* Compact Crest */}
+                <div style={{
+                  width: '40px',
+                  height: '40px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: '8px'
+                }}>
                   {team.crest ? (
                     <img 
                       src={team.crest} 
                       alt={`${team.name} crest`}
                       style={{ 
-                        maxHeight: '80px', 
-                        maxWidth: '80px', 
+                        maxHeight: '40px', 
+                        maxWidth: '40px', 
                         objectFit: 'contain' 
                       }}
                       onError={(e) => {
@@ -127,15 +149,15 @@ const ClubsPage: React.FC = () => {
                   ) : (
                     <div 
                       style={{ 
-                        width: '80px', 
-                        height: '80px', 
+                        width: '40px', 
+                        height: '40px', 
                         borderRadius: '50%', 
                         background: '#f3f4f6', 
                         display: 'flex', 
                         alignItems: 'center', 
                         justifyContent: 'center', 
                         fontWeight: 'bold', 
-                        fontSize: '18px', 
+                        fontSize: '14px', 
                         color: '#6b7280' 
                       }}
                     >
@@ -143,31 +165,34 @@ const ClubsPage: React.FC = () => {
                     </div>
                   )}
                 </div>
-                <div>
-                  <h3 
-                    style={{ 
-                      margin: '0 0 12px 0', 
-                      fontSize: '18px', 
-                      fontWeight: '600', 
-                      color: '#1f2937' 
+                
+                {/* Team Name - Responsive */}
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                  <div 
+                    className="team-name-full"
+                    style={{
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      color: '#1f2937',
+                      lineHeight: '1.3',
+                      display: 'block'
                     }}
                   >
                     {team.name}
-                  </h3>
-                  <a 
-                    href={`/clubs/${team.slug}`} 
-                    style={{ 
-                      color: '#6366f1', 
-                      textDecoration: 'underline', 
-                      fontSize: '0.9rem',
-                      display: 'inline-block',
-                      marginTop: '8px'
+                  </div>
+                  <div 
+                    className="team-name-short"
+                    style={{
+                      fontSize: '16px',
+                      fontWeight: '700',
+                      color: '#1f2937',
+                      display: 'none'
                     }}
                   >
-                    View Fixtures →
-                  </a>
+                    {getDisplayTeamName(team.name, true)}
+                  </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

@@ -696,3 +696,117 @@ textarea:focus {
     display: grid !important;
   }
 }
+
+/* Compact card design optimizations */
+.fixture-group {
+  margin-bottom: 20px;
+}
+
+.fixture-card-compact {
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.fixture-card-compact:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: #6366f1;
+}
+
+/* Responsive optimizations for compact cards */
+@media (max-width: 768px) {
+  .fixture-teams-compact {
+    gap: 6px !important;
+  }
+  
+  .fixture-card-compact {
+    padding: 10px !important;
+    gap: 8px !important;
+  }
+  
+  .broadcaster-info-compact {
+    gap: 6px !important;
+  }
+  
+  /* Make team names even shorter on very small screens */
+  .team-name {
+    max-width: 80px;
+  }
+}
+
+@media (max-width: 480px) {
+  .fixture-group {
+    margin-bottom: 16px;
+  }
+  
+  .fixture-card-compact {
+    padding: 8px !important;
+    gap: 6px !important;
+    margin-bottom: 4px !important;
+  }
+  
+  .team-name {
+    max-width: 60px;
+    font-size: 13px !important;
+  }
+  
+  .vs {
+    font-size: 11px !important;
+  }
+}
+
+/* Compact club grid optimizations */
+.clubs-grid-compact {
+  transition: all 0.2s ease;
+}
+
+.club-card-compact {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.club-card-compact:hover {
+  cursor: pointer;
+}
+
+/* Responsive club grid adjustments */
+@media (max-width: 768px) {
+  .clubs-grid-compact {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
+    gap: 10px !important;
+  }
+  
+  .club-card-compact {
+    padding: 12px 8px !important;
+    height: 100px !important;
+  }
+  
+  /* Show short names on mobile */
+  .team-name-full {
+    display: none !important;
+  }
+  
+  .team-name-short {
+    display: block !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .clubs-grid-compact {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) !important;
+    gap: 8px !important;
+  }
+  
+  .club-card-compact {
+    padding: 10px 6px !important;
+    height: 90px !important;
+  }
+  
+  .club-card-compact img {
+    max-height: 32px !important;
+    max-width: 32px !important;
+  }
+  
+  .team-name-short {
+    font-size: 14px !important;
+  }
+}
