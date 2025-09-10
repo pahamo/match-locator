@@ -35,6 +35,7 @@ const ProviderPage: React.FC = () => {
               <a
                 href={provider.url}
                 target="_blank"
+                rel="noreferrer noopener"
                 {...withAffiliateAriaLabel(provider.name)}
                 style={{ display: 'inline-block', padding: '10px 16px', background: '#6366f1', color: '#fff', textDecoration: 'none', borderRadius: 8, fontWeight: 600 }}
               >

@@ -1,11 +1,14 @@
 import React from 'react';
 
 interface HeaderProps {
+  // Optional site/app title override
+  title?: string;
   // Optional SEO-friendly tagline override
   subtitle?: string;
 }
 
 const Header: React.FC<HeaderProps> = ({ 
+  title = "Match Locator",
   subtitle = "UK football TV schedule — who shows every match"
 }) => {
   return (
@@ -46,7 +49,7 @@ const Header: React.FC<HeaderProps> = ({
               fontWeight: '700',
               color: '#1f2937'
             }}>
-              Match Locator
+              {title}
             </div>
           </a>
           <p style={{ margin: 0, fontSize: '14px', color: '#6b7280', marginTop: '2px' }}>
