@@ -164,6 +164,54 @@ Deployment
   - Local dev also uses react-version/.env (ignored by git).
   - Consider rotating Supabase anon key and removing inline fallbacks in services once env is everywhere.
 
+Compliance, Security & Legal (New)
+
+- Security headers (Netlify):
+  - HSTS, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, baseline CSP applied to all routes.
+  - File: netlify.toml (mirrored in config/netlify.toml).
+- Robots and indexing controls:
+  - X-Robots-Tag: noindex for /admin/* and /api/private/*
+  - Staging (deploy previews/branch deploys) send global X-Robots-Tag: noindex
+  - robots.txt disallows /admin and /api/private and points to /sitemap.xml
+- Sitemaps:
+  - Generated at build time: /sitemap.xml + child sitemaps in /sitemaps (fixtures, matches, teams, providers, legal)
+  - Script: react-version/scripts/generate_sitemaps.mjs (runs in prebuild)
+  - Env: REACT_APP_CANONICAL_BASE used for canonical URLs
+- Canonical handling:
+  - All SEO meta generators use REACT_APP_CANONICAL_BASE
+  - Legal pages set canonical to current URL
+- Legal pages (plain‑English boilerplate + TODOs):
+  - Privacy Policy, Cookie Policy, Terms & Conditions under /legal/*
+  - Provider pages /providers/:slug render required affiliate disclosures
+  - Privacy request path: /privacy/request (email/type/message + data‑subject confirm; mailto fallback)
+- Cookies:
+  - Minimal Cookie Settings modal (informational MVP). Necessary locked on; analytics cookie‑less on; marketing disabled
+  - Footer “Cookie settings” opens modal; future CMP can replace this
+- Affiliate disclosure:
+  - Inline above CTAs and footer disclosure on match and provider pages; affiliate links carry aria‑labels and rel="sponsored"
+
+Secrets hygiene
+
+- Removed tracked .env files from repo and added ignore for config/.env
+  - Rotated Supabase anon key recommended
+  - Production/staging rely on Netlify env: REACT_APP_SUPABASE_URL, REACT_APP_SUPABASE_ANON_KEY, REACT_APP_CANONICAL_BASE
+
+Verification checklist (post‑deploy)
+
+- Headers:
+  - curl -I https://<host>/ | grep -i "strict-transport\|content-security\|referrer-policy\|permissions-policy"
+  - curl -I https://<host>/admin | grep -i x-robots
+  - curl -I https://<host>/fixtures | grep -i content-security
+- Sitemaps & robots:
+  - https://<host>/sitemap.xml and child sitemaps return 200
+  - https://<host>/robots.txt lists sitemap and disallows sensitive routes
+- Pages:
+  - /, /fixtures, /clubs, /clubs/:slug, /matches/:slug, /providers/:slug, /admin
+  - /legal/privacy-policy, /legal/cookie-policy, /legal/terms
+  - /privacy/request submits and opens mailto; SLA text shows
+- CSP:
+  - Check browser console for any CSP violations; extend directives narrowly if needed
+
 Launch Branding Plan (Match Locator)
 
 - Product name at launch: Match Locator
