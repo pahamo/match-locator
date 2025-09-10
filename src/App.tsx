@@ -9,8 +9,15 @@ import ClubsPage from './pages/ClubsPage';
 import FixturesPage from './pages/FixturesPage';
 import './App.css';
 import NotFoundPage from './pages/NotFoundPage';
+import ProviderPage from './pages/ProviderPage';
+import PrivacyPolicy from './pages/legal/PrivacyPolicy';
+import CookiePolicy from './pages/legal/CookiePolicy';
+import Terms from './pages/legal/Terms';
+import Footer from './components/Footer';
+import CookieSettingsModal from './components/cookies/CookieSettingsModal';
 
 function App() {
+  const [cookieOpen, setCookieOpen] = React.useState(false);
   return (
     <Router>
       <div className="App">
@@ -25,10 +32,16 @@ function App() {
           <Route path="/club/:clubId" element={<ClubPage />} />
           <Route path="/clubs" element={<ClubsPage />} />
           <Route path="/clubs/:slug" element={<ClubPage />} />
+          <Route path="/providers/:slug" element={<ProviderPage />} />
           <Route path="/admin" element={<AdminPage />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/legal/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/legal/cookie-policy" element={<CookiePolicy />} />
+          <Route path="/legal/terms" element={<Terms />} />
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
+        <Footer onOpenCookieSettings={() => setCookieOpen(true)} />
+        <CookieSettingsModal open={cookieOpen} onClose={() => setCookieOpen(false)} />
       </div>
     </Router>
   );
