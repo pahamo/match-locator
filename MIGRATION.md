@@ -416,3 +416,5 @@ Common Issues:
 - Cookie settings not functional: placeholder implementation needs cookie management integration
 Contact & Feedback
 This migration was driven by practical development challenges with AI-assisted coding in the original architecture. The React version should provide a more maintainable foundation for future development.
+
+QA: deploy preview trigger 2025-09-10T12:48:53Z
