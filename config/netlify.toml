@@ -55,3 +55,10 @@
   for = "/api/private/*"
   [headers.values]
     X-Robots-Tag = "noindex"
+
+# TEMP: Hide entire site from indexing in production until launch
+[context.production]
+  [[context.production.headers]]
+    for = "/*"
+    [context.production.headers.values]
+      X-Robots-Tag = "noindex"

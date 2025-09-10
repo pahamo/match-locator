@@ -56,13 +56,11 @@ const ClubPage: React.FC = () => {
 
   return (
     <div className="club-page">
-      <Header 
-        title={team?.name || 'Team'}
-        subtitle="Upcoming fixtures and how to watch in the UK"
-      />
+      <Header />
 
       <main>
         <div className="wrap">
+          <h1 style={{ marginTop: 0 }}>{team?.name || 'Team'}</h1>
           {loading && <div className="loading">Loading fixtures…</div>}
           {error && <div className="error">{error}</div>}
 
