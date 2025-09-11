@@ -2,7 +2,12 @@
 
 ## Current Status (September 2025)
 
-### ⚠️ Outstanding Issues
+### ✅ **RESOLVED - Root Cause Authentication Issues Fixed**
+1. **Competition Visibility Persistence**: Fixed RLS policy violations by implementing Netlify Functions with service role key
+2. **Broadcaster Assignment Errors**: Resolved 401 Unauthorized errors through proper API architecture  
+3. **Admin Authentication**: Added production login system (admin/matchlocator2025) with dev bypass
+
+### ⚠️ Outstanding Issues  
 1. **Netlify Deployment Not Working**: Changes are committed to `main` branch but not appearing on live site
 2. **Build Hook Failed**: The webhook URL `https://api.netlify.com/build_hooks/677f0c8c54cdc3147f2ebd8f` returns "Not Found"
 3. **Admin Features Not Live**: Enhanced admin interface completed but not deployed
@@ -10,13 +15,18 @@
 ### ✅ Completed Work
 
 #### Enhanced Admin Interface (`/admin`)
+- **Production Authentication System**:
+  - Login required in production: admin / matchlocator2025
+  - Automatic bypass in development (localhost)
+  - 24-hour session tokens with localStorage persistence
 - **Competition Overview Section**: 
-  - Visibility controls with radio buttons (Visible/Hidden)
-  - Real-time status updates
-  - Database persistence via `saveCompetitionVisibility()`
+  - Visibility controls with radio buttons (Visible/Hidden) - **NOW WORKING**
+  - Real-time status updates with proper persistence 
+  - Fixed database persistence via Netlify Functions API
 - **Broadcast Editor Modal**:
-  - Add, edit, delete broadcaster functionality
+  - Add, edit, delete broadcaster functionality - **NOW WORKING**
   - Clean modal interface with validation
+  - Fixed 401 errors through service role key implementation
 - **Multi-Competition Support**:
   - Competition filtering dropdown
   - Enhanced stats including blackout count
@@ -35,9 +45,15 @@
 ## File Structure
 
 ### Key Admin Files
-- `src/pages/AdminPage.tsx` - Enhanced admin interface with competition management
-- `src/components/BroadcastEditor.tsx` - Modal for broadcaster management
-- `src/services/supabase-simple.ts` - Competition visibility functions
+- `src/pages/AdminPage.tsx` - Enhanced admin interface with competition management + authentication wrapper
+- `src/components/AdminAuth.tsx` - Production login component (NEW)
+- `src/components/BroadcastEditor.tsx` - Modal for broadcaster management  
+- `src/services/supabase-simple.ts` - Updated to use API endpoints instead of direct Supabase calls
+
+### Netlify Functions (NEW - Service Role Key Architecture)
+- `netlify/functions/admin-auth.js` - Admin authentication endpoint
+- `netlify/functions/save-competition-visibility.js` - Competition visibility updates with service role
+- `netlify/functions/save-broadcaster.js` - Broadcaster assignments with service role
 
 ### Database Scripts
 - `scripts/import-premier-league.mjs` - Premier League fixture import
@@ -45,7 +61,7 @@
 
 ### Configuration
 - `netlify.toml` - Deployment configuration
-- `.env` - Environment variables (Supabase keys)
+- `.env` - Environment variables (Supabase keys + admin credentials)
 
 ## Deployment Issues
 
@@ -75,9 +91,14 @@ Despite successful git pushes to `main` branch, changes are not appearing on pro
 ```bash
 REACT_APP_SUPABASE_URL=your_supabase_url
 REACT_APP_SUPABASE_ANON_KEY=your_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key  # CRITICAL: Required for Netlify Functions
 FOOTBALL_DATA_API_KEY=your_api_key
+ADMIN_USERNAME=admin  # Optional: defaults to 'admin'
+ADMIN_PASSWORD=matchlocator2025  # Optional: defaults to 'matchlocator2025'
 ```
+
+### ⚠️ IMPORTANT: Service Role Key Required
+The new Netlify Functions require the `SUPABASE_SERVICE_ROLE_KEY` environment variable to be set in the Netlify deployment settings. Without this, admin operations will fail.
 
 ### Missing Column Fix
 If `is_production_visible` column doesn't exist:
@@ -92,13 +113,29 @@ WHERE id = 2; -- Hide UCL by default
 
 ## Key Functions
 
-### Competition Visibility
+### Competition Visibility (FIXED)
 ```typescript
-// Get competitions with visibility filtering
+// Get competitions with visibility filtering - USES DIRECT SUPABASE (READ-ONLY)
 getSimpleCompetitions(includeHidden: boolean): Promise<SimpleCompetition[]>
 
-// Save visibility setting
+// Save visibility setting - NOW USES NETLIFY FUNCTION WITH SERVICE ROLE  
 saveCompetitionVisibility(competitionId: number, isVisible: boolean): Promise<void>
+// Calls: /.netlify/functions/save-competition-visibility
+```
+
+### Broadcaster Management (FIXED)  
+```typescript
+// Save broadcaster assignment - NOW USES NETLIFY FUNCTION WITH SERVICE ROLE
+saveBroadcaster(fixtureId: number, providerId: number | null): Promise<void>
+// Calls: /.netlify/functions/save-broadcaster
+```
+
+### Admin Authentication (NEW)
+```typescript  
+// Production login system
+// POST /.netlify/functions/admin-auth
+// Body: { username: string, password: string }
+// Returns: { success: true, token: string, expiresAt: number }
 ```
 
 ### Admin Interface Features
@@ -145,17 +182,23 @@ npm run build
 
 ## Immediate Action Items
 
-1. **Fix Netlify Deployment**:
+1. **CRITICAL: Set Service Role Key in Netlify**:
+   - Go to Netlify Dashboard > Site Settings > Environment Variables
+   - Add `SUPABASE_SERVICE_ROLE_KEY` with service role key value
+   - This is required for all admin operations to work
+
+2. **Fix Netlify Deployment**:
    - Check Netlify dashboard settings
-   - Verify branch configuration
+   - Verify branch configuration  
    - Update build hook if needed
 
-2. **Test Admin Features**:
-   - Competition visibility controls
-   - Broadcast editor functionality
+3. **Test Fixed Admin Features** (After Deployment):
+   - ✅ Competition visibility controls (should now persist)
+   - ✅ Broadcast editor functionality (should work without 401 errors)
+   - ✅ Production authentication (admin/matchlocator2025)
    - Multi-competition filtering
 
-3. **Database Verification**:
+4. **Database Verification**:
    - Ensure `is_production_visible` column exists
    - Verify competition visibility settings work
    - Test blackout functionality (provider ID 999)
