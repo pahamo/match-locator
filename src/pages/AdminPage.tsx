@@ -3,15 +3,21 @@ import {
   getSimpleFixtures,
   saveBroadcaster,
   SIMPLE_BROADCASTERS,
-  type SimpleFixture 
+  type SimpleFixture,
+  type SimpleCompetition,
+  getSimpleCompetitions,
+  saveCompetitionVisibility
 } from '../services/supabase-simple';
+import BroadcastEditor from '../components/BroadcastEditor';
 
-type FilterStatus = '' | 'confirmed' | 'tbd';
+type FilterStatus = '' | 'confirmed' | 'tbd' | 'blackout';
 type TimeFilter = '' | 'upcoming' | 'all';
 
 const AdminPage: React.FC = () => {
   const [fixtures, setFixtures] = useState<SimpleFixture[]>([]);
   const [filteredFixtures, setFilteredFixtures] = useState<SimpleFixture[]>([]);
+  const [competitions, setCompetitions] = useState<SimpleCompetition[]>([]);
+  const [selectedCompetitionId, setSelectedCompetitionId] = useState<number>(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
@@ -21,15 +27,16 @@ const AdminPage: React.FC = () => {
   const [monthFilter, setMonthFilter] = useState<string>('');
   const [matchweekFilter, setMatchweekFilter] = useState<string>('');
   const [timeFilter, setTimeFilter] = useState<TimeFilter>('upcoming');
+  const [showBroadcastEditor, setShowBroadcastEditor] = useState(false);
   const messageTimeoutRef = useRef<number | null>(null);
   const isMountedRef = useRef(true);
 
-  const isBlackout = (fixtureId: number): boolean => {
+  const loadCompetitions = async () => {
     try {
-      const blackoutFixtures = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
-      return Array.isArray(blackoutFixtures) && blackoutFixtures.includes(fixtureId);
-    } catch {
-      return false;
+      const competitionsData = await getSimpleCompetitions(true); // Include hidden for admin
+      setCompetitions(competitionsData);
+    } catch (err) {
+      console.error('Failed to load competitions:', err);
     }
   };
 
@@ -37,7 +44,7 @@ const AdminPage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      const fixturesData = await getSimpleFixtures();
+      const fixturesData = await getSimpleFixtures(selectedCompetitionId);
       if (!isMountedRef.current) return;
       setFixtures(fixturesData);
       // Clear any pending changes after a fresh load to avoid stale state
@@ -50,7 +57,7 @@ const AdminPage: React.FC = () => {
       if (!isMountedRef.current) return;
       setLoading(false);
     }
-  }, []);
+  }, [selectedCompetitionId]);
 
   const loadFixtures = useCallback(async (confirmIfPending: boolean = false) => {
     if (confirmIfPending && pendingChanges.size > 0) {
@@ -61,8 +68,8 @@ const AdminPage: React.FC = () => {
   }, [pendingChanges, loadFixturesUnsafe]);
 
   useEffect(() => {
-    // In React StrictMode (dev), components mount/unmount/mount; reset flag on each mount
     isMountedRef.current = true;
+    loadCompetitions();
     loadFixturesUnsafe();
     return () => {
       isMountedRef.current = false;
@@ -89,23 +96,20 @@ const AdminPage: React.FC = () => {
     if (matchweekFilter) {
       const matchweek = parseInt(matchweekFilter, 10);
       if (!isNaN(matchweek)) {
-        // Use actual matchweek data from database
         filtered = filtered.filter(f => f.matchweek === matchweek);
       }
     }
 
     if (statusFilter === 'confirmed') {
-      filtered = filtered.filter(f => !!f.broadcaster);
+      filtered = filtered.filter(f => f.broadcaster && !f.isBlackout);
     } else if (statusFilter === 'tbd') {
-      filtered = filtered.filter(f => !f.broadcaster);
+      filtered = filtered.filter(f => !f.broadcaster && !f.isBlackout);
+    } else if (statusFilter === 'blackout') {
+      filtered = filtered.filter(f => f.isBlackout);
     }
 
     setFilteredFixtures(filtered);
   }, [fixtures, statusFilter, monthFilter, matchweekFilter, timeFilter]);
-
-  
-
-  
 
   const getMonthOptions = () => {
     const months = new Set<string>();
@@ -118,9 +122,10 @@ const AdminPage: React.FC = () => {
 
   const getStats = () => {
     const total = filteredFixtures.length;
-    const confirmed = filteredFixtures.filter(f => !!f.broadcaster).length;
-    const tbd = total - confirmed;
-    return { total, confirmed, tbd };
+    const confirmed = filteredFixtures.filter(f => f.broadcaster && !f.isBlackout).length;
+    const blackout = filteredFixtures.filter(f => f.isBlackout).length;
+    const tbd = total - confirmed - blackout;
+    return { total, confirmed, tbd, blackout };
   };
 
   const showMessage = (text: string, type: 'success' | 'error' = 'success') => {
@@ -139,16 +144,10 @@ const AdminPage: React.FC = () => {
   const handleProviderChange = (fixtureId: number, providerId: string) => {
     const newChanges = new Map(pendingChanges);
     const fixture = fixtures.find(f => f.id === fixtureId);
-    const currentProviderId = isBlackout(fixtureId)
-      ? -1
-      : (fixture?.broadcaster 
-          ? SIMPLE_BROADCASTERS.find(b => b.name === fixture.broadcaster)?.id 
-          : null);
+    const currentProviderId = fixture?.providerId || null;
     
     const parsed = providerId === '' ? null : Number.parseInt(providerId, 10);
     const selectedProviderId = parsed === null || Number.isNaN(parsed) ? null : parsed;
-    
-    console.log('Provider change:', { fixtureId, currentProviderId, selectedProviderId, providerId });
     
     if (selectedProviderId !== currentProviderId) {
       newChanges.set(fixtureId, selectedProviderId);
@@ -162,8 +161,6 @@ const AdminPage: React.FC = () => {
   const handleSaveBroadcast = async (fixtureId: number) => {
     const providerId = pendingChanges.get(fixtureId);
     if (providerId === undefined) return;
-
-    console.log('Saving broadcast:', { fixtureId, providerId });
 
     setSavingFixtures(prev => {
       const newSet = new Set(prev);
@@ -181,8 +178,8 @@ const AdminPage: React.FC = () => {
           const broadcaster = (providerId && providerId > 0)
             ? SIMPLE_BROADCASTERS.find(b => b.id === providerId)?.name
             : undefined;
-          console.log('Updated fixture broadcaster:', { fixtureId, broadcaster });
-          return { ...f, broadcaster };
+          const isBlackout = providerId === 999;
+          return { ...f, broadcaster, isBlackout, providerId: providerId || undefined };
         }
         return f;
       }));
@@ -194,7 +191,7 @@ const AdminPage: React.FC = () => {
         return newChanges;
       });
       
-      const broadcasterName = (providerId === -1)
+      const broadcasterName = (providerId === 999)
         ? '🚫 Blackout'
         : (providerId ? (SIMPLE_BROADCASTERS.find(b => b.id === providerId)?.name || 'Unknown') : 'TBD');
       showMessage(`Successfully updated broadcaster to ${broadcasterName}`, 'success');
@@ -216,8 +213,27 @@ const AdminPage: React.FC = () => {
     }
   };
 
+  const handleCompetitionVisibilityChange = async (competitionId: number, isVisible: boolean) => {
+    try {
+      await saveCompetitionVisibility(competitionId, isVisible);
+      
+      // Update local state
+      setCompetitions(prev => prev.map(comp => 
+        comp.id === competitionId 
+          ? { ...comp, is_production_visible: isVisible }
+          : comp
+      ));
+      
+      const compName = competitions.find(c => c.id === competitionId)?.name || 'Competition';
+      showMessage(`${compName} is now ${isVisible ? 'visible' : 'hidden'} on the public site`, 'success');
+      
+    } catch (err) {
+      console.error('Failed to save competition visibility:', err);
+      showMessage('Failed to save competition visibility', 'error');
+    }
+  };
+
   const getMatchweekOptions = () => {
-    // Get actual matchweeks from fixture data
     const matchweeks = new Set<number>();
     fixtures.forEach(f => {
       if (f.matchweek) matchweeks.add(f.matchweek);
@@ -232,27 +248,25 @@ const AdminPage: React.FC = () => {
     let successCount = 0;
     let errorCount = 0;
     
-    // Set all pending fixtures as saving
     setSavingFixtures(prev => {
       const newSet = new Set(prev);
       changeEntries.forEach(([fixtureId]) => newSet.add(fixtureId));
       return newSet;
     });
     
-    // Process all changes
     for (const [fixtureId, providerId] of changeEntries) {
       try {
         await saveBroadcaster(fixtureId, providerId);
         successCount++;
         
-        // Update local fixture data
         if (isMountedRef.current) {
           setFixtures(prev => prev.map(f => {
             if (f.id === fixtureId) {
               const broadcaster = (providerId && providerId > 0)
                 ? SIMPLE_BROADCASTERS.find(b => b.id === providerId)?.name
                 : undefined;
-              return { ...f, broadcaster };
+              const isBlackout = providerId === 999;
+              return { ...f, broadcaster, isBlackout, providerId: providerId || undefined };
             }
             return f;
           }));
@@ -264,13 +278,9 @@ const AdminPage: React.FC = () => {
     }
     
     if (isMountedRef.current) {
-      // Clear all pending changes after processing
       setPendingChanges(new Map());
-      
-      // Clear saving state
       setSavingFixtures(new Set());
       
-      // Show summary message
       if (errorCount === 0) {
         showMessage(`Successfully saved all ${successCount} changes`, 'success');
       } else if (successCount === 0) {
@@ -293,18 +303,20 @@ const AdminPage: React.FC = () => {
     });
   };
 
-  if (loading) {
+  const selectedCompetition = competitions.find(c => c.id === selectedCompetitionId);
+
+  if (loading && competitions.length === 0) {
     return (
       <div className="admin-page">
         <header className="admin-header">
           <div className="container">
-            <h1>Broadcast Admin - Premier League TV Schedule</h1>
-            <p>Manage TV broadcaster assignments for upcoming fixtures</p>
+            <h1>Broadcast Admin - Football TV Schedule</h1>
+            <p>Manage TV broadcaster assignments and competition visibility</p>
           </div>
         </header>
         
         <main className="container">
-          <div className="loading">Loading fixtures...</div>
+          <div className="loading">Loading...</div>
         </main>
       </div>
     );
@@ -315,8 +327,8 @@ const AdminPage: React.FC = () => {
       <div className="admin-page">
         <header className="admin-header">
           <div className="container">
-            <h1>Broadcast Admin - Premier League TV Schedule</h1>
-            <p>Manage TV broadcaster assignments for upcoming fixtures</p>
+            <h1>Broadcast Admin - Football TV Schedule</h1>
+            <p>Manage TV broadcaster assignments and competition visibility</p>
           </div>
         </header>
         
@@ -332,8 +344,8 @@ const AdminPage: React.FC = () => {
     <div className="admin-page">
       <header className="admin-header">
         <div className="container">
-          <h1>Broadcast Admin - Premier League TV Schedule</h1>
-          <p>Simple broadcaster assignments: Sky Sports & TNT Sports</p>
+          <h1>Broadcast Admin - Football TV Schedule</h1>
+          <p>Manage TV broadcaster assignments and competition visibility</p>
           <div style={{ marginTop: '10px' }}>
             <a href="/" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.9rem' }}>
               ← Back to Schedule
@@ -349,6 +361,112 @@ const AdminPage: React.FC = () => {
           </div>
         )}
 
+        {/* Competition Overview Section */}
+        <div style={{ marginBottom: '32px' }}>
+          <h2 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '16px', color: '#1f2937' }}>
+            Competition Overview
+          </h2>
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
+            gap: '16px',
+            marginBottom: '24px'
+          }}>
+            {competitions.map(competition => (
+              <div key={competition.id} style={{
+                background: 'white',
+                border: '1px solid #e5e7eb',
+                borderRadius: '8px',
+                padding: '20px'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
+                  <div>
+                    <h3 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: '600' }}>
+                      {competition.name}
+                    </h3>
+                    <p style={{ margin: 0, fontSize: '14px', color: '#6b7280' }}>
+                      {competition.short_name} • ID: {competition.id}
+                    </p>
+                  </div>
+                </div>
+                
+                <div style={{ marginBottom: '16px' }}>
+                  <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>
+                    Public Visibility
+                  </div>
+                  <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+                      <input
+                        type="radio"
+                        name={`visibility-${competition.id}`}
+                        checked={competition.is_production_visible === true}
+                        onChange={() => handleCompetitionVisibilityChange(competition.id, true)}
+                      />
+                      <span style={{ fontSize: '14px' }}>Visible</span>
+                    </label>
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+                      <input
+                        type="radio"
+                        name={`visibility-${competition.id}`}
+                        checked={competition.is_production_visible === false}
+                        onChange={() => handleCompetitionVisibilityChange(competition.id, false)}
+                      />
+                      <span style={{ fontSize: '14px' }}>Hidden</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div style={{
+                  padding: '12px',
+                  backgroundColor: competition.is_production_visible ? '#f0fdf4' : '#fef2f2',
+                  borderRadius: '6px',
+                  fontSize: '14px'
+                }}>
+                  <strong>Status:</strong> {competition.is_production_visible ? 'Visible to public' : 'Hidden from public'}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Broadcaster Management Section */}
+        <div style={{ marginBottom: '32px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <h2 style={{ fontSize: '20px', fontWeight: '600', margin: 0, color: '#1f2937' }}>
+              Broadcaster Management
+            </h2>
+            <button 
+              onClick={() => setShowBroadcastEditor(true)}
+              className="save-btn"
+              style={{ fontSize: '14px' }}
+            >
+              📺 Manage Broadcasters
+            </button>
+          </div>
+          <p style={{ color: '#6b7280', fontSize: '14px', margin: '0 0 16px 0' }}>
+            Current broadcasters: {SIMPLE_BROADCASTERS.map(b => b.name).join(', ')}
+          </p>
+        </div>
+
+        {/* Competition Filter */}
+        <div style={{ marginBottom: '24px' }}>
+          <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: '500' }}>
+            Competition
+          </label>
+          <select 
+            value={selectedCompetitionId} 
+            onChange={(e) => setSelectedCompetitionId(Number(e.target.value))}
+            className="filter-select"
+            style={{ minWidth: '200px' }}
+          >
+            {competitions.map(comp => (
+              <option key={comp.id} value={comp.id}>
+                {comp.name} ({comp.is_production_visible ? 'Visible' : 'Hidden'})
+              </option>
+            ))}
+          </select>
+        </div>
+
         {/* Stats Cards */}
         <div className="stats-grid">
           <div className="stats-card">
@@ -362,6 +480,10 @@ const AdminPage: React.FC = () => {
           <div className="stats-card">
             <div className="stats-number pending">{getStats().tbd}</div>
             <div className="stats-label">TBD</div>
+          </div>
+          <div className="stats-card">
+            <div className="stats-number" style={{ color: '#dc2626' }}>{getStats().blackout}</div>
+            <div className="stats-label">Blackout</div>
           </div>
         </div>
 
@@ -389,18 +511,20 @@ const AdminPage: React.FC = () => {
             ))}
           </select>
 
-          <select 
-            value={matchweekFilter} 
-            onChange={(e) => setMatchweekFilter(e.target.value)}
-            className="filter-select"
-          >
-            <option value="">All matchweeks</option>
-            {getMatchweekOptions().map(week => (
-              <option key={week} value={week}>
-                Matchweek {week}
-              </option>
-            ))}
-          </select>
+          {selectedCompetition?.id === 1 && (
+            <select 
+              value={matchweekFilter} 
+              onChange={(e) => setMatchweekFilter(e.target.value)}
+              className="filter-select"
+            >
+              <option value="">All matchweeks</option>
+              {getMatchweekOptions().map(week => (
+                <option key={week} value={week}>
+                  Matchweek {week}
+                </option>
+              ))}
+            </select>
+          )}
 
           <select 
             value={statusFilter} 
@@ -410,6 +534,7 @@ const AdminPage: React.FC = () => {
             <option value="">All fixtures</option>
             <option value="confirmed">Confirmed broadcaster</option>
             <option value="tbd">TBD (awaiting announcement)</option>
+            <option value="blackout">Blackout (No UK TV)</option>
           </select>
 
           <button onClick={() => loadFixtures(true)} className="save-btn">
@@ -423,11 +548,14 @@ const AdminPage: React.FC = () => {
           )}
 
           <div>
-            <strong>Showing: {filteredFixtures.length} of {fixtures.length}</strong>
+            <strong>
+              {selectedCompetition ? selectedCompetition.name : 'All Competitions'}: {filteredFixtures.length} of {fixtures.length}
+            </strong>
             {pendingChanges.size > 0 && <span> | Pending changes: {pendingChanges.size}</span>}
           </div>
         </div>
 
+        {/* Fixtures Table */}
         <div className="fixtures-table">
           <table>
             <thead>
@@ -442,11 +570,7 @@ const AdminPage: React.FC = () => {
               {filteredFixtures.map(fixture => {
                 const hasPendingChange = pendingChanges.has(fixture.id);
                 const isSaving = savingFixtures.has(fixture.id);
-                const currentProviderId = isBlackout(fixture.id)
-                  ? -1
-                  : (fixture.broadcaster 
-                      ? SIMPLE_BROADCASTERS.find(b => b.name === fixture.broadcaster)?.id 
-                      : null);
+                const currentProviderId = fixture.providerId || null;
                 const pendingProviderId = pendingChanges.has(fixture.id) 
                   ? pendingChanges.get(fixture.id) 
                   : currentProviderId;
@@ -466,10 +590,15 @@ const AdminPage: React.FC = () => {
                           MW {fixture.matchweek}
                         </div>
                       )}
+                      {fixture.stage && fixture.round && (
+                        <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '2px' }}>
+                          {fixture.stage} - {fixture.round}
+                        </div>
+                      )}
                     </td>
                     <td>
                       <div className="broadcast-status">
-                        {isBlackout(fixture.id) ? '🚫 Blackout' : (fixture.broadcaster || 'TBD')}
+                        {fixture.isBlackout ? '🚫 Blackout' : (fixture.broadcaster || 'TBD')}
                       </div>
                     </td>
                     <td>
@@ -482,7 +611,7 @@ const AdminPage: React.FC = () => {
                           disabled={isSaving}
                         >
                           <option value="">-- Select broadcaster --</option>
-                          <option value="-1">🚫 Blackout (No UK TV)</option>
+                          <option value="999">🚫 Blackout (No UK TV)</option>
                           {SIMPLE_BROADCASTERS.map(broadcaster => (
                             <option key={broadcaster.id} value={broadcaster.id}>
                               {broadcaster.name}
@@ -510,7 +639,7 @@ const AdminPage: React.FC = () => {
 
         {fixtures.length === 0 ? (
           <div className="no-fixtures">
-            <p>No fixtures found.</p>
+            <p>No fixtures found for {selectedCompetition?.name}.</p>
           </div>
         ) : filteredFixtures.length === 0 && (
           <div className="no-fixtures">
@@ -518,6 +647,15 @@ const AdminPage: React.FC = () => {
           </div>
         )}
       </main>
+
+      <BroadcastEditor
+        isOpen={showBroadcastEditor}
+        onClose={() => setShowBroadcastEditor(false)}
+        onSave={(broadcasters) => {
+          console.log('Updated broadcasters:', broadcasters);
+          setShowBroadcastEditor(false);
+        }}
+      />
     </div>
   );
 };
