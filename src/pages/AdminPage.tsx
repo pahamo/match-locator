@@ -9,6 +9,7 @@ import {
   saveCompetitionVisibility
 } from '../services/supabase-simple';
 import BroadcastEditor from '../components/BroadcastEditor';
+import AdminAuth from '../components/AdminAuth';
 
 type FilterStatus = '' | 'confirmed' | 'tbd' | 'blackout';
 type TimeFilter = '' | 'upcoming' | 'all';
@@ -660,4 +661,61 @@ const AdminPage: React.FC = () => {
   );
 };
 
-export default AdminPage;
+// Wrap the AdminPage with authentication
+const AuthenticatedAdminPage: React.FC = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = () => {
+      // In development (localhost), skip authentication
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        setIsAuthenticated(true);
+        setAuthChecked(true);
+        return;
+      }
+
+      // In production, require authentication
+      const token = localStorage.getItem('adminToken');
+      const expiry = localStorage.getItem('adminTokenExpiry');
+      
+      if (token && expiry && Date.now() < parseInt(expiry)) {
+        setIsAuthenticated(true);
+      } else {
+        localStorage.removeItem('adminToken');
+        localStorage.removeItem('adminTokenExpiry');
+        setIsAuthenticated(false);
+      }
+      setAuthChecked(true);
+    };
+
+    checkAuth();
+  }, []);
+
+  const handleAuthenticated = () => {
+    setIsAuthenticated(true);
+  };
+
+  if (!authChecked) {
+    return (
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        fontSize: '16px',
+        color: '#666'
+      }}>
+        Loading...
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <AdminAuth onAuthenticated={handleAuthenticated} />;
+  }
+
+  return <AdminPage />;
+};
+
+export default AuthenticatedAdminPage;

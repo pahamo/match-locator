@@ -121,45 +121,39 @@ export async function getSimpleFixtures(competitionId: number = 1): Promise<Simp
   }
 }
 
-// Save broadcaster assignment (simple)
+// Save broadcaster assignment (via API endpoint with service role key)
 export async function saveBroadcaster(fixtureId: number, providerId: number | null): Promise<void> {
   try {
-    console.log(`[Supabase] Saving broadcaster for fixture ${fixtureId}: provider ${providerId}`);
+    console.log(`[API] Saving broadcaster for fixture ${fixtureId}: provider ${providerId}`);
     
-    if (providerId === 999 || providerId === -1) {
-      // Blackout: Set blackout provider (999) in database  
-      const { error } = await supabase
-        .from('broadcasts')
-        .upsert({
-          fixture_id: fixtureId,
-          provider_id: 999 // Use blackout provider ID
-        });
-      if (error) throw error;
-      console.log(`[Supabase] Set blackout for fixture ${fixtureId}`);
-
-    } else if (!providerId) {
-      // Remove broadcaster (TBD)
-      const { error } = await supabase
-        .from('broadcasts')
-        .delete()
-        .eq('fixture_id', fixtureId);
-        
-      if (error) throw error;
-      console.log(`[Supabase] Removed broadcaster for fixture ${fixtureId}`);
-    } else {
-      // Add/update broadcaster
-      const { error } = await supabase
-        .from('broadcasts')
-        .upsert({
-          fixture_id: fixtureId,
-          provider_id: providerId
-        });
-        
-      if (error) throw error;
-      console.log(`[Supabase] Saved broadcaster for fixture ${fixtureId}`);
+    // Normalize providerId (-1 blackout should be 999)
+    const normalizedProviderId = (providerId === -1) ? 999 : providerId;
+    
+    const response = await fetch('/.netlify/functions/save-broadcaster', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        fixtureId,
+        providerId: normalizedProviderId
+      })
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+      throw new Error(`API error (${response.status}): ${errorData.error || 'Unknown error'}`);
     }
+    
+    const result = await response.json();
+    if (!result.success) {
+      throw new Error(result.error || 'Unknown error');
+    }
+    
+    console.log(`[API] Successfully saved broadcaster for fixture ${fixtureId}`);
+    
   } catch (error) {
-    console.error(`[Supabase] Error saving broadcaster:`, error);
+    console.error(`[API] Error saving broadcaster:`, error);
     throw error;
   }
 }
@@ -229,24 +223,36 @@ export async function getSimpleCompetitions(includeHidden: boolean = false): Pro
   }
 }
 
-// Save competition visibility setting
+// Save competition visibility setting (via API endpoint with service role key)
 export async function saveCompetitionVisibility(competitionId: number, isVisible: boolean): Promise<void> {
   try {
-    console.log(`[Supabase] Updating competition ${competitionId} visibility to ${isVisible}...`);
+    console.log(`[API] Updating competition ${competitionId} visibility to ${isVisible}...`);
     
-    const { error } = await supabase
-      .from('competitions')
-      .update({ is_production_visible: isVisible })
-      .eq('id', competitionId);
-      
-    if (error) throw error;
-    console.log(`[Supabase] Successfully updated competition ${competitionId} visibility`);
+    const response = await fetch('/.netlify/functions/save-competition-visibility', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        competitionId,
+        isVisible
+      })
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+      throw new Error(`API error (${response.status}): ${errorData.error || 'Unknown error'}`);
+    }
+    
+    const result = await response.json();
+    if (!result.success) {
+      throw new Error(result.error || 'Unknown error');
+    }
+    
+    console.log(`[API] Successfully updated competition ${competitionId} visibility`);
     
   } catch (error: any) {
-    console.error(`[Supabase] Error updating competition visibility:`, error);
-    if (error.code === '42703') {
-      console.error('[Supabase] Column is_production_visible does not exist in competitions table');
-    }
+    console.error(`[API] Error updating competition visibility:`, error);
     throw error;
   }
 }
