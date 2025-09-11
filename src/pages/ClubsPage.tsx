@@ -4,7 +4,7 @@ import { getTeams } from '../services/supabase';
 import type { Team } from '../types';
 import Header from '../components/Header';
 import { generateClubsMeta, updateDocumentMeta } from '../utils/seo';
-import { getDisplayTeamName, shouldUseShortNames } from '../utils/teamNames';
+import { getDisplayTeamName } from '../utils/teamNames';
 
 const ClubsPage: React.FC = () => {
   const [teams, setTeams] = useState<Team[]>([]);

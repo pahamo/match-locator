@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getSimpleFixtures, getSimpleCompetitions, type SimpleFixture, type SimpleCompetition } from '../services/supabase-simple';
 import Header from '../components/Header';
-import CompetitionSelector from '../components/CompetitionSelector';
 import StructuredData from '../components/StructuredData';
 import { FixtureCardSkeleton } from '../components/SkeletonLoader';
 import DayGroupCard from '../components/DayGroupCard';
@@ -269,24 +268,10 @@ const HomePage: React.FC = () => {
       <Header />
       
       <main>
-<<<<<<< HEAD
-        <div className="wrap">
-          <h1 style={{ marginTop: 0 }}>
-            {competitions.find(c => c.id === selectedCompetitionId)?.name || 'Football'} TV Schedule (UK)
-          </h1>
-          
-          <CompetitionSelector
-            competitions={competitions}
-            selectedCompetitionId={selectedCompetitionId}
-            onCompetitionChange={setSelectedCompetitionId}
-            loading={loading}
-          />
-=======
         <div className="wrap" style={{ position: 'relative' }}>
           <h1 style={{ marginTop: 0 }}>Premier League TV Schedule (UK)</h1>
           
           {/* Compact Matchweek Info */}
->>>>>>> staging
           <div 
             style={{ 
               background: matchWeek.hasToday ? '#f8fafc' : '#fafaf9', 
@@ -303,21 +288,6 @@ const HomePage: React.FC = () => {
               justifyContent: 'space-between',
               gap: '12px'
             }}>
-<<<<<<< HEAD
-              {matchWeek.hasToday ? '🔴' : '📅'} Upcoming Matches
-            </h2>
-            <p style={{ 
-              margin: 0, 
-              color: matchWeek.hasToday ? '#075985' : '#92400e',
-              fontSize: '14px'
-            }}>
-              {selectedCompetitionId === 1 ? (
-                <><strong>Matchweek {matchWeek.matchweek}</strong> • {matchWeek.dateRange} • {matchWeek.fixtures.length} match{matchWeek.fixtures.length === 1 ? '' : 'es'}</>
-              ) : (
-                <><strong>{matchWeek.dateRange}</strong> • {matchWeek.fixtures.length} match{matchWeek.fixtures.length === 1 ? '' : 'es'}</>
-              )}
-            </p>
-=======
               <span style={{ 
                 color: '#64748b',
                 fontWeight: '500'
@@ -331,7 +301,6 @@ const HomePage: React.FC = () => {
                 {matchWeek.dateRange}
               </span>
             </div>
->>>>>>> staging
           </div>
 
           {/* Sticky Header for Mobile */}

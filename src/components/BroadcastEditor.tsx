@@ -4,12 +4,12 @@ import { SIMPLE_BROADCASTERS } from '../services/supabase-simple';
 interface BroadcastEditorProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (broadcasters: Array<{ id: number; name: string; type: string }>) => void;
+  onSave: (broadcasters: Array<{ id: number; name: string }>) => void;
 }
 
 const BroadcastEditor: React.FC<BroadcastEditorProps> = ({ isOpen, onClose, onSave }) => {
   const [broadcasters, setBroadcasters] = useState(SIMPLE_BROADCASTERS);
-  const [newBroadcaster, setNewBroadcaster] = useState({ name: '', type: 'tv' });
+  const [newBroadcaster, setNewBroadcaster] = useState({ name: '' });
   const [editingId, setEditingId] = useState<number | null>(null);
 
   useEffect(() => {
@@ -21,10 +21,9 @@ const BroadcastEditor: React.FC<BroadcastEditorProps> = ({ isOpen, onClose, onSa
       const newId = Math.max(...broadcasters.map(b => b.id)) + 1;
       setBroadcasters([...broadcasters, { 
         id: newId, 
-        name: newBroadcaster.name.trim(), 
-        type: newBroadcaster.type 
+        name: newBroadcaster.name.trim()
       }]);
-      setNewBroadcaster({ name: '', type: 'tv' });
+      setNewBroadcaster({ name: '' });
     }
   };
 
@@ -83,7 +82,7 @@ const BroadcastEditor: React.FC<BroadcastEditorProps> = ({ isOpen, onClose, onSa
               <input
                 type="text"
                 value={newBroadcaster.name}
-                onChange={(e) => setNewBroadcaster({ ...newBroadcaster, name: e.target.value })}
+                onChange={(e) => setNewBroadcaster({ name: e.target.value })}
                 style={{
                   width: '100%',
                   padding: '8px 12px',
@@ -93,24 +92,6 @@ const BroadcastEditor: React.FC<BroadcastEditorProps> = ({ isOpen, onClose, onSa
                 }}
                 placeholder="e.g., BBC Sport"
               />
-            </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px', fontWeight: '500' }}>
-                Type
-              </label>
-              <select
-                value={newBroadcaster.type}
-                onChange={(e) => setNewBroadcaster({ ...newBroadcaster, type: e.target.value })}
-                style={{
-                  padding: '8px 12px',
-                  border: '1px solid #d1d5db',
-                  borderRadius: '4px',
-                  fontSize: '14px'
-                }}
-              >
-                <option value="tv">TV</option>
-                <option value="streaming">Streaming</option>
-              </select>
             </div>
             <button
               onClick={handleAdd}
@@ -171,7 +152,7 @@ const BroadcastEditor: React.FC<BroadcastEditorProps> = ({ isOpen, onClose, onSa
                 <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: '500', fontSize: '14px' }}>{broadcaster.name}</div>
                   <div style={{ fontSize: '12px', color: '#6b7280' }}>
-                    ID: {broadcaster.id} • Type: {broadcaster.type}
+                    ID: {broadcaster.id}
                   </div>
                 </div>
               )}
