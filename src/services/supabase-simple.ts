@@ -10,12 +10,15 @@ export interface SimpleFixture {
   away_crest?: string;
   broadcaster?: string;
   matchweek?: number;
+  providerId?: number; // Added to track the actual provider ID for admin
+  isBlackout?: boolean; // Added to track blackout status
 }
 
-// Only Sky Sports and TNT Sports for simplicity
+// Only Sky Sports and TNT Sports for simplicity (plus blackout)
 export const SIMPLE_BROADCASTERS = [
   { id: 1, name: 'Sky Sports' },
-  { id: 2, name: 'TNT Sports' }
+  { id: 2, name: 'TNT Sports' },
+  { id: 999, name: '🚫 Blackout (No TV)' }
 ];
 
 // Get fixtures with basic team info using simple JOINs
@@ -45,10 +48,14 @@ export async function getSimpleFixtures(): Promise<SimpleFixture[]> {
       return [];
     }
 
+    // Filter out test/dummy fixtures (same as main supabase service)
+    const validFixtures = fixtures.filter(f => f.id && f.id > 30);
+    console.log(`[Supabase] Filtered ${fixtures.length} -> ${validFixtures.length} fixtures (excluded test fixtures <= 30)`);
+
     // Team names are now included directly from fixtures_with_teams view
 
     // Step 3: Load broadcasts for these fixtures
-    const fixtureIds = fixtures.map((f: any) => f.id);
+    const fixtureIds = validFixtures.map((f: any) => f.id);
     const { data: broadcasts } = await supabase
       .from('broadcasts')
       .select('fixture_id, provider_id')
@@ -60,16 +67,26 @@ export async function getSimpleFixtures(): Promise<SimpleFixture[]> {
     });
 
     // Step 4: Map to simple format
-    return fixtures.map((fixture: any) => ({
-      id: fixture.id,
-      kickoff_utc: fixture.utc_kickoff,
-      home_team: fixture.home_team || 'Unknown',
-      away_team: fixture.away_team || 'Unknown',
-      home_crest: fixture.home_crest || undefined,
-      away_crest: fixture.away_crest || undefined,
-      matchweek: fixture.matchday || undefined,
-      broadcaster: SIMPLE_BROADCASTERS.find(b => b.id === broadcastLookup[fixture.id])?.name || undefined,
-    }));
+    return validFixtures.map((fixture: any) => {
+      const providerId = broadcastLookup[fixture.id];
+      const isBlackout = providerId === 999;
+      
+      return {
+        id: fixture.id,
+        kickoff_utc: fixture.utc_kickoff,
+        home_team: fixture.home_team || 'Unknown',
+        away_team: fixture.away_team || 'Unknown',
+        home_crest: fixture.home_crest || undefined,
+        away_crest: fixture.away_crest || undefined,
+        matchweek: fixture.matchday || undefined,
+        providerId: providerId || undefined,
+        isBlackout: isBlackout,
+        // Only show broadcaster name if it's not blackout
+        broadcaster: isBlackout 
+          ? undefined 
+          : SIMPLE_BROADCASTERS.find(b => b.id === providerId)?.name || undefined,
+      };
+    });
   } catch (error) {
     console.error('[Supabase] Unexpected error:', error);
     return [];
@@ -81,53 +98,36 @@ export async function saveBroadcaster(fixtureId: number, providerId: number | nu
   try {
     console.log(`[Supabase] Saving broadcaster for fixture ${fixtureId}: provider ${providerId}`);
     
-    if (providerId === -1) {
-      // Blackout: remove any broadcaster and mark blackout in localStorage
+    if (providerId === 999 || providerId === -1) {
+      // Blackout: Set blackout provider (999) in database  
       const { error } = await supabase
         .from('broadcasts')
-        .delete()
-        .eq('fixture_id', fixtureId);
+        .upsert({
+          fixture_id: fixtureId,
+          provider_id: 999 // Use blackout provider ID
+        });
       if (error) throw error;
-
-      const blackoutFixtures = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
-      if (!blackoutFixtures.includes(fixtureId)) {
-        blackoutFixtures.push(fixtureId);
-        localStorage.setItem('blackoutFixtures', JSON.stringify(blackoutFixtures));
-      }
       console.log(`[Supabase] Set blackout for fixture ${fixtureId}`);
 
     } else if (!providerId) {
-      // Remove broadcaster and clear blackout flag
+      // Remove broadcaster (TBD)
       const { error } = await supabase
         .from('broadcasts')
         .delete()
         .eq('fixture_id', fixtureId);
         
       if (error) throw error;
-      const blackoutFixtures = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
-      const updated = blackoutFixtures.filter((id: number) => id !== fixtureId);
-      localStorage.setItem('blackoutFixtures', JSON.stringify(updated));
       console.log(`[Supabase] Removed broadcaster for fixture ${fixtureId}`);
     } else {
-      // Add/update broadcaster and clear blackout flag
-      // First delete any existing broadcasts for this fixture to avoid conflicts
-      await supabase
-        .from('broadcasts')
-        .delete()
-        .eq('fixture_id', fixtureId);
-
-      // Then insert the new broadcast
+      // Add/update broadcaster
       const { error } = await supabase
         .from('broadcasts')
-        .insert({
+        .upsert({
           fixture_id: fixtureId,
           provider_id: providerId
         });
         
       if (error) throw error;
-      const blackoutFixtures = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
-      const updated = blackoutFixtures.filter((id: number) => id !== fixtureId);
-      localStorage.setItem('blackoutFixtures', JSON.stringify(updated));
       console.log(`[Supabase] Saved broadcaster for fixture ${fixtureId}`);
     }
   } catch (error) {

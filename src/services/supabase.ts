@@ -57,9 +57,8 @@ function mapFixtureRow(row: FixtureRow, providersByFixture: Record<number, Provi
   };
   const providers = providersByFixture[row.id] || [];
 
-  // Check blackout status from localStorage (matching original SPA logic)
-  const blackoutFixtures = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
-  const isBlackout = blackoutFixtures.includes(row.id);
+  // Check blackout status from providers (database-based)
+  const isBlackout = providers.some(p => p.id === '999' && p.type === 'blackout');
 
   return {
     id: row.id,
@@ -357,25 +356,18 @@ export async function saveBroadcast(fixtureId: number, providerId: number | stri
         throw error;
       }
       
-      // Handle blackout localStorage logic
+      // Handle blackout by setting blackout provider
       if (providerId === '-1') {
-        const blackoutFixtures = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
-        if (!blackoutFixtures.includes(fixtureId)) {
-          blackoutFixtures.push(fixtureId);
-          localStorage.setItem('blackoutFixtures', JSON.stringify(blackoutFixtures));
-        }
-      } else {
-        // Remove from blackout list if setting to empty
-        const blackoutFixtures = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
-        const updatedBlackout = blackoutFixtures.filter((id: number) => id !== fixtureId);
-        localStorage.setItem('blackoutFixtures', JSON.stringify(updatedBlackout));
+        const { error: insertError } = await supabase
+          .from('broadcasts')
+          .insert({
+            fixture_id: fixtureId,
+            provider_id: 999 // Blackout provider
+          });
+        if (insertError) throw insertError;
       }
     } else {
-      // Add/update broadcaster - remove from blackout list first
-      const blackoutFixtures = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
-      const updatedBlackout = blackoutFixtures.filter((id: number) => id !== fixtureId);
-      localStorage.setItem('blackoutFixtures', JSON.stringify(updatedBlackout));
-      
+      // Add/update broadcaster
       const broadcastData = {
         fixture_id: fixtureId,
         provider_id: parseInt(String(providerId))
@@ -396,18 +388,17 @@ export async function saveBroadcast(fixtureId: number, providerId: number | stri
   }
 }
 
-// Blackout helper functions
-export function isFixtureBlackout(fixtureId: number): boolean {
-  const blackoutFixtures = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
-  return blackoutFixtures.includes(fixtureId);
+// Blackout helper functions (updated to use database-based approach)
+export function isFixtureBlackout(fixture: AdminFixture): boolean {
+  return !!(fixture.broadcast && fixture.broadcast.provider_id === 999);
 }
 
 export function isFixtureConfirmed(fixture: AdminFixture): boolean {
-  return !!(fixture.broadcast && fixture.broadcast.provider_id && !isFixtureBlackout(fixture.id));
+  return !!(fixture.broadcast && fixture.broadcast.provider_id && fixture.broadcast.provider_id !== 999);
 }
 
 export function isFixturePending(fixture: AdminFixture): boolean {
-  return !fixture.broadcast && !isFixtureBlackout(fixture.id);
+  return !fixture.broadcast || fixture.broadcast.provider_id === 999;
 }
 
 // Teams API

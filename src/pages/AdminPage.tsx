@@ -24,14 +24,6 @@ const AdminPage: React.FC = () => {
   const messageTimeoutRef = useRef<number | null>(null);
   const isMountedRef = useRef(true);
 
-  const isBlackout = (fixtureId: number): boolean => {
-    try {
-      const blackoutFixtures = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
-      return Array.isArray(blackoutFixtures) && blackoutFixtures.includes(fixtureId);
-    } catch {
-      return false;
-    }
-  };
 
   const loadFixturesUnsafe = useCallback(async () => {
     try {
@@ -139,11 +131,9 @@ const AdminPage: React.FC = () => {
   const handleProviderChange = (fixtureId: number, providerId: string) => {
     const newChanges = new Map(pendingChanges);
     const fixture = fixtures.find(f => f.id === fixtureId);
-    const currentProviderId = isBlackout(fixtureId)
-      ? -1
-      : (fixture?.broadcaster 
-          ? SIMPLE_BROADCASTERS.find(b => b.name === fixture.broadcaster)?.id 
-          : null);
+    const currentProviderId = fixture?.isBlackout
+      ? 999  // Use actual blackout provider ID
+      : (fixture?.providerId || null);
     
     const parsed = providerId === '' ? null : Number.parseInt(providerId, 10);
     const selectedProviderId = parsed === null || Number.isNaN(parsed) ? null : parsed;
@@ -178,11 +168,20 @@ const AdminPage: React.FC = () => {
       // Update local fixture data
       setFixtures(prev => prev.map(f => {
         if (f.id === fixtureId) {
-          const broadcaster = (providerId && providerId > 0)
-            ? SIMPLE_BROADCASTERS.find(b => b.id === providerId)?.name
-            : undefined;
-          console.log('Updated fixture broadcaster:', { fixtureId, broadcaster });
-          return { ...f, broadcaster };
+          const isBlackout = providerId === 999 || providerId === -1;
+          const actualProviderId = isBlackout ? 999 : (providerId || undefined);
+          const broadcaster = isBlackout 
+            ? undefined
+            : (providerId && providerId > 0)
+              ? SIMPLE_BROADCASTERS.find(b => b.id === providerId)?.name
+              : undefined;
+          console.log('Updated fixture:', { fixtureId, broadcaster, isBlackout, actualProviderId });
+          return { 
+            ...f, 
+            broadcaster, 
+            isBlackout,
+            providerId: actualProviderId
+          };
         }
         return f;
       }));
@@ -194,7 +193,7 @@ const AdminPage: React.FC = () => {
         return newChanges;
       });
       
-      const broadcasterName = (providerId === -1)
+      const broadcasterName = (providerId === 999)
         ? '🚫 Blackout'
         : (providerId ? (SIMPLE_BROADCASTERS.find(b => b.id === providerId)?.name || 'Unknown') : 'TBD');
       showMessage(`Successfully updated broadcaster to ${broadcasterName}`, 'success');
@@ -249,10 +248,19 @@ const AdminPage: React.FC = () => {
         if (isMountedRef.current) {
           setFixtures(prev => prev.map(f => {
             if (f.id === fixtureId) {
-              const broadcaster = (providerId && providerId > 0)
-                ? SIMPLE_BROADCASTERS.find(b => b.id === providerId)?.name
-                : undefined;
-              return { ...f, broadcaster };
+              const isBlackout = providerId === 999 || providerId === -1;
+              const actualProviderId = isBlackout ? 999 : (providerId || undefined);
+              const broadcaster = isBlackout 
+                ? undefined
+                : (providerId && providerId > 0)
+                  ? SIMPLE_BROADCASTERS.find(b => b.id === providerId)?.name
+                  : undefined;
+              return { 
+                ...f, 
+                broadcaster, 
+                isBlackout,
+                providerId: actualProviderId
+              };
             }
             return f;
           }));
@@ -442,11 +450,9 @@ const AdminPage: React.FC = () => {
               {filteredFixtures.map(fixture => {
                 const hasPendingChange = pendingChanges.has(fixture.id);
                 const isSaving = savingFixtures.has(fixture.id);
-                const currentProviderId = isBlackout(fixture.id)
+                const currentProviderId = fixture.isBlackout
                   ? -1
-                  : (fixture.broadcaster 
-                      ? SIMPLE_BROADCASTERS.find(b => b.name === fixture.broadcaster)?.id 
-                      : null);
+                  : (fixture.providerId || null);
                 const pendingProviderId = pendingChanges.has(fixture.id) 
                   ? pendingChanges.get(fixture.id) 
                   : currentProviderId;
@@ -469,7 +475,7 @@ const AdminPage: React.FC = () => {
                     </td>
                     <td>
                       <div className="broadcast-status">
-                        {isBlackout(fixture.id) ? '🚫 Blackout' : (fixture.broadcaster || 'TBD')}
+                        {fixture.isBlackout ? '🚫 Blackout' : (fixture.broadcaster || 'TBD')}
                       </div>
                     </td>
                     <td>
@@ -482,7 +488,6 @@ const AdminPage: React.FC = () => {
                           disabled={isSaving}
                         >
                           <option value="">-- Select broadcaster --</option>
-                          <option value="-1">🚫 Blackout (No UK TV)</option>
                           {SIMPLE_BROADCASTERS.map(broadcaster => (
                             <option key={broadcaster.id} value={broadcaster.id}>
                               {broadcaster.name}
