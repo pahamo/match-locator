@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getSimpleFixtures, type SimpleFixture } from '../services/supabase-simple';
+import { getSimpleFixtures, getSimpleCompetitions, type SimpleFixture, type SimpleCompetition } from '../services/supabase-simple';
 import Header from '../components/Header';
+import CompetitionSelector from '../components/CompetitionSelector';
 import StructuredData from '../components/StructuredData';
 import { FixtureCardSkeleton } from '../components/SkeletonLoader';
 import { generateHomeMeta, updateDocumentMeta, generateSimpleMatchUrl } from '../utils/seo';
@@ -19,6 +20,8 @@ const HomePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [blackoutIds, setBlackoutIds] = useState<number[]>([]);
+  const [competitions, setCompetitions] = useState<SimpleCompetition[]>([]);
+  const [selectedCompetitionId, setSelectedCompetitionId] = useState<number>(1); // Default to Premier League
 
   useEffect(() => {
     let isCancelled = false;
@@ -26,7 +29,21 @@ const HomePage: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-        const fixturesData = await getSimpleFixtures();
+        
+        // Load competitions first
+        const competitionsData = await getSimpleCompetitions();
+        if (!isCancelled) {
+          setCompetitions(competitionsData);
+          
+          // Auto-select first available competition if current selection is not visible
+          const isCurrentCompetitionVisible = competitionsData.some(c => c.id === selectedCompetitionId);
+          if (!isCurrentCompetitionVisible && competitionsData.length > 0) {
+            setSelectedCompetitionId(competitionsData[0].id);
+          }
+        }
+        
+        // Load fixtures for selected competition
+        const fixturesData = await getSimpleFixtures(selectedCompetitionId);
         const currentMatchWeek = getCurrentOrUpcomingMatchWeek(fixturesData);
         if (!isCancelled) {
           setMatchWeek(currentMatchWeek);
@@ -46,7 +63,7 @@ const HomePage: React.FC = () => {
       }
     })();
     return () => { isCancelled = true; };
-  }, []);
+  }, [selectedCompetitionId]);
 
   const loadMatchWeek = async () => {
     try {
@@ -77,16 +94,16 @@ const HomePage: React.FC = () => {
 
     const now = new Date();
     
-    // Group fixtures by matchweek
+    // Group fixtures by matchweek or create a single group for competitions without matchweeks
     const fixturesByMatchweek = new Map<number, SimpleFixture[]>();
     
     fixtures.forEach(fixture => {
-      if (fixture.matchweek) {
-        if (!fixturesByMatchweek.has(fixture.matchweek)) {
-          fixturesByMatchweek.set(fixture.matchweek, []);
-        }
-        fixturesByMatchweek.get(fixture.matchweek)!.push(fixture);
+      // Use matchweek for Premier League, or use 1 as default for Champions League (no matchweeks)
+      const groupKey = fixture.matchweek || 1;
+      if (!fixturesByMatchweek.has(groupKey)) {
+        fixturesByMatchweek.set(groupKey, []);
       }
+      fixturesByMatchweek.get(groupKey)!.push(fixture);
     });
 
     // Find current or upcoming matchweek
@@ -191,7 +208,16 @@ const HomePage: React.FC = () => {
       
       <main>
         <div className="wrap">
-          <h1 style={{ marginTop: 0 }}>Premier League TV Schedule (UK)</h1>
+          <h1 style={{ marginTop: 0 }}>
+            {competitions.find(c => c.id === selectedCompetitionId)?.name || 'Football'} TV Schedule (UK)
+          </h1>
+          
+          <CompetitionSelector
+            competitions={competitions}
+            selectedCompetitionId={selectedCompetitionId}
+            onCompetitionChange={setSelectedCompetitionId}
+            loading={loading}
+          />
           <div 
             style={{ 
               background: matchWeek.hasToday ? '#f0f9ff' : '#fefce8', 
@@ -216,7 +242,11 @@ const HomePage: React.FC = () => {
               color: matchWeek.hasToday ? '#075985' : '#92400e',
               fontSize: '14px'
             }}>
-              <strong>Matchweek {matchWeek.matchweek}</strong> • {matchWeek.dateRange} • {matchWeek.fixtures.length} match{matchWeek.fixtures.length === 1 ? '' : 'es'}
+              {selectedCompetitionId === 1 ? (
+                <><strong>Matchweek {matchWeek.matchweek}</strong> • {matchWeek.dateRange} • {matchWeek.fixtures.length} match{matchWeek.fixtures.length === 1 ? '' : 'es'}</>
+              ) : (
+                <><strong>{matchWeek.dateRange}</strong> • {matchWeek.fixtures.length} match{matchWeek.fixtures.length === 1 ? '' : 'es'}</>
+              )}
             </p>
           </div>
 

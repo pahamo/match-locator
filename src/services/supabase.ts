@@ -151,8 +151,33 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
       dateTo,
       limit = 100,
       order = 'asc',
-      competitionId = 1 // Default to Premier League
+      competitionId // Don't default to 1 anymore, let visibility settings control
     } = params;
+
+    // If no specific competition is requested, filter by production-visible competitions
+    let allowedCompetitionIds: number[] = [];
+    if (!competitionId) {
+      try {
+        const { data: competitions, error } = await supabase
+          .from('competitions')
+          .select('id')
+          .eq('is_active', true)
+          .eq('is_production_visible', true);
+        
+        if (error) {
+          console.warn('[Supabase] Failed to load production-visible competitions, defaulting to Premier League only:', error);
+          allowedCompetitionIds = [1]; // Fallback to Premier League only
+        } else {
+          allowedCompetitionIds = (competitions || []).map(c => c.id);
+          if (allowedCompetitionIds.length === 0) {
+            allowedCompetitionIds = [1]; // Fallback to Premier League only
+          }
+        }
+      } catch (e) {
+        console.warn('[Supabase] Failed to check competition visibility, defaulting to Premier League only:', e);
+        allowedCompetitionIds = [1]; // Fallback to Premier League only
+      }
+    }
 
     let query = supabase
       .from('fixtures_with_teams')
@@ -172,6 +197,8 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
     }
     if (competitionId) {
       query = query.eq('competition_id', competitionId);
+    } else if (allowedCompetitionIds.length > 0) {
+      query = query.in('competition_id', allowedCompetitionIds);
     }
 
     const { data: rows, error } = await query;
