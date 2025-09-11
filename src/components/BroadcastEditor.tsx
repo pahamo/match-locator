@@ -1,65 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SIMPLE_BROADCASTERS } from '../services/supabase-simple';
 
-interface Broadcaster {
-  id: number;
-  name: string;
-  editable?: boolean;
-}
-
 interface BroadcastEditorProps {
+  isOpen: boolean;
   onClose: () => void;
+  onSave: (broadcasters: Array<{ id: number; name: string; type: string }>) => void;
 }
 
-const BroadcastEditor: React.FC<BroadcastEditorProps> = ({ onClose }) => {
-  const [broadcasters, setBroadcasters] = useState<Broadcaster[]>(SIMPLE_BROADCASTERS);
-  const [newBroadcasterName, setNewBroadcasterName] = useState('');
+const BroadcastEditor: React.FC<BroadcastEditorProps> = ({ isOpen, onClose, onSave }) => {
+  const [broadcasters, setBroadcasters] = useState(SIMPLE_BROADCASTERS);
+  const [newBroadcaster, setNewBroadcaster] = useState({ name: '', type: 'tv' });
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [editingName, setEditingName] = useState('');
 
-  const handleAddBroadcaster = () => {
-    if (!newBroadcasterName.trim()) return;
-    
-    const newId = Math.max(...broadcasters.map(b => b.id)) + 1;
-    const newBroadcaster: Broadcaster = {
-      id: newId,
-      name: newBroadcasterName.trim(),
-      editable: true
-    };
-    
-    setBroadcasters([...broadcasters, newBroadcaster]);
-    setNewBroadcasterName('');
+  useEffect(() => {
+    setBroadcasters(SIMPLE_BROADCASTERS);
+  }, []);
+
+  const handleAdd = () => {
+    if (newBroadcaster.name.trim()) {
+      const newId = Math.max(...broadcasters.map(b => b.id)) + 1;
+      setBroadcasters([...broadcasters, { 
+        id: newId, 
+        name: newBroadcaster.name.trim(), 
+        type: newBroadcaster.type 
+      }]);
+      setNewBroadcaster({ name: '', type: 'tv' });
+    }
   };
 
-  const handleEditBroadcaster = (id: number, currentName: string) => {
-    setEditingId(id);
-    setEditingName(currentName);
-  };
-
-  const handleSaveEdit = () => {
-    if (!editingName.trim() || editingId === null) return;
-    
+  const handleEdit = (id: number, newName: string) => {
     setBroadcasters(prev => prev.map(b => 
-      b.id === editingId ? { ...b, name: editingName.trim() } : b
+      b.id === id ? { ...b, name: newName } : b
     ));
     setEditingId(null);
-    setEditingName('');
   };
 
-  const handleDeleteBroadcaster = (id: number) => {
-    // Don't allow deleting core broadcasters (Sky Sports, TNT Sports, Blackout)
-    if (id <= 999) {
-      alert('Cannot delete core broadcasters');
-      return;
+  const handleDelete = (id: number) => {
+    if (window.confirm('Are you sure you want to delete this broadcaster?')) {
+      setBroadcasters(prev => prev.filter(b => b.id !== id));
     }
-    
-    setBroadcasters(prev => prev.filter(b => b.id !== id));
   };
 
-  const handleCancelEdit = () => {
-    setEditingId(null);
-    setEditingName('');
+  const handleSave = () => {
+    onSave(broadcasters);
+    onClose();
   };
+
+  if (!isOpen) return null;
 
   return (
     <div style={{
@@ -75,220 +62,190 @@ const BroadcastEditor: React.FC<BroadcastEditorProps> = ({ onClose }) => {
       zIndex: 1000
     }}>
       <div style={{
-        background: 'white',
-        borderRadius: '12px',
+        backgroundColor: 'white',
+        borderRadius: '8px',
         padding: '24px',
-        minWidth: '500px',
+        maxWidth: '500px',
+        width: '90%',
         maxHeight: '80vh',
-        overflow: 'auto',
-        boxShadow: '0 20px 40px rgba(0, 0, 0, 0.3)'
+        overflow: 'auto'
       }}>
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '24px'
-        }}>
-          <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: '600' }}>
-            Broadcast Editor
-          </h2>
-          <button 
-            onClick={onClose}
-            style={{
-              background: 'none',
-              border: 'none',
-              fontSize: '24px',
-              cursor: 'pointer',
-              color: '#6b7280'
-            }}
-          >
-            ×
-          </button>
-        </div>
-
-        {/* Add New Broadcaster */}
-        <div style={{
-          background: '#f8fafc',
-          padding: '16px',
-          borderRadius: '8px',
-          marginBottom: '24px'
-        }}>
-          <h3 style={{ margin: '0 0 12px 0', fontSize: '1rem', fontWeight: '600' }}>
-            Add New Broadcaster
-          </h3>
-          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            <input
-              type="text"
-              value={newBroadcasterName}
-              onChange={(e) => setNewBroadcasterName(e.target.value)}
-              placeholder="Enter broadcaster name (e.g., BBC iPlayer, Amazon Prime)"
-              style={{
-                flex: 1,
-                padding: '8px 12px',
-                border: '1px solid #d1d5db',
-                borderRadius: '6px',
-                fontSize: '14px'
-              }}
-              onKeyPress={(e) => e.key === 'Enter' && handleAddBroadcaster()}
-            />
+        <h2 style={{ marginTop: 0, marginBottom: '20px' }}>Manage Broadcasters</h2>
+        
+        {/* Add new broadcaster */}
+        <div style={{ marginBottom: '20px', padding: '16px', backgroundColor: '#f8fafc', borderRadius: '6px' }}>
+          <h3 style={{ marginTop: 0, marginBottom: '12px', fontSize: '16px' }}>Add New Broadcaster</h3>
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-end' }}>
+            <div style={{ flex: 1 }}>
+              <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px', fontWeight: '500' }}>
+                Name
+              </label>
+              <input
+                type="text"
+                value={newBroadcaster.name}
+                onChange={(e) => setNewBroadcaster({ ...newBroadcaster, name: e.target.value })}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '4px',
+                  fontSize: '14px'
+                }}
+                placeholder="e.g., BBC Sport"
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', marginBottom: '4px', fontSize: '14px', fontWeight: '500' }}>
+                Type
+              </label>
+              <select
+                value={newBroadcaster.type}
+                onChange={(e) => setNewBroadcaster({ ...newBroadcaster, type: e.target.value })}
+                style={{
+                  padding: '8px 12px',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '4px',
+                  fontSize: '14px'
+                }}
+              >
+                <option value="tv">TV</option>
+                <option value="streaming">Streaming</option>
+              </select>
+            </div>
             <button
-              onClick={handleAddBroadcaster}
-              disabled={!newBroadcasterName.trim()}
-              className="save-btn"
-              style={{ fontSize: '14px' }}
+              onClick={handleAdd}
+              disabled={!newBroadcaster.name.trim()}
+              style={{
+                padding: '8px 16px',
+                backgroundColor: '#6366f1',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: newBroadcaster.name.trim() ? 'pointer' : 'not-allowed',
+                fontSize: '14px',
+                opacity: newBroadcaster.name.trim() ? 1 : 0.5
+              }}
             >
               Add
             </button>
           </div>
         </div>
 
-        {/* Broadcasters List */}
+        {/* Existing broadcasters */}
         <div>
-          <h3 style={{ margin: '0 0 16px 0', fontSize: '1rem', fontWeight: '600' }}>
-            Existing Broadcasters
-          </h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {broadcasters.map(broadcaster => (
-              <div 
-                key={broadcaster.id}
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: '12px',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '6px',
-                  backgroundColor: broadcaster.id <= 999 ? '#fef3f2' : '#ffffff'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
-                  <span style={{ 
-                    fontWeight: '500', 
-                    color: broadcaster.id === 999 ? '#dc2626' : '#1f2937',
-                    minWidth: '40px',
-                    fontSize: '12px'
-                  }}>
-                    ID: {broadcaster.id}
-                  </span>
-                  
-                  {editingId === broadcaster.id ? (
-                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flex: 1 }}>
-                      <input
-                        type="text"
-                        value={editingName}
-                        onChange={(e) => setEditingName(e.target.value)}
-                        style={{
-                          flex: 1,
-                          padding: '6px 8px',
-                          border: '1px solid #6366f1',
-                          borderRadius: '4px',
-                          fontSize: '14px'
-                        }}
-                        onKeyPress={(e) => e.key === 'Enter' && handleSaveEdit()}
-                        autoFocus
-                      />
-                      <button 
-                        onClick={handleSaveEdit}
-                        className="save-btn save-btn-small"
-                      >
-                        Save
-                      </button>
-                      <button 
-                        onClick={handleCancelEdit}
-                        style={{
-                          padding: '4px 8px',
-                          background: '#6b7280',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '4px',
-                          fontSize: '12px',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  ) : (
-                    <span style={{ flex: 1, fontSize: '14px' }}>
-                      {broadcaster.name}
-                      {broadcaster.id <= 999 && (
-                        <span style={{ 
-                          marginLeft: '8px', 
-                          fontSize: '12px', 
-                          color: '#6b7280',
-                          fontStyle: 'italic' 
-                        }}>
-                          (Core broadcaster)
-                        </span>
-                      )}
-                    </span>
-                  )}
-                </div>
-
-                {editingId !== broadcaster.id && (
-                  <div style={{ display: 'flex', gap: '4px' }}>
-                    <button
-                      onClick={() => handleEditBroadcaster(broadcaster.id, broadcaster.name)}
-                      style={{
-                        padding: '4px 8px',
-                        background: '#f3f4f6',
-                        border: '1px solid #d1d5db',
-                        borderRadius: '4px',
-                        fontSize: '12px',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      Edit
-                    </button>
-                    
-                    {broadcaster.id > 999 && (
-                      <button
-                        onClick={() => handleDeleteBroadcaster(broadcaster.id)}
-                        style={{
-                          padding: '4px 8px',
-                          background: '#fef2f2',
-                          border: '1px solid #fca5a5',
-                          borderRadius: '4px',
-                          fontSize: '12px',
-                          cursor: 'pointer',
-                          color: '#dc2626'
-                        }}
-                      >
-                        Delete
-                      </button>
-                    )}
+          <h3 style={{ marginBottom: '12px', fontSize: '16px' }}>Current Broadcasters</h3>
+          {broadcasters.map(broadcaster => (
+            <div key={broadcaster.id} style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '12px',
+              border: '1px solid #e5e7eb',
+              borderRadius: '4px',
+              marginBottom: '8px'
+            }}>
+              {editingId === broadcaster.id ? (
+                <input
+                  type="text"
+                  defaultValue={broadcaster.name}
+                  onBlur={(e) => handleEdit(broadcaster.id, e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleEdit(broadcaster.id, e.currentTarget.value);
+                    }
+                    if (e.key === 'Escape') {
+                      setEditingId(null);
+                    }
+                  }}
+                  autoFocus
+                  style={{
+                    padding: '4px 8px',
+                    border: '1px solid #6366f1',
+                    borderRadius: '4px',
+                    fontSize: '14px',
+                    flex: 1,
+                    marginRight: '8px'
+                  }}
+                />
+              ) : (
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: '500', fontSize: '14px' }}>{broadcaster.name}</div>
+                  <div style={{ fontSize: '12px', color: '#6b7280' }}>
+                    ID: {broadcaster.id} • Type: {broadcaster.type}
                   </div>
+                </div>
+              )}
+              
+              <div style={{ display: 'flex', gap: '8px' }}>
+                {editingId !== broadcaster.id && (
+                  <button
+                    onClick={() => setEditingId(broadcaster.id)}
+                    style={{
+                      padding: '4px 8px',
+                      backgroundColor: '#f3f4f6',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '4px',
+                      cursor: 'pointer',
+                      fontSize: '12px'
+                    }}
+                  >
+                    Edit
+                  </button>
                 )}
+                <button
+                  onClick={() => handleDelete(broadcaster.id)}
+                  style={{
+                    padding: '4px 8px',
+                    backgroundColor: '#fee2e2',
+                    border: '1px solid #fecaca',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    fontSize: '12px',
+                    color: '#dc2626'
+                  }}
+                >
+                  Delete
+                </button>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
 
-        {/* Help Text */}
-        <div style={{
-          marginTop: '24px',
-          padding: '12px',
-          background: '#eff6ff',
-          borderRadius: '6px',
-          fontSize: '13px',
-          color: '#1e40af'
-        }}>
-          <strong>Note:</strong> Changes are only saved locally in this session. 
-          To persist changes permanently, you would need to update the database schema and service configuration.
-        </div>
-
-        {/* Close Button */}
+        {/* Actions */}
         <div style={{ 
-          marginTop: '24px', 
           display: 'flex', 
-          justifyContent: 'flex-end' 
+          justifyContent: 'flex-end', 
+          gap: '12px', 
+          marginTop: '24px',
+          paddingTop: '20px',
+          borderTop: '1px solid #e5e7eb'
         }}>
-          <button 
+          <button
             onClick={onClose}
-            className="save-btn"
-            style={{ background: '#6b7280' }}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: '#f3f4f6',
+              border: '1px solid #d1d5db',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '14px'
+            }}
           >
-            Close
+            Cancel
+          </button>
+          <button
+            onClick={handleSave}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: '#6366f1',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer',
+              fontSize: '14px'
+            }}
+          >
+            Save Changes
           </button>
         </div>
       </div>
