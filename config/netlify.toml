@@ -3,12 +3,6 @@
   command = "CI= npm run build"
   publish = "build"
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-  force = false
-
 # Enforce HTTPS
 [[redirects]]
   from = "http://*"
@@ -42,7 +36,7 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "geolocation=(), microphone=(), camera=()"
-    Content-Security-Policy = "default-src 'self'; img-src 'self' data: https:; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data: https:; connect-src 'self' https:"
+    Content-Security-Policy = "default-src 'self'; img-src 'self' data: https:; script-src 'self' https://analytics.kinotto.co 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data: https:; connect-src 'self' https://analytics.kinotto.co https:; frame-ancestors 'none'; base-uri 'self';"
 
 # Noindex sensitive routes
 [[headers]]
@@ -67,3 +61,9 @@
     for = "/*"
     [context.branch-deploy.headers.values]
       X-Robots-Tag = "noindex"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false
