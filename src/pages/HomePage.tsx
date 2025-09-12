@@ -370,6 +370,11 @@ const HomePage: React.FC = () => {
                                 src={fixture.home_crest} 
                                 alt={`${fixture.home_team} crest`}
                                 style={{ width: '18px', height: '18px', objectFit: 'contain', flexShrink: 0 }}
+                                loading="lazy"
+                                decoding="async"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).style.display = 'none';
+                                }}
                               />
                             )}
                             <span className="team-name" style={{
@@ -412,6 +417,11 @@ const HomePage: React.FC = () => {
                                 src={fixture.away_crest} 
                                 alt={`${fixture.away_team} crest`}
                                 style={{ width: '18px', height: '18px', objectFit: 'contain', flexShrink: 0 }}
+                                loading="lazy"
+                                decoding="async"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).style.display = 'none';
+                                }}
                               />
                             )}
                           </div>

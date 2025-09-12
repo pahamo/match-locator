@@ -7,7 +7,7 @@ interface DayGroupCardProps {
   children: React.ReactNode;
 }
 
-const DayGroupCard = forwardRef<HTMLDivElement, DayGroupCardProps>(
+const DayGroupCard = React.memo(forwardRef<HTMLDivElement, DayGroupCardProps>(
   ({ id, date, time, children }, ref) => {
     return (
       <div
@@ -49,7 +49,7 @@ const DayGroupCard = forwardRef<HTMLDivElement, DayGroupCardProps>(
       </div>
     );
   }
-);
+));
 
 DayGroupCard.displayName = 'DayGroupCard';
 

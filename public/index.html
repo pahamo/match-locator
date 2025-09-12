@@ -28,9 +28,22 @@
     />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     
-    <!-- Preload critical resources -->
+    <!-- Critical CSS inlined -->
+    <style>
+      *{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;color:#1a202c;background:#fff}.wrap{max-width:1200px;margin:0 auto;padding:0 16px}header{background:#fff;border-bottom:1px solid #e2e8f0;position:sticky;top:0;z-index:100}.header-content{display:flex;align-items:center;justify-content:space-between;height:60px}.skeleton{background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:loading 1.5s infinite;border-radius:4px}@keyframes loading{0%{background-position:200% 0}100%{background-position:-200% 0}}.fixture-card-skeleton{height:120px;margin-bottom:12px;border-radius:8px;border:1px solid #e5e7eb}h1{font-size:clamp(1.5rem,5vw,1.875rem);font-weight:700;margin:0 0 24px 0;line-height:1.2}img{display:block;max-width:100%;height:auto}img[alt*="crest"]{width:24px;height:24px;aspect-ratio:1/1;object-fit:contain;flex-shrink:0}.day-group-card{min-height:120px}.fixture-card{min-height:100px}
+    </style>
+    
+    <!-- Preconnect to external resources -->
     <link rel="preconnect" href="https://analytics.kinotto.co" crossorigin>
     <link rel="preconnect" href="https://nkfuzkrazehjivzmdrvt.supabase.co" crossorigin>
+    <link rel="dns-prefetch" href="https://crests.football-data.org">
+    
+    <!-- Preload key resources -->
+    <link rel="modulepreload" href="/static/js/main.js" as="script">
+    
+    <!-- Defer non-critical resources -->
+    <link rel="preload" href="/static/css/main.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/static/css/main.css"></noscript>
     
     <!-- Web App Manifest -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />

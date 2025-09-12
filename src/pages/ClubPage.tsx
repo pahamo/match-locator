@@ -95,12 +95,30 @@ const ClubPage: React.FC = () => {
                       </div>
                       <div className="fixture-teams">
                         <div className="team">
-                          {fx.home.crest && <img className="team-crest" src={fx.home.crest} alt={`${fx.home.name} crest`} />}
+                          {fx.home.crest && (
+                            <img 
+                              className="team-crest" 
+                              src={fx.home.crest} 
+                              alt={`${fx.home.name} crest`}
+                              loading="lazy"
+                              decoding="async"
+                              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                            />
+                          )}
                           <span className="team-name">{fx.home.name}</span>
                         </div>
                         <div className="vs">vs</div>
                         <div className="team away-team">
-                          {fx.away.crest && <img className="team-crest" src={fx.away.crest} alt={`${fx.away.name} crest`} />}
+                          {fx.away.crest && (
+                            <img 
+                              className="team-crest" 
+                              src={fx.away.crest} 
+                              alt={`${fx.away.name} crest`}
+                              loading="lazy"
+                              decoding="async"
+                              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                            />
+                          )}
                           <span className="team-name">{fx.away.name}</span>
                         </div>
                       </div>

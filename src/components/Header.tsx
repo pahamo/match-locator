@@ -7,7 +7,7 @@ interface HeaderProps {
   subtitle?: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ 
+const Header: React.FC<HeaderProps> = React.memo(({ 
   title = "Match Locator",
   subtitle = "UK football TV schedule — who shows every match"
 }) => {
@@ -147,6 +147,6 @@ const Header: React.FC<HeaderProps> = ({
       </nav>
     </header>
   );
-};
+});
 
 export default Header;

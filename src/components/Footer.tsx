@@ -4,9 +4,16 @@ interface FooterProps {
   onOpenCookieSettings?: () => void;
 }
 
-const Footer: React.FC<FooterProps> = ({ onOpenCookieSettings }) => {
+const Footer: React.FC<FooterProps> = React.memo(({ onOpenCookieSettings }) => {
   return (
-    <footer aria-label="Site footer" style={{ borderTop: '1px solid #e5e7eb', background: '#fff', marginTop: 32 }}>
+    <footer 
+      aria-label="Site footer" 
+      style={{ 
+        borderTop: '1px solid #e5e7eb', 
+        background: '#fff', 
+        marginTop: 32,
+        minHeight: '64px' // Prevent layout shift
+      }}>
       <div className="wrap" style={{ display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ color: '#6b7280', fontSize: 14 }}>
           © {new Date().getFullYear()} Match Locator
