@@ -4,10 +4,8 @@ import Header from '../components/Header';
 import StructuredData from '../components/StructuredData';
 import { FixtureCardSkeleton } from '../components/SkeletonLoader';
 import DayGroupCard from '../components/DayGroupCard';
-import StickyHeader from '../components/StickyHeader';
 import { generateHomeMeta, updateDocumentMeta, generateSimpleMatchUrl } from '../utils/seo';
 import { getDisplayTeamName, shouldUseShortNames } from '../utils/teamNames';
-import { useActiveGroup } from '../hooks/useActiveGroup';
 
 interface MatchWeek {
   matchweek: number;
@@ -80,9 +78,6 @@ const HomePage: React.FC = () => {
     
   // Prepare data for hooks - call hooks unconditionally
   const dayGroups = matchWeek ? groupFixturesByDate(matchWeek.fixtures) : [];
-  const { activeGroup, groupRefs } = useActiveGroup(
-    dayGroups.map(group => ({ date: group.date, time: group.commonTime }))
-  );
 
   useEffect(() => {
     let isCancelled = false;
@@ -221,7 +216,7 @@ const HomePage: React.FC = () => {
         <main>
           <div className="wrap">
             <h1 style={{ margin: '0 0 24px 0', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>
-              Upcoming Matches
+              Premier League TV Schedule (UK)
             </h1>
             <FixtureCardSkeleton />
             <FixtureCardSkeleton />
@@ -271,11 +266,6 @@ const HomePage: React.FC = () => {
         <div className="wrap" style={{ position: 'relative' }}>
           <h1 style={{ marginTop: 0 }}>Premier League TV Schedule (UK)</h1>
 
-          {/* Sticky Header for Mobile */}
-          <StickyHeader 
-            activeGroup={activeGroup} 
-            show={typeof window !== 'undefined' && window.innerWidth < 768}
-          />
 
           {/* Day Cards */}
           <div className="fixtures-list" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -285,7 +275,6 @@ const HomePage: React.FC = () => {
                 id={`group-${dayIndex}`}
                 date={dayGroup.date}
                 matchweek={`Matchweek ${matchWeek?.matchweek || 1}`}
-                ref={(el) => { groupRefs.current[dayIndex] = el; }}
               >
                 {/* Time slots within the day */}
                 {dayGroup.timeSlots.map((timeSlot, timeIndex) => (

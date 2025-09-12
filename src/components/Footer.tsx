@@ -12,9 +12,21 @@ const Footer: React.FC<FooterProps> = React.memo(({ onOpenCookieSettings }) => {
         borderTop: '1px solid #e5e7eb', 
         background: '#fff', 
         marginTop: 32,
-        minHeight: '64px' // Prevent layout shift
+        minHeight: '64px', // Prevent layout shift
+        width: '100%',
+        maxWidth: '100vw',
+        overflowX: 'hidden'
       }}>
-      <div className="wrap" style={{ display: 'flex', flexWrap: 'wrap', gap: 16, alignItems: 'center', justifyContent: 'space-between' }}>
+      <div className="wrap" style={{ 
+        display: 'flex', 
+        flexWrap: 'wrap', 
+        gap: 16, 
+        alignItems: 'center', 
+        justifyContent: 'space-between',
+        padding: '16px',
+        maxWidth: '1200px',
+        margin: '0 auto'
+      }}>
         <div style={{ color: '#6b7280', fontSize: 14 }}>
           © {new Date().getFullYear()} Match Locator
         </div>
