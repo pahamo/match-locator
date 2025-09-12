@@ -2,3 +2,4 @@
 # LIVE: Allow crawling (flip back to Disallow:/ during prelaunch/testing)
 User-agent: *
 Disallow:
+Sitemap: https://matchlocator.com/sitemap.xml
