@@ -55,9 +55,7 @@ exports.handler = async (event, context) => {
         .from('broadcasts')
         .upsert({
           fixture_id: fixtureId,
-          provider_id: providerId
-        }, {
-          onConflict: 'fixture_id'
+          provider_id: parseInt(String(providerId))
         });
 
       if (error) {

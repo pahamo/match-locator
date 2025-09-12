@@ -612,7 +612,6 @@ const AdminPage: React.FC = () => {
                           disabled={isSaving}
                         >
                           <option value="">-- Select broadcaster --</option>
-                          <option value="999">🚫 Blackout (No UK TV)</option>
                           {SIMPLE_BROADCASTERS.map(broadcaster => (
                             <option key={broadcaster.id} value={broadcaster.id}>
                               {broadcaster.name}
