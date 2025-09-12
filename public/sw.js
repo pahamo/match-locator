@@ -1,12 +1,11 @@
 // Simple service worker for basic offline support
-const CACHE_NAME = 'match-locator-v1';
+const CACHE_NAME = 'match-locator-v2'; // Increment version to clear old cache
 const urlsToCache = [
   '/',
-  '/static/js/main.js',
-  '/static/css/main.css',
   '/logo.svg',
   '/favicon.png',
   '/manifest.json'
+  // Note: Don't cache specific JS/CSS files as they have hashes
 ];
 
 // Install event - cache core assets
@@ -37,8 +36,9 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request)
       .then((response) => {
-        // Return cached version if available
+        // Return cached version if available (but log it for debugging)
         if (response) {
+          console.log('SW: Serving from cache:', event.request.url);
           return response;
         }
 
@@ -54,20 +54,17 @@ self.addEventListener('fetch', (event) => {
 
           caches.open(CACHE_NAME)
             .then((cache) => {
-              // Only cache static assets and main pages
-              if (event.request.url.match(/\.(js|css|png|jpg|jpeg|svg|ico)$/) || 
-                  event.request.url === self.location.origin + '/' ||
-                  event.request.url.match(/\/(fixtures|clubs|about)$/)) {
+              // Only cache static assets (not HTML pages to avoid SPA routing issues)
+              if (event.request.url.match(/\.(js|css|png|jpg|jpeg|svg|ico)$/)) {
                 cache.put(event.request, responseToCache);
               }
             });
 
           return response;
         }).catch(() => {
-          // Return offline fallback for navigation requests
-          if (event.request.mode === 'navigate') {
-            return caches.match('/');
-          }
+          // Only provide offline fallback for actual offline scenarios
+          // Don't interfere with normal SPA navigation
+          return null;
         });
       })
   );
