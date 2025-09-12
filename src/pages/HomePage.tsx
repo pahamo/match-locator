@@ -77,6 +77,8 @@ const HomePage: React.FC = () => {
   const [competitions, setCompetitions] = useState<SimpleCompetition[]>([]);
   const [selectedCompetitionId, setSelectedCompetitionId] = useState<number>(1); // Default to Premier League
 
+    const [blackoutIds, setBlackoutIds] = useState<string[]>([]);
+    
   // Prepare data for hooks - call hooks unconditionally
   const dayGroups = matchWeek ? groupFixturesByDate(matchWeek.fixtures) : [];
   const { activeGroup, groupRefs } = useActiveGroup(
