@@ -42,6 +42,19 @@ const PageLoader = () => (
 
 function App() {
   const [cookieOpen, setCookieOpen] = React.useState(false);
+  // Blackout state for fixtures (ensures setBlackoutIds exists)
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [blackoutIds, setBlackoutIds] = React.useState<string[]>([]);
+  
+  // Hydrate blackout ids once on mount if nothing else does it
+  React.useEffect(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
+      if (Array.isArray(stored)) setBlackoutIds(stored);
+    } catch {
+      // ignore
+    }
+  }, []);
   return (
     <ErrorBoundary>
       <Router>

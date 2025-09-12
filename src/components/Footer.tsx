@@ -63,6 +63,6 @@ const Footer: React.FC<FooterProps> = React.memo(({ onOpenCookieSettings }) => {
       </div>
     </footer>
   );
-};
+});
 
 export default Footer;
