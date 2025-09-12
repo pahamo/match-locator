@@ -9,7 +9,7 @@ const sitemapsDir = path.join(publicDir, 'sitemaps');
 
 const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL;
 const SUPABASE_ANON = process.env.REACT_APP_SUPABASE_ANON_KEY;
-const CANONICAL_BASE = (process.env.REACT_APP_CANONICAL_BASE || 'https://fixturesapp.netlify.app').replace(/\/$/, '');
+const CANONICAL_BASE = (process.env.REACT_APP_CANONICAL_BASE || 'https://matchlocator.com').replace(/\/$/, '');
 
 /** util **/
 function ensureDir(dir) { fs.mkdirSync(dir, { recursive: true }); }
