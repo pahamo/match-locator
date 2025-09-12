@@ -30,6 +30,9 @@ const FixturesPage: React.FC = () => {
     loadData();
   }, []);
 
+  const [displayCount, setDisplayCount] = useState(50);
+  const [hasMore, setHasMore] = useState(false);
+
   useEffect(() => {
     let filtered = [...fixtures];
 
@@ -59,6 +62,10 @@ const FixturesPage: React.FC = () => {
     }
 
     setFilteredFixtures(filtered);
+    
+    // Reset display count when filters change and update hasMore
+    setDisplayCount(50);
+    setHasMore(filtered.length > 50);
   }, [fixtures, teamFilter, matchweekFilter, competitionFilter, locationFilter]);
 
   const loadData = async () => {
@@ -76,6 +83,7 @@ const FixturesPage: React.FC = () => {
       
       setFixtures(fixturesData);
       setTeams(teamsData);
+      setHasMore(fixturesData.length > 50);
       
       // Update SEO meta tags for fixtures page
       const meta = generateFixturesMeta();
@@ -113,6 +121,12 @@ const FixturesPage: React.FC = () => {
     setMatchweekFilter('');
     setCompetitionFilter('');
     setLocationFilter('');
+  };
+
+  const loadMore = () => {
+    const newDisplayCount = Math.min(displayCount + 50, filteredFixtures.length);
+    setDisplayCount(newDisplayCount);
+    setHasMore(newDisplayCount < filteredFixtures.length);
   };
 
   if (loading) {
@@ -429,6 +443,15 @@ const FixturesPage: React.FC = () => {
             </div>
           </div>
 
+          {/* Results Count */}
+          <div style={{ 
+            marginBottom: '16px', 
+            color: '#6b7280', 
+            fontSize: '14px' 
+          }}>
+            Showing {Math.min(displayCount, filteredFixtures.length)} of {filteredFixtures.length} fixtures
+          </div>
+
           {/* Fixtures List */}
           {filteredFixtures.length === 0 ? (
             <div style={{ 
@@ -442,8 +465,9 @@ const FixturesPage: React.FC = () => {
               </p>
             </div>
           ) : (
-            <div className="fixtures-list">
-              {filteredFixtures.map(fixture => (
+            <>
+              <div className="fixtures-list">
+                {filteredFixtures.slice(0, displayCount).map(fixture => (
                 <div key={fixture.id} className="fixture-card">
                   <div className="fixture-datetime">
                     {new Date(fixture.kickoff_utc).toLocaleDateString('en-GB', {
@@ -515,7 +539,38 @@ const FixturesPage: React.FC = () => {
                   </div>
                 </div>
               ))}
-            </div>
+              </div>
+              
+              {/* Load More Button */}
+              {hasMore && (
+                <div style={{ 
+                  textAlign: 'center', 
+                  marginTop: '32px',
+                  paddingTop: '24px',
+                  borderTop: '1px solid #e5e7eb'
+                }}>
+                  <button
+                    onClick={loadMore}
+                    style={{
+                      padding: '12px 24px',
+                      background: '#6366f1',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      minHeight: '44px',
+                      transition: 'background-color 0.2s'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#5856eb'}
+                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#6366f1'}
+                  >
+                    Load More Fixtures ({filteredFixtures.length - displayCount} remaining)
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </main>

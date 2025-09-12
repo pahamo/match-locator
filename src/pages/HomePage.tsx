@@ -270,38 +270,6 @@ const HomePage: React.FC = () => {
       <main>
         <div className="wrap" style={{ position: 'relative' }}>
           <h1 style={{ marginTop: 0 }}>Premier League TV Schedule (UK)</h1>
-          
-          {/* Compact Matchweek Info */}
-          <div 
-            style={{ 
-              background: matchWeek.hasToday ? '#f8fafc' : '#fafaf9', 
-              border: '1px solid #e2e8f0',
-              borderRadius: '6px', 
-              padding: '12px 16px', 
-              marginBottom: '16px',
-              fontSize: '14px'
-            }}
-          >
-            <div style={{ 
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: '12px'
-            }}>
-              <span style={{ 
-                color: '#64748b',
-                fontWeight: '500'
-              }}>
-                Matchweek {matchWeek.matchweek} • {matchWeek.fixtures.length} match{matchWeek.fixtures.length === 1 ? '' : 'es'}
-              </span>
-              <span style={{ 
-                color: '#94a3b8',
-                fontSize: '12px'
-              }}>
-                {matchWeek.dateRange}
-              </span>
-            </div>
-          </div>
 
           {/* Sticky Header for Mobile */}
           <StickyHeader 
@@ -316,7 +284,7 @@ const HomePage: React.FC = () => {
                 key={dayIndex}
                 id={`group-${dayIndex}`}
                 date={dayGroup.date}
-                time={dayGroup.commonTime}
+                matchweek={`Matchweek ${matchWeek?.matchweek || 1}`}
                 ref={(el) => { groupRefs.current[dayIndex] = el; }}
               >
                 {/* Time slots within the day */}
@@ -430,7 +398,7 @@ const HomePage: React.FC = () => {
                         
                         {/* Broadcaster Info - Compact */}
                         <div className="broadcaster-info-compact" style={{
-                          display: 'flex',
+                          display: typeof window !== 'undefined' && window.innerWidth <= 640 ? 'none' : 'flex',
                           alignItems: 'center',
                           gap: '8px',
                           flexShrink: 0
@@ -467,13 +435,16 @@ const HomePage: React.FC = () => {
                             style={{ 
                               color: '#6366f1', 
                               textDecoration: 'none',
-                              fontSize: '12px',
+                              fontSize: typeof window !== 'undefined' && window.innerWidth <= 640 ? '14px' : '12px',
                               fontWeight: '500',
-                              padding: '4px 8px',
+                              padding: typeof window !== 'undefined' && window.innerWidth <= 640 ? '8px 16px' : '4px 8px',
                               borderRadius: '4px',
                               border: '1px solid #6366f1',
                               transition: 'all 0.2s',
-                              display: 'inline-block'
+                              display: typeof window !== 'undefined' && window.innerWidth <= 640 ? 'inline-flex' : 'inline-block',
+                              minHeight: typeof window !== 'undefined' && window.innerWidth <= 640 ? '44px' : 'auto',
+                              alignItems: 'center',
+                              justifyContent: 'center'
                             }}
                             onMouseOver={(e) => {
                               e.currentTarget.style.background = '#6366f1';
