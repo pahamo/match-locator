@@ -74,7 +74,6 @@ const HomePage: React.FC = () => {
   const [matchWeek, setMatchWeek] = useState<MatchWeek | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [blackoutIds, setBlackoutIds] = useState<number[]>([]);
   const [competitions, setCompetitions] = useState<SimpleCompetition[]>([]);
   const [selectedCompetitionId, setSelectedCompetitionId] = useState<number>(1); // Default to Premier League
 
@@ -425,14 +424,14 @@ const HomePage: React.FC = () => {
                           gap: '8px',
                           flexShrink: 0
                         }}>
-                          {blackoutIds.includes(fixture.id) ? (
+                          {fixture.isBlackout ? (
                             <span className="provider blackout" style={{
                               fontSize: '12px',
                               padding: '2px 6px',
                               borderRadius: '4px',
                               background: '#fee2e2',
                               color: '#dc2626'
-                            }}>🚫</span>
+                            }}>🚫 Blackout</span>
                           ) : fixture.broadcaster ? (
                             <span className="provider confirmed" style={{
                               fontSize: '12px',
