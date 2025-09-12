@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { getSimpleFixtures, getSimpleCompetitions, type SimpleFixture, type SimpleCompetition } from '../services/supabase-simple';
 import Header from '../components/Header';
 import StructuredData from '../components/StructuredData';
@@ -463,8 +462,8 @@ const HomePage: React.FC = () => {
                             }}>TBD</span>
                           )}
                           
-                          <Link 
-                            to={generateSimpleMatchUrl(fixture)} 
+                          <a 
+                            href={generateSimpleMatchUrl(fixture)}
                             style={{ 
                               color: '#6366f1', 
                               textDecoration: 'none',
@@ -473,7 +472,8 @@ const HomePage: React.FC = () => {
                               padding: '4px 8px',
                               borderRadius: '4px',
                               border: '1px solid #6366f1',
-                              transition: 'all 0.2s'
+                              transition: 'all 0.2s',
+                              display: 'inline-block'
                             }}
                             onMouseOver={(e) => {
                               e.currentTarget.style.background = '#6366f1';
@@ -497,7 +497,7 @@ const HomePage: React.FC = () => {
                             }}
                           >
                             View
-                          </Link>
+                          </a>
                         </div>
                       </div>
                     ))}
