@@ -2,6 +2,10 @@ import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage'; // Keep HomePage eager for LCP
 import MatchPage from './pages/MatchPage'; // Keep MatchPage eager for SEO
+
+import Footer from './components/Footer';
+import ErrorBoundary from './components/ErrorBoundary';
+import { FixtureCardSkeleton } from './components/SkeletonLoader';
 import './App.css';
 
 // Lazy load non-critical CSS
@@ -14,9 +18,6 @@ const loadNonCriticalCSS = () => {
 
 // Load non-critical CSS after initial render
 setTimeout(loadNonCriticalCSS, 100);
-import Footer from './components/Footer';
-import ErrorBoundary from './components/ErrorBoundary';
-import { FixtureCardSkeleton } from './components/SkeletonLoader';
 
 // Lazy load non-critical pages
 const ClubPage = React.lazy(() => import('./pages/ClubPage'));
