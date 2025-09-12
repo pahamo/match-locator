@@ -3,20 +3,14 @@
   command = "CI= npm run build"
   publish = "build"
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-  force = false
-
-# Enforce HTTPS for all hosts (including previews)
+# Enforce HTTPS
 [[redirects]]
   from = "http://*"
   to = "https://:splat"
   status = 301
   force = true
 
-# Preferred host for production (safe no-op on previews)
+# Preferred host (redirect www to apex domain if using matchlocator.com)
 [[redirects]]
   from = "https://www.matchlocator.com/*"
   to = "https://matchlocator.com/:splat"
@@ -42,10 +36,9 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "geolocation=(), microphone=(), camera=()"
-    # Baseline CSP; adjust if any asset is blocked in console
-    Content-Security-Policy = "default-src 'self'; img-src 'self' data: https:; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data: https:; connect-src 'self' https:"
+    Content-Security-Policy = "default-src 'self'; img-src 'self' data: https:; script-src 'self' https://analytics.kinotto.co 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data: https:; connect-src 'self' https://analytics.kinotto.co https:; frame-ancestors 'none'; base-uri 'self';"
 
-# Noindex for sensitive routes
+# Noindex sensitive routes
 [[headers]]
   for = "/admin/*"
   [headers.values]
@@ -56,14 +49,7 @@
   [headers.values]
     X-Robots-Tag = "noindex"
 
-# TEMP: Hide entire site from indexing in production until launch
-[context.production]
-  [[context.production.headers]]
-    for = "/*"
-    [context.production.headers.values]
-      X-Robots-Tag = "noindex"
-
-# Ensure previews and branch deploys are not indexed
+# Staging contexts: add a global noindex header
 [context.deploy-preview]
   [[context.deploy-preview.headers]]
     for = "/*"
@@ -75,3 +61,9 @@
     for = "/*"
     [context.branch-deploy.headers.values]
       X-Robots-Tag = "noindex"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false
