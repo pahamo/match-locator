@@ -40,7 +40,15 @@ const MatchPage: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
+        
+        // Add debug logging
+        console.log('MatchPage: Loading fixture with ID:', parsedId);
+        const startTime = performance.now();
+        
         const fixtureData = await getFixtureById(parsedId);
+        
+        const endTime = performance.now();
+        console.log(`MatchPage: Fixture loaded in ${endTime - startTime}ms`);
         
         if (!fixtureData) {
           setError('Match not found');

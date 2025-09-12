@@ -1,69 +1,16 @@
-[build]
-  # Prevent CRA from failing the build on ESLint warnings in CI
-  command = "CI= npm run build"
-  publish = "build"
-
-# Enforce HTTPS
-[[redirects]]
-  from = "http://*"
-  to = "https://:splat"
-  status = 301
-  force = true
-
-# Preferred host (redirect www to apex domain if using matchlocator.com)
-[[redirects]]
-  from = "https://www.matchlocator.com/*"
-  to = "https://matchlocator.com/:splat"
-  status = 301
-  force = true
-
-# Always serve fresh copies of sitemap and robots
-[[headers]]
-  for = "/sitemap.xml"
-  [headers.values]
-    Cache-Control = "no-store"
-
-[[headers]]
-  for = "/robots.txt"
-  [headers.values]
-    Cache-Control = "no-store"
-
-# Global security headers
-[[headers]]
-  for = "/*"
-  [headers.values]
-    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
-    Content-Security-Policy = "default-src 'self'; img-src 'self' data: https:; script-src 'self' https://analytics.kinotto.co 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self' data: https:; connect-src 'self' https://analytics.kinotto.co https:; frame-ancestors 'none'; base-uri 'self';"
-
-# Noindex sensitive routes
-[[headers]]
-  for = "/admin/*"
-  [headers.values]
-    X-Robots-Tag = "noindex"
-
-[[headers]]
-  for = "/api/private/*"
-  [headers.values]
-    X-Robots-Tag = "noindex"
-
-# Staging contexts: add a global noindex header
-[context.deploy-preview]
-  [[context.deploy-preview.headers]]
-    for = "/*"
-    [context.deploy-preview.headers.values]
-      X-Robots-Tag = "noindex"
-
-[context.branch-deploy]
-  [[context.branch-deploy.headers]]
-    for = "/*"
-    [context.branch-deploy.headers.values]
-      X-Robots-Tag = "noindex"
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-  force = false
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My App</title>
+  <script
+    defer
+    data-domain="matchlocator.com,design.matchlocator.com"
+    data-api="https://analytics.kinotto.co/api/event"
+    src="https://analytics.kinotto.co/js/script.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+</body>
+</html>

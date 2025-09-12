@@ -23,6 +23,8 @@ const Footer: React.FC<FooterProps> = React.memo(({ onOpenCookieSettings }) => {
           <a href="/fixtures" style={{ color: '#6366f1', fontSize: '14px', textDecoration: 'none' }}>Fixtures</a>
           <a href="/clubs" style={{ color: '#6366f1', fontSize: '14px', textDecoration: 'none' }}>Clubs</a>
           <a href="/about" style={{ color: '#6366f1', fontSize: '14px', textDecoration: 'none' }}>About</a>
+          <a href="/legal/privacy-policy" style={{ color: '#6366f1', fontSize: '14px', textDecoration: 'none' }}>Privacy</a>
+          <a href="/legal/terms" style={{ color: '#6366f1', fontSize: '14px', textDecoration: 'none' }}>Terms</a>
           <a 
             href="/admin" 
             style={{ 

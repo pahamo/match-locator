@@ -17,6 +17,19 @@
   status = 301
   force = true
 
+# Static asset headers with correct MIME types
+[[headers]]
+  for = "/static/css/*.css"
+  [headers.values]
+    Content-Type = "text/css"
+    Cache-Control = "public, max-age=31536000"
+
+[[headers]]
+  for = "/static/js/*.js"
+  [headers.values]
+    Content-Type = "application/javascript"
+    Cache-Control = "public, max-age=31536000"
+
 # Always serve fresh copies of sitemap and robots
 [[headers]]
   for = "/sitemap.xml"
@@ -62,8 +75,10 @@
     [context.branch-deploy.headers.values]
       X-Robots-Tag = "noindex"
 
+# SPA fallback - but exclude static assets
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
   force = false
+  conditions = {Role = [""], "!Path" = ["/static/*", "/sitemap.xml", "/robots.txt", "/favicon.ico", "/favicon.png", "/logo.svg", "/manifest.json"]}

@@ -29,3 +29,4 @@ node_modules 2/
 
 # Local configuration (never commit secrets)
 config/.env
+.env.admin

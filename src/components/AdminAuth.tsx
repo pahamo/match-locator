@@ -166,17 +166,6 @@ const AdminAuth: React.FC<AdminAuthProps> = ({ onAuthenticated }) => {
           </button>
         </form>
 
-        <div style={{
-          marginTop: '20px',
-          padding: '16px',
-          backgroundColor: '#f8fafc',
-          borderRadius: '4px',
-          fontSize: '12px',
-          color: '#6b7280',
-          textAlign: 'center'
-        }}>
-          Default credentials: admin / matchlocator2025
-        </div>
       </div>
     </div>
   );

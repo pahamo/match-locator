@@ -19,8 +19,8 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) => {
     
     // Generate SEO-friendly URL for the match
     const matchUrl = isSimpleFixture ? 
-      `https://fixturesapp.netlify.app/matches/${fixture.id}-${homeTeam.toLowerCase().replace(/\s+/g, '-')}-vs-${awayTeam.toLowerCase().replace(/\s+/g, '-')}-${kickoffDate.split('T')[0]}` :
-      `https://fixturesapp.netlify.app/matches/${fixture.id}-${fixture.home.name.toLowerCase().replace(/\s+/g, '-')}-vs-${fixture.away.name.toLowerCase().replace(/\s+/g, '-')}-${kickoffDate.split('T')[0]}`;
+      `https://matchlocator.com/matches/${fixture.id}-${homeTeam.toLowerCase().replace(/\s+/g, '-')}-vs-${awayTeam.toLowerCase().replace(/\s+/g, '-')}-${kickoffDate.split('T')[0]}` :
+      `https://matchlocator.com/matches/${fixture.id}-${fixture.home.name.toLowerCase().replace(/\s+/g, '-')}-vs-${fixture.away.name.toLowerCase().replace(/\s+/g, '-')}-${kickoffDate.split('T')[0]}`;
     
     return {
       "@context": "https://schema.org",
@@ -77,10 +77,10 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) => {
       "@type": "Organization", 
       "name": "fixtures.app",
       "description": "Premier League TV Schedule for UK - Sky Sports & TNT Sports fixtures",
-      "url": "https://fixturesapp.netlify.app",
-      "logo": "https://fixturesapp.netlify.app/logo192.png",
+      "url": "https://matchlocator.com",
+      "logo": "https://matchlocator.com/favicon.png",
       "sameAs": [
-        "https://fixturesapp.netlify.app"
+        "https://matchlocator.com"
       ],
       "foundingDate": "2024",
       "knowsAbout": [
@@ -99,12 +99,12 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) => {
       "@type": "WebSite",
       "name": "fixtures.app - Premier League TV Guide UK",
       "description": "Premier League TV Guide UK - Sky Sports & TNT Sports fixtures. Find which broadcaster shows every Premier League match.",
-      "url": "https://fixturesapp.netlify.app",
+      "url": "https://matchlocator.com",
       "potentialAction": {
         "@type": "SearchAction",
         "target": {
           "@type": "EntryPoint",
-          "urlTemplate": "https://fixturesapp.netlify.app/fixtures?q={search_term_string}"
+          "urlTemplate": "https://matchlocator.com/fixtures?q={search_term_string}"
         },
         "query-input": "required name=search_term_string"
       },

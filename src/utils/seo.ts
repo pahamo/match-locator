@@ -143,7 +143,7 @@ export const generateMatchMeta = (fixture: Fixture) => {
         : 'Broadcaster to be confirmed.'
   } UK Premier League TV schedule.`;
 
-  const ogImage = fixture.home.crest || fixture.away.crest || '/logo192.png';
+  const ogImage = fixture.home.crest || fixture.away.crest || '/favicon.png';
   const canonical = `${CANONICAL_BASE}${generateMatchUrl(fixture)}`;
 
   return {
@@ -168,7 +168,7 @@ export const generateTeamMeta = (team: Team, upcomingCount: number = 0) => {
     canonical,
     ogTitle: title,
     ogDescription: description,
-    ogImage: team.crest || '/logo192.png',
+    ogImage: team.crest || '/favicon.png',
     ogUrl: canonical
   };
 };
@@ -184,7 +184,7 @@ export const generateHomeMeta = () => {
     canonical,
     ogTitle: title,
     ogDescription: description,
-    ogImage: '/logo192.png',
+    ogImage: '/favicon.png',
     ogUrl: canonical
   };
 };
@@ -200,7 +200,7 @@ export const generateFixturesMeta = () => {
     canonical,
     ogTitle: title,
     ogDescription: description,
-    ogImage: '/logo192.png',
+    ogImage: '/favicon.png',
     ogUrl: canonical
   };
 };
@@ -216,7 +216,7 @@ export const generateClubsMeta = () => {
     canonical,
     ogTitle: title,
     ogDescription: description,
-    ogImage: '/logo192.png',
+    ogImage: '/favicon.png',
     ogUrl: canonical
   };
 };

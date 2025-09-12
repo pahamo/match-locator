@@ -478,10 +478,22 @@ const HomePage: React.FC = () => {
                             onMouseOver={(e) => {
                               e.currentTarget.style.background = '#6366f1';
                               e.currentTarget.style.color = 'white';
+                              
+                              // Preload the fixture data on hover
+                              if (typeof window !== 'undefined') {
+                                import('../services/supabase').then(({ getFixtureById }) => {
+                                  getFixtureById(fixture.id).catch(() => {});
+                                });
+                              }
                             }}
                             onMouseOut={(e) => {
                               e.currentTarget.style.background = 'transparent';
                               e.currentTarget.style.color = '#6366f1';
+                            }}
+                            onClick={() => {
+                              // Add click debugging
+                              console.log('View button clicked for fixture:', fixture.id);
+                              console.log('Generated URL:', generateSimpleMatchUrl(fixture));
                             }}
                           >
                             View
