@@ -75,10 +75,8 @@
     [context.branch-deploy.headers.values]
       X-Robots-Tag = "noindex"
 
-# SPA fallback - but exclude static assets
+# SPA fallback - catch all non-file requests
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-  force = false
-  conditions = {Role = [""], "!Path" = ["/static/*", "/sitemap.xml", "/robots.txt", "/favicon.ico", "/favicon.png", "/logo.svg", "/manifest.json"]}
