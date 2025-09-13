@@ -6,6 +6,7 @@ import Header from '../components/Header';
 import MobileFilterModal from '../components/MobileFilterModal';
 import { FixtureCard } from '../design-system';
 import { generateFixturesMeta, updateDocumentMeta } from '../utils/seo';
+import { getMatchStatus, getMatchStatusStyles } from '../utils/matchStatus';
 
 type FilterTeam = '' | string;
 type FilterMatchweek = '' | string;
