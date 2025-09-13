@@ -100,6 +100,15 @@ const HomePage: React.FC = () => {
   const { finishedFixtures, currentAndUpcomingFixtures } = matchWeek ? separateFixturesByStatus(matchWeek.fixtures) : { finishedFixtures: [], currentAndUpcomingFixtures: [] };
   const dayGroups = groupFixturesByDate(currentAndUpcomingFixtures);
 
+  // Debug logging for stacked cards
+  console.log('HomePage fixtures debug:');
+  console.log('Total fixtures:', matchWeek?.fixtures?.length || 0);
+  console.log('Finished fixtures:', finishedFixtures.length);
+  console.log('Current/upcoming fixtures:', currentAndUpcomingFixtures.length);
+  if (finishedFixtures.length > 0) {
+    console.log('Finished fixtures:', finishedFixtures.map(f => ({ id: f.id, kickoff: f.kickoff_utc, teams: `${f.home_team} vs ${f.away_team}` })));
+  }
+
   useEffect(() => {
     let isCancelled = false;
     (async () => {

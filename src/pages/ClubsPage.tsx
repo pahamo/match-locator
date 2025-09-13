@@ -42,7 +42,7 @@ const ClubsPage: React.FC = () => {
   // Filter teams by competition with better matching
   const eplTeams = teams.filter(team => {
     const teamNameLower = team.name.toLowerCase();
-    return premierLeagueTeams.some(plTeam => {
+    const isMatch = premierLeagueTeams.some(plTeam => {
       const plTeamLower = plTeam.toLowerCase();
       // Check for exact match or if team name contains PL team name parts
       return teamNameLower === plTeamLower ||
@@ -58,7 +58,20 @@ const ClubsPage: React.FC = () => {
              (plTeam === 'Newcastle United' && teamNameLower.includes('newcastle')) ||
              (plTeam === 'Nottingham Forest' && teamNameLower.includes('nottingham'));
     });
+
+    // Debug logging
+    if (isMatch) {
+      console.log('✓ Matched EPL team:', team.name);
+    } else {
+      console.log('✗ No match for team:', team.name);
+    }
+
+    return isMatch;
   });
+
+  console.log('Total teams in database:', teams.length);
+  console.log('Matched EPL teams count:', eplTeams.length);
+  console.log('Expected PL teams:', premierLeagueTeams.length);
 
   const uclTeams = teams.filter(team => {
     const teamNameLower = team.name.toLowerCase();
