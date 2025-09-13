@@ -10,73 +10,49 @@ const ClubsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // EPL teams (all 20 Premier League teams)
-  const eplTeams = teams;
-  
-  // ALL UCL teams (complete Champions League participants)
-  const uclTeamNames = [
-    // English teams
-    'Manchester City',
-    'Arsenal', 
-    'Liverpool',
-    'Aston Villa',
-    // Spanish teams
-    'Real Madrid',
-    'Barcelona',
-    'Atletico Madrid',
-    'Athletic Bilbao',
-    // German teams  
-    'Bayern Munich',
-    'Borussia Dortmund',
-    'RB Leipzig',
-    'Bayer Leverkusen',
-    // Italian teams
-    'Inter Milan',
-    'AC Milan',
-    'Juventus',
-    'Atalanta',
-    // French teams
-    'Paris Saint-Germain',
-    'AS Monaco',
-    'Lille',
-    'Brest',
-    // Portuguese teams
-    'Sporting CP',
-    'Benfica',
-    // Dutch teams
-    'PSV Eindhoven',
-    'Feyenoord',
-    // Other major teams
-    'Celtic',
-    'Club Brugge',
-    'Shakhtar Donetsk',
-    'Red Star Belgrade',
-    'Young Boys',
-    'Sparta Prague',
-    'Salzburg',
-    'Stuttgart',
-    'Sturm Graz',
-    'Slovan Bratislava',
-    'Girona'
+  // Premier League teams (exactly the 20 current EPL teams)
+  const premierLeagueTeams = [
+    'Arsenal', 'Aston Villa', 'Bournemouth', 'Brentford', 'Brighton & Hove Albion',
+    'Chelsea', 'Crystal Palace', 'Everton', 'Fulham', 'Ipswich Town',
+    'Leicester City', 'Liverpool', 'Manchester City', 'Manchester United', 'Newcastle United',
+    'Nottingham Forest', 'Southampton', 'Tottenham Hotspur', 'West Ham United', 'Wolverhampton Wanderers'
   ];
-  
-  // Create UCL teams - mix of existing EPL teams and placeholder teams for non-EPL
-  const uclTeams = uclTeamNames.map(teamName => {
-    // Check if this team exists in our EPL data
-    const existingTeam = teams.find(team => team.name.includes(teamName.split(' ')[0]));
-    
-    if (existingTeam) {
-      return existingTeam;
-    } else {
-      // Create placeholder team for non-EPL UCL teams
-      return {
-        id: Math.random(), // Temporary ID for non-EPL teams
-        name: teamName,
-        slug: teamName.toLowerCase().replace(/\s+/g, '-'),
-        crest: null
-      };
-    }
-  });
+
+  // Champions League teams (complete 2024-25 participant list)
+  const championsLeagueTeams = [
+    // English teams
+    'Manchester City', 'Arsenal', 'Liverpool', 'Aston Villa',
+    // Spanish teams
+    'Real Madrid', 'Barcelona', 'Atletico Madrid', 'Girona',
+    // German teams
+    'Bayern Munich', 'Borussia Dortmund', 'RB Leipzig', 'Bayer Leverkusen', 'Stuttgart',
+    // Italian teams
+    'Inter Milan', 'AC Milan', 'Juventus', 'Atalanta', 'Bologna',
+    // French teams
+    'Paris Saint-Germain', 'AS Monaco', 'Lille', 'Brest',
+    // Portuguese teams
+    'Sporting CP', 'Benfica',
+    // Dutch teams
+    'PSV Eindhoven', 'Feyenoord',
+    // Other teams
+    'Celtic', 'Club Brugge', 'Shakhtar Donetsk', 'Red Star Belgrade',
+    'Young Boys', 'Sparta Prague', 'Salzburg', 'Sturm Graz', 'Slovan Bratislava'
+  ];
+
+  // Filter teams by competition
+  const eplTeams = teams.filter(team =>
+    premierLeagueTeams.some(plTeam =>
+      team.name.toLowerCase().includes(plTeam.toLowerCase().split(' ')[0].toLowerCase()) ||
+      plTeam.toLowerCase().includes(team.name.toLowerCase())
+    )
+  );
+
+  const uclTeams = teams.filter(team =>
+    championsLeagueTeams.some(clTeam =>
+      team.name.toLowerCase().includes(clTeam.toLowerCase().split(' ')[0].toLowerCase()) ||
+      clTeam.toLowerCase().includes(team.name.toLowerCase())
+    )
+  );
 
   useEffect(() => {
     loadTeams();
@@ -162,7 +138,7 @@ const ClubsPage: React.FC = () => {
               color: '#64748b',
               fontWeight: '500'
             }}>
-              {eplTeams.length} Premier League clubs
+              {eplTeams.length} of 20 Premier League clubs
             </div>
             
             <div 
@@ -209,7 +185,7 @@ const ClubsPage: React.FC = () => {
               color: '#0369a1',
               fontWeight: '500'
             }}>
-              {uclTeams.length} clubs in Champions League
+              {uclTeams.length} Champions League clubs available
             </div>
             
             <div 
