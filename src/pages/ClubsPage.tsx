@@ -106,7 +106,7 @@ const ClubsPage: React.FC = () => {
         <Header />
         <main>
           <div className="wrap">
-            <h1 style={{ marginTop: 32, marginBottom: 32 }}>Football Clubs</h1>
+            <h1 style={{ margin: '0 0 24px 0', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>Football Clubs</h1>
             <div className="loading">Loading teams...</div>
           </div>
         </main>
@@ -120,7 +120,7 @@ const ClubsPage: React.FC = () => {
         <Header />
         <main>
           <div className="wrap">
-            <h1 style={{ marginTop: 32, marginBottom: 32 }}>Football Clubs</h1>
+            <h1 style={{ margin: '0 0 24px 0', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>Football Clubs</h1>
             <div className="error">{error}</div>
             <button onClick={loadTeams}>Retry</button>
           </div>
@@ -135,7 +135,7 @@ const ClubsPage: React.FC = () => {
       
       <main>
         <div className="wrap">
-          <h1 style={{ marginTop: 32, marginBottom: 32 }}>Football Clubs</h1>
+          <h1 style={{ margin: '0 0 24px 0', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>Football Clubs</h1>
           
           {/* Premier League Section */}
           <section style={{ marginBottom: '48px' }}>

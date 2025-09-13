@@ -7,6 +7,7 @@ import { FixtureCardSkeleton } from '../components/SkeletonLoader';
 import DayGroupCard from '../components/DayGroupCard';
 import { FixtureCard } from '../design-system';
 import { generateHomeMeta, updateDocumentMeta } from '../utils/seo';
+import { getMatchStatus } from '../utils/matchStatus';
 
 interface MatchWeek {
   matchweek: number;
@@ -16,6 +17,23 @@ interface MatchWeek {
   isUpcoming: boolean;
 }
 
+
+// Helper to separate fixtures by match status
+const separateFixturesByStatus = (fixtures: SimpleFixture[]) => {
+  const finishedFixtures: SimpleFixture[] = [];
+  const currentAndUpcomingFixtures: SimpleFixture[] = [];
+
+  fixtures.forEach(fixture => {
+    const status = getMatchStatus(fixture.kickoff_utc);
+    if (status.status === 'finished') {
+      finishedFixtures.push(fixture);
+    } else {
+      currentAndUpcomingFixtures.push(fixture);
+    }
+  });
+
+  return { finishedFixtures, currentAndUpcomingFixtures };
+};
 
 // Helper to group fixtures by date, then by time within each date for day card display
 const groupFixturesByDate = (fixtures: SimpleFixture[]) => {
@@ -78,7 +96,8 @@ const HomePage: React.FC = () => {
     const [blackoutIds, setBlackoutIds] = useState<string[]>([]);
     
   // Prepare data for hooks - call hooks unconditionally
-  const dayGroups = matchWeek ? groupFixturesByDate(matchWeek.fixtures) : [];
+  const { finishedFixtures, currentAndUpcomingFixtures } = matchWeek ? separateFixturesByStatus(matchWeek.fixtures) : { finishedFixtures: [], currentAndUpcomingFixtures: [] };
+  const dayGroups = groupFixturesByDate(currentAndUpcomingFixtures);
 
   useEffect(() => {
     let isCancelled = false;
@@ -267,6 +286,33 @@ const HomePage: React.FC = () => {
         <div className="wrap" style={{ position: 'relative' }}>
           <h1 style={{ marginTop: '32px', marginBottom: '32px' }}>Premier League TV Schedule</h1>
 
+          {/* Finished Matches - Minimized Display */}
+          {finishedFixtures.length > 0 && (
+            <div style={{ marginBottom: '32px' }}>
+              <h2 style={{
+                fontSize: '16px',
+                fontWeight: '600',
+                color: '#6b7280',
+                marginBottom: '12px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px'
+              }}>Recent Results</h2>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                {finishedFixtures
+                  .sort((a, b) => new Date(b.kickoff_utc).getTime() - new Date(a.kickoff_utc).getTime())
+                  .slice(0, 5)
+                  .map(fixture => (
+                    <FixtureCard
+                      key={fixture.id}
+                      fixture={fixture}
+                      variant="minimized"
+                      showViewButton={false}
+                    />
+                  ))
+                }
+              </div>
+            </div>
+          )}
 
           {/* Day Cards */}
           <div className="fixtures-list" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -303,6 +349,7 @@ const HomePage: React.FC = () => {
                         key={fixture.id}
                         fixture={fixture}
                         variant="compact"
+                        showViewButton={true}
                       />
                     ))}
                   </div>

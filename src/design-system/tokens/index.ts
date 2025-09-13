@@ -26,6 +26,22 @@ export const tokens = {
       50: '#fef2f2'
     },
     
+    // Broadcaster specific colors (original design)
+    broadcaster: {
+      confirmed: {
+        background: '#dcfce7',
+        text: '#16a34a'
+      },
+      blackout: {
+        background: '#fee2e2',
+        text: '#dc2626'
+      },
+      tbd: {
+        background: '#fef3c7',
+        text: '#d97706'
+      }
+    },
+    
     // Neutral colors
     gray: {
       50: '#f9fafb',
@@ -123,6 +139,16 @@ export const tokens = {
     dropdown: 10,
     sticky: 20,
     modal: 50
+  },
+  
+  // Layout standards
+  layout: {
+    headerHeight: '64px',
+    pageTopMargin: '32px',
+    pageBottomMargin: '32px',
+    sectionSpacing: '48px',
+    contentMaxWidth: '1200px',
+    headerClearance: '80px' // Header height + margin
   }
 } as const;
 
@@ -165,6 +191,22 @@ export const cssVariables = `
   --color-live-primary: ${tokens.colors.live.primary};
   --color-live-bg: ${tokens.colors.live.background};
   --color-live-border: ${tokens.colors.live.border};
+  
+  /* Broadcaster colors */
+  --broadcaster-confirmed-bg: ${tokens.colors.broadcaster.confirmed.background};
+  --broadcaster-confirmed-text: ${tokens.colors.broadcaster.confirmed.text};
+  --broadcaster-blackout-bg: ${tokens.colors.broadcaster.blackout.background};
+  --broadcaster-blackout-text: ${tokens.colors.broadcaster.blackout.text};
+  --broadcaster-tbd-bg: ${tokens.colors.broadcaster.tbd.background};
+  --broadcaster-tbd-text: ${tokens.colors.broadcaster.tbd.text};
+  
+  /* Layout standards */
+  --layout-header-height: ${tokens.layout.headerHeight};
+  --layout-page-top-margin: ${tokens.layout.pageTopMargin};
+  --layout-page-bottom-margin: ${tokens.layout.pageBottomMargin};
+  --layout-section-spacing: ${tokens.layout.sectionSpacing};
+  --layout-content-max-width: ${tokens.layout.contentMaxWidth};
+  --layout-header-clearance: ${tokens.layout.headerClearance};
   
   /* Spacing */
   --spacing-xs: ${tokens.spacing.xs};
@@ -211,6 +253,26 @@ export const cssVariables = `
   --transition-fast: ${tokens.transition.fast};
   --transition-base: ${tokens.transition.base};
   --transition-slow: ${tokens.transition.slow};
+}
+
+/* CSS animations for live indicators */
+@keyframes pulse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.live-pulse {
+  animation: pulse 2s ease-in-out infinite;
 }
 `;
 

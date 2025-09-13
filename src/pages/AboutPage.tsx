@@ -7,9 +7,9 @@ const AboutPage: React.FC = () => {
       <Header />
 
       <main>
-        <div className="wrap">
+        <div className="wrap" style={{ paddingTop: 'var(--layout-page-top-margin)' }}>
           <section className="card" style={{ background: 'var(--color-card)', border: '1px solid var(--color-border)', borderRadius: 'var(--border-radius)', padding: 'var(--spacing-xl)', boxShadow: 'var(--shadow-sm)' }}>
-            <h1 style={{ marginTop: 0 }}>About Match Locator</h1>
+            <h1 style={{ margin: '0 0 24px 0', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>About Match Locator</h1>
             <p className="muted" style={{ marginTop: 0 }}>
               A simple, fast way to see who is broadcasting each Premier League match in the UK.
             </p>

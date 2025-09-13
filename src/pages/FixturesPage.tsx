@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { getFixtures, getTeams } from '../services/supabase';
 import type { Fixture, Team } from '../types';
 import Header from '../components/Header';
 import MobileFilterModal from '../components/MobileFilterModal';
-import { generateFixturesMeta, updateDocumentMeta, generateMatchUrl } from '../utils/seo';
-import { getMatchStatus, getMatchStatusStyles } from '../utils/matchStatus';
+import { FixtureCard } from '../design-system';
+import { generateFixturesMeta, updateDocumentMeta } from '../utils/seo';
 
 type FilterTeam = '' | string;
 type FilterMatchweek = '' | string;
@@ -136,7 +135,7 @@ const FixturesPage: React.FC = () => {
         <Header />
         <main>
           <div className="wrap">
-            <h1 style={{ marginTop: 0 }}>Premier League Fixtures</h1>
+            <h1 style={{ margin: '0 0 24px 0', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>Premier League Fixtures</h1>
             <div className="loading">Loading fixtures...</div>
           </div>
         </main>
@@ -150,7 +149,7 @@ const FixturesPage: React.FC = () => {
         <Header />
         <main>
           <div className="wrap">
-            <h1 style={{ marginTop: 0 }}>Premier League Fixtures</h1>
+            <h1 style={{ margin: '0 0 24px 0', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>Premier League Fixtures</h1>
             <div className="error">{error}</div>
             <button onClick={loadData}>Retry</button>
           </div>
