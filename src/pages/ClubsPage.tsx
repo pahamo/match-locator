@@ -11,21 +11,73 @@ const ClubsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // EPL teams (all teams are Premier League)
+  // EPL teams (all 20 Premier League teams)
   const eplTeams = teams;
   
-  // UCL teams (Champions League participating teams from EPL)
+  // ALL UCL teams (complete Champions League participants)
   const uclTeamNames = [
+    // English teams
     'Manchester City',
     'Arsenal', 
     'Liverpool',
-    'Aston Villa'
+    'Aston Villa',
+    // Spanish teams
+    'Real Madrid',
+    'Barcelona',
+    'Atletico Madrid',
+    'Athletic Bilbao',
+    // German teams  
+    'Bayern Munich',
+    'Borussia Dortmund',
+    'RB Leipzig',
+    'Bayer Leverkusen',
+    // Italian teams
+    'Inter Milan',
+    'AC Milan',
+    'Juventus',
+    'Atalanta',
+    // French teams
+    'Paris Saint-Germain',
+    'AS Monaco',
+    'Lille',
+    'Brest',
+    // Portuguese teams
+    'Sporting CP',
+    'Benfica',
+    // Dutch teams
+    'PSV Eindhoven',
+    'Feyenoord',
+    // Other major teams
+    'Celtic',
+    'Club Brugge',
+    'Shakhtar Donetsk',
+    'Red Star Belgrade',
+    'Young Boys',
+    'Sparta Prague',
+    'Salzburg',
+    'Stuttgart',
+    'Sturm Graz',
+    'Slovan Bratislava',
+    'Girona'
   ];
   
-  // Filter EPL teams that are also in UCL
-  const uclEplTeams = teams.filter(team => 
-    uclTeamNames.some(uclTeam => team.name.includes(uclTeam))
-  );
+  // Create UCL teams - mix of existing EPL teams and placeholder teams for non-EPL
+  const uclTeams = uclTeamNames.map(teamName => {
+    // Check if this team exists in our EPL data
+    const existingTeam = teams.find(team => team.name.includes(teamName.split(' ')[0]));
+    
+    if (existingTeam) {
+      return existingTeam;
+    } else {
+      // Create placeholder team for non-EPL UCL teams
+      return {
+        id: Math.random(), // Temporary ID for non-EPL teams
+        name: teamName,
+        slug: teamName.toLowerCase().replace(/\s+/g, '-'),
+        crest: null
+      };
+    }
+  });
 
   useEffect(() => {
     loadTeams();
@@ -252,7 +304,7 @@ const ClubsPage: React.FC = () => {
               color: '#0369a1',
               fontWeight: '500'
             }}>
-              {uclEplTeams.length} EPL clubs qualified for Champions League
+              {uclTeams.length} clubs in Champions League
             </div>
             
             <div 
@@ -264,7 +316,7 @@ const ClubsPage: React.FC = () => {
                 marginTop: '16px' 
               }}
             >
-              {uclEplTeams.map(team => (
+              {uclTeams.map(team => (
               <Link
                 key={`ucl-${team.id}`}
                 to={`/clubs/${team.slug}`}
