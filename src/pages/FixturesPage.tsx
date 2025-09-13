@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { getFixtures, getTeams } from '../services/supabase';
 import type { Fixture, Team } from '../types';
 import Header from '../components/Header';
