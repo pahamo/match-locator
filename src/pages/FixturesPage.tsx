@@ -5,6 +5,7 @@ import type { Fixture, Team } from '../types';
 import Header from '../components/Header';
 import MobileFilterModal from '../components/MobileFilterModal';
 import { generateFixturesMeta, updateDocumentMeta, generateMatchUrl } from '../utils/seo';
+import { getMatchStatus, getMatchStatusStyles } from '../utils/matchStatus';
 
 type FilterTeam = '' | string;
 type FilterMatchweek = '' | string;
@@ -467,15 +468,21 @@ const FixturesPage: React.FC = () => {
           ) : (
             <>
               <div className="fixtures-list">
-                {filteredFixtures.slice(0, displayCount).map(fixture => (
+                {filteredFixtures.slice(0, displayCount).map(fixture => {
+                  const matchStatus = getMatchStatus(fixture.utc_kickoff);
+                  const statusStyles = getMatchStatusStyles(matchStatus);
+                  
+                  return (
                 <div key={fixture.id} style={{
                   borderRadius: '12px',
-                  border: '1px solid rgba(209, 213, 219, 0.8)',
-                  background: 'rgba(255, 255, 255, 0.95)',
+                  border: statusStyles.card.border || '1px solid rgba(209, 213, 219, 0.8)',
+                  background: statusStyles.card.background || 'rgba(255, 255, 255, 0.95)',
                   backdropFilter: 'blur(12px)',
-                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)',
+                  boxShadow: statusStyles.card.boxShadow || '0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)',
                   padding: '16px',
-                  marginBottom: '12px'
+                  marginBottom: '12px',
+                  position: 'relative',
+                  ...statusStyles.card
                 }}>
                   {/* Header with MW pill and date */}
                   <div style={{
@@ -504,6 +511,17 @@ const FixturesPage: React.FC = () => {
                       })}
                     </span>
                   </div>
+
+                  {/* Match Status Badge */}
+                  {statusStyles.badge && (
+                    <div style={{
+                      ...statusStyles.badge,
+                      marginBottom: '8px'
+                    }}>
+                      {matchStatus.status === 'live' && '🔴 LIVE'}
+                      {matchStatus.status === 'upNext' && `⏰ UP NEXT ${matchStatus.timeUntil ? `in ${matchStatus.timeUntil}` : ''}`}
+                    </div>
+                  )}
 
                   {/* Time */}
                   <div style={{ 
@@ -677,7 +695,8 @@ const FixturesPage: React.FC = () => {
                     </Link>
                   </div>
                 </div>
-              ))}
+              );
+              })}
               </div>
               
               {/* Load More Button */}

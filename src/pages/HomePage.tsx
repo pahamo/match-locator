@@ -6,6 +6,7 @@ import { FixtureCardSkeleton } from '../components/SkeletonLoader';
 import DayGroupCard from '../components/DayGroupCard';
 import { generateHomeMeta, updateDocumentMeta, generateSimpleMatchUrl } from '../utils/seo';
 import { getDisplayTeamName, shouldUseShortNames } from '../utils/teamNames';
+import { getMatchStatus, getMatchStatusStyles } from '../utils/matchStatus';
 
 interface MatchWeek {
   matchweek: number;
@@ -297,17 +298,23 @@ const HomePage: React.FC = () => {
                     )}
                     
                     {/* Compact Match Cards */}
-                    {timeSlot.fixtures.map(fixture => (
+                    {timeSlot.fixtures.map(fixture => {
+                      const matchStatus = getMatchStatus(fixture.kickoff_utc);
+                      const statusStyles = getMatchStatusStyles(matchStatus);
+                      
+                      return (
                       <div key={fixture.id} className="fixture-card-compact" style={{
-                        background: 'white',
-                        border: '1px solid #e2e8f0',
+                        background: statusStyles.card.background || 'white',
+                        border: statusStyles.card.border || '1px solid #e2e8f0',
                         borderRadius: '6px',
                         padding: '12px',
                         marginBottom: '6px',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '12px',
-                        minHeight: 'auto'
+                        minHeight: 'auto',
+                        position: 'relative',
+                        ...statusStyles.card
                       }}>
                         {/* Teams Section - More Compact */}
                         <div className="fixture-teams-compact" style={{
@@ -388,6 +395,14 @@ const HomePage: React.FC = () => {
                           </div>
                         </div>
                         
+                        {/* Match Status Badge */}
+                        {statusStyles.badge && (
+                          <div style={statusStyles.badge}>
+                            {matchStatus.status === 'live' && '🔴 LIVE'}
+                            {matchStatus.status === 'upNext' && `⏰ UP NEXT ${matchStatus.timeUntil ? `in ${matchStatus.timeUntil}` : ''}`}
+                          </div>
+                        )}
+                        
                         {/* Broadcaster Info - Desktop Only */}
                         <div className="broadcaster-badges" style={{
                           display: typeof window !== 'undefined' && window.innerWidth <= 640 ? 'none' : 'flex',
@@ -465,7 +480,8 @@ const HomePage: React.FC = () => {
                           View
                         </a>
                       </div>
-                    ))}
+                    );
+                    })}
                   </div>
                 ))}
               </DayGroupCard>
