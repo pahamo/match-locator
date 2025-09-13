@@ -1,14 +1,26 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useState, useEffect } from 'react';
 
 interface DayGroupCardProps {
   id: string;
   date: string;
   matchweek: string;
+  kickoffTime?: string;
   children: React.ReactNode;
 }
 
 const DayGroupCard = React.memo(forwardRef<HTMLDivElement, DayGroupCardProps>(
-  ({ id, date, matchweek, children }, ref) => {
+  ({ id, date, matchweek, kickoffTime, children }, ref) => {
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    useEffect(() => {
+      const handleScroll = () => {
+        const scrolled = window.scrollY > 100;
+        setIsScrolled(scrolled);
+      };
+
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
     return (
       <div
         ref={ref}
@@ -49,14 +61,25 @@ const DayGroupCard = React.memo(forwardRef<HTMLDivElement, DayGroupCardProps>(
           }}
         >
           <span style={{
-            background: '#f3f4f6',
-            color: '#374151',
+            background: isScrolled && kickoffTime ? '#e0f2fe' : '#f3f4f6',
+            color: isScrolled && kickoffTime ? '#0369a1' : '#374151',
             padding: '4px 8px',
             borderRadius: '12px',
             fontSize: '12px',
-            fontWeight: '600'
+            fontWeight: '600',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px',
+            transition: 'all 0.2s ease-in-out'
           }}>
-            {matchweek.replace('Matchweek ', 'MW')}
+            {isScrolled && kickoffTime ? (
+              <>
+                <span style={{ fontSize: '10px' }}>⏰</span>
+                {kickoffTime}
+              </>
+            ) : (
+              matchweek.replace('Matchweek ', 'MW')
+            )}
           </span>
           <span>{date}</span>
         </div>

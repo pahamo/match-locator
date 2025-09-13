@@ -275,6 +275,7 @@ const HomePage: React.FC = () => {
                 id={`group-${dayIndex}`}
                 date={dayGroup.date}
                 matchweek={`Matchweek ${matchWeek?.matchweek || 1}`}
+                kickoffTime={dayGroup.commonTime}
               >
                 {/* Time slots within the day */}
                 {dayGroup.timeSlots.map((timeSlot, timeIndex) => (

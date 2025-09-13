@@ -468,73 +468,212 @@ const FixturesPage: React.FC = () => {
             <>
               <div className="fixtures-list">
                 {filteredFixtures.slice(0, displayCount).map(fixture => (
-                <div key={fixture.id} className="fixture-card">
-                  <div className="fixture-datetime">
-                    {new Date(fixture.kickoff_utc).toLocaleDateString('en-GB', {
-                      weekday: 'short',
-                      month: 'short',
-                      day: 'numeric',
+                <div key={fixture.id} style={{
+                  borderRadius: '12px',
+                  border: '1px solid rgba(209, 213, 219, 0.8)',
+                  background: 'rgba(255, 255, 255, 0.95)',
+                  backdropFilter: 'blur(12px)',
+                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)',
+                  padding: '16px',
+                  marginBottom: '12px'
+                }}>
+                  {/* Header with MW pill and date */}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: '12px',
+                    paddingBottom: '8px',
+                    borderBottom: '1px solid rgba(226, 232, 240, 0.5)'
+                  }}>
+                    <span style={{
+                      background: '#f3f4f6',
+                      color: '#374151',
+                      padding: '4px 8px',
+                      borderRadius: '12px',
+                      fontSize: '12px',
+                      fontWeight: '600'
+                    }}>
+                      {fixture.matchweek ? `MW${fixture.matchweek}` : 'MW1'}
+                    </span>
+                    <span style={{ fontSize: '14px', color: '#6b7280', fontWeight: '500' }}>
+                      {new Date(fixture.kickoff_utc).toLocaleDateString('en-GB', {
+                        weekday: 'short',
+                        month: 'short',
+                        day: 'numeric'
+                      })}
+                    </span>
+                  </div>
+
+                  {/* Time */}
+                  <div style={{ 
+                    fontSize: '12px', 
+                    color: '#6b7280', 
+                    marginBottom: '8px',
+                    fontWeight: '500'
+                  }}>
+                    {new Date(fixture.kickoff_utc).toLocaleTimeString('en-GB', {
                       hour: '2-digit',
                       minute: '2-digit',
                       timeZone: 'Europe/London'
                     })}
-                    {fixture.matchweek && (
-                      <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '2px' }}>
-                        MW {fixture.matchweek}
-                      </div>
-                    )}
                   </div>
-                  <div className="fixture-teams">
-                    <div className="team">
+
+                  {/* Teams */}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: '12px'
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      flex: '1',
+                      minWidth: '0'
+                    }}>
                       {fixture.home.crest && (
                         <img 
                           src={fixture.home.crest} 
                           alt={`${fixture.home.name} crest`}
-                          style={{ width: '20px', height: '20px', marginRight: '8px', objectFit: 'contain' }}
+                          style={{ width: '18px', height: '18px', objectFit: 'contain', flexShrink: 0 }}
+                          loading="lazy"
+                          decoding="async"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none';
+                          }}
                         />
                       )}
-                      <span className="team-name">{fixture.home.name}</span>
+                      <span style={{
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        lineHeight: '1.3',
+                        wordBreak: 'break-word',
+                        hyphens: 'auto',
+                        minWidth: 0
+                      }}>
+                        {fixture.home.name}
+                      </span>
                     </div>
-                    <div className="vs">vs</div>
-                    <div className="team away-team">
-                      <span className="team-name">{fixture.away.name}</span>
+                    
+                    <div style={{
+                      fontSize: '12px',
+                      color: '#9ca3af',
+                      fontWeight: '500',
+                      flexShrink: 0
+                    }}>vs</div>
+                    
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      flex: '1',
+                      minWidth: '0',
+                      justifyContent: 'flex-end'
+                    }}>
+                      <span style={{
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        lineHeight: '1.3',
+                        wordBreak: 'break-word',
+                        hyphens: 'auto',
+                        minWidth: 0
+                      }}>
+                        {fixture.away.name}
+                      </span>
                       {fixture.away.crest && (
                         <img 
                           src={fixture.away.crest} 
                           alt={`${fixture.away.name} crest`}
-                          style={{ width: '20px', height: '20px', marginLeft: '8px', objectFit: 'contain' }}
+                          style={{ width: '18px', height: '18px', objectFit: 'contain', flexShrink: 0 }}
+                          loading="lazy"
+                          decoding="async"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none';
+                          }}
                         />
                       )}
                     </div>
                   </div>
-                  <div className="broadcaster-info">
-                    {fixture.blackout?.is_blackout ? (
-                      <span className="provider blackout">🚫 Blackout</span>
-                    ) : fixture.providers_uk.length === 0 ? (
-                      <span className="tbd-text">TBD</span>
-                    ) : (
-                      fixture.providers_uk.map(provider => (
-                        <span 
-                          key={provider.id} 
-                          className={`provider confirmed ${provider.type}`}
-                          title={provider.type}
-                        >
-                          {provider.name}
-                        </span>
-                      ))
-                    )}
-                  </div>
-                  <div style={{ marginTop: '12px', textAlign: 'right' }}>
+                  
+                  {/* Broadcaster Info and View Button */}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '8px'
+                  }}>
+                    {/* Broadcaster Badges - Desktop Only */}
+                    <div style={{
+                      display: typeof window !== 'undefined' && window.innerWidth <= 640 ? 'none' : 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      flexShrink: 0
+                    }}>
+                      {fixture.blackout?.is_blackout ? (
+                        <span style={{
+                          fontSize: '12px',
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                          background: '#fee2e2',
+                          color: '#dc2626'
+                        }}>🚫 Blackout</span>
+                      ) : fixture.providers_uk.length === 0 ? (
+                        <span style={{
+                          fontSize: '12px',
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                          background: '#fef3c7',
+                          color: '#d97706'
+                        }}>TBD</span>
+                      ) : (
+                        fixture.providers_uk.map(provider => (
+                          <span 
+                            key={provider.id}
+                            style={{
+                              fontSize: '12px',
+                              padding: '2px 6px',
+                              borderRadius: '4px',
+                              background: '#dcfce7',
+                              color: '#16a34a',
+                              fontWeight: '500'
+                            }}
+                          >
+                            {provider.name}
+                          </span>
+                        ))
+                      )}
+                    </div>
+
+                    {/* View Button - Always Visible */}
                     <Link 
                       to={generateMatchUrl(fixture)} 
                       style={{ 
                         color: '#6366f1', 
-                        textDecoration: 'underline', 
-                        fontSize: '0.9rem',
-                        fontWeight: '500'
+                        textDecoration: 'none',
+                        fontSize: typeof window !== 'undefined' && window.innerWidth <= 640 ? '14px' : '12px',
+                        fontWeight: '500',
+                        padding: typeof window !== 'undefined' && window.innerWidth <= 640 ? '8px 16px' : '4px 8px',
+                        borderRadius: '4px',
+                        border: '1px solid #6366f1',
+                        transition: 'all 0.2s',
+                        display: typeof window !== 'undefined' && window.innerWidth <= 640 ? 'inline-flex' : 'inline-block',
+                        minHeight: typeof window !== 'undefined' && window.innerWidth <= 640 ? '44px' : 'auto',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginLeft: typeof window !== 'undefined' && window.innerWidth > 640 ? '8px' : '0'
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.background = '#6366f1';
+                        e.currentTarget.style.color = 'white';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.background = 'transparent';
+                        e.currentTarget.style.color = '#6366f1';
                       }}
                     >
-                      Details →
+                      View
                     </Link>
                   </div>
                 </div>

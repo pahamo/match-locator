@@ -56,31 +56,73 @@ const SkeletonLoader: React.FC<SkeletonLoaderProps> = ({
 // Predefined skeleton components for common use cases
 export const FixtureCardSkeleton: React.FC = () => (
   <div style={{
-    background: 'var(--color-card)',
-    border: '1px solid var(--color-border)',
-    borderRadius: 'var(--border-radius)',
-    padding: 'clamp(12px, 3vw, 16px)',
-    marginBottom: 'var(--spacing-md)',
+    borderRadius: '12px',
+    border: '1px solid rgba(209, 213, 219, 0.8)',
+    background: 'rgba(255, 255, 255, 0.95)',
+    backdropFilter: 'blur(12px)',
+    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)',
+    padding: '16px',
+    marginBottom: '12px'
   }}>
-    <SkeletonLoader variant="text" width="30%" height="14px" />
+    {/* Header with MW pill and date skeleton */}
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: '12px',
+      paddingBottom: '8px',
+      borderBottom: '1px solid rgba(226, 232, 240, 0.5)'
+    }}>
+      <div style={{
+        background: '#f3f4f6',
+        borderRadius: '12px',
+        padding: '4px 8px'
+      }}>
+        <SkeletonLoader variant="text" width="40px" height="12px" />
+      </div>
+      <SkeletonLoader variant="text" width="80px" height="14px" />
+    </div>
+
+    {/* Time skeleton */}
+    <div style={{ marginBottom: '8px' }}>
+      <SkeletonLoader variant="text" width="50px" height="12px" />
+    </div>
+
+    {/* Teams skeleton */}
     <div style={{ 
       display: 'flex', 
       alignItems: 'center', 
       justifyContent: 'space-between',
-      margin: '12px 0',
-      gap: 'clamp(8px, 2vw, 12px)'
+      marginBottom: '12px',
+      gap: '8px'
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
-        <SkeletonLoader variant="circle" width="24px" height="24px" />
-        <SkeletonLoader variant="text" width="80px" height="16px" />
+      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flex: 1, minWidth: 0 }}>
+        <SkeletonLoader variant="circle" width="18px" height="18px" />
+        <SkeletonLoader variant="text" width="90px" height="14px" />
       </div>
-      <SkeletonLoader variant="text" width="20px" height="14px" />
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, justifyContent: 'flex-end' }}>
-        <SkeletonLoader variant="text" width="80px" height="16px" />
-        <SkeletonLoader variant="circle" width="24px" height="24px" />
+      <SkeletonLoader variant="text" width="20px" height="12px" />
+      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flex: 1, minWidth: 0, justifyContent: 'flex-end' }}>
+        <SkeletonLoader variant="text" width="90px" height="14px" />
+        <SkeletonLoader variant="circle" width="18px" height="18px" />
       </div>
     </div>
-    <SkeletonLoader variant="text" width="60%" height="14px" />
+    
+    {/* Footer with broadcaster and view button skeleton */}
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: '8px'
+    }}>
+      <SkeletonLoader variant="text" width="60px" height="24px" />
+      <div style={{
+        border: '1px solid #e2e8f0',
+        borderRadius: '4px',
+        padding: '4px 8px'
+      }}>
+        <SkeletonLoader variant="text" width="40px" height="12px" />
+      </div>
+    </div>
   </div>
 );
 
