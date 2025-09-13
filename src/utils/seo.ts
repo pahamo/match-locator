@@ -126,24 +126,59 @@ export const generateMatchMeta = (fixture: Fixture) => {
     year: 'numeric'
   });
 
-  const broadcaster = fixture.blackout?.is_blackout 
-    ? 'Not available in UK' 
-    : fixture.providers_uk.length > 0 
+  const broadcaster = fixture.blackout?.is_blackout
+    ? 'Not available in UK'
+    : fixture.providers_uk.length > 0
       ? fixture.providers_uk.map(p => p.name).join(', ')
       : 'TBD';
 
-  const title = `${fixture.home.name} vs ${fixture.away.name} - Premier League TV Guide`;
-  
+  const title = `${fixture.home.name} vs ${fixture.away.name}`;
+
   const description = `${fixture.home.name} vs ${fixture.away.name} on ${date}. ${
-    fixture.blackout?.is_blackout 
-      ? 'Not shown on UK TV.' 
-      : fixture.providers_uk.length > 0 
-        ? `Watch on ${broadcaster}.` 
+    fixture.blackout?.is_blackout
+      ? 'Not shown on UK TV.'
+      : fixture.providers_uk.length > 0
+        ? `Watch on ${broadcaster}.`
         : 'Broadcaster to be confirmed.'
   } UK Premier League TV schedule.`;
 
   const ogImage = fixture.home.crest || fixture.away.crest || '/favicon.png';
   const canonical = `${CANONICAL_BASE}${generateMatchUrl(fixture)}`;
+
+  return {
+    title,
+    description,
+    canonical,
+    ogTitle: title,
+    ogDescription: description,
+    ogImage: ogImage,
+    ogUrl: canonical
+  };
+};
+
+export const generateSimpleMatchMeta = (fixture: SimpleFixture) => {
+  const date = new Date(fixture.kickoff_utc).toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+  });
+
+  const broadcaster = fixture.isBlackout
+    ? 'Not available in UK'
+    : fixture.broadcaster || 'TBD';
+
+  const title = `${fixture.home_team} vs ${fixture.away_team}`;
+
+  const description = `${fixture.home_team} vs ${fixture.away_team} on ${date}. ${
+    fixture.isBlackout
+      ? 'Not shown on UK TV.'
+      : fixture.broadcaster
+        ? `Watch on ${broadcaster}.`
+        : 'Broadcaster to be confirmed.'
+  } UK Premier League TV schedule.`;
+
+  const ogImage = fixture.home_crest || fixture.away_crest || '/favicon.png';
+  const canonical = `${CANONICAL_BASE}${generateSimpleMatchUrl(fixture)}`;
 
   return {
     title,

@@ -92,6 +92,7 @@ const HomePage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [selectedCompetitionId, setSelectedCompetitionId] = useState<number>(1); // Default to Premier League
+  const [pastGamesExpanded, setPastGamesExpanded] = useState(false);
 
     const [blackoutIds, setBlackoutIds] = useState<string[]>([]);
     
@@ -286,31 +287,92 @@ const HomePage: React.FC = () => {
         <div className="wrap" style={{ position: 'relative' }}>
           <h1 style={{ marginTop: '32px', marginBottom: '32px' }}>Premier League TV Schedule</h1>
 
-          {/* Finished Matches - Minimized Display */}
+          {/* Finished Matches - Collapsible Display */}
           {finishedFixtures.length > 0 && (
             <div style={{ marginBottom: '32px' }}>
-              <h2 style={{
-                fontSize: '16px',
-                fontWeight: '600',
-                color: '#6b7280',
-                marginBottom: '12px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px'
-              }}>Recent Results</h2>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                {finishedFixtures
-                  .sort((a, b) => new Date(b.kickoff_utc).getTime() - new Date(a.kickoff_utc).getTime())
-                  .slice(0, 5)
-                  .map(fixture => (
-                    <FixtureCard
-                      key={fixture.id}
-                      fixture={fixture}
-                      variant="minimized"
-                      showViewButton={false}
-                    />
-                  ))
-                }
-              </div>
+              <button
+                onClick={() => setPastGamesExpanded(!pastGamesExpanded)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  padding: '0',
+                  cursor: 'pointer',
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: '12px'
+                }}
+              >
+                <h2 style={{
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  color: '#6b7280',
+                  margin: '0',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px'
+                }}>Recent Results ({finishedFixtures.length})</h2>
+                <span style={{
+                  fontSize: '18px',
+                  color: '#6b7280',
+                  transform: pastGamesExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                  transition: 'transform 0.2s ease'
+                }}>
+                  ▼
+                </span>
+              </button>
+
+              {/* Collapsed State - Stack of grayed out cards */}
+              {!pastGamesExpanded && (
+                <div style={{
+                  position: 'relative',
+                  height: '40px',
+                  overflow: 'hidden'
+                }}>
+                  {finishedFixtures
+                    .sort((a, b) => new Date(b.kickoff_utc).getTime() - new Date(a.kickoff_utc).getTime())
+                    .slice(0, 3)
+                    .map((fixture, index) => (
+                      <div
+                        key={fixture.id}
+                        style={{
+                          position: 'absolute',
+                          top: `${index * 2}px`,
+                          left: `${index * 4}px`,
+                          right: `${index * 4}px`,
+                          zIndex: 3 - index,
+                          opacity: 0.3 - (index * 0.1),
+                          transform: `scale(${1 - (index * 0.02)})`,
+                          pointerEvents: 'none'
+                        }}
+                      >
+                        <FixtureCard
+                          fixture={fixture}
+                          variant="minimized"
+                          showViewButton={false}
+                        />
+                      </div>
+                    ))
+                  }
+                </div>
+              )}
+
+              {/* Expanded State - Full list */}
+              {pastGamesExpanded && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                  {finishedFixtures
+                    .sort((a, b) => new Date(b.kickoff_utc).getTime() - new Date(a.kickoff_utc).getTime())
+                    .map(fixture => (
+                      <FixtureCard
+                        key={fixture.id}
+                        fixture={fixture}
+                        variant="minimized"
+                        showViewButton={false}
+                      />
+                    ))
+                  }
+                </div>
+              )}
             </div>
           )}
 
