@@ -469,7 +469,7 @@ const FixturesPage: React.FC = () => {
             <>
               <div className="fixtures-list">
                 {filteredFixtures.slice(0, displayCount).map(fixture => {
-                  const matchStatus = getMatchStatus(fixture.utc_kickoff);
+                  const matchStatus = getMatchStatus(fixture.kickoff_utc);
                   const statusStyles = getMatchStatusStyles(matchStatus);
                   
                   return (
