@@ -16,9 +16,10 @@ const DayGroupCard = React.memo(forwardRef<HTMLDivElement, DayGroupCardProps>(
         className="day-group-card"
         style={{
           borderRadius: '16px',
-          border: '1px solid rgba(229, 231, 235, 0.7)',
-          background: 'rgba(255, 255, 255, 0.7)',
-          backdropFilter: 'blur(8px)',
+          border: '1px solid rgba(209, 213, 219, 0.8)',
+          background: 'rgba(255, 255, 255, 0.95)',
+          backdropFilter: 'blur(12px)',
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)',
           padding: 'clamp(8px, 2vw, 16px)',
           marginBottom: '24px'
         }}
@@ -47,8 +48,17 @@ const DayGroupCard = React.memo(forwardRef<HTMLDivElement, DayGroupCardProps>(
             paddingRight: typeof window !== 'undefined' && window.innerWidth <= 768 ? 'clamp(8px, 2vw, 16px)' : '12px'
           }}
         >
+          <span style={{
+            background: '#f3f4f6',
+            color: '#374151',
+            padding: '4px 8px',
+            borderRadius: '12px',
+            fontSize: '12px',
+            fontWeight: '600'
+          }}>
+            {matchweek.replace('Matchweek ', 'MW')}
+          </span>
           <span>{date}</span>
-          <span>{matchweek}</span>
         </div>
 
         {/* Fixture Cards */}

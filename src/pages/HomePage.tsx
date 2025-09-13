@@ -264,7 +264,7 @@ const HomePage: React.FC = () => {
       
       <main>
         <div className="wrap" style={{ position: 'relative' }}>
-          <h1 style={{ marginTop: 0 }}>Premier League TV Schedule (UK)</h1>
+          <h1 style={{ marginTop: '32px', marginBottom: '32px' }}>Premier League TV Schedule</h1>
 
 
           {/* Day Cards */}
@@ -338,9 +338,10 @@ const HomePage: React.FC = () => {
                             <span className="team-name" style={{
                               fontSize: '14px',
                               fontWeight: '500',
-                              textOverflow: 'ellipsis',
-                              overflow: 'hidden',
-                              whiteSpace: 'nowrap'
+                              lineHeight: '1.3',
+                              wordBreak: 'break-word',
+                              hyphens: 'auto',
+                              minWidth: 0
                             }}>
                               {getDisplayTeamName(fixture.home_team, shouldUseShortNames())}
                             </span>
@@ -364,9 +365,10 @@ const HomePage: React.FC = () => {
                             <span className="team-name" style={{
                               fontSize: '14px',
                               fontWeight: '500',
-                              textOverflow: 'ellipsis',
-                              overflow: 'hidden',
-                              whiteSpace: 'nowrap'
+                              lineHeight: '1.3',
+                              wordBreak: 'break-word',
+                              hyphens: 'auto',
+                              minWidth: 0
                             }}>
                               {getDisplayTeamName(fixture.away_team, shouldUseShortNames())}
                             </span>
@@ -385,8 +387,8 @@ const HomePage: React.FC = () => {
                           </div>
                         </div>
                         
-                        {/* Broadcaster Info - Compact */}
-                        <div className="broadcaster-info-compact" style={{
+                        {/* Broadcaster Info - Desktop Only */}
+                        <div className="broadcaster-badges" style={{
                           display: typeof window !== 'undefined' && window.innerWidth <= 640 ? 'none' : 'flex',
                           alignItems: 'center',
                           gap: '8px',
@@ -418,47 +420,49 @@ const HomePage: React.FC = () => {
                               color: '#d97706'
                             }}>TBD</span>
                           )}
-                          
-                          <a 
-                            href={generateSimpleMatchUrl(fixture)}
-                            style={{ 
-                              color: '#6366f1', 
-                              textDecoration: 'none',
-                              fontSize: typeof window !== 'undefined' && window.innerWidth <= 640 ? '14px' : '12px',
-                              fontWeight: '500',
-                              padding: typeof window !== 'undefined' && window.innerWidth <= 640 ? '8px 16px' : '4px 8px',
-                              borderRadius: '4px',
-                              border: '1px solid #6366f1',
-                              transition: 'all 0.2s',
-                              display: typeof window !== 'undefined' && window.innerWidth <= 640 ? 'inline-flex' : 'inline-block',
-                              minHeight: typeof window !== 'undefined' && window.innerWidth <= 640 ? '44px' : 'auto',
-                              alignItems: 'center',
-                              justifyContent: 'center'
-                            }}
-                            onMouseOver={(e) => {
-                              e.currentTarget.style.background = '#6366f1';
-                              e.currentTarget.style.color = 'white';
-                              
-                              // Preload the fixture data on hover
-                              if (typeof window !== 'undefined') {
-                                import('../services/supabase').then(({ getFixtureById }) => {
-                                  getFixtureById(fixture.id).catch(() => {});
-                                });
-                              }
-                            }}
-                            onMouseOut={(e) => {
-                              e.currentTarget.style.background = 'transparent';
-                              e.currentTarget.style.color = '#6366f1';
-                            }}
-                            onClick={() => {
-                              // Add click debugging
-                              console.log('View button clicked for fixture:', fixture.id);
-                              console.log('Generated URL:', generateSimpleMatchUrl(fixture));
-                            }}
-                          >
-                            View
-                          </a>
                         </div>
+
+                        {/* View Button - Always Visible */}
+                        <a 
+                          href={generateSimpleMatchUrl(fixture)}
+                          style={{ 
+                            color: '#6366f1', 
+                            textDecoration: 'none',
+                            fontSize: typeof window !== 'undefined' && window.innerWidth <= 640 ? '14px' : '12px',
+                            fontWeight: '500',
+                            padding: typeof window !== 'undefined' && window.innerWidth <= 640 ? '8px 16px' : '4px 8px',
+                            borderRadius: '4px',
+                            border: '1px solid #6366f1',
+                            transition: 'all 0.2s',
+                            display: typeof window !== 'undefined' && window.innerWidth <= 640 ? 'inline-flex' : 'inline-block',
+                            minHeight: typeof window !== 'undefined' && window.innerWidth <= 640 ? '44px' : 'auto',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            marginLeft: typeof window !== 'undefined' && window.innerWidth > 640 ? '8px' : '0'
+                          }}
+                          onMouseOver={(e) => {
+                            e.currentTarget.style.background = '#6366f1';
+                            e.currentTarget.style.color = 'white';
+                            
+                            // Preload the fixture data on hover
+                            if (typeof window !== 'undefined') {
+                              import('../services/supabase').then(({ getFixtureById }) => {
+                                getFixtureById(fixture.id).catch(() => {});
+                              });
+                            }
+                          }}
+                          onMouseOut={(e) => {
+                            e.currentTarget.style.background = 'transparent';
+                            e.currentTarget.style.color = '#6366f1';
+                          }}
+                          onClick={() => {
+                            // Add click debugging
+                            console.log('View button clicked for fixture:', fixture.id);
+                            console.log('Generated URL:', generateSimpleMatchUrl(fixture));
+                          }}
+                        >
+                          View
+                        </a>
                       </div>
                     ))}
                   </div>
@@ -488,17 +492,6 @@ const HomePage: React.FC = () => {
                 }}
               >
                 📺 All Fixtures
-              </a>
-              <a 
-                href="/admin" 
-                style={{ 
-                  color: '#6366f1', 
-                  textDecoration: 'underline', 
-                  fontSize: '0.9rem',
-                  fontWeight: '500'
-                }}
-              >
-                🔧 Admin
               </a>
               <a 
                 href="/clubs" 
