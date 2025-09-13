@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage'; // Keep HomePage eager for LCP
 import MatchPage from './pages/MatchPage'; // Keep MatchPage eager for SEO
@@ -6,6 +6,7 @@ import MatchPage from './pages/MatchPage'; // Keep MatchPage eager for SEO
 import Footer from './components/Footer';
 import ErrorBoundary from './components/ErrorBoundary';
 import { FixtureCardSkeleton } from './components/SkeletonLoader';
+import { injectDesignTokens } from './design-system';
 import './App.css';
 
 // Lazy load non-critical CSS
@@ -46,6 +47,11 @@ function App() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [blackoutIds, setBlackoutIds] = React.useState<string[]>([]);
   
+  // Initialize design system
+  useEffect(() => {
+    injectDesignTokens();
+  }, []);
+
   // Hydrate blackout ids once on mount if nothing else does it
   React.useEffect(() => {
     try {

@@ -18,10 +18,12 @@ export interface BlackoutInfo {
   reason?: string | null;
 }
 
+// Unified fixture interface combining both approaches
 export interface Fixture {
   id: number;
-  sport: string;
-  competition: string;
+  sport?: string;
+  competition?: string;
+  competition_id?: number;
   matchweek: number | null;
   kickoff_utc: string;
   venue: string | null;
@@ -30,6 +32,35 @@ export interface Fixture {
   providers_uk: Provider[];
   blackout: BlackoutInfo;
   status: string;
+  // Champions League specific fields
+  stage?: string;
+  round?: string;
+}
+
+// Simple fixture interface for admin and lightweight operations
+export interface SimpleFixture {
+  id: number;
+  kickoff_utc: string;
+  home_team: string;
+  away_team: string;
+  home_crest?: string;
+  away_crest?: string;
+  broadcaster?: string;
+  matchweek?: number;
+  providerId?: number;
+  isBlackout?: boolean;
+  competition_id?: number;
+  stage?: string;
+  round?: string;
+}
+
+// Competition interface
+export interface Competition {
+  id: number;
+  name: string;
+  slug: string;
+  short_name?: string;
+  is_production_visible?: boolean;
 }
 
 export interface FixturesApiParams {

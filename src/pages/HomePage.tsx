@@ -4,9 +4,8 @@ import Header from '../components/Header';
 import StructuredData from '../components/StructuredData';
 import { FixtureCardSkeleton } from '../components/SkeletonLoader';
 import DayGroupCard from '../components/DayGroupCard';
-import { generateHomeMeta, updateDocumentMeta, generateSimpleMatchUrl } from '../utils/seo';
-import { getDisplayTeamName, shouldUseShortNames } from '../utils/teamNames';
-import { getMatchStatus, getMatchStatusStyles } from '../utils/matchStatus';
+import { FixtureCard } from '../design-system';
+import { generateHomeMeta, updateDocumentMeta } from '../utils/seo';
 
 interface MatchWeek {
   matchweek: number;
@@ -298,190 +297,13 @@ const HomePage: React.FC = () => {
                     )}
                     
                     {/* Compact Match Cards */}
-                    {timeSlot.fixtures.map(fixture => {
-                      const matchStatus = getMatchStatus(fixture.kickoff_utc);
-                      const statusStyles = getMatchStatusStyles(matchStatus);
-                      
-                      return (
-                      <div key={fixture.id} className="fixture-card-compact" style={{
-                        background: statusStyles.card.background || 'white',
-                        border: statusStyles.card.border || '1px solid #e2e8f0',
-                        borderRadius: '6px',
-                        padding: '12px',
-                        marginBottom: '6px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '12px',
-                        minHeight: 'auto',
-                        position: 'relative',
-                        ...statusStyles.card
-                      }}>
-                        {/* Teams Section - More Compact */}
-                        <div className="fixture-teams-compact" style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '8px',
-                          flex: '1',
-                          minWidth: '0'
-                        }}>
-                          <div className="team" style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '4px',
-                            flex: '1',
-                            minWidth: '0'
-                          }}>
-                            {fixture.home_crest && (
-                              <img 
-                                src={fixture.home_crest} 
-                                alt={`${fixture.home_team} crest`}
-                                style={{ width: '18px', height: '18px', objectFit: 'contain', flexShrink: 0 }}
-                                loading="lazy"
-                                decoding="async"
-                                onError={(e) => {
-                                  (e.target as HTMLImageElement).style.display = 'none';
-                                }}
-                              />
-                            )}
-                            <span className="team-name" style={{
-                              fontSize: '14px',
-                              fontWeight: '500',
-                              lineHeight: '1.3',
-                              wordBreak: 'break-word',
-                              hyphens: 'auto',
-                              minWidth: 0
-                            }}>
-                              {getDisplayTeamName(fixture.home_team, shouldUseShortNames())}
-                            </span>
-                          </div>
-                          
-                          <div className="vs" style={{
-                            fontSize: '12px',
-                            color: '#9ca3af',
-                            fontWeight: '500',
-                            flexShrink: 0
-                          }}>vs</div>
-                          
-                          <div className="team away-team" style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '4px',
-                            flex: '1',
-                            minWidth: '0',
-                            justifyContent: 'flex-end'
-                          }}>
-                            <span className="team-name" style={{
-                              fontSize: '14px',
-                              fontWeight: '500',
-                              lineHeight: '1.3',
-                              wordBreak: 'break-word',
-                              hyphens: 'auto',
-                              minWidth: 0
-                            }}>
-                              {getDisplayTeamName(fixture.away_team, shouldUseShortNames())}
-                            </span>
-                            {fixture.away_crest && (
-                              <img 
-                                src={fixture.away_crest} 
-                                alt={`${fixture.away_team} crest`}
-                                style={{ width: '18px', height: '18px', objectFit: 'contain', flexShrink: 0 }}
-                                loading="lazy"
-                                decoding="async"
-                                onError={(e) => {
-                                  (e.target as HTMLImageElement).style.display = 'none';
-                                }}
-                              />
-                            )}
-                          </div>
-                        </div>
-                        
-                        {/* Match Status Badge */}
-                        {statusStyles.badge && (
-                          <div style={statusStyles.badge}>
-                            {matchStatus.status === 'live' && '🔴 LIVE'}
-                            {matchStatus.status === 'upNext' && `⏰ UP NEXT ${matchStatus.timeUntil ? `in ${matchStatus.timeUntil}` : ''}`}
-                          </div>
-                        )}
-                        
-                        {/* Broadcaster Info - Desktop Only */}
-                        <div className="broadcaster-badges" style={{
-                          display: typeof window !== 'undefined' && window.innerWidth <= 640 ? 'none' : 'flex',
-                          alignItems: 'center',
-                          gap: '8px',
-                          flexShrink: 0
-                        }}>
-                          {fixture.isBlackout ? (
-                            <span className="provider blackout" style={{
-                              fontSize: '12px',
-                              padding: '2px 6px',
-                              borderRadius: '4px',
-                              background: '#fee2e2',
-                              color: '#dc2626'
-                            }}>🚫 Blackout</span>
-                          ) : fixture.broadcaster ? (
-                            <span className="provider confirmed" style={{
-                              fontSize: '12px',
-                              padding: '2px 6px',
-                              borderRadius: '4px',
-                              background: '#dcfce7',
-                              color: '#16a34a',
-                              fontWeight: '500'
-                            }}>{fixture.broadcaster}</span>
-                          ) : (
-                            <span className="tbd-text" style={{
-                              fontSize: '12px',
-                              padding: '2px 6px',
-                              borderRadius: '4px',
-                              background: '#fef3c7',
-                              color: '#d97706'
-                            }}>TBD</span>
-                          )}
-                        </div>
-
-                        {/* View Button - Always Visible */}
-                        <a 
-                          href={generateSimpleMatchUrl(fixture)}
-                          style={{ 
-                            color: '#6366f1', 
-                            textDecoration: 'none',
-                            fontSize: typeof window !== 'undefined' && window.innerWidth <= 640 ? '14px' : '12px',
-                            fontWeight: '500',
-                            padding: typeof window !== 'undefined' && window.innerWidth <= 640 ? '8px 16px' : '4px 8px',
-                            borderRadius: '4px',
-                            border: '1px solid #6366f1',
-                            transition: 'all 0.2s',
-                            display: typeof window !== 'undefined' && window.innerWidth <= 640 ? 'inline-flex' : 'inline-block',
-                            minHeight: typeof window !== 'undefined' && window.innerWidth <= 640 ? '44px' : 'auto',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            marginLeft: typeof window !== 'undefined' && window.innerWidth > 640 ? '8px' : '0'
-                          }}
-                          onMouseOver={(e) => {
-                            e.currentTarget.style.background = '#6366f1';
-                            e.currentTarget.style.color = 'white';
-                            
-                            // Preload the fixture data on hover
-                            if (typeof window !== 'undefined') {
-                              import('../services/supabase').then(({ getFixtureById }) => {
-                                getFixtureById(fixture.id).catch(() => {});
-                              });
-                            }
-                          }}
-                          onMouseOut={(e) => {
-                            e.currentTarget.style.background = 'transparent';
-                            e.currentTarget.style.color = '#6366f1';
-                          }}
-                          onClick={() => {
-                            // Add click debugging
-                            console.log('View button clicked for fixture:', fixture.id);
-                            console.log('Generated URL:', generateSimpleMatchUrl(fixture));
-                          }}
-                        >
-                          View
-                        </a>
-                      </div>
-                    );
-                    })}
+                    {timeSlot.fixtures.map(fixture => (
+                      <FixtureCard 
+                        key={fixture.id}
+                        fixture={fixture}
+                        variant="compact"
+                      />
+                    ))}
                   </div>
                 ))}
               </DayGroupCard>

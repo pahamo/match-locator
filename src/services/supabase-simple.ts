@@ -1,29 +1,8 @@
 import { supabase } from './supabase';
+import type { SimpleFixture, Competition } from '../types';
 
-// Simple, minimal types
-export interface SimpleFixture {
-  id: number;
-  kickoff_utc: string;
-  home_team: string;
-  away_team: string;
-  home_crest?: string;
-  away_crest?: string;
-  broadcaster?: string;
-  matchweek?: number;
-  providerId?: number; // Added to track the actual provider ID for admin
-  isBlackout?: boolean; // Added to track blackout status
-  competition_id?: number; // Added to track competition
-  stage?: string; // Champions League stage
-  round?: string; // Champions League round
-}
-
-export interface SimpleCompetition {
-  id: number;
-  name: string;
-  slug: string;
-  short_name?: string;
-  is_production_visible?: boolean;
-}
+// Alias for backward compatibility
+export type SimpleCompetition = Competition;
 
 // Only Sky Sports and TNT Sports for simplicity (plus blackout)
 export const SIMPLE_BROADCASTERS = [
@@ -159,12 +138,12 @@ export async function saveBroadcaster(fixtureId: number, providerId: number | nu
 }
 
 // Get available competitions (with optional admin flag to see all)
-export async function getSimpleCompetitions(includeHidden: boolean = false): Promise<SimpleCompetition[]> {
+export async function getSimpleCompetitions(includeHidden: boolean = false): Promise<Competition[]> {
   try {
     console.log('[Supabase] Loading available competitions...');
     
     // First try with is_production_visible column
-    let competitions: SimpleCompetition[] = [];
+    let competitions: Competition[] = [];
     try {
       let query = supabase
         .from('competitions')
