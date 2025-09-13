@@ -341,7 +341,7 @@ const HomePage: React.FC = () => {
                           left: `${index * 4}px`,
                           right: `${index * 4}px`,
                           zIndex: 3 - index,
-                          opacity: 0.3 - (index * 0.1),
+                          opacity: 0.6 - (index * 0.15),
                           transform: `scale(${1 - (index * 0.02)})`,
                           pointerEvents: 'none'
                         }}

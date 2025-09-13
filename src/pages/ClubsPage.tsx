@@ -39,20 +39,36 @@ const ClubsPage: React.FC = () => {
     'Young Boys', 'Sparta Prague', 'Salzburg', 'Sturm Graz', 'Slovan Bratislava'
   ];
 
-  // Filter teams by competition
-  const eplTeams = teams.filter(team =>
-    premierLeagueTeams.some(plTeam =>
-      team.name.toLowerCase().includes(plTeam.toLowerCase().split(' ')[0].toLowerCase()) ||
-      plTeam.toLowerCase().includes(team.name.toLowerCase())
-    )
-  );
+  // Filter teams by competition with better matching
+  const eplTeams = teams.filter(team => {
+    const teamNameLower = team.name.toLowerCase();
+    return premierLeagueTeams.some(plTeam => {
+      const plTeamLower = plTeam.toLowerCase();
+      // Check for exact match or if team name contains PL team name parts
+      return teamNameLower === plTeamLower ||
+             teamNameLower.includes(plTeamLower) ||
+             plTeamLower.includes(teamNameLower) ||
+             // Check for common abbreviations and alternative names
+             (plTeam === 'Brighton & Hove Albion' && teamNameLower.includes('brighton')) ||
+             (plTeam === 'Wolverhampton Wanderers' && (teamNameLower.includes('wolves') || teamNameLower.includes('wolverhampton'))) ||
+             (plTeam === 'Tottenham Hotspur' && teamNameLower.includes('tottenham')) ||
+             (plTeam === 'Manchester United' && teamNameLower.includes('manchester united')) ||
+             (plTeam === 'Manchester City' && teamNameLower.includes('manchester city')) ||
+             (plTeam === 'West Ham United' && teamNameLower.includes('west ham')) ||
+             (plTeam === 'Newcastle United' && teamNameLower.includes('newcastle')) ||
+             (plTeam === 'Nottingham Forest' && teamNameLower.includes('nottingham'));
+    });
+  });
 
-  const uclTeams = teams.filter(team =>
-    championsLeagueTeams.some(clTeam =>
-      team.name.toLowerCase().includes(clTeam.toLowerCase().split(' ')[0].toLowerCase()) ||
-      clTeam.toLowerCase().includes(team.name.toLowerCase())
-    )
-  );
+  const uclTeams = teams.filter(team => {
+    const teamNameLower = team.name.toLowerCase();
+    return championsLeagueTeams.some(clTeam => {
+      const clTeamLower = clTeam.toLowerCase();
+      return teamNameLower === clTeamLower ||
+             teamNameLower.includes(clTeamLower) ||
+             clTeamLower.includes(teamNameLower);
+    });
+  });
 
   useEffect(() => {
     loadTeams();

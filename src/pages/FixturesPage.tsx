@@ -26,6 +26,7 @@ const FixturesPage: React.FC = () => {
   const [competitionFilter, setCompetitionFilter] = useState<FilterCompetition>('');
   const [locationFilter, setLocationFilter] = useState<FilterLocation>('');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [showPastGames, setShowPastGames] = useState(false);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
@@ -37,6 +38,15 @@ const FixturesPage: React.FC = () => {
 
   useEffect(() => {
     let filtered = [...fixtures];
+
+    // Filter out past games by default (unless showPastGames is true)
+    if (!showPastGames) {
+      const now = new Date();
+      filtered = filtered.filter(f => {
+        const matchStatus = getMatchStatus(f.kickoff_utc);
+        return matchStatus.status !== 'finished';
+      });
+    }
 
     if (teamFilter) {
       filtered = filtered.filter(f => f.home.slug === teamFilter || f.away.slug === teamFilter);
@@ -64,11 +74,11 @@ const FixturesPage: React.FC = () => {
     }
 
     setFilteredFixtures(filtered);
-    
+
     // Reset display count when filters change and update hasMore
     setDisplayCount(50);
     setHasMore(filtered.length > 50);
-  }, [fixtures, teamFilter, matchweekFilter, competitionFilter, locationFilter]);
+  }, [fixtures, teamFilter, matchweekFilter, competitionFilter, locationFilter, showPastGames]);
 
   const loadData = async () => {
     try {
@@ -167,7 +177,31 @@ const FixturesPage: React.FC = () => {
       
       <main>
         <div className="wrap">
-          <h1 style={{ marginTop: 0 }}>Premier League Fixtures</h1>
+          <h1 style={{ margin: '0 0 24px 0', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>Premier League Fixtures</h1>
+
+          {/* Past Games Toggle Button */}
+          <div style={{ marginBottom: '16px' }}>
+            <button
+              onClick={() => setShowPastGames(!showPastGames)}
+              style={{
+                background: showPastGames ? '#6366f1' : 'transparent',
+                color: showPastGames ? 'white' : '#6366f1',
+                border: '1px solid #6366f1',
+                borderRadius: '6px',
+                padding: '8px 16px',
+                fontSize: '14px',
+                fontWeight: '500',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              {showPastGames ? '✓ ' : ''}
+              {showPastGames ? 'Hide Past Games' : 'Show Past Games'}
+            </button>
+          </div>
 
           {/* Mobile filter button */}
           <div className="mobile-filter-trigger">
