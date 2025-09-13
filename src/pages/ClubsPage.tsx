@@ -11,11 +11,11 @@ const ClubsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // EPL teams (Premier League)
-  const eplTeams = teams.filter(team => team.competition === 'premier-league');
+  // EPL teams (all teams are Premier League)
+  const eplTeams = teams;
   
   // UCL teams (Champions League participating teams from EPL)
-  const uclTeams = [
+  const uclTeamNames = [
     'Manchester City',
     'Arsenal', 
     'Liverpool',
@@ -24,7 +24,7 @@ const ClubsPage: React.FC = () => {
   
   // Filter EPL teams that are also in UCL
   const uclEplTeams = teams.filter(team => 
-    uclTeams.some(uclTeam => team.name.includes(uclTeam))
+    uclTeamNames.some(uclTeam => team.name.includes(uclTeam))
   );
 
   useEffect(() => {
