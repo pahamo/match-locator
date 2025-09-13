@@ -1,6 +1,5 @@
 import React from 'react';
-import type { Fixture } from '../types';
-import type { SimpleFixture } from '../services/supabase-simple';
+import type { Fixture, SimpleFixture } from '../types';
 
 interface StructuredDataProps {
   type: 'match' | 'organization' | 'website';

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { getSimpleFixtures, getSimpleCompetitions, type SimpleFixture, type SimpleCompetition } from '../services/supabase-simple';
+import { getSimpleFixtures, getSimpleCompetitions } from '../services/supabase-simple';
+import type { SimpleFixture, Competition } from '../types';
 import Header from '../components/Header';
 import StructuredData from '../components/StructuredData';
 import { FixtureCardSkeleton } from '../components/SkeletonLoader';
@@ -71,7 +72,7 @@ const HomePage: React.FC = () => {
   const [matchWeek, setMatchWeek] = useState<MatchWeek | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [competitions, setCompetitions] = useState<SimpleCompetition[]>([]);
+  const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [selectedCompetitionId, setSelectedCompetitionId] = useState<number>(1); // Default to Premier League
 
     const [blackoutIds, setBlackoutIds] = useState<string[]>([]);

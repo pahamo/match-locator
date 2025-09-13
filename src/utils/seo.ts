@@ -1,5 +1,4 @@
-import type { Fixture, Team } from '../types';
-import type { SimpleFixture } from '../services/supabase-simple';
+import type { Fixture, Team, SimpleFixture } from '../types';
 
 // Determine canonical base from env or window origin
 const CANONICAL_BASE = (

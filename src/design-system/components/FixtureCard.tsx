@@ -105,7 +105,7 @@ const FixtureCard: React.FC<FixtureCardProps> = ({
       style={baseCardStyle}
     >
       {/* Live indicator */}
-      {matchStatus === 'live' && (
+      {matchStatus.status === 'live' && (
         <div style={{
           position: 'absolute',
           top: tokens.spacing.xs,

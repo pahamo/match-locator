@@ -3,11 +3,10 @@ import {
   getSimpleFixtures,
   saveBroadcaster,
   SIMPLE_BROADCASTERS,
-  type SimpleFixture,
-  type SimpleCompetition,
   getSimpleCompetitions,
   saveCompetitionVisibility
 } from '../services/supabase-simple';
+import type { SimpleFixture, Competition } from '../types';
 import BroadcastEditor from '../components/BroadcastEditor';
 import AdminAuth from '../components/AdminAuth';
 
@@ -17,7 +16,7 @@ type TimeFilter = '' | 'upcoming' | 'all';
 const AdminPage: React.FC = () => {
   const [fixtures, setFixtures] = useState<SimpleFixture[]>([]);
   const [filteredFixtures, setFilteredFixtures] = useState<SimpleFixture[]>([]);
-  const [competitions, setCompetitions] = useState<SimpleCompetition[]>([]);
+  const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [selectedCompetitionId, setSelectedCompetitionId] = useState<number>(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
