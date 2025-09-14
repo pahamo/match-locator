@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { getTeams } from '../../services/supabase';
 import type { Team } from '../../types';
 import AdminLayout from '../../components/AdminLayout';
@@ -120,6 +120,7 @@ const AdminTeamsPage: React.FC = () => {
   const getTeamStats = () => {
     const total = teams.length;
     const eplCount = teams.filter(team => team.competition_id === 1).length;
+    console.log(`[DEBUG] getTeamStats: ${total} total teams, ${eplCount} EPL teams (competition_id === 1)`);
 
     const withCrests = teams.filter(team => team.crest).length;
     const withShortNames = teams.filter(team => team.short_name).length;
@@ -169,7 +170,7 @@ const AdminTeamsPage: React.FC = () => {
     );
   }
 
-  const stats = getTeamStats();
+  const stats = useMemo(() => getTeamStats(), [teams]);
 
   return (
     <AdminLayout title="Teams Management">
