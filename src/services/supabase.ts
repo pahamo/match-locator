@@ -431,7 +431,8 @@ export function isFixturePending(fixture: AdminFixture): boolean {
 // Teams API
 export async function getTeams(): Promise<Team[]> {
   try {
-    // Fetch ALL teams without is_active filtering for admin/clubs pages
+    // DEBUG: Force cache busting - fetch ALL teams without is_active filtering
+    console.log('[DEBUG] getTeams called - fetching all teams');
     const { data, error } = await supabase
       .from('teams')
       .select('id,name,slug,crest_url,competition_id,short_name,club_colors,website,venue,home_venue,city')
@@ -441,6 +442,8 @@ export async function getTeams(): Promise<Team[]> {
       console.warn('[Supabase] getTeams error', error);
       return [];
     }
+
+    console.log(`[DEBUG] getTeams returned ${(data || []).length} teams from database`);
     return (data || []).map((t: any) => ({
       id: t.id,
       name: t.name,
