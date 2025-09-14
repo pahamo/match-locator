@@ -39,28 +39,8 @@ const ClubsPage: React.FC = () => {
     'Young Boys', 'Sparta Prague', 'Salzburg', 'Sturm Graz', 'Slovan Bratislava'
   ];
 
-  // Filter teams by competition with better matching
-  const eplTeams = teams.filter(team => {
-    const teamNameLower = team.name.toLowerCase();
-    const isMatch = premierLeagueTeams.some(plTeam => {
-      const plTeamLower = plTeam.toLowerCase();
-      // Check for exact match or if team name contains PL team name parts
-      return teamNameLower === plTeamLower ||
-             teamNameLower.includes(plTeamLower) ||
-             plTeamLower.includes(teamNameLower) ||
-             // Check for common abbreviations and alternative names
-             (plTeam === 'Brighton & Hove Albion' && teamNameLower.includes('brighton')) ||
-             (plTeam === 'Wolverhampton Wanderers' && (teamNameLower.includes('wolves') || teamNameLower.includes('wolverhampton'))) ||
-             (plTeam === 'Tottenham Hotspur' && teamNameLower.includes('tottenham')) ||
-             (plTeam === 'Manchester United' && teamNameLower.includes('manchester united')) ||
-             (plTeam === 'Manchester City' && teamNameLower.includes('manchester city')) ||
-             (plTeam === 'West Ham United' && teamNameLower.includes('west ham')) ||
-             (plTeam === 'Newcastle United' && teamNameLower.includes('newcastle')) ||
-             (plTeam === 'Nottingham Forest' && teamNameLower.includes('nottingham'));
-    });
-
-    return isMatch;
-  });
+  // Filter teams by competition using competition_id
+  const eplTeams = teams.filter(team => team.competition_id === 1 || team.competition_id === '1');
 
   const uclTeams = teams.filter(team => {
     const teamNameLower = team.name.toLowerCase();

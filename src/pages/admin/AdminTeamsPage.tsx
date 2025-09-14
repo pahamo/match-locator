@@ -119,10 +119,7 @@ const AdminTeamsPage: React.FC = () => {
 
   const getTeamStats = () => {
     const total = teams.length;
-    const eplCount = teams.filter(team => {
-      const eplTeams = ['Arsenal', 'Aston Villa', 'Bournemouth', 'Brentford', 'Brighton', 'Chelsea', 'Crystal Palace', 'Everton', 'Fulham', 'Ipswich', 'Leicester', 'Liverpool', 'Manchester City', 'Manchester United', 'Newcastle', 'Nottingham Forest', 'Southampton', 'Tottenham', 'West Ham', 'Wolverhampton'];
-      return eplTeams.some(eplTeam => team.name.toLowerCase().includes(eplTeam.toLowerCase()));
-    }).length;
+    const eplCount = teams.filter(team => team.competition_id === 1 || team.competition_id === '1').length;
 
     const withCrests = teams.filter(team => team.crest).length;
     const withShortNames = teams.filter(team => team.short_name).length;
@@ -397,12 +394,17 @@ const AdminTeamsPage: React.FC = () => {
                     {team.slug}
                   </div>
                   <div style={{
-                    fontSize: '13px',
+                    fontSize: '11px',
                     fontWeight: '600',
                     color: team.competition_id === 1 ? '#059669' : team.competition_id === 2 ? '#dc2626' : '#6b7280',
-                    textAlign: 'center'
+                    textAlign: 'center',
+                    padding: '2px 4px',
+                    borderRadius: '4px',
+                    background: team.competition_id === 1 ? '#f0fdf4' : team.competition_id === 2 ? '#fef2f2' : '#f9fafb'
                   }}>
-                    {team.competition_id || 'N/A'}
+                    {team.competition_id === 1 ? 'EPL' :
+                     team.competition_id === 2 ? 'CHAMP' :
+                     team.competition_id ? `C${team.competition_id}` : 'N/A'}
                   </div>
                   <div style={{ fontSize: '12px', color: team.club_colors ? '#1f2937' : '#9ca3af' }}>
                     {team.club_colors ? (
