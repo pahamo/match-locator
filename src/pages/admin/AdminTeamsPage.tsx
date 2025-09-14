@@ -306,7 +306,7 @@ const AdminTeamsPage: React.FC = () => {
         }}>
           <div style={{
             display: 'grid',
-            gridTemplateColumns: '60px 2fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 100px',
+            gridTemplateColumns: '60px 2fr 1fr 1fr 80px 1fr 1fr 1fr 1fr 1fr 100px',
             gap: '12px',
             padding: '16px',
             background: '#f8fafc',
@@ -320,6 +320,7 @@ const AdminTeamsPage: React.FC = () => {
             <div>Team Name</div>
             <div>Short Name</div>
             <div>Slug</div>
+            <div>Comp ID</div>
             <div>Colors</div>
             <div>Website</div>
             <div>Venue</div>
@@ -343,7 +344,7 @@ const AdminTeamsPage: React.FC = () => {
                   key={team.id}
                   style={{
                     display: 'grid',
-                    gridTemplateColumns: '60px 2fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 100px',
+                    gridTemplateColumns: '60px 2fr 1fr 1fr 80px 1fr 1fr 1fr 1fr 1fr 100px',
                     gap: '12px',
                     padding: '16px',
                     borderBottom: '1px solid #e2e8f0',
@@ -385,6 +386,14 @@ const AdminTeamsPage: React.FC = () => {
                   </div>
                   <div style={{ fontSize: '12px', color: '#6b7280', fontFamily: 'monospace' }}>
                     {team.slug}
+                  </div>
+                  <div style={{
+                    fontSize: '13px',
+                    fontWeight: '600',
+                    color: team.competition_id === 1 ? '#059669' : team.competition_id === 2 ? '#dc2626' : '#6b7280',
+                    textAlign: 'center'
+                  }}>
+                    {team.competition_id || 'N/A'}
                   </div>
                   <div style={{ fontSize: '12px', color: team.club_colors ? '#1f2937' : '#9ca3af' }}>
                     {team.club_colors ? (

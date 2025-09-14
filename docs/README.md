@@ -42,5 +42,9 @@ This directory contains all technical documentation for the Match Locator projec
 **Last Updated**: September 2025
 
 ---
+*Teams and season
+* The current season is 2025-26
+* teams in the premier league are Liverpool, Arsenal, Tottenham, Bornemouth, Chelsea, Everton, Sunderland, Man City, Crystal Palace, Newcastle, Fulam, Brentford, Brighton, Man United, Nottingham Forest, Leeds United, Burnley, West Ham, Aston Villa, Wolves
+
 
 *All documentation is current as of the production launch preparation.*
