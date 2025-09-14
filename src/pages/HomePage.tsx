@@ -323,38 +323,18 @@ const HomePage: React.FC = () => {
                 </span>
               </button>
 
-              {/* Collapsed State - Stack of grayed out cards */}
+              {/* Collapsed State - Simple text indicator */}
               {!pastGamesExpanded && (
                 <div style={{
-                  position: 'relative',
-                  height: '40px',
-                  overflow: 'hidden'
+                  padding: '16px',
+                  background: '#f9fafb',
+                  border: '1px solid #e5e7eb',
+                  borderRadius: '6px',
+                  textAlign: 'center',
+                  color: '#6b7280',
+                  fontSize: '14px'
                 }}>
-                  {finishedFixtures
-                    .sort((a, b) => new Date(b.kickoff_utc).getTime() - new Date(a.kickoff_utc).getTime())
-                    .slice(0, 3)
-                    .map((fixture, index) => (
-                      <div
-                        key={fixture.id}
-                        style={{
-                          position: 'absolute',
-                          top: `${index * 2}px`,
-                          left: `${index * 4}px`,
-                          right: `${index * 4}px`,
-                          zIndex: 3 - index,
-                          opacity: 0.6 - (index * 0.15),
-                          transform: `scale(${1 - (index * 0.02)})`,
-                          pointerEvents: 'none'
-                        }}
-                      >
-                        <FixtureCard
-                          fixture={fixture}
-                          variant="minimized"
-                          showViewButton={false}
-                        />
-                      </div>
-                    ))
-                  }
+                  {finishedFixtures.length} passed game{finishedFixtures.length !== 1 ? 's' : ''} - tap above to expand
                 </div>
               )}
 
