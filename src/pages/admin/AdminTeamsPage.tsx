@@ -56,6 +56,8 @@ const AdminTeamsPage: React.FC = () => {
 
   const filterTeams = () => {
     let filtered = [...teams];
+    console.log(`[DEBUG] filterTeams called - starting with ${teams.length} teams`);
+    console.log(`[DEBUG] Filters: competition="${competitionFilter}", country="${countryFilter}", search="${searchTerm}"`);
 
     // Text search filter - search by team name and short name if available
     if (searchTerm) {
@@ -102,6 +104,7 @@ const AdminTeamsPage: React.FC = () => {
     }
     // Add more country filters as needed
 
+    console.log(`[DEBUG] filterTeams result: ${filtered.length} teams after filtering`);
     setFilteredTeams(filtered);
   };
 
