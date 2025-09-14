@@ -64,24 +64,9 @@ const AdminTeamsPage: React.FC = () => {
       );
     }
 
-    // Competition filter (simplified - based on common knowledge)
+    // Competition filter - now use proper database competition_id
     if (competitionFilter === 'epl') {
-      const eplTeams = [
-        'Arsenal', 'Aston Villa', 'Bournemouth', 'Brentford', 'Brighton & Hove Albion',
-        'Chelsea', 'Crystal Palace', 'Everton', 'Fulham', 'Ipswich Town',
-        'Leicester City', 'Liverpool', 'Manchester City', 'Manchester United', 'Newcastle United',
-        'Nottingham Forest', 'Southampton', 'Tottenham Hotspur', 'West Ham United', 'Wolverhampton Wanderers'
-      ];
-      filtered = filtered.filter(team =>
-        eplTeams.some(eplTeam => {
-          const teamNameLower = team.name.toLowerCase();
-          const eplTeamLower = eplTeam.toLowerCase();
-          return teamNameLower.includes(eplTeamLower) ||
-                 eplTeamLower.includes(teamNameLower) ||
-                 (eplTeam === 'Brighton & Hove Albion' && teamNameLower.includes('brighton')) ||
-                 (eplTeam === 'Wolverhampton Wanderers' && (teamNameLower.includes('wolves') || teamNameLower.includes('wolverhampton')));
-        })
-      );
+      filtered = filtered.filter(team => team.competition_id === 1);
     } else if (competitionFilter === 'ucl') {
       const uclTeams = [
         'Manchester City', 'Arsenal', 'Liverpool', 'Aston Villa',

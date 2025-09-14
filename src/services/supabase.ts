@@ -433,8 +433,7 @@ export async function getTeams(): Promise<Team[]> {
   try {
     const { data, error } = await supabase
       .from('teams')
-      .select('id,name,slug,crest_url')
-      .eq('is_active', true)
+      .select('id,name,slug,crest_url,competition_id')
       .order('name', { ascending: true });
 
     if (error) {
@@ -446,6 +445,7 @@ export async function getTeams(): Promise<Team[]> {
       name: t.name,
       slug: t.slug,
       crest: t.crest_url ?? null,
+      competition_id: t.competition_id,
     }));
   } catch (e) {
     console.warn('[Supabase] getTeams error', e);

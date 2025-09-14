@@ -3,6 +3,7 @@ export interface Team {
   name: string;
   slug: string;
   crest: string | null;
+  competition_id?: number;
 }
 
 export interface Provider {
