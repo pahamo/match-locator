@@ -3,9 +3,6 @@
   command = "CI= npm run build"
   publish = "build"
 
-  # Security scanning configuration
-  SECRETS_SCAN_OMIT_PATHS = ".env"
-
 # Enforce HTTPS
 [[redirects]]
   from = "http://*"
