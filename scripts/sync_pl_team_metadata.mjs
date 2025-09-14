@@ -1,11 +1,19 @@
 // scripts/sync_pl_team_metadata.mjs
 import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+// Load environment variables
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+dotenv.config({ path: join(__dirname, '../.env') });
 
 // Read env the way your project already defines them
 const SUPABASE_URL =
   process.env.REACT_APP_SUPABASE_URL || process.env.SUPABASE_URL;
-const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE_KEY; // server-only
-const FDO_API_KEY = process.env.FOOTBALL_DATA_API_KEY;      // football-data.org
+const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY; // server-only
+const FDO_API_KEY = process.env.FOOTBALL_DATA_API_KEY || process.env.FOOTBALL_DATA_TOKEN;      // football-data.org
 
 if (!SUPABASE_URL || !SERVICE_ROLE || !FDO_API_KEY) {
   console.error('Missing env: REACT_APP_SUPABASE_URL/SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, FOOTBALL_DATA_API_KEY');
@@ -59,6 +67,7 @@ function mapFromTeamList(t) {
     city: cityFromAddress(t.address ?? null),
     crest_url: t.crest ?? null,
     active: true,
+    competition_id: 1, // EPL teams should have competition_id = 1
   };
 }
 
