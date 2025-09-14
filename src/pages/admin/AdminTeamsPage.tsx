@@ -70,7 +70,16 @@ const AdminTeamsPage: React.FC = () => {
 
     // Competition filter - now use proper database competition_id
     if (competitionFilter === 'epl') {
-      filtered = filtered.filter(team => team.competition_id === 1);
+      console.log(`[DEBUG] EPL filter - checking ${filtered.length} teams for competition_id === 1`);
+      const beforeFilter = filtered.length;
+      filtered = filtered.filter(team => {
+        const matches = team.competition_id === 1 || team.competition_id === '1';
+        if (!matches && (team.name.includes('Sunderland') || team.name.includes('Leeds') || team.name.includes('Burnley'))) {
+          console.log(`[DEBUG] ${team.name} excluded: competition_id=${team.competition_id} (type: ${typeof team.competition_id})`);
+        }
+        return matches;
+      });
+      console.log(`[DEBUG] EPL filter result: ${beforeFilter} → ${filtered.length} teams`);
     } else if (competitionFilter === 'ucl') {
       const uclTeams = [
         'Manchester City', 'Arsenal', 'Liverpool', 'Aston Villa',
