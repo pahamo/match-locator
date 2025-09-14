@@ -4,6 +4,12 @@ export interface Team {
   slug: string;
   crest: string | null;
   competition_id?: number;
+  short_name?: string | null;
+  club_colors?: string | null;
+  website?: string | null;
+  venue?: string | null;
+  home_venue?: string | null;
+  city?: string | null;
 }
 
 export interface Provider {
