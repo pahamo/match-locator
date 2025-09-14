@@ -57,10 +57,12 @@ const AdminTeamsPage: React.FC = () => {
   const filterTeams = () => {
     let filtered = [...teams];
 
-    // Text search filter
+    // Text search filter - search by team name and short name if available
     if (searchTerm) {
       filtered = filtered.filter(team =>
-        team.name.toLowerCase().includes(searchTerm.toLowerCase())
+        team.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (team.short_name && team.short_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        team.slug.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 

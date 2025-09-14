@@ -11,11 +11,6 @@
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/clubs/afc-bournemouth-fc</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
     <loc>https://matchlocator.com/clubs/arsenal-fc</loc>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
