@@ -19,6 +19,9 @@ const AdminTeamsPage: React.FC = () => {
   const [countryFilter, setCountryFilter] = useState<CountryFilter>('');
   const [searchTerm, setSearchTerm] = useState('');
 
+  // Derived state - must be before early returns
+  const stats = useMemo(() => getTeamStats(), [teams]);
+
   useEffect(() => {
     const checkAuth = () => {
       const token = localStorage.getItem('adminToken');
@@ -169,8 +172,6 @@ const AdminTeamsPage: React.FC = () => {
       </AdminLayout>
     );
   }
-
-  const stats = useMemo(() => getTeamStats(), [teams]);
 
   return (
     <AdminLayout title="Teams Management">
