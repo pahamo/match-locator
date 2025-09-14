@@ -73,7 +73,7 @@ const AdminTeamsPage: React.FC = () => {
       console.log(`[DEBUG] EPL filter - checking ${filtered.length} teams for competition_id === 1`);
       const beforeFilter = filtered.length;
       filtered = filtered.filter(team => {
-        const matches = team.competition_id === 1 || team.competition_id === '1';
+        const matches = team.competition_id === 1;
         if (!matches && (team.name.includes('Sunderland') || team.name.includes('Leeds') || team.name.includes('Burnley'))) {
           console.log(`[DEBUG] ${team.name} excluded: competition_id=${team.competition_id} (type: ${typeof team.competition_id})`);
         }
@@ -119,7 +119,7 @@ const AdminTeamsPage: React.FC = () => {
 
   const getTeamStats = () => {
     const total = teams.length;
-    const eplCount = teams.filter(team => team.competition_id === 1 || team.competition_id === '1').length;
+    const eplCount = teams.filter(team => team.competition_id === 1).length;
 
     const withCrests = teams.filter(team => team.crest).length;
     const withShortNames = teams.filter(team => team.short_name).length;

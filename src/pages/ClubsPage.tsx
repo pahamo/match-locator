@@ -40,7 +40,7 @@ const ClubsPage: React.FC = () => {
   ];
 
   // Filter teams by competition using competition_id
-  const eplTeams = teams.filter(team => team.competition_id === 1 || team.competition_id === '1');
+  const eplTeams = teams.filter(team => team.competition_id === 1);
 
   const uclTeams = teams.filter(team => {
     const teamNameLower = team.name.toLowerCase();
