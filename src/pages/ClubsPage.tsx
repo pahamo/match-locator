@@ -59,19 +59,8 @@ const ClubsPage: React.FC = () => {
              (plTeam === 'Nottingham Forest' && teamNameLower.includes('nottingham'));
     });
 
-    // Debug logging
-    if (isMatch) {
-      console.log('✓ Matched EPL team:', team.name);
-    } else {
-      console.log('✗ No match for team:', team.name);
-    }
-
     return isMatch;
   });
-
-  console.log('Total teams in database:', teams.length);
-  console.log('Matched EPL teams count:', eplTeams.length);
-  console.log('Expected PL teams:', premierLeagueTeams.length);
 
   const uclTeams = teams.filter(team => {
     const teamNameLower = team.name.toLowerCase();
