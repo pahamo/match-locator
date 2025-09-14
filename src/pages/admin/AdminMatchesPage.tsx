@@ -1,25 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { getSimpleFixtures, getSimpleCompetitions } from '../../services/supabase-simple';
-import { getMatchStatus } from '../../utils/matchStatus';
-import type { SimpleFixture, Competition } from '../../types';
+import { getTeams } from '../../services/supabase';
+import { getSimpleCompetitions } from '../../services/supabase-simple';
+import type { Team, Competition } from '../../types';
 import AdminLayout from '../../components/AdminLayout';
 import AdminAuth from '../../components/AdminAuth';
 
-type StatusFilter = '' | 'upcoming' | 'live' | 'finished';
-type BroadcasterFilter = '' | 'with_broadcaster' | 'no_broadcaster' | 'blackouts';
+type CompetitionFilter = '' | 'epl' | 'ucl' | 'all';
+type DataFilter = '' | 'with_crests' | 'no_crests' | 'complete_data' | 'missing_data';
 
 const AdminMatchesPage: React.FC = () => {
-  const [fixtures, setFixtures] = useState<SimpleFixture[]>([]);
-  const [filteredFixtures, setFilteredFixtures] = useState<SimpleFixture[]>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [filteredTeams, setFilteredTeams] = useState<Team[]>([]);
   const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // Filters
-  const [competitionFilter, setCompetitionFilter] = useState<number | ''>('');
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('');
-  const [broadcasterFilter, setBroadcasterFilter] = useState<BroadcasterFilter>('');
+  const [competitionFilter, setCompetitionFilter] = useState<CompetitionFilter>('');
+  const [dataFilter, setDataFilter] = useState<DataFilter>('');
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
@@ -40,20 +39,20 @@ const AdminMatchesPage: React.FC = () => {
   }, [isAuthenticated]);
 
   useEffect(() => {
-    filterFixtures();
-  }, [fixtures, competitionFilter, statusFilter, broadcasterFilter, searchTerm]);
+    filterTeams();
+  }, [teams, competitionFilter, dataFilter, searchTerm]);
 
   const loadData = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const [fixturesData, competitionsData] = await Promise.all([
-        getSimpleFixtures(), // Get all fixtures
+      const [teamsData, competitionsData] = await Promise.all([
+        getTeams(),
         getSimpleCompetitions(true) // Include hidden competitions
       ]);
 
-      setFixtures(fixturesData);
+      setTeams(teamsData);
       setCompetitions(competitionsData);
     } catch (err) {
       console.error('Failed to load data:', err);
@@ -63,72 +62,89 @@ const AdminMatchesPage: React.FC = () => {
     }
   };
 
-  const filterFixtures = () => {
-    let filtered = [...fixtures];
+  const filterTeams = () => {
+    let filtered = [...teams];
 
     // Text search filter
     if (searchTerm) {
-      filtered = filtered.filter(fixture =>
-        fixture.home_team.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        fixture.away_team.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(team =>
+        team.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (team.short_name && team.short_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        team.slug.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
     // Competition filter
-    if (competitionFilter) {
-      filtered = filtered.filter(fixture => fixture.competition_id === competitionFilter);
+    if (competitionFilter === 'epl') {
+      const eplTeams = [
+        'Arsenal', 'Aston Villa', 'Bournemouth', 'Brentford', 'Brighton & Hove Albion',
+        'Chelsea', 'Crystal Palace', 'Everton', 'Fulham', 'Ipswich Town',
+        'Leicester City', 'Liverpool', 'Manchester City', 'Manchester United', 'Newcastle United',
+        'Nottingham Forest', 'Southampton', 'Tottenham Hotspur', 'West Ham United', 'Wolverhampton Wanderers'
+      ];
+      filtered = filtered.filter(team =>
+        eplTeams.some(eplTeam => {
+          const teamNameLower = team.name.toLowerCase();
+          const eplTeamLower = eplTeam.toLowerCase();
+          return teamNameLower.includes(eplTeamLower) ||
+                 eplTeamLower.includes(teamNameLower) ||
+                 (eplTeam === 'Brighton & Hove Albion' && teamNameLower.includes('brighton')) ||
+                 (eplTeam === 'Wolverhampton Wanderers' && (teamNameLower.includes('wolves') || teamNameLower.includes('wolverhampton')));
+        })
+      );
+    } else if (competitionFilter === 'ucl') {
+      const uclTeams = [
+        'Manchester City', 'Arsenal', 'Liverpool', 'Aston Villa',
+        'Real Madrid', 'Barcelona', 'Atletico Madrid', 'Girona',
+        'Bayern Munich', 'Borussia Dortmund', 'RB Leipzig', 'Bayer Leverkusen',
+        'Inter Milan', 'AC Milan', 'Juventus', 'Atalanta',
+        'Paris Saint-Germain', 'AS Monaco', 'Lille', 'Brest',
+        'Sporting CP', 'Benfica', 'PSV Eindhoven', 'Feyenoord',
+        'Celtic'
+      ];
+      filtered = filtered.filter(team =>
+        uclTeams.some(uclTeam => {
+          const teamNameLower = team.name.toLowerCase();
+          const uclTeamLower = uclTeam.toLowerCase();
+          return teamNameLower.includes(uclTeamLower) || uclTeamLower.includes(teamNameLower);
+        })
+      );
     }
 
-    // Status filter
-    if (statusFilter) {
-      filtered = filtered.filter(fixture => {
-        const status = getMatchStatus(fixture.kickoff_utc);
-        return status.status === statusFilter;
-      });
+    // Data completeness filter
+    if (dataFilter === 'with_crests') {
+      filtered = filtered.filter(team => team.crest);
+    } else if (dataFilter === 'no_crests') {
+      filtered = filtered.filter(team => !team.crest);
+    } else if (dataFilter === 'complete_data') {
+      filtered = filtered.filter(team =>
+        team.crest && team.short_name && team.club_colors && team.website
+      );
+    } else if (dataFilter === 'missing_data') {
+      filtered = filtered.filter(team =>
+        !team.crest || !team.short_name || !team.club_colors || !team.website
+      );
     }
 
-    // Broadcaster filter
-    if (broadcasterFilter === 'with_broadcaster') {
-      filtered = filtered.filter(fixture => fixture.broadcaster);
-    } else if (broadcasterFilter === 'no_broadcaster') {
-      filtered = filtered.filter(fixture => !fixture.broadcaster);
-    } else if (broadcasterFilter === 'blackouts') {
-      filtered = filtered.filter(fixture => fixture.isBlackout);
-    }
-
-    setFilteredFixtures(filtered);
+    setFilteredTeams(filtered);
   };
 
-  const getFixtureStats = () => {
-    const total = fixtures.length;
-    let upcoming = 0;
-    let live = 0;
-    let finished = 0;
-    let withBroadcaster = 0;
-    let blackouts = 0;
+  const getTeamStats = () => {
+    const total = teams.length;
+    const eplCount = teams.filter(team => {
+      const eplTeams = ['Arsenal', 'Aston Villa', 'Bournemouth', 'Brentford', 'Brighton', 'Chelsea', 'Crystal Palace', 'Everton', 'Fulham', 'Ipswich', 'Leicester', 'Liverpool', 'Manchester City', 'Manchester United', 'Newcastle', 'Nottingham Forest', 'Southampton', 'Tottenham', 'West Ham', 'Wolverhampton'];
+      return eplTeams.some(eplTeam => team.name.toLowerCase().includes(eplTeam.toLowerCase()));
+    }).length;
 
-    fixtures.forEach(fixture => {
-      const status = getMatchStatus(fixture.kickoff_utc);
-      if (status.status === 'upcoming') upcoming++;
-      else if (status.status === 'live' || status.status === 'upNext') live++;
-      else if (status.status === 'finished') finished++;
+    const withCrests = teams.filter(team => team.crest).length;
+    const withShortNames = teams.filter(team => team.short_name).length;
+    const withColors = teams.filter(team => team.club_colors).length;
+    const withWebsites = teams.filter(team => team.website).length;
+    const completeData = teams.filter(team =>
+      team.crest && team.short_name && team.club_colors && team.website
+    ).length;
 
-      if (fixture.broadcaster) withBroadcaster++;
-      if (fixture.isBlackout) blackouts++;
-    });
-
-    return { total, upcoming, live, finished, withBroadcaster, blackouts };
-  };
-
-  const formatDateTime = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: '2-digit',
-      year: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+    return { total, eplCount, withCrests, withShortNames, withColors, withWebsites, completeData };
   };
 
   const handleAuthenticated = () => {
@@ -141,275 +157,309 @@ const AdminMatchesPage: React.FC = () => {
 
   if (loading) {
     return (
-      <AdminLayout title="Matches Management">
-        <div>Loading matches...</div>
+      <AdminLayout title="Teams Database">
+        <div>Loading teams...</div>
       </AdminLayout>
     );
   }
 
   if (error) {
     return (
-      <AdminLayout title="Matches Management">
+      <AdminLayout title="Teams Database">
         <div className="error">{error}</div>
         <button onClick={loadData} style={{ marginTop: '16px' }}>Retry</button>
       </AdminLayout>
     );
   }
 
-  const stats = getFixtureStats();
+  const stats = getTeamStats();
 
   return (
-    <AdminLayout title="Matches Management">
-        {/* Stats Cards */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-          gap: '16px',
-          marginBottom: '24px'
-        }}>
-          <div style={{
-            background: 'white',
-            border: '1px solid #e2e8f0',
-            borderRadius: '8px',
-            padding: '16px'
-          }}>
-            <div style={{ fontSize: '24px', fontWeight: '700', color: '#1f2937' }}>{stats.total}</div>
-            <div style={{ fontSize: '14px', color: '#6b7280' }}>Total Fixtures</div>
-          </div>
-
-          <div style={{
-            background: 'white',
-            border: '1px solid #e2e8f0',
-            borderRadius: '8px',
-            padding: '16px'
-          }}>
-            <div style={{ fontSize: '24px', fontWeight: '700', color: '#dc2626' }}>{stats.live}</div>
-            <div style={{ fontSize: '14px', color: '#6b7280' }}>Live/Up Next</div>
-          </div>
-
-          <div style={{
-            background: 'white',
-            border: '1px solid #e2e8f0',
-            borderRadius: '8px',
-            padding: '16px'
-          }}>
-            <div style={{ fontSize: '24px', fontWeight: '700', color: '#2563eb' }}>{stats.upcoming}</div>
-            <div style={{ fontSize: '14px', color: '#6b7280' }}>Upcoming</div>
-          </div>
-
-          <div style={{
-            background: 'white',
-            border: '1px solid #e2e8f0',
-            borderRadius: '8px',
-            padding: '16px'
-          }}>
-            <div style={{ fontSize: '24px', fontWeight: '700', color: '#16a34a' }}>{Math.round((stats.withBroadcaster / stats.total) * 100)}%</div>
-            <div style={{ fontSize: '14px', color: '#6b7280' }}>With Broadcaster</div>
-          </div>
-
-          <div style={{
-            background: 'white',
-            border: '1px solid #e2e8f0',
-            borderRadius: '8px',
-            padding: '16px'
-          }}>
-            <div style={{ fontSize: '24px', fontWeight: '700', color: '#dc2626' }}>{stats.blackouts}</div>
-            <div style={{ fontSize: '14px', color: '#6b7280' }}>Blackouts</div>
-          </div>
-        </div>
-
-        {/* Filters */}
-        <div style={{
-          display: 'flex',
-          gap: '16px',
-          marginBottom: '24px',
-          flexWrap: 'wrap',
-          alignItems: 'center'
-        }}>
-          <input
-            type="text"
-            placeholder="Search teams..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{
-              padding: '8px 12px',
-              border: '1px solid #d1d5db',
-              borderRadius: '6px',
-              fontSize: '14px',
-              minWidth: '200px'
-            }}
-          />
-
-          <select
-            value={competitionFilter}
-            onChange={(e) => setCompetitionFilter(e.target.value === '' ? '' : Number(e.target.value))}
-            style={{
-              padding: '8px 12px',
-              border: '1px solid #d1d5db',
-              borderRadius: '6px',
-              fontSize: '14px'
-            }}
-          >
-            <option value="">All Competitions</option>
-            {competitions.map(comp => (
-              <option key={comp.id} value={comp.id}>{comp.name}</option>
-            ))}
-          </select>
-
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
-            style={{
-              padding: '8px 12px',
-              border: '1px solid #d1d5db',
-              borderRadius: '6px',
-              fontSize: '14px'
-            }}
-          >
-            <option value="">All Status</option>
-            <option value="upcoming">Upcoming</option>
-            <option value="live">Live/Up Next</option>
-            <option value="finished">Finished</option>
-          </select>
-
-          <select
-            value={broadcasterFilter}
-            onChange={(e) => setBroadcasterFilter(e.target.value as BroadcasterFilter)}
-            style={{
-              padding: '8px 12px',
-              border: '1px solid #d1d5db',
-              borderRadius: '6px',
-              fontSize: '14px'
-            }}
-          >
-            <option value="">All Broadcasters</option>
-            <option value="with_broadcaster">With Broadcaster</option>
-            <option value="no_broadcaster">No Broadcaster</option>
-            <option value="blackouts">Blackouts</option>
-          </select>
-
-          <div style={{ fontSize: '14px', color: '#6b7280' }}>
-            Showing {filteredFixtures.length} of {fixtures.length} fixtures
-          </div>
-        </div>
-
-        {/* Fixtures List */}
+    <AdminLayout title="Teams Database">
+      {/* Stats Cards */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+        gap: '16px',
+        marginBottom: '24px'
+      }}>
         <div style={{
           background: 'white',
           border: '1px solid #e2e8f0',
           borderRadius: '8px',
-          overflow: 'hidden'
+          padding: '16px'
         }}>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: '140px 1fr 1fr 120px 100px 80px 100px',
-            gap: '12px',
-            padding: '16px',
-            background: '#f8fafc',
-            fontWeight: '600',
-            fontSize: '14px',
-            color: '#374151',
-            borderBottom: '1px solid #e2e8f0'
-          }}>
-            <div>Date/Time</div>
-            <div>Home Team</div>
-            <div>Away Team</div>
-            <div>Broadcaster</div>
-            <div>Status</div>
-            <div>Blackout</div>
-            <div>Actions</div>
-          </div>
+          <div style={{ fontSize: '24px', fontWeight: '700', color: '#1f2937' }}>{stats.total}</div>
+          <div style={{ fontSize: '14px', color: '#6b7280' }}>Total Teams</div>
+        </div>
 
-          {filteredFixtures.length === 0 ? (
+        <div style={{
+          background: 'white',
+          border: '1px solid #e2e8f0',
+          borderRadius: '8px',
+          padding: '16px'
+        }}>
+          <div style={{ fontSize: '24px', fontWeight: '700', color: stats.eplCount === 20 ? '#16a34a' : '#dc2626' }}>{stats.eplCount}/20</div>
+          <div style={{ fontSize: '14px', color: '#6b7280' }}>EPL Teams</div>
+        </div>
+
+        <div style={{
+          background: 'white',
+          border: '1px solid #e2e8f0',
+          borderRadius: '8px',
+          padding: '16px'
+        }}>
+          <div style={{ fontSize: '24px', fontWeight: '700', color: '#1f2937' }}>{Math.round((stats.withCrests / stats.total) * 100)}%</div>
+          <div style={{ fontSize: '14px', color: '#6b7280' }}>With Crests</div>
+        </div>
+
+        <div style={{
+          background: 'white',
+          border: '1px solid #e2e8f0',
+          borderRadius: '8px',
+          padding: '16px'
+        }}>
+          <div style={{ fontSize: '24px', fontWeight: '700', color: '#1f2937' }}>{Math.round((stats.withShortNames / stats.total) * 100)}%</div>
+          <div style={{ fontSize: '14px', color: '#6b7280' }}>With Short Names</div>
+        </div>
+
+        <div style={{
+          background: 'white',
+          border: '1px solid #e2e8f0',
+          borderRadius: '8px',
+          padding: '16px'
+        }}>
+          <div style={{ fontSize: '24px', fontWeight: '700', color: '#1f2937' }}>{Math.round((stats.completeData / stats.total) * 100)}%</div>
+          <div style={{ fontSize: '14px', color: '#6b7280' }}>Complete Data</div>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div style={{
+        display: 'flex',
+        gap: '16px',
+        marginBottom: '24px',
+        flexWrap: 'wrap',
+        alignItems: 'center'
+      }}>
+        <input
+          type="text"
+          placeholder="Search teams..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{
+            padding: '8px 12px',
+            border: '1px solid #d1d5db',
+            borderRadius: '6px',
+            fontSize: '14px',
+            minWidth: '200px'
+          }}
+        />
+
+        <select
+          value={competitionFilter}
+          onChange={(e) => setCompetitionFilter(e.target.value as CompetitionFilter)}
+          style={{
+            padding: '8px 12px',
+            border: '1px solid #d1d5db',
+            borderRadius: '6px',
+            fontSize: '14px'
+          }}
+        >
+          <option value="">All Competitions</option>
+          <option value="epl">Premier League</option>
+          <option value="ucl">Champions League</option>
+        </select>
+
+        <select
+          value={dataFilter}
+          onChange={(e) => setDataFilter(e.target.value as DataFilter)}
+          style={{
+            padding: '8px 12px',
+            border: '1px solid #d1d5db',
+            borderRadius: '6px',
+            fontSize: '14px'
+          }}
+        >
+          <option value="">All Teams</option>
+          <option value="with_crests">With Crests</option>
+          <option value="no_crests">No Crests</option>
+          <option value="complete_data">Complete Data</option>
+          <option value="missing_data">Missing Data</option>
+        </select>
+
+        <div style={{ fontSize: '14px', color: '#6b7280' }}>
+          Showing {filteredTeams.length} of {teams.length} teams
+        </div>
+      </div>
+
+      {/* Teams Table - Full Width */}
+      <div style={{
+        background: 'white',
+        border: '1px solid #e2e8f0',
+        borderRadius: '8px',
+        overflow: 'hidden',
+        width: '100%'
+      }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '60px 2fr 1fr 1fr 1fr 1fr 1fr 1fr 100px',
+          gap: '12px',
+          padding: '16px',
+          background: '#f8fafc',
+          fontWeight: '600',
+          fontSize: '14px',
+          color: '#374151',
+          borderBottom: '1px solid #e2e8f0',
+          minWidth: '1200px'
+        }}>
+          <div>Crest</div>
+          <div>Team Name</div>
+          <div>Short Name</div>
+          <div>Slug</div>
+          <div>Colors</div>
+          <div>Website</div>
+          <div>Venue</div>
+          <div>City</div>
+          <div>Actions</div>
+        </div>
+
+        <div style={{ overflowX: 'auto' }}>
+          {filteredTeams.length === 0 ? (
             <div style={{
               padding: '32px',
               textAlign: 'center',
               color: '#6b7280'
             }}>
-              No fixtures found matching your filters.
+              No teams found matching your filters.
             </div>
           ) : (
-            filteredFixtures.map((fixture) => {
-              const matchStatus = getMatchStatus(fixture.kickoff_utc);
-              return (
-                <div
-                  key={fixture.id}
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: '140px 1fr 1fr 120px 100px 80px 100px',
-                    gap: '12px',
-                    padding: '16px',
-                    borderBottom: '1px solid #e2e8f0',
-                    alignItems: 'center'
-                  }}
-                >
-                  <div style={{ fontSize: '12px', color: '#6b7280' }}>
-                    {formatDateTime(fixture.kickoff_utc)}
-                  </div>
-                  <div style={{ fontSize: '14px', fontWeight: '500' }}>
-                    {fixture.home_team}
-                  </div>
-                  <div style={{ fontSize: '14px', fontWeight: '500' }}>
-                    {fixture.away_team}
-                  </div>
-                  <div style={{ fontSize: '12px' }}>
-                    {fixture.broadcaster ? (
-                      <span style={{
-                        background: '#dcfce7',
-                        color: '#166534',
-                        padding: '2px 6px',
-                        borderRadius: '4px',
-                        fontSize: '11px'
-                      }}>
-                        {fixture.broadcaster}
-                      </span>
-                    ) : (
-                      <span style={{ color: '#9ca3af' }}>None</span>
-                    )}
-                  </div>
-                  <div>
-                    <span style={{
-                      background:
-                        matchStatus.status === 'live' || matchStatus.status === 'upNext' ? '#fee2e2' :
-                        matchStatus.status === 'upcoming' ? '#dbeafe' : '#f3f4f6',
-                      color:
-                        matchStatus.status === 'live' || matchStatus.status === 'upNext' ? '#dc2626' :
-                        matchStatus.status === 'upcoming' ? '#2563eb' : '#6b7280',
-                      padding: '2px 6px',
-                      borderRadius: '4px',
-                      fontSize: '11px',
-                      fontWeight: '500'
-                    }}>
-                      {matchStatus.status === 'upNext' ? 'Up Next' :
-                       matchStatus.status.charAt(0).toUpperCase() + matchStatus.status.slice(1)}
-                    </span>
-                  </div>
-                  <div>
-                    {fixture.isBlackout ? (
-                      <span style={{ color: '#dc2626', fontSize: '12px' }}>Yes</span>
-                    ) : (
-                      <span style={{ color: '#9ca3af', fontSize: '12px' }}>No</span>
-                    )}
-                  </div>
-                  <div>
-                    <button
+            filteredTeams.map((team) => (
+              <div
+                key={team.id}
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '60px 2fr 1fr 1fr 1fr 1fr 1fr 1fr 100px',
+                  gap: '12px',
+                  padding: '16px',
+                  borderBottom: '1px solid #e2e8f0',
+                  alignItems: 'center',
+                  minWidth: '1200px'
+                }}
+              >
+                <div>
+                  {team.crest ? (
+                    <img
+                      src={team.crest}
+                      alt={`${team.name} crest`}
                       style={{
-                        padding: '4px 8px',
-                        fontSize: '12px',
-                        border: '1px solid #d1d5db',
-                        borderRadius: '4px',
-                        background: 'white',
-                        cursor: 'pointer'
+                        width: '32px',
+                        height: '32px',
+                        objectFit: 'contain',
+                        borderRadius: '4px'
                       }}
-                    >
-                      Edit
-                    </button>
-                  </div>
+                    />
+                  ) : (
+                    <div style={{
+                      width: '32px',
+                      height: '32px',
+                      background: '#f3f4f6',
+                      borderRadius: '4px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '12px',
+                      color: '#6b7280'
+                    }}>
+                      ?
+                    </div>
+                  )}
                 </div>
-              );
-            })
+                <div style={{ fontWeight: '600', fontSize: '14px' }}>{team.name}</div>
+                <div style={{ fontSize: '13px', color: team.short_name ? '#1f2937' : '#9ca3af' }}>
+                  {team.short_name || 'None'}
+                </div>
+                <div style={{ fontSize: '12px', color: '#6b7280', fontFamily: 'monospace' }}>
+                  {team.slug}
+                </div>
+                <div style={{ fontSize: '12px', color: team.club_colors ? '#1f2937' : '#9ca3af' }}>
+                  {team.club_colors ? (
+                    <span style={{
+                      background: '#f0fdf4',
+                      color: '#166534',
+                      padding: '2px 6px',
+                      borderRadius: '4px'
+                    }}>
+                      {team.club_colors.length > 20 ? team.club_colors.substring(0, 20) + '...' : team.club_colors}
+                    </span>
+                  ) : 'None'}
+                </div>
+                <div style={{ fontSize: '12px' }}>
+                  {team.website ? (
+                    <a
+                      href={team.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: '#2563eb', textDecoration: 'none' }}
+                    >
+                      {team.website.replace(/^https?:\/\//, '').split('/')[0]}
+                    </a>
+                  ) : (
+                    <span style={{ color: '#9ca3af' }}>None</span>
+                  )}
+                </div>
+                <div style={{ fontSize: '12px', color: team.venue ? '#1f2937' : '#9ca3af' }}>
+                  {team.venue || 'None'}
+                </div>
+                <div style={{ fontSize: '12px', color: team.city ? '#1f2937' : '#9ca3af' }}>
+                  {team.city || 'None'}
+                </div>
+                <div>
+                  <button
+                    style={{
+                      padding: '4px 8px',
+                      fontSize: '12px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '4px',
+                      background: 'white',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Edit
+                  </button>
+                </div>
+              </div>
+            ))
           )}
         </div>
+      </div>
+
+      {/* Data Enrichment Info */}
+      <div style={{ marginTop: '24px' }}>
+        <div style={{
+          background: '#f0f9ff',
+          border: '1px solid #0ea5e9',
+          borderRadius: '8px',
+          padding: '16px'
+        }}>
+          <h3 style={{ fontSize: '16px', fontWeight: '600', margin: '0 0 8px 0' }}>
+            💡 Need more team data?
+          </h3>
+          <p style={{ fontSize: '14px', color: '#0f172a', margin: '0 0 8px 0' }}>
+            Use the team backfill script to enrich missing data from Football-Data.org:
+          </p>
+          <code style={{
+            background: '#1e293b',
+            color: '#e2e8f0',
+            padding: '4px 8px',
+            borderRadius: '4px',
+            fontSize: '13px',
+            fontFamily: 'monospace'
+          }}>
+            npm run teams:backfill:dry
+          </code>
+        </div>
+      </div>
     </AdminLayout>
   );
 };

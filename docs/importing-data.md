@@ -49,6 +49,7 @@ Use the generalized importer with CLI flags.
 - Championship (comp-id `2016`, internal-id `7` suggested):
   - Full: `node scripts/import-fa-cup.js --type=LEAGUE --comp-id=2016 --internal-id=7 --name=Championship --slug=championship --short-name=ELC --skip-competition`
 
+
 Notes:
 - Use `--skip-competition` while the `competitions` REST route is not available.
 - If Football-Data returns 403 for a comp-id, that competition is not included in the current plan.
@@ -63,6 +64,12 @@ Check counts and a small sample via REST:
 Outputs include:
 - Teams count and 3 sample rows
 - Fixtures count and 3 sample rows
+
+## Recommended Workflow
+
+1. **Before each new season import**, always run the dry-run first:
+   ```bash
+   npm run teams:backfill:dry
 
 ## Future Improvements (Optional)
 

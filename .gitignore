@@ -30,3 +30,38 @@ node_modules 2/
 # Local configuration (never commit secrets)
 config/.env
 .env.admin
+
+# macOS file system duplicates and temporary files
+*" 2".*
+*" copy".*
+*" Copy".*
+*.orig
+*.bak
+*~
+.#*
+
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+/tmp/
+*.tmp
+*.temp
+
+# Screenshots and other accidental files
+Screenshot*.png
+Screenshot*.jpg
+Screenshot*.jpeg
