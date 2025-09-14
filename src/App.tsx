@@ -23,7 +23,10 @@ setTimeout(loadNonCriticalCSS, 100);
 // Lazy load non-critical pages
 const ClubPage = React.lazy(() => import('./pages/ClubPage'));
 const AboutPage = React.lazy(() => import('./pages/AboutPage'));
-const AdminPage = React.lazy(() => import('./pages/AdminPage'));
+const AdminDashboardPage = React.lazy(() => import('./pages/admin/AdminDashboardPage'));
+const AdminTeamsPage = React.lazy(() => import('./pages/admin/AdminTeamsPage'));
+const AdminMatchesPage = React.lazy(() => import('./pages/admin/AdminMatchesPage'));
+const AdminCompetitionsPage = React.lazy(() => import('./pages/admin/AdminCompetitionsPage'));
 const ClubsPage = React.lazy(() => import('./pages/ClubsPage'));
 const FixturesPage = React.lazy(() => import('./pages/FixturesPage'));
 const NotFoundPage = React.lazy(() => import('./pages/NotFoundPage'));
@@ -78,7 +81,11 @@ function App() {
               <Route path="/clubs" element={<ClubsPage />} />
               <Route path="/clubs/:slug" element={<ClubPage />} />
               <Route path="/providers/:slug" element={<ProviderPage />} />
-              <Route path="/admin" element={<AdminPage />} />
+              {/* Admin routes */}
+              <Route path="/admin" element={<AdminDashboardPage />} />
+              <Route path="/admin/teams" element={<AdminTeamsPage />} />
+              <Route path="/admin/matches" element={<AdminMatchesPage />} />
+              <Route path="/admin/competitions" element={<AdminCompetitionsPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/legal/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/legal/cookie-policy" element={<CookiePolicy />} />
