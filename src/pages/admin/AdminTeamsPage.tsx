@@ -126,8 +126,26 @@ const AdminTeamsPage: React.FC = () => {
     }).length;
 
     const withCrests = teams.filter(team => team.crest).length;
+    const withShortNames = teams.filter(team => team.short_name).length;
+    const withColors = teams.filter(team => team.club_colors).length;
+    const withWebsites = teams.filter(team => team.website).length;
+    const withVenues = teams.filter(team => team.venue).length;
+    const withCities = teams.filter(team => team.city).length;
+    const completeData = teams.filter(team =>
+      team.crest && team.short_name && team.club_colors && team.website && team.venue
+    ).length;
 
-    return { total, eplCount, withCrests };
+    return {
+      total,
+      eplCount,
+      withCrests,
+      withShortNames,
+      withColors,
+      withWebsites,
+      withVenues,
+      withCities,
+      completeData
+    };
   };
 
   const handleAuthenticated = () => {
@@ -162,7 +180,7 @@ const AdminTeamsPage: React.FC = () => {
         {/* Stats Cards */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
           gap: '16px',
           marginBottom: '24px'
         }}>
@@ -182,7 +200,7 @@ const AdminTeamsPage: React.FC = () => {
             borderRadius: '8px',
             padding: '16px'
           }}>
-            <div style={{ fontSize: '24px', fontWeight: '700', color: '#1f2937' }}>{stats.eplCount}/20</div>
+            <div style={{ fontSize: '24px', fontWeight: '700', color: stats.eplCount === 20 ? '#16a34a' : '#dc2626' }}>{stats.eplCount}/20</div>
             <div style={{ fontSize: '14px', color: '#6b7280' }}>EPL Teams</div>
           </div>
 
@@ -192,8 +210,38 @@ const AdminTeamsPage: React.FC = () => {
             borderRadius: '8px',
             padding: '16px'
           }}>
-            <div style={{ fontSize: '24px', fontWeight: '700', color: '#1f2937' }}>{stats.withCrests}</div>
+            <div style={{ fontSize: '24px', fontWeight: '700', color: '#1f2937' }}>{Math.round((stats.withCrests / stats.total) * 100)}%</div>
             <div style={{ fontSize: '14px', color: '#6b7280' }}>With Crests</div>
+          </div>
+
+          <div style={{
+            background: 'white',
+            border: '1px solid #e2e8f0',
+            borderRadius: '8px',
+            padding: '16px'
+          }}>
+            <div style={{ fontSize: '24px', fontWeight: '700', color: '#1f2937' }}>{Math.round((stats.withColors / stats.total) * 100)}%</div>
+            <div style={{ fontSize: '14px', color: '#6b7280' }}>With Colors</div>
+          </div>
+
+          <div style={{
+            background: 'white',
+            border: '1px solid #e2e8f0',
+            borderRadius: '8px',
+            padding: '16px'
+          }}>
+            <div style={{ fontSize: '24px', fontWeight: '700', color: '#1f2937' }}>{Math.round((stats.withVenues / stats.total) * 100)}%</div>
+            <div style={{ fontSize: '14px', color: '#6b7280' }}>With Venues</div>
+          </div>
+
+          <div style={{
+            background: 'white',
+            border: '1px solid #e2e8f0',
+            borderRadius: '8px',
+            padding: '16px'
+          }}>
+            <div style={{ fontSize: '24px', fontWeight: '700', color: '#1f2937' }}>{Math.round((stats.completeData / stats.total) * 100)}%</div>
+            <div style={{ fontSize: '14px', color: '#6b7280' }}>Complete Data</div>
           </div>
         </div>
 
@@ -258,106 +306,176 @@ const AdminTeamsPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Teams List */}
+        {/* Teams List - Full Width */}
         <div style={{
           background: 'white',
           border: '1px solid #e2e8f0',
           borderRadius: '8px',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          width: '100%'
         }}>
           <div style={{
             display: 'grid',
-            gridTemplateColumns: '60px 1fr 120px 120px 100px',
-            gap: '16px',
+            gridTemplateColumns: '60px 2fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 100px',
+            gap: '12px',
             padding: '16px',
             background: '#f8fafc',
             fontWeight: '600',
             fontSize: '14px',
             color: '#374151',
-            borderBottom: '1px solid #e2e8f0'
+            borderBottom: '1px solid #e2e8f0',
+            minWidth: '1200px'
           }}>
             <div>Crest</div>
-            <div>Name</div>
+            <div>Team Name</div>
+            <div>Short Name</div>
             <div>Slug</div>
-            <div>ID</div>
+            <div>Colors</div>
+            <div>Website</div>
+            <div>Venue</div>
+            <div>Home Venue</div>
+            <div>City</div>
             <div>Actions</div>
           </div>
 
-          {filteredTeams.length === 0 ? (
-            <div style={{
-              padding: '32px',
-              textAlign: 'center',
-              color: '#6b7280'
-            }}>
-              No teams found matching your filters.
-            </div>
-          ) : (
-            filteredTeams.map((team) => (
-              <div
-                key={team.id}
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '60px 1fr 120px 120px 100px',
-                  gap: '16px',
-                  padding: '16px',
-                  borderBottom: '1px solid #e2e8f0',
-                  alignItems: 'center'
-                }}
-              >
-                <div>
-                  {team.crest ? (
-                    <img
-                      src={team.crest}
-                      alt={`${team.name} crest`}
-                      style={{
+          <div style={{ overflowX: 'auto' }}>
+            {filteredTeams.length === 0 ? (
+              <div style={{
+                padding: '32px',
+                textAlign: 'center',
+                color: '#6b7280'
+              }}>
+                No teams found matching your filters.
+              </div>
+            ) : (
+              filteredTeams.map((team) => (
+                <div
+                  key={team.id}
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '60px 2fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 100px',
+                    gap: '12px',
+                    padding: '16px',
+                    borderBottom: '1px solid #e2e8f0',
+                    alignItems: 'center',
+                    minWidth: '1200px'
+                  }}
+                >
+                  <div>
+                    {team.crest ? (
+                      <img
+                        src={team.crest}
+                        alt={`${team.name} crest`}
+                        style={{
+                          width: '32px',
+                          height: '32px',
+                          objectFit: 'contain',
+                          borderRadius: '4px'
+                        }}
+                      />
+                    ) : (
+                      <div style={{
                         width: '32px',
                         height: '32px',
-                        objectFit: 'contain',
-                        borderRadius: '4px'
-                      }}
-                    />
-                  ) : (
-                    <div style={{
-                      width: '32px',
-                      height: '32px',
-                      background: '#f3f4f6',
-                      borderRadius: '4px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '12px',
-                      color: '#6b7280'
-                    }}>
-                      ?
-                    </div>
-                  )}
-                </div>
-                <div>
+                        background: '#f3f4f6',
+                        borderRadius: '4px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '12px',
+                        color: '#6b7280'
+                      }}>
+                        ?
+                      </div>
+                    )}
+                  </div>
                   <div style={{ fontWeight: '600', fontSize: '14px' }}>{team.name}</div>
+                  <div style={{ fontSize: '13px', color: team.short_name ? '#1f2937' : '#9ca3af' }}>
+                    {team.short_name || 'None'}
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#6b7280', fontFamily: 'monospace' }}>
+                    {team.slug}
+                  </div>
+                  <div style={{ fontSize: '12px', color: team.club_colors ? '#1f2937' : '#9ca3af' }}>
+                    {team.club_colors ? (
+                      <span style={{
+                        background: '#f0fdf4',
+                        color: '#166534',
+                        padding: '2px 6px',
+                        borderRadius: '4px'
+                      }}>
+                        {team.club_colors.length > 20 ? team.club_colors.substring(0, 20) + '...' : team.club_colors}
+                      </span>
+                    ) : 'None'}
+                  </div>
+                  <div style={{ fontSize: '12px' }}>
+                    {team.website ? (
+                      <a
+                        href={team.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: '#2563eb', textDecoration: 'none' }}
+                      >
+                        {team.website.replace(/^https?:\/\//, '').split('/')[0]}
+                      </a>
+                    ) : (
+                      <span style={{ color: '#9ca3af' }}>None</span>
+                    )}
+                  </div>
+                  <div style={{ fontSize: '12px', color: team.venue ? '#1f2937' : '#9ca3af' }}>
+                    {team.venue || 'None'}
+                  </div>
+                  <div style={{ fontSize: '12px', color: team.home_venue ? '#1f2937' : '#9ca3af' }}>
+                    {team.home_venue || 'None'}
+                  </div>
+                  <div style={{ fontSize: '12px', color: team.city ? '#1f2937' : '#9ca3af' }}>
+                    {team.city || 'None'}
+                  </div>
+                  <div>
+                    <button
+                      style={{
+                        padding: '4px 8px',
+                        fontSize: '12px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '4px',
+                        background: 'white',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Edit
+                    </button>
+                  </div>
                 </div>
-                <div style={{ fontSize: '12px', color: '#6b7280', fontFamily: 'monospace' }}>
-                  {team.slug}
-                </div>
-                <div style={{ fontSize: '12px', color: '#6b7280', fontFamily: 'monospace' }}>
-                  {team.id}
-                </div>
-                <div>
-                  <button
-                    style={{
-                      padding: '4px 8px',
-                      fontSize: '12px',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '4px',
-                      background: 'white',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Edit
-                  </button>
-                </div>
-              </div>
-            ))
-          )}
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Data Enrichment Info */}
+        <div style={{ marginTop: '24px' }}>
+          <div style={{
+            background: '#f0f9ff',
+            border: '1px solid #0ea5e9',
+            borderRadius: '8px',
+            padding: '16px'
+          }}>
+            <h3 style={{ fontSize: '16px', fontWeight: '600', margin: '0 0 8px 0' }}>
+              💡 Need more team data?
+            </h3>
+            <p style={{ fontSize: '14px', color: '#0f172a', margin: '0 0 8px 0' }}>
+              Use the team backfill script to enrich missing data from Football-Data.org:
+            </p>
+            <code style={{
+              background: '#1e293b',
+              color: '#e2e8f0',
+              padding: '4px 8px',
+              borderRadius: '4px',
+              fontSize: '13px',
+              fontFamily: 'monospace'
+            }}>
+              npm run teams:backfill:dry
+            </code>
+          </div>
         </div>
     </AdminLayout>
   );
