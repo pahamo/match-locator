@@ -8,6 +8,7 @@ This directory contains all technical documentation for the Match Locator projec
 
 #### **Essential Guides**
 - **[Development Guide](development.md)** - Complete setup, architecture, and development workflow
+- **[Environment Variables](ENVIRONMENT_VARIABLES.md)** - 🚨 **Production vs local environment setup**
 - **[Admin Features](admin-features.md)** - Admin interface functionality and usage
 - **[SEO Guide](seo.md)** - SEO implementation and monitoring
 - **[Agent Handoff](agents.md)** - AI coding agent reference and conventions
@@ -21,11 +22,13 @@ This directory contains all technical documentation for the Match Locator projec
 
 ### 🚀 For New Developers
 1. Start with **[Development Guide](development.md)**
-2. Review **[Migration Guide](migration.md)** for project context
-3. Check **[Admin Features](admin-features.md)** for admin interface
+2. **CRITICAL:** Read **[Environment Variables](ENVIRONMENT_VARIABLES.md)** for setup
+3. Review **[Migration Guide](migration.md)** for project context
+4. Check **[Admin Features](admin-features.md)** for admin interface
 
 ### 🔧 For AI Agents
 - **[Agent Handoff](agents.md)** - Specific guidelines for AI development
+- **[Environment Variables](ENVIRONMENT_VARIABLES.md)** - 🚨 **MUST READ: Production vs local setup**
 - **[Development Guide](development.md)** - Technical architecture reference
 
 ### 🔍 For SEO/Marketing
