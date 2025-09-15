@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef } from 'react';
+import { ContentCard, TextContainer } from '../../design-system';
 
 interface TocItem { id: string; label: string }
 
@@ -40,23 +41,28 @@ const LegalLayout: React.FC<LegalLayoutProps> = ({
 
   return (
     <div className="legal-layout">
-      <main ref={mainRef} tabIndex={-1} className="wrap" aria-labelledby="legal-title" style={{ paddingTop: 24, paddingBottom: 24 }}>
-        <header style={{ marginBottom: 16 }}>
-          <h1 id="legal-title" style={{ margin: 0 }}>{title}</h1>
-          <p className="muted" style={{ margin: '8px 0 0' }}>Last updated: {lastUpdated || today}</p>
-        </header>
+      <main ref={mainRef} tabIndex={-1} className="wrap" aria-labelledby="legal-title" style={{ paddingTop: 'var(--layout-page-top-margin)' }}>
+        <ContentCard>
+          <TextContainer>
+            <header>
+              <h1 id="legal-title">{title}</h1>
+              <p className="muted">Last updated: {lastUpdated || today}</p>
+            </header>
 
-        {toc.length > 0 && (
-          <nav aria-label="Table of contents" style={{ margin: '12px 0 20px' }}>
-            <ul style={{ margin: 0, paddingLeft: 16 }}>
-              {toc.map(item => (
-                <li key={item.id}><a href={`#${item.id}`} style={{ color: '#6366f1' }}>{item.label}</a></li>
-              ))}
-            </ul>
-          </nav>
-        )}
+            {toc.length > 0 && (
+              <nav aria-label="Table of contents">
+                <h2>Contents</h2>
+                <ul>
+                  {toc.map(item => (
+                    <li key={item.id}><a href={`#${item.id}`}>{item.label}</a></li>
+                  ))}
+                </ul>
+              </nav>
+            )}
 
-        <article>{children}</article>
+            <article>{children}</article>
+          </TextContainer>
+        </ContentCard>
       </main>
     </div>
   );

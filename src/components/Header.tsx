@@ -25,7 +25,7 @@ const Header: React.FC<HeaderProps> = React.memo(({
     name: comp.name,
     slug: comp.slug,
     icon: getCompetitionIcon(comp.slug),
-    logo: getCompetitionLogo(comp.slug)
+    logo: getCompetitionLogo(comp.slug) || undefined
   }));
 
   return (

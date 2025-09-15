@@ -155,6 +155,19 @@ export const tokens = {
 // CSS Custom Properties string for injection
 export const cssVariables = `
 :root {
+  /* Card and UI colors */
+  --color-card: white;
+  --color-border: ${tokens.colors.gray[200]};
+  --color-text: ${tokens.colors.gray[700]};
+  --color-heading: ${tokens.colors.gray[900]};
+  --color-muted: ${tokens.colors.gray[500]};
+  --color-accent: ${tokens.colors.primary[600]};
+  --color-accent-hover: ${tokens.colors.primary[700]};
+
+  /* Design system tokens */
+  --border-radius: ${tokens.borderRadius.lg};
+  --shadow: ${tokens.boxShadow.sm};
+
   /* Colors */
   --color-primary-50: ${tokens.colors.primary[50]};
   --color-primary-100: ${tokens.colors.primary[100]};

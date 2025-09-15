@@ -185,7 +185,7 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
     let query = supabase
       .from('fixtures_with_teams')
       .select(`
-        id,matchday,utc_kickoff,venue,status,
+        id,matchday,utc_kickoff,venue,status,competition_id,
         home_team_id,home_team,home_slug,home_crest,
         away_team_id,away_team,away_slug,away_crest
       `)
@@ -311,8 +311,10 @@ export const BROADCASTERS = [
 
 export async function getAdminFixtures(competitionId: number = 1): Promise<AdminFixture[]> {
   try {
-    // Get fixtures from current season
-    const currentSeasonStart = '2024-08-01T00:00:00.000Z';
+    // Get fixtures from current season (dynamic calculation matching getSimpleFixtures)
+    const now = new Date();
+    const seasonYear = now.getUTCMonth() >= 6 ? now.getUTCFullYear() : now.getUTCFullYear() - 1;
+    const currentSeasonStart = `${seasonYear}-08-01T00:00:00.000Z`;
 
     const { data: rows, error } = await supabase
       .from('fixtures_with_teams')
