@@ -201,11 +201,8 @@ const CompetitionPage: React.FC = () => {
         {/* Main Content Grid */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '1fr 300px',
-          gap: '2rem',
-          '@media (max-width: 768px)': {
-            gridTemplateColumns: '1fr'
-          }
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gap: '2rem'
         }}>
           {/* Fixtures Section */}
           <div>
