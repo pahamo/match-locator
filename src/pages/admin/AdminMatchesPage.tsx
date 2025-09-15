@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { getAdminFixtures, saveBroadcast, type AdminFixture } from '../../services/supabase';
+import { getAdminFixtures, saveBroadcast, type AdminFixture, BROADCASTERS } from '../../services/supabase';
 import { getSimpleCompetitions } from '../../services/supabase-simple';
 import type { Competition } from '../../types';
 import AdminLayout from '../../components/AdminLayout';
@@ -20,6 +20,8 @@ const AdminMatchesPage: React.FC = () => {
   const [competitionFilter, setCompetitionFilter] = useState<CompetitionFilter>('');
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [editingFixture, setEditingFixture] = useState<number | null>(null);
+  const [newBroadcast, setNewBroadcast] = useState<string>('');
 
   useEffect(() => {
     const checkAuth = () => {
@@ -62,6 +64,21 @@ const AdminMatchesPage: React.FC = () => {
     }
   };
 
+  // Helper to calculate actual fixture status
+  const getActualStatus = (fixture: AdminFixture) => {
+    const now = new Date();
+    const kickoff = new Date(fixture.kickoff_utc);
+    const hoursAfterKickoff = (now.getTime() - kickoff.getTime()) / (1000 * 60 * 60);
+
+    if (hoursAfterKickoff > 2) {
+      return 'finished'; // Games are typically 90-120 minutes
+    } else if (hoursAfterKickoff > -0.25 && hoursAfterKickoff <= 2) {
+      return 'live'; // From 15 minutes before to 2 hours after kickoff
+    } else {
+      return 'scheduled';
+    }
+  };
+
   const filterFixtures = () => {
     let filtered = [...fixtures];
 
@@ -75,15 +92,15 @@ const AdminMatchesPage: React.FC = () => {
 
     // Status filter
     if (statusFilter === 'scheduled') {
-      filtered = filtered.filter(fixture => fixture.status === 'scheduled');
+      filtered = filtered.filter(fixture => getActualStatus(fixture) === 'scheduled');
     } else if (statusFilter === 'live') {
-      filtered = filtered.filter(fixture => fixture.status === 'live');
+      filtered = filtered.filter(fixture => getActualStatus(fixture) === 'live');
     } else if (statusFilter === 'finished') {
-      filtered = filtered.filter(fixture => fixture.status === 'finished');
+      filtered = filtered.filter(fixture => getActualStatus(fixture) === 'finished');
     } else if (statusFilter === 'with_broadcast') {
-      filtered = filtered.filter(fixture => fixture.providers_uk && fixture.providers_uk.length > 0);
+      filtered = filtered.filter(fixture => fixture.broadcast && fixture.broadcast.provider_id !== 999);
     } else if (statusFilter === 'no_broadcast') {
-      filtered = filtered.filter(fixture => !fixture.providers_uk || fixture.providers_uk.length === 0);
+      filtered = filtered.filter(fixture => !fixture.broadcast || fixture.broadcast.provider_id === 999);
     }
 
     setFilteredFixtures(filtered);
@@ -92,11 +109,11 @@ const AdminMatchesPage: React.FC = () => {
   // Helper function for stats - must be defined before useMemo
   const getFixtureStats = () => {
     const total = fixtures.length;
-    const scheduled = fixtures.filter(f => f.status === 'scheduled').length;
-    const live = fixtures.filter(f => f.status === 'live').length;
-    const finished = fixtures.filter(f => f.status === 'finished').length;
-    const withBroadcast = fixtures.filter(f => f.providers_uk && f.providers_uk.length > 0).length;
-    const noBroadcast = fixtures.filter(f => !f.providers_uk || f.providers_uk.length === 0).length;
+    const scheduled = fixtures.filter(f => getActualStatus(f) === 'scheduled').length;
+    const live = fixtures.filter(f => getActualStatus(f) === 'live').length;
+    const finished = fixtures.filter(f => getActualStatus(f) === 'finished').length;
+    const withBroadcast = fixtures.filter(f => f.broadcast && f.broadcast.provider_id !== 999).length;
+    const noBroadcast = fixtures.filter(f => !f.broadcast || f.broadcast.provider_id === 999).length;
 
     return {
       total,
@@ -113,6 +130,33 @@ const AdminMatchesPage: React.FC = () => {
 
   const handleAuthenticated = () => {
     setIsAuthenticated(true);
+  };
+
+  const handleEditBroadcast = (fixtureId: number, currentProviderId?: number) => {
+    setEditingFixture(fixtureId);
+    setNewBroadcast(currentProviderId ? currentProviderId.toString() : '');
+  };
+
+  const handleCancelEdit = () => {
+    setEditingFixture(null);
+    setNewBroadcast('');
+  };
+
+  const handleSaveBroadcast = async (fixtureId: number) => {
+    try {
+      const providerId = newBroadcast === '' ? null : parseInt(newBroadcast);
+      await saveBroadcast(fixtureId, providerId);
+
+      // Refresh data
+      await loadData();
+
+      // Clear editing state
+      setEditingFixture(null);
+      setNewBroadcast('');
+    } catch (err) {
+      console.error('Failed to save broadcast:', err);
+      alert('Failed to save broadcaster. Please try again.');
+    }
   };
 
   if (!isAuthenticated) {
@@ -344,39 +388,91 @@ const AdminMatchesPage: React.FC = () => {
                     fontSize: '11px',
                     fontWeight: '600',
                     textTransform: 'uppercase',
-                    background: fixture.status === 'live' ? '#fee2e2' : fixture.status === 'finished' ? '#f0fdf4' : '#fef3c7',
-                    color: fixture.status === 'live' ? '#dc2626' : fixture.status === 'finished' ? '#16a34a' : '#d97706'
+                    background: getActualStatus(fixture) === 'live' ? '#fee2e2' : getActualStatus(fixture) === 'finished' ? '#f0fdf4' : '#fef3c7',
+                    color: getActualStatus(fixture) === 'live' ? '#dc2626' : getActualStatus(fixture) === 'finished' ? '#16a34a' : '#d97706'
                   }}>
-                    {fixture.status}
+                    {getActualStatus(fixture)}
                   </span>
                 </div>
                 <div style={{ fontSize: '12px' }}>
-                  {fixture.providers_uk && fixture.providers_uk.length > 0 ? (
+                  {fixture.broadcast && fixture.broadcast.provider_id !== 999 ? (
                     <span style={{
                       background: '#f0fdf4',
                       color: '#166534',
                       padding: '2px 6px',
                       borderRadius: '4px'
                     }}>
-                      {fixture.providers_uk.join(', ')}
+                      {fixture.broadcast.provider_display_name || `Provider ${fixture.broadcast.provider_id}`}
                     </span>
                   ) : (
                     <span style={{ color: '#9ca3af' }}>None</span>
                   )}
                 </div>
                 <div>
-                  <button
-                    style={{
-                      padding: '4px 8px',
-                      fontSize: '12px',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '4px',
-                      background: 'white',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Edit
-                  </button>
+                  {editingFixture === fixture.id ? (
+                    <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+                      <select
+                        value={newBroadcast}
+                        onChange={(e) => setNewBroadcast(e.target.value)}
+                        style={{
+                          padding: '2px 4px',
+                          fontSize: '11px',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '4px',
+                          maxWidth: '80px'
+                        }}
+                      >
+                        <option value="">None</option>
+                        {BROADCASTERS.filter(b => b.id !== 999).map(broadcaster => (
+                          <option key={broadcaster.id} value={broadcaster.id}>
+                            {broadcaster.name}
+                          </option>
+                        ))}
+                      </select>
+                      <button
+                        onClick={() => handleSaveBroadcast(fixture.id)}
+                        style={{
+                          padding: '2px 6px',
+                          fontSize: '11px',
+                          border: '1px solid #16a34a',
+                          borderRadius: '4px',
+                          background: '#16a34a',
+                          color: 'white',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Save
+                      </button>
+                      <button
+                        onClick={() => handleCancelEdit()}
+                        style={{
+                          padding: '2px 6px',
+                          fontSize: '11px',
+                          border: '1px solid #dc2626',
+                          borderRadius: '4px',
+                          background: '#dc2626',
+                          color: 'white',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => handleEditBroadcast(fixture.id, fixture.broadcast?.provider_id)}
+                      style={{
+                        padding: '4px 8px',
+                        fontSize: '12px',
+                        border: '1px solid #d1d5db',
+                        borderRadius: '4px',
+                        background: 'white',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Edit
+                    </button>
+                  )}
                 </div>
               </div>
             ))

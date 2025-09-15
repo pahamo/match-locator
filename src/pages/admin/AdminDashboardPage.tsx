@@ -62,11 +62,8 @@ const AdminDashboardPage: React.FC = () => {
         getSimpleCompetitions(true) // Include hidden competitions
       ]);
 
-      // Calculate team stats
-      const eplTeams = ['Arsenal', 'Aston Villa', 'Bournemouth', 'Brentford', 'Brighton', 'Chelsea', 'Crystal Palace', 'Everton', 'Fulham', 'Ipswich', 'Leicester', 'Liverpool', 'Manchester City', 'Manchester United', 'Newcastle', 'Nottingham Forest', 'Southampton', 'Tottenham', 'West Ham', 'Wolverhampton'];
-      const eplCount = teams.filter(team =>
-        eplTeams.some(eplTeam => team.name.toLowerCase().includes(eplTeam.toLowerCase()))
-      ).length;
+      // Calculate team stats - use competition_id for accuracy
+      const eplCount = teams.filter(team => team.competition_id === 1).length;
 
       const teamStats = {
         total: teams.length,
