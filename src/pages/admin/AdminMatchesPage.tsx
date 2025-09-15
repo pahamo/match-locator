@@ -485,70 +485,70 @@ const AdminMatchesPage: React.FC = () => {
                     )}
                   </td>
                   <td style={{ padding: '16px 12px' }}>
-                  {editingFixture === fixture.id ? (
-                    <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                      <select
-                        value={newBroadcast}
-                        onChange={(e) => setNewBroadcast(e.target.value)}
+                    {editingFixture === fixture.id ? (
+                      <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+                        <select
+                          value={newBroadcast}
+                          onChange={(e) => setNewBroadcast(e.target.value)}
+                          style={{
+                            padding: '2px 4px',
+                            fontSize: '11px',
+                            border: '1px solid #d1d5db',
+                            borderRadius: '4px',
+                            maxWidth: '80px'
+                          }}
+                        >
+                          <option value="">None</option>
+                          {BROADCASTERS.filter(b => b.id !== 999).map(broadcaster => (
+                            <option key={broadcaster.id} value={broadcaster.id}>
+                              {broadcaster.name}
+                            </option>
+                          ))}
+                        </select>
+                        <button
+                          onClick={() => handleSaveBroadcast(fixture.id)}
+                          style={{
+                            padding: '2px 6px',
+                            fontSize: '11px',
+                            border: '1px solid #16a34a',
+                            borderRadius: '4px',
+                            background: '#16a34a',
+                            color: 'white',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          Save
+                        </button>
+                        <button
+                          onClick={() => handleCancelEdit()}
+                          style={{
+                            padding: '2px 6px',
+                            fontSize: '11px',
+                            border: '1px solid #dc2626',
+                            borderRadius: '4px',
+                            background: '#dc2626',
+                            color: 'white',
+                            cursor: 'pointer'
+                          }}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => handleEditBroadcast(fixture.id, fixture.broadcast?.provider_id)}
                         style={{
-                          padding: '2px 4px',
-                          fontSize: '11px',
+                          padding: '4px 8px',
+                          fontSize: '12px',
                           border: '1px solid #d1d5db',
                           borderRadius: '4px',
-                          maxWidth: '80px'
-                        }}
-                      >
-                        <option value="">None</option>
-                        {BROADCASTERS.filter(b => b.id !== 999).map(broadcaster => (
-                          <option key={broadcaster.id} value={broadcaster.id}>
-                            {broadcaster.name}
-                          </option>
-                        ))}
-                      </select>
-                      <button
-                        onClick={() => handleSaveBroadcast(fixture.id)}
-                        style={{
-                          padding: '2px 6px',
-                          fontSize: '11px',
-                          border: '1px solid #16a34a',
-                          borderRadius: '4px',
-                          background: '#16a34a',
-                          color: 'white',
+                          background: 'white',
                           cursor: 'pointer'
                         }}
                       >
-                        Save
+                        Edit
                       </button>
-                      <button
-                        onClick={() => handleCancelEdit()}
-                        style={{
-                          padding: '2px 6px',
-                          fontSize: '11px',
-                          border: '1px solid #dc2626',
-                          borderRadius: '4px',
-                          background: '#dc2626',
-                          color: 'white',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  ) : (
-                    <button
-                      onClick={() => handleEditBroadcast(fixture.id, fixture.broadcast?.provider_id)}
-                      style={{
-                        padding: '4px 8px',
-                        fontSize: '12px',
-                        border: '1px solid #d1d5db',
-                        borderRadius: '4px',
-                        background: 'white',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      Edit
-                    </button>
-                  )}
+                    )}
                   </td>
                 </tr>
               ))
