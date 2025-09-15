@@ -17,7 +17,7 @@ const AdminMatchesPage: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // Filters
-  const [competitionFilter, setCompetitionFilter] = useState<CompetitionFilter>('');
+  const [competitionFilter, setCompetitionFilter] = useState<CompetitionFilter>('epl'); // Default to EPL
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('scheduled'); // Default to scheduled (future games)
   const [searchTerm, setSearchTerm] = useState('');
   const [editingFixture, setEditingFixture] = useState<number | null>(null);

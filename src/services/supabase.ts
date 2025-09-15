@@ -17,6 +17,7 @@ interface FixtureRow {
   utc_kickoff: string;
   venue?: string | null;
   status?: string;
+  competition_id?: number;
   home_team_id: number;
   home_team: string;
   home_slug: string;
@@ -63,16 +64,17 @@ function mapFixtureRow(row: FixtureRow, providersByFixture: Record<number, Provi
   return {
     id: row.id,
     sport: 'football',
-    competition: 'premier-league',
+    competition: row.competition_id === 1 ? 'premier-league' : row.competition_id === 2 ? 'champions-league' : 'unknown',
+    competition_id: row.competition_id,
     matchweek: mw,
     kickoff_utc: kickoffIso,
     venue: row.venue ?? null,
     home,
     away,
     providers_uk: providers,
-    blackout: { 
-      is_blackout: isBlackout, 
-      reason: isBlackout ? 'No UK broadcaster announced' : null 
+    blackout: {
+      is_blackout: isBlackout,
+      reason: isBlackout ? 'No UK broadcaster announced' : null
     },
     status: row.status || 'scheduled',
   };
@@ -310,11 +312,11 @@ export async function getAdminFixtures(competitionId: number = 1): Promise<Admin
   try {
     // Get fixtures from current season
     const currentSeasonStart = '2024-08-01T00:00:00.000Z';
-    
+
     const { data: rows, error } = await supabase
       .from('fixtures_with_teams')
       .select(`
-        id,matchday,utc_kickoff,venue,status,
+        id,matchday,utc_kickoff,venue,status,competition_id,
         home_team_id,home_team,home_slug,home_crest,
         away_team_id,away_team,away_slug,away_crest
       `)
