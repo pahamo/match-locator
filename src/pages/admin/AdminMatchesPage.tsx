@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { getAdminFixtures, saveBroadcast, type AdminFixture, BROADCASTERS } from '../../services/supabase';
-import { getSimpleCompetitions } from '../../services/supabase-simple';
+import { getAdminFixtures, type AdminFixture, BROADCASTERS } from '../../services/supabase';
+import { getSimpleCompetitions, saveBroadcaster } from '../../services/supabase-simple';
 import type { Competition } from '../../types';
 import AdminLayout from '../../components/AdminLayout';
 import AdminAuth from '../../components/AdminAuth';
 
 type CompetitionFilter = '' | 'epl' | 'ucl' | 'all';
-type StatusFilter = '' | 'scheduled' | 'live' | 'finished' | 'with_broadcast' | 'no_broadcast';
+type MatchStatusFilter = '' | 'scheduled' | 'live' | 'finished';
+type BroadcastStatusFilter = '' | 'with_broadcast' | 'no_broadcast';
 
 const AdminMatchesPage: React.FC = () => {
   const [fixtures, setFixtures] = useState<AdminFixture[]>([]);
@@ -18,7 +19,8 @@ const AdminMatchesPage: React.FC = () => {
 
   // Filters
   const [competitionFilter, setCompetitionFilter] = useState<CompetitionFilter>('epl'); // Default to EPL
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('scheduled'); // Default to scheduled (future games)
+  const [matchStatusFilter, setMatchStatusFilter] = useState<MatchStatusFilter>('scheduled'); // Default to scheduled (future games)
+  const [broadcastStatusFilter, setBroadcastStatusFilter] = useState<BroadcastStatusFilter>(''); // Default to all
   const [searchTerm, setSearchTerm] = useState('');
   const [editingFixture, setEditingFixture] = useState<number | null>(null);
   const [newBroadcast, setNewBroadcast] = useState<string>('');
@@ -42,7 +44,7 @@ const AdminMatchesPage: React.FC = () => {
 
   useEffect(() => {
     filterFixtures();
-  }, [fixtures, competitionFilter, statusFilter, searchTerm]);
+  }, [fixtures, competitionFilter, matchStatusFilter, broadcastStatusFilter, searchTerm]);
 
   const loadData = async () => {
     try {
@@ -101,16 +103,19 @@ const AdminMatchesPage: React.FC = () => {
       filtered = filtered.filter(fixture => fixture.competition_id === 2);
     }
 
-    // Status filter
-    if (statusFilter === 'scheduled') {
+    // Match status filter (scheduled, live, finished)
+    if (matchStatusFilter === 'scheduled') {
       filtered = filtered.filter(fixture => getActualStatus(fixture) === 'scheduled');
-    } else if (statusFilter === 'live') {
+    } else if (matchStatusFilter === 'live') {
       filtered = filtered.filter(fixture => getActualStatus(fixture) === 'live');
-    } else if (statusFilter === 'finished') {
+    } else if (matchStatusFilter === 'finished') {
       filtered = filtered.filter(fixture => getActualStatus(fixture) === 'finished');
-    } else if (statusFilter === 'with_broadcast') {
+    }
+
+    // Broadcast status filter (with/without broadcast)
+    if (broadcastStatusFilter === 'with_broadcast') {
       filtered = filtered.filter(fixture => fixture.broadcast && fixture.broadcast.provider_id !== 999);
-    } else if (statusFilter === 'no_broadcast') {
+    } else if (broadcastStatusFilter === 'no_broadcast') {
       filtered = filtered.filter(fixture => !fixture.broadcast || fixture.broadcast.provider_id === 999);
     }
 
@@ -143,6 +148,13 @@ const AdminMatchesPage: React.FC = () => {
     setIsAuthenticated(true);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminTokenExpiry');
+    setIsAuthenticated(false);
+    window.location.href = '/admin';
+  };
+
   const handleEditBroadcast = (fixtureId: number, currentProviderId?: number) => {
     setEditingFixture(fixtureId);
     setNewBroadcast(currentProviderId ? currentProviderId.toString() : '');
@@ -156,7 +168,8 @@ const AdminMatchesPage: React.FC = () => {
   const handleSaveBroadcast = async (fixtureId: number) => {
     try {
       const providerId = newBroadcast === '' ? null : parseInt(newBroadcast);
-      await saveBroadcast(fixtureId, providerId);
+      // Use saveBroadcaster from supabase-simple which uses service role key
+      await saveBroadcaster(fixtureId, providerId);
 
       // Refresh data
       await loadData();
@@ -176,7 +189,7 @@ const AdminMatchesPage: React.FC = () => {
 
   if (loading) {
     return (
-      <AdminLayout title="Fixtures Management">
+      <AdminLayout title="Fixtures Management" onLogout={handleLogout}>
         <div>Loading fixtures...</div>
       </AdminLayout>
     );
@@ -184,7 +197,7 @@ const AdminMatchesPage: React.FC = () => {
 
   if (error) {
     return (
-      <AdminLayout title="Fixtures Management">
+      <AdminLayout title="Fixtures Management" onLogout={handleLogout}>
         <div className="error">{error}</div>
         <button onClick={loadData} style={{ marginTop: '16px' }}>Retry</button>
       </AdminLayout>
@@ -192,7 +205,7 @@ const AdminMatchesPage: React.FC = () => {
   }
 
   return (
-    <AdminLayout title="Fixtures Management">
+    <AdminLayout title="Fixtures Management" onLogout={handleLogout}>
       {/* Stats Cards */}
       <div style={{
         display: 'grid',
@@ -299,8 +312,8 @@ const AdminMatchesPage: React.FC = () => {
         </select>
 
         <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
+          value={matchStatusFilter}
+          onChange={(e) => setMatchStatusFilter(e.target.value as MatchStatusFilter)}
           style={{
             padding: '8px 12px',
             border: '1px solid #d1d5db',
@@ -308,10 +321,23 @@ const AdminMatchesPage: React.FC = () => {
             fontSize: '14px'
           }}
         >
-          <option value="">All Status</option>
+          <option value="">All Match Status</option>
           <option value="scheduled">Scheduled</option>
           <option value="live">Live</option>
           <option value="finished">Finished</option>
+        </select>
+
+        <select
+          value={broadcastStatusFilter}
+          onChange={(e) => setBroadcastStatusFilter(e.target.value as BroadcastStatusFilter)}
+          style={{
+            padding: '8px 12px',
+            border: '1px solid #d1d5db',
+            borderRadius: '6px',
+            fontSize: '14px'
+          }}
+        >
+          <option value="">All Broadcasts</option>
           <option value="with_broadcast">With Broadcast</option>
           <option value="no_broadcast">No Broadcast</option>
         </select>

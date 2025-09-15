@@ -5,9 +5,10 @@ import Header from './Header';
 interface AdminLayoutProps {
   children: React.ReactNode;
   title: string;
+  onLogout?: () => void;
 }
 
-const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
+const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title, onLogout }) => {
   const location = useLocation();
 
   const navItems = [
@@ -79,6 +80,38 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
                     {item.label}
                   </Link>
                 ))}
+
+                {onLogout && (
+                  <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid #e2e8f0' }}>
+                    <button
+                      onClick={onLogout}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '8px 12px',
+                        borderRadius: '6px',
+                        border: 'none',
+                        background: 'transparent',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        color: '#dc2626',
+                        cursor: 'pointer',
+                        width: '100%',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseOver={(e) => {
+                        e.currentTarget.style.background = '#fef2f2';
+                      }}
+                      onMouseOut={(e) => {
+                        e.currentTarget.style.background = 'transparent';
+                      }}
+                    >
+                      <span>🚪</span>
+                      Logout
+                    </button>
+                  </div>
+                )}
                 </div>
               </nav>
             </div>

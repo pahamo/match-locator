@@ -153,13 +153,20 @@ const AdminTeamsPage: React.FC = () => {
     setIsAuthenticated(true);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminTokenExpiry');
+    setIsAuthenticated(false);
+    window.location.href = '/admin';
+  };
+
   if (!isAuthenticated) {
     return <AdminAuth onAuthenticated={handleAuthenticated} />;
   }
 
   if (loading) {
     return (
-      <AdminLayout title="Teams Management">
+      <AdminLayout title="Teams Management" onLogout={handleLogout}>
         <div>Loading teams...</div>
       </AdminLayout>
     );
@@ -167,7 +174,7 @@ const AdminTeamsPage: React.FC = () => {
 
   if (error) {
     return (
-      <AdminLayout title="Teams Management">
+      <AdminLayout title="Teams Management" onLogout={handleLogout}>
         <div className="error">{error}</div>
         <button onClick={loadTeams} style={{ marginTop: '16px' }}>Retry</button>
       </AdminLayout>
@@ -175,7 +182,7 @@ const AdminTeamsPage: React.FC = () => {
   }
 
   return (
-    <AdminLayout title="Teams Management">
+    <AdminLayout title="Teams Management" onLogout={handleLogout}>
         {/* Stats Cards */}
         <div style={{
           display: 'grid',
