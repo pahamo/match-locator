@@ -18,7 +18,7 @@ const AdminMatchesPage: React.FC = () => {
 
   // Filters
   const [competitionFilter, setCompetitionFilter] = useState<CompetitionFilter>('');
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('scheduled'); // Default to scheduled (future games)
   const [searchTerm, setSearchTerm] = useState('');
   const [editingFixture, setEditingFixture] = useState<number | null>(null);
   const [newBroadcast, setNewBroadcast] = useState<string>('');
@@ -300,115 +300,165 @@ const AdminMatchesPage: React.FC = () => {
         background: 'white',
         border: '1px solid #e2e8f0',
         borderRadius: '8px',
-        overflow: 'hidden',
-        width: '100%'
+        overflow: 'auto',
+        width: '100%',
+        maxHeight: '70vh'
       }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '120px 2fr 2fr 120px 80px 150px 120px',
-          gap: '12px',
-          padding: '16px',
-          background: '#f8fafc',
-          fontWeight: '600',
-          fontSize: '14px',
-          color: '#374151',
-          borderBottom: '1px solid #e2e8f0',
-          minWidth: '1000px'
-        }}>
-          <div>Date</div>
-          <div>Home Team</div>
-          <div>Away Team</div>
-          <div>Kickoff</div>
-          <div>Status</div>
-          <div>Broadcast</div>
-          <div>Actions</div>
-        </div>
-
-        <div style={{ overflowX: 'auto' }}>
-          {filteredFixtures.length === 0 ? (
-            <div style={{
-              padding: '32px',
-              textAlign: 'center',
-              color: '#6b7280'
-            }}>
-              No fixtures found matching your filters.
-            </div>
-          ) : (
-            filteredFixtures.map((fixture) => (
-              <div
-                key={fixture.id}
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: '120px 2fr 2fr 120px 80px 150px 120px',
-                  gap: '12px',
-                  padding: '16px',
-                  borderBottom: '1px solid #e2e8f0',
-                  alignItems: 'center',
-                  minWidth: '1000px'
-                }}
-              >
-                <div style={{ fontSize: '12px', color: '#6b7280' }}>
-                  {new Date(fixture.kickoff_utc).toLocaleDateString()}
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  {fixture.home.crest && (
-                    <img
-                      src={fixture.home.crest}
-                      alt={fixture.home.name}
-                      style={{
-                        width: '24px',
-                        height: '24px',
-                        objectFit: 'contain'
-                      }}
-                    />
-                  )}
-                  <span style={{ fontWeight: '600', fontSize: '14px' }}>{fixture.home.name}</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  {fixture.away.crest && (
-                    <img
-                      src={fixture.away.crest}
-                      alt={fixture.away.name}
-                      style={{
-                        width: '24px',
-                        height: '24px',
-                        objectFit: 'contain'
-                      }}
-                    />
-                  )}
-                  <span style={{ fontWeight: '600', fontSize: '14px' }}>{fixture.away.name}</span>
-                </div>
-                <div style={{ fontSize: '12px', color: '#6b7280' }}>
-                  {new Date(fixture.kickoff_utc).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </div>
-                <div>
-                  <span style={{
-                    padding: '2px 8px',
-                    borderRadius: '12px',
-                    fontSize: '11px',
-                    fontWeight: '600',
-                    textTransform: 'uppercase',
-                    background: getActualStatus(fixture) === 'live' ? '#fee2e2' : getActualStatus(fixture) === 'finished' ? '#f0fdf4' : '#fef3c7',
-                    color: getActualStatus(fixture) === 'live' ? '#dc2626' : getActualStatus(fixture) === 'finished' ? '#16a34a' : '#d97706'
-                  }}>
-                    {getActualStatus(fixture)}
-                  </span>
-                </div>
-                <div style={{ fontSize: '12px' }}>
-                  {fixture.broadcast && fixture.broadcast.provider_id !== 999 ? (
+        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '1000px' }}>
+          <thead style={{
+            position: 'sticky',
+            top: 0,
+            background: '#f8fafc',
+            zIndex: 10
+          }}>
+            <tr>
+              <th style={{
+                padding: '16px 12px',
+                textAlign: 'left',
+                fontWeight: '600',
+                fontSize: '14px',
+                color: '#374151',
+                borderBottom: '1px solid #e2e8f0',
+                width: '120px'
+              }}>Date</th>
+              <th style={{
+                padding: '16px 12px',
+                textAlign: 'left',
+                fontWeight: '600',
+                fontSize: '14px',
+                color: '#374151',
+                borderBottom: '1px solid #e2e8f0',
+                width: 'auto'
+              }}>Home Team</th>
+              <th style={{
+                padding: '16px 12px',
+                textAlign: 'left',
+                fontWeight: '600',
+                fontSize: '14px',
+                color: '#374151',
+                borderBottom: '1px solid #e2e8f0',
+                width: 'auto'
+              }}>Away Team</th>
+              <th style={{
+                padding: '16px 12px',
+                textAlign: 'left',
+                fontWeight: '600',
+                fontSize: '14px',
+                color: '#374151',
+                borderBottom: '1px solid #e2e8f0',
+                width: '120px'
+              }}>Kickoff</th>
+              <th style={{
+                padding: '16px 12px',
+                textAlign: 'left',
+                fontWeight: '600',
+                fontSize: '14px',
+                color: '#374151',
+                borderBottom: '1px solid #e2e8f0',
+                width: '80px'
+              }}>Status</th>
+              <th style={{
+                padding: '16px 12px',
+                textAlign: 'left',
+                fontWeight: '600',
+                fontSize: '14px',
+                color: '#374151',
+                borderBottom: '1px solid #e2e8f0',
+                width: '150px'
+              }}>Broadcast</th>
+              <th style={{
+                padding: '16px 12px',
+                textAlign: 'left',
+                fontWeight: '600',
+                fontSize: '14px',
+                color: '#374151',
+                borderBottom: '1px solid #e2e8f0',
+                width: '120px'
+              }}>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredFixtures.length === 0 ? (
+              <tr>
+                <td colSpan={7} style={{
+                  padding: '32px',
+                  textAlign: 'center',
+                  color: '#6b7280'
+                }}>
+                  No fixtures found matching your filters.
+                </td>
+              </tr>
+            ) : (
+              filteredFixtures.map((fixture) => (
+                <tr key={fixture.id} style={{
+                  borderBottom: '1px solid #e2e8f0'
+                }}>
+                  <td style={{ padding: '16px 12px', fontSize: '12px', color: '#6b7280' }}>
+                    {new Date(fixture.kickoff_utc).toLocaleDateString()}
+                  </td>
+                  <td style={{ padding: '16px 12px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      {fixture.home.crest && (
+                        <img
+                          src={fixture.home.crest}
+                          alt={fixture.home.name}
+                          style={{
+                            width: '24px',
+                            height: '24px',
+                            objectFit: 'contain'
+                          }}
+                        />
+                      )}
+                      <span style={{ fontWeight: '600', fontSize: '14px' }}>{fixture.home.name}</span>
+                    </div>
+                  </td>
+                  <td style={{ padding: '16px 12px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      {fixture.away.crest && (
+                        <img
+                          src={fixture.away.crest}
+                          alt={fixture.away.name}
+                          style={{
+                            width: '24px',
+                            height: '24px',
+                            objectFit: 'contain'
+                          }}
+                        />
+                      )}
+                      <span style={{ fontWeight: '600', fontSize: '14px' }}>{fixture.away.name}</span>
+                    </div>
+                  </td>
+                  <td style={{ padding: '16px 12px', fontSize: '12px', color: '#6b7280' }}>
+                    {new Date(fixture.kickoff_utc).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </td>
+                  <td style={{ padding: '16px 12px' }}>
                     <span style={{
-                      background: '#f0fdf4',
-                      color: '#166534',
-                      padding: '2px 6px',
-                      borderRadius: '4px'
+                      padding: '2px 8px',
+                      borderRadius: '12px',
+                      fontSize: '11px',
+                      fontWeight: '600',
+                      textTransform: 'uppercase',
+                      background: getActualStatus(fixture) === 'live' ? '#fee2e2' : getActualStatus(fixture) === 'finished' ? '#f0fdf4' : '#fef3c7',
+                      color: getActualStatus(fixture) === 'live' ? '#dc2626' : getActualStatus(fixture) === 'finished' ? '#16a34a' : '#d97706'
                     }}>
-                      {fixture.broadcast.provider_display_name || `Provider ${fixture.broadcast.provider_id}`}
+                      {getActualStatus(fixture)}
                     </span>
-                  ) : (
-                    <span style={{ color: '#9ca3af' }}>None</span>
-                  )}
-                </div>
-                <div>
+                  </td>
+                  <td style={{ padding: '16px 12px', fontSize: '12px' }}>
+                    {fixture.broadcast && fixture.broadcast.provider_id !== 999 ? (
+                      <span style={{
+                        background: '#f0fdf4',
+                        color: '#166534',
+                        padding: '2px 6px',
+                        borderRadius: '4px'
+                      }}>
+                        {fixture.broadcast.provider_display_name || `Provider ${fixture.broadcast.provider_id}`}
+                      </span>
+                    ) : (
+                      <span style={{ color: '#9ca3af' }}>None</span>
+                    )}
+                  </td>
+                  <td style={{ padding: '16px 12px' }}>
                   {editingFixture === fixture.id ? (
                     <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
                       <select
@@ -473,11 +523,12 @@ const AdminMatchesPage: React.FC = () => {
                       Edit
                     </button>
                   )}
-                </div>
-              </div>
-            ))
-          )}
-        </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
 
       {/* Broadcast Management Info */}

@@ -406,7 +406,7 @@ const AdminTeamsPage: React.FC = () => {
                     background: team.competition_id === 1 ? '#f0fdf4' : team.competition_id === 2 ? '#fef2f2' : '#f9fafb'
                   }}>
                     {team.competition_id === 1 ? 'EPL' :
-                     team.competition_id === 2 ? 'CHAMP' :
+                     team.competition_id === 2 ? 'UCL' :
                      team.competition_id ? `C${team.competition_id}` : 'N/A'}
                   </div>
                   <div style={{ fontSize: '12px', color: team.club_colors ? '#1f2937' : '#9ca3af' }}>
