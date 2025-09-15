@@ -4,6 +4,7 @@ import { tokens } from '../tokens';
 import type { SimpleFixture, Fixture } from '../../types';
 import { getMatchStatus, getMatchStatusStyles } from '../../utils/matchStatus';
 import { generateSimpleMatchUrl, generateMatchUrl } from '../../utils/seo';
+import { getDisplayTeamName } from '../../utils/teamNames';
 
 
 export interface FixtureCardProps {
@@ -127,7 +128,8 @@ const FixtureCard: React.FC<FixtureCardProps> = ({
             hyphens: 'auto',
             minWidth: 0
           }}>
-            {fixtureData.homeTeam}
+            <span className="team-name-full">{fixtureData.homeTeam}</span>
+            <span className="team-name-short">{getDisplayTeamName(fixtureData.homeTeam, true)}</span>
           </span>
         </div>
         
@@ -154,7 +156,8 @@ const FixtureCard: React.FC<FixtureCardProps> = ({
             hyphens: 'auto',
             minWidth: 0
           }}>
-            {fixtureData.awayTeam}
+            <span className="team-name-full">{fixtureData.awayTeam}</span>
+            <span className="team-name-short">{getDisplayTeamName(fixtureData.awayTeam, true)}</span>
           </span>
           {fixtureData.awayCrest && (
             <img
@@ -287,6 +290,10 @@ const fixtureCardStyles = `
     color: white;
   }
 
+  .team-name-short {
+    display: none;
+  }
+
   @media (max-width: 640px) {
     .broadcaster-info {
       display: none;
@@ -298,6 +305,14 @@ const fixtureCardStyles = `
       display: inline-flex;
       min-height: 44px;
       margin-left: 0;
+    }
+
+    .team-name-full {
+      display: none;
+    }
+
+    .team-name-short {
+      display: inline;
     }
   }
 `;

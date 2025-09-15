@@ -172,4 +172,29 @@ const ClubCard: React.FC<ClubCardProps> = ({
   );
 };
 
+// Add CSS for responsive team name display
+const clubCardStyles = `
+  .team-name-short {
+    display: none;
+  }
+
+  @media (max-width: 640px) {
+    .team-name-full {
+      display: none;
+    }
+
+    .team-name-short {
+      display: block;
+    }
+  }
+`;
+
+// Inject styles if not already present
+if (typeof document !== 'undefined' && !document.getElementById('club-card-styles')) {
+  const styleSheet = document.createElement('style');
+  styleSheet.id = 'club-card-styles';
+  styleSheet.textContent = clubCardStyles;
+  document.head.appendChild(styleSheet);
+}
+
 export default ClubCard;
