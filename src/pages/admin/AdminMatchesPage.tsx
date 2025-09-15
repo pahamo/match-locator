@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { getTeams } from '../../services/supabase';
+import React, { useState, useEffect, useMemo } from 'react';
+import { getAdminFixtures, saveBroadcast, type AdminFixture } from '../../services/supabase';
 import { getSimpleCompetitions } from '../../services/supabase-simple';
-import type { Team, Competition } from '../../types';
+import type { Competition } from '../../types';
 import AdminLayout from '../../components/AdminLayout';
 import AdminAuth from '../../components/AdminAuth';
 
 type CompetitionFilter = '' | 'epl' | 'ucl' | 'all';
-type DataFilter = '' | 'with_crests' | 'no_crests' | 'complete_data' | 'missing_data';
+type StatusFilter = '' | 'scheduled' | 'live' | 'finished' | 'with_broadcast' | 'no_broadcast';
 
 const AdminMatchesPage: React.FC = () => {
-  const [teams, setTeams] = useState<Team[]>([]);
-  const [filteredTeams, setFilteredTeams] = useState<Team[]>([]);
+  const [fixtures, setFixtures] = useState<AdminFixture[]>([]);
+  const [filteredFixtures, setFilteredFixtures] = useState<AdminFixture[]>([]);
   const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -18,7 +18,7 @@ const AdminMatchesPage: React.FC = () => {
 
   // Filters
   const [competitionFilter, setCompetitionFilter] = useState<CompetitionFilter>('');
-  const [dataFilter, setDataFilter] = useState<DataFilter>('');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('');
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
@@ -39,113 +39,77 @@ const AdminMatchesPage: React.FC = () => {
   }, [isAuthenticated]);
 
   useEffect(() => {
-    filterTeams();
-  }, [teams, competitionFilter, dataFilter, searchTerm]);
+    filterFixtures();
+  }, [fixtures, competitionFilter, statusFilter, searchTerm]);
 
   const loadData = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const [teamsData, competitionsData] = await Promise.all([
-        getTeams(),
+      const [fixturesData, competitionsData] = await Promise.all([
+        getAdminFixtures(1), // EPL fixtures
         getSimpleCompetitions(true) // Include hidden competitions
       ]);
 
-      setTeams(teamsData);
+      setFixtures(fixturesData);
       setCompetitions(competitionsData);
     } catch (err) {
-      console.error('Failed to load data:', err);
-      setError('Failed to load data. Please try again later.');
+      console.error('Failed to load fixtures data:', err);
+      setError('Failed to load fixtures. Please try again later.');
     } finally {
       setLoading(false);
     }
   };
 
-  const filterTeams = () => {
-    let filtered = [...teams];
+  const filterFixtures = () => {
+    let filtered = [...fixtures];
 
-    // Text search filter
+    // Text search filter (search by team names)
     if (searchTerm) {
-      filtered = filtered.filter(team =>
-        team.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (team.short_name && team.short_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        team.slug.toLowerCase().includes(searchTerm.toLowerCase())
+      filtered = filtered.filter(fixture =>
+        fixture.home.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        fixture.away.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
-    // Competition filter
-    if (competitionFilter === 'epl') {
-      const eplTeams = [
-        'Arsenal', 'Aston Villa', 'Bournemouth', 'Brentford', 'Brighton & Hove Albion',
-        'Chelsea', 'Crystal Palace', 'Everton', 'Fulham', 'Ipswich Town',
-        'Leicester City', 'Liverpool', 'Manchester City', 'Manchester United', 'Newcastle United',
-        'Nottingham Forest', 'Southampton', 'Tottenham Hotspur', 'West Ham United', 'Wolverhampton Wanderers'
-      ];
-      filtered = filtered.filter(team =>
-        eplTeams.some(eplTeam => {
-          const teamNameLower = team.name.toLowerCase();
-          const eplTeamLower = eplTeam.toLowerCase();
-          return teamNameLower.includes(eplTeamLower) ||
-                 eplTeamLower.includes(teamNameLower) ||
-                 (eplTeam === 'Brighton & Hove Albion' && teamNameLower.includes('brighton')) ||
-                 (eplTeam === 'Wolverhampton Wanderers' && (teamNameLower.includes('wolves') || teamNameLower.includes('wolverhampton')));
-        })
-      );
-    } else if (competitionFilter === 'ucl') {
-      const uclTeams = [
-        'Manchester City', 'Arsenal', 'Liverpool', 'Aston Villa',
-        'Real Madrid', 'Barcelona', 'Atletico Madrid', 'Girona',
-        'Bayern Munich', 'Borussia Dortmund', 'RB Leipzig', 'Bayer Leverkusen',
-        'Inter Milan', 'AC Milan', 'Juventus', 'Atalanta',
-        'Paris Saint-Germain', 'AS Monaco', 'Lille', 'Brest',
-        'Sporting CP', 'Benfica', 'PSV Eindhoven', 'Feyenoord',
-        'Celtic'
-      ];
-      filtered = filtered.filter(team =>
-        uclTeams.some(uclTeam => {
-          const teamNameLower = team.name.toLowerCase();
-          const uclTeamLower = uclTeam.toLowerCase();
-          return teamNameLower.includes(uclTeamLower) || uclTeamLower.includes(teamNameLower);
-        })
-      );
+    // Status filter
+    if (statusFilter === 'scheduled') {
+      filtered = filtered.filter(fixture => fixture.status === 'scheduled');
+    } else if (statusFilter === 'live') {
+      filtered = filtered.filter(fixture => fixture.status === 'live');
+    } else if (statusFilter === 'finished') {
+      filtered = filtered.filter(fixture => fixture.status === 'finished');
+    } else if (statusFilter === 'with_broadcast') {
+      filtered = filtered.filter(fixture => fixture.providers_uk && fixture.providers_uk.length > 0);
+    } else if (statusFilter === 'no_broadcast') {
+      filtered = filtered.filter(fixture => !fixture.providers_uk || fixture.providers_uk.length === 0);
     }
 
-    // Data completeness filter
-    if (dataFilter === 'with_crests') {
-      filtered = filtered.filter(team => team.crest);
-    } else if (dataFilter === 'no_crests') {
-      filtered = filtered.filter(team => !team.crest);
-    } else if (dataFilter === 'complete_data') {
-      filtered = filtered.filter(team =>
-        team.crest && team.short_name && team.club_colors && team.website
-      );
-    } else if (dataFilter === 'missing_data') {
-      filtered = filtered.filter(team =>
-        !team.crest || !team.short_name || !team.club_colors || !team.website
-      );
-    }
-
-    setFilteredTeams(filtered);
+    setFilteredFixtures(filtered);
   };
 
-  const getTeamStats = () => {
-    const total = teams.length;
-    const eplCount = teams.filter(team => {
-      const eplTeams = ['Arsenal', 'Aston Villa', 'Bournemouth', 'Brentford', 'Brighton', 'Chelsea', 'Crystal Palace', 'Everton', 'Fulham', 'Ipswich', 'Leicester', 'Liverpool', 'Manchester City', 'Manchester United', 'Newcastle', 'Nottingham Forest', 'Southampton', 'Tottenham', 'West Ham', 'Wolverhampton'];
-      return eplTeams.some(eplTeam => team.name.toLowerCase().includes(eplTeam.toLowerCase()));
-    }).length;
+  // Helper function for stats - must be defined before useMemo
+  const getFixtureStats = () => {
+    const total = fixtures.length;
+    const scheduled = fixtures.filter(f => f.status === 'scheduled').length;
+    const live = fixtures.filter(f => f.status === 'live').length;
+    const finished = fixtures.filter(f => f.status === 'finished').length;
+    const withBroadcast = fixtures.filter(f => f.providers_uk && f.providers_uk.length > 0).length;
+    const noBroadcast = fixtures.filter(f => !f.providers_uk || f.providers_uk.length === 0).length;
 
-    const withCrests = teams.filter(team => team.crest).length;
-    const withShortNames = teams.filter(team => team.short_name).length;
-    const withColors = teams.filter(team => team.club_colors).length;
-    const withWebsites = teams.filter(team => team.website).length;
-    const completeData = teams.filter(team =>
-      team.crest && team.short_name && team.club_colors && team.website
-    ).length;
-
-    return { total, eplCount, withCrests, withShortNames, withColors, withWebsites, completeData };
+    return {
+      total,
+      scheduled,
+      live,
+      finished,
+      withBroadcast,
+      noBroadcast
+    };
   };
+
+  // Derived state - must be before early returns
+  const stats = useMemo(() => getFixtureStats(), [fixtures]);
 
   const handleAuthenticated = () => {
     setIsAuthenticated(true);
@@ -157,25 +121,23 @@ const AdminMatchesPage: React.FC = () => {
 
   if (loading) {
     return (
-      <AdminLayout title="Teams Database">
-        <div>Loading teams...</div>
+      <AdminLayout title="Fixtures Management">
+        <div>Loading fixtures...</div>
       </AdminLayout>
     );
   }
 
   if (error) {
     return (
-      <AdminLayout title="Teams Database">
+      <AdminLayout title="Fixtures Management">
         <div className="error">{error}</div>
         <button onClick={loadData} style={{ marginTop: '16px' }}>Retry</button>
       </AdminLayout>
     );
   }
 
-  const stats = getTeamStats();
-
   return (
-    <AdminLayout title="Teams Database">
+    <AdminLayout title="Fixtures Management">
       {/* Stats Cards */}
       <div style={{
         display: 'grid',
@@ -190,7 +152,7 @@ const AdminMatchesPage: React.FC = () => {
           padding: '16px'
         }}>
           <div style={{ fontSize: '24px', fontWeight: '700', color: '#1f2937' }}>{stats.total}</div>
-          <div style={{ fontSize: '14px', color: '#6b7280' }}>Total Teams</div>
+          <div style={{ fontSize: '14px', color: '#6b7280' }}>Total Fixtures</div>
         </div>
 
         <div style={{
@@ -199,8 +161,8 @@ const AdminMatchesPage: React.FC = () => {
           borderRadius: '8px',
           padding: '16px'
         }}>
-          <div style={{ fontSize: '24px', fontWeight: '700', color: stats.eplCount === 20 ? '#16a34a' : '#dc2626' }}>{stats.eplCount}/20</div>
-          <div style={{ fontSize: '14px', color: '#6b7280' }}>EPL Teams</div>
+          <div style={{ fontSize: '24px', fontWeight: '700', color: '#2563eb' }}>{stats.scheduled}</div>
+          <div style={{ fontSize: '14px', color: '#6b7280' }}>Scheduled</div>
         </div>
 
         <div style={{
@@ -209,8 +171,8 @@ const AdminMatchesPage: React.FC = () => {
           borderRadius: '8px',
           padding: '16px'
         }}>
-          <div style={{ fontSize: '24px', fontWeight: '700', color: '#1f2937' }}>{Math.round((stats.withCrests / stats.total) * 100)}%</div>
-          <div style={{ fontSize: '14px', color: '#6b7280' }}>With Crests</div>
+          <div style={{ fontSize: '24px', fontWeight: '700', color: '#dc2626' }}>{stats.live}</div>
+          <div style={{ fontSize: '14px', color: '#6b7280' }}>Live</div>
         </div>
 
         <div style={{
@@ -219,8 +181,8 @@ const AdminMatchesPage: React.FC = () => {
           borderRadius: '8px',
           padding: '16px'
         }}>
-          <div style={{ fontSize: '24px', fontWeight: '700', color: '#1f2937' }}>{Math.round((stats.withShortNames / stats.total) * 100)}%</div>
-          <div style={{ fontSize: '14px', color: '#6b7280' }}>With Short Names</div>
+          <div style={{ fontSize: '24px', fontWeight: '700', color: '#16a34a' }}>{stats.finished}</div>
+          <div style={{ fontSize: '14px', color: '#6b7280' }}>Finished</div>
         </div>
 
         <div style={{
@@ -229,8 +191,18 @@ const AdminMatchesPage: React.FC = () => {
           borderRadius: '8px',
           padding: '16px'
         }}>
-          <div style={{ fontSize: '24px', fontWeight: '700', color: '#1f2937' }}>{Math.round((stats.completeData / stats.total) * 100)}%</div>
-          <div style={{ fontSize: '14px', color: '#6b7280' }}>Complete Data</div>
+          <div style={{ fontSize: '24px', fontWeight: '700', color: '#16a34a' }}>{stats.withBroadcast}</div>
+          <div style={{ fontSize: '14px', color: '#6b7280' }}>With Broadcast</div>
+        </div>
+
+        <div style={{
+          background: 'white',
+          border: '1px solid #e2e8f0',
+          borderRadius: '8px',
+          padding: '16px'
+        }}>
+          <div style={{ fontSize: '24px', fontWeight: '700', color: '#dc2626' }}>{stats.noBroadcast}</div>
+          <div style={{ fontSize: '14px', color: '#6b7280' }}>No Broadcast</div>
         </div>
       </div>
 
@@ -244,7 +216,7 @@ const AdminMatchesPage: React.FC = () => {
       }}>
         <input
           type="text"
-          placeholder="Search teams..."
+          placeholder="Search fixtures..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           style={{
@@ -257,8 +229,8 @@ const AdminMatchesPage: React.FC = () => {
         />
 
         <select
-          value={competitionFilter}
-          onChange={(e) => setCompetitionFilter(e.target.value as CompetitionFilter)}
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value as StatusFilter)}
           style={{
             padding: '8px 12px',
             border: '1px solid #d1d5db',
@@ -266,34 +238,20 @@ const AdminMatchesPage: React.FC = () => {
             fontSize: '14px'
           }}
         >
-          <option value="">All Competitions</option>
-          <option value="epl">Premier League</option>
-          <option value="ucl">Champions League</option>
-        </select>
-
-        <select
-          value={dataFilter}
-          onChange={(e) => setDataFilter(e.target.value as DataFilter)}
-          style={{
-            padding: '8px 12px',
-            border: '1px solid #d1d5db',
-            borderRadius: '6px',
-            fontSize: '14px'
-          }}
-        >
-          <option value="">All Teams</option>
-          <option value="with_crests">With Crests</option>
-          <option value="no_crests">No Crests</option>
-          <option value="complete_data">Complete Data</option>
-          <option value="missing_data">Missing Data</option>
+          <option value="">All Status</option>
+          <option value="scheduled">Scheduled</option>
+          <option value="live">Live</option>
+          <option value="finished">Finished</option>
+          <option value="with_broadcast">With Broadcast</option>
+          <option value="no_broadcast">No Broadcast</option>
         </select>
 
         <div style={{ fontSize: '14px', color: '#6b7280' }}>
-          Showing {filteredTeams.length} of {teams.length} teams
+          Showing {filteredFixtures.length} of {fixtures.length} fixtures
         </div>
       </div>
 
-      {/* Teams Table - Full Width */}
+      {/* Fixtures Table - Full Width */}
       <div style={{
         background: 'white',
         border: '1px solid #e2e8f0',
@@ -303,7 +261,7 @@ const AdminMatchesPage: React.FC = () => {
       }}>
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '60px 2fr 1fr 1fr 1fr 1fr 1fr 1fr 100px',
+          gridTemplateColumns: '120px 2fr 2fr 120px 80px 150px 120px',
           gap: '12px',
           padding: '16px',
           background: '#f8fafc',
@@ -311,108 +269,100 @@ const AdminMatchesPage: React.FC = () => {
           fontSize: '14px',
           color: '#374151',
           borderBottom: '1px solid #e2e8f0',
-          minWidth: '1200px'
+          minWidth: '1000px'
         }}>
-          <div>Crest</div>
-          <div>Team Name</div>
-          <div>Short Name</div>
-          <div>Slug</div>
-          <div>Colors</div>
-          <div>Website</div>
-          <div>Venue</div>
-          <div>City</div>
+          <div>Date</div>
+          <div>Home Team</div>
+          <div>Away Team</div>
+          <div>Kickoff</div>
+          <div>Status</div>
+          <div>Broadcast</div>
           <div>Actions</div>
         </div>
 
         <div style={{ overflowX: 'auto' }}>
-          {filteredTeams.length === 0 ? (
+          {filteredFixtures.length === 0 ? (
             <div style={{
               padding: '32px',
               textAlign: 'center',
               color: '#6b7280'
             }}>
-              No teams found matching your filters.
+              No fixtures found matching your filters.
             </div>
           ) : (
-            filteredTeams.map((team) => (
+            filteredFixtures.map((fixture) => (
               <div
-                key={team.id}
+                key={fixture.id}
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: '60px 2fr 1fr 1fr 1fr 1fr 1fr 1fr 100px',
+                  gridTemplateColumns: '120px 2fr 2fr 120px 80px 150px 120px',
                   gap: '12px',
                   padding: '16px',
                   borderBottom: '1px solid #e2e8f0',
                   alignItems: 'center',
-                  minWidth: '1200px'
+                  minWidth: '1000px'
                 }}
               >
-                <div>
-                  {team.crest ? (
+                <div style={{ fontSize: '12px', color: '#6b7280' }}>
+                  {new Date(fixture.kickoff_utc).toLocaleDateString()}
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  {fixture.home.crest && (
                     <img
-                      src={team.crest}
-                      alt={`${team.name} crest`}
+                      src={fixture.home.crest}
+                      alt={fixture.home.name}
                       style={{
-                        width: '32px',
-                        height: '32px',
-                        objectFit: 'contain',
-                        borderRadius: '4px'
+                        width: '24px',
+                        height: '24px',
+                        objectFit: 'contain'
                       }}
                     />
-                  ) : (
-                    <div style={{
-                      width: '32px',
-                      height: '32px',
-                      background: '#f3f4f6',
-                      borderRadius: '4px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '12px',
-                      color: '#6b7280'
-                    }}>
-                      ?
-                    </div>
                   )}
+                  <span style={{ fontWeight: '600', fontSize: '14px' }}>{fixture.home.name}</span>
                 </div>
-                <div style={{ fontWeight: '600', fontSize: '14px' }}>{team.name}</div>
-                <div style={{ fontSize: '13px', color: team.short_name ? '#1f2937' : '#9ca3af' }}>
-                  {team.short_name || 'None'}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  {fixture.away.crest && (
+                    <img
+                      src={fixture.away.crest}
+                      alt={fixture.away.name}
+                      style={{
+                        width: '24px',
+                        height: '24px',
+                        objectFit: 'contain'
+                      }}
+                    />
+                  )}
+                  <span style={{ fontWeight: '600', fontSize: '14px' }}>{fixture.away.name}</span>
                 </div>
-                <div style={{ fontSize: '12px', color: '#6b7280', fontFamily: 'monospace' }}>
-                  {team.slug}
+                <div style={{ fontSize: '12px', color: '#6b7280' }}>
+                  {new Date(fixture.kickoff_utc).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </div>
-                <div style={{ fontSize: '12px', color: team.club_colors ? '#1f2937' : '#9ca3af' }}>
-                  {team.club_colors ? (
+                <div>
+                  <span style={{
+                    padding: '2px 8px',
+                    borderRadius: '12px',
+                    fontSize: '11px',
+                    fontWeight: '600',
+                    textTransform: 'uppercase',
+                    background: fixture.status === 'live' ? '#fee2e2' : fixture.status === 'finished' ? '#f0fdf4' : '#fef3c7',
+                    color: fixture.status === 'live' ? '#dc2626' : fixture.status === 'finished' ? '#16a34a' : '#d97706'
+                  }}>
+                    {fixture.status}
+                  </span>
+                </div>
+                <div style={{ fontSize: '12px' }}>
+                  {fixture.providers_uk && fixture.providers_uk.length > 0 ? (
                     <span style={{
                       background: '#f0fdf4',
                       color: '#166534',
                       padding: '2px 6px',
                       borderRadius: '4px'
                     }}>
-                      {team.club_colors.length > 20 ? team.club_colors.substring(0, 20) + '...' : team.club_colors}
+                      {fixture.providers_uk.join(', ')}
                     </span>
-                  ) : 'None'}
-                </div>
-                <div style={{ fontSize: '12px' }}>
-                  {team.website ? (
-                    <a
-                      href={team.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ color: '#2563eb', textDecoration: 'none' }}
-                    >
-                      {team.website.replace(/^https?:\/\//, '').split('/')[0]}
-                    </a>
                   ) : (
                     <span style={{ color: '#9ca3af' }}>None</span>
                   )}
-                </div>
-                <div style={{ fontSize: '12px', color: team.venue ? '#1f2937' : '#9ca3af' }}>
-                  {team.venue || 'None'}
-                </div>
-                <div style={{ fontSize: '12px', color: team.city ? '#1f2937' : '#9ca3af' }}>
-                  {team.city || 'None'}
                 </div>
                 <div>
                   <button
@@ -434,7 +384,7 @@ const AdminMatchesPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Data Enrichment Info */}
+      {/* Broadcast Management Info */}
       <div style={{ marginTop: '24px' }}>
         <div style={{
           background: '#f0f9ff',
@@ -443,21 +393,11 @@ const AdminMatchesPage: React.FC = () => {
           padding: '16px'
         }}>
           <h3 style={{ fontSize: '16px', fontWeight: '600', margin: '0 0 8px 0' }}>
-            💡 Need more team data?
+            📺 Broadcast Management
           </h3>
           <p style={{ fontSize: '14px', color: '#0f172a', margin: '0 0 8px 0' }}>
-            Use the team backfill script to enrich missing data from Football-Data.org:
+            Use the Edit button to assign UK TV broadcasters to fixtures. Common broadcasters include Sky Sports, BT Sport, BBC, and Amazon Prime Video.
           </p>
-          <code style={{
-            background: '#1e293b',
-            color: '#e2e8f0',
-            padding: '4px 8px',
-            borderRadius: '4px',
-            fontSize: '13px',
-            fontFamily: 'monospace'
-          }}>
-            npm run teams:backfill:dry
-          </code>
         </div>
       </div>
     </AdminLayout>
