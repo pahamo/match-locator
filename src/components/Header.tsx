@@ -7,12 +7,21 @@ interface HeaderProps {
   subtitle?: string;
 }
 
-const Header: React.FC<HeaderProps> = React.memo(({ 
+const Header: React.FC<HeaderProps> = React.memo(({
   title = "Match Locator",
   subtitle = "UK football TV schedule — who shows every match"
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
+  const [competitionsDropdownOpen, setCompetitionsDropdownOpen] = useState(false);
+
+  const competitions = [
+    { name: 'Premier League', slug: 'premier-league', icon: '⚽' },
+    { name: 'Champions League', slug: 'champions-league', icon: '🏆' },
+    { name: 'Europa League', slug: 'europa-league', icon: '🌟' },
+    { name: 'FA Cup', slug: 'fa-cup', icon: '🏅' },
+    { name: 'League Cup', slug: 'league-cup', icon: '🥇' }
+  ];
+
   return (
     <header style={{
       background: 'white',
@@ -24,14 +33,15 @@ const Header: React.FC<HeaderProps> = React.memo(({
       flexWrap: 'nowrap',
       gap: '12px',
       minHeight: 'clamp(48px, 6vh, 56px)',
-      position: 'relative'
+      position: 'relative',
+      zIndex: 100
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
-        <a 
-          href="/" 
-          style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
+        <a
+          href="/"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
             textDecoration: 'none',
             color: 'inherit',
             flexShrink: 0
@@ -41,16 +51,16 @@ const Header: React.FC<HeaderProps> = React.memo(({
           <img src="/logo.svg" alt="Match Locator logo" style={{ height: '28px', width: '28px' }} />
         </a>
         <div style={{ minWidth: 0, flex: 1 }}>
-          <a 
-            href="/" 
-            style={{ 
+          <a
+            href="/"
+            style={{
               textDecoration: 'none',
               color: 'inherit'
             }}
             aria-label="Match Locator home page"
           >
-            <div style={{ 
-              margin: 0, 
+            <div style={{
+              margin: 0,
               fontSize: 'clamp(16px, 4vw, 20px)',
               fontWeight: '700',
               color: '#1f2937',
@@ -62,11 +72,11 @@ const Header: React.FC<HeaderProps> = React.memo(({
               {title}
             </div>
           </a>
-          <p style={{ 
-            margin: 0, 
-            fontSize: 'clamp(11px, 2.5vw, 13px)', 
-            color: '#6b7280', 
-            marginTop: '1px', 
+          <p style={{
+            margin: 0,
+            fontSize: 'clamp(11px, 2.5vw, 13px)',
+            color: '#6b7280',
+            marginTop: '1px',
             lineHeight: '1.3',
             display: window.innerWidth <= 640 ? 'none' : 'block'
           }}>
@@ -74,54 +84,16 @@ const Header: React.FC<HeaderProps> = React.memo(({
           </p>
         </div>
       </div>
-      
+
       {/* Desktop Navigation */}
-      <nav style={{ 
+      <nav style={{
         display: window.innerWidth <= 768 ? 'none' : 'flex',
         gap: 'clamp(8px, 2vw, 16px)',
         alignItems: 'center',
         flexShrink: 0
       }}>
-        <a 
-          href="/" 
-          style={{ 
-            color: '#6366f1', 
-            textDecoration: 'none', 
-            fontSize: '14px',
-            fontWeight: '500',
-            padding: '8px 12px',
-            borderRadius: '6px',
-            transition: 'background-color 0.2s',
-            minHeight: '36px',
-            display: 'flex',
-            alignItems: 'center'
-          }}
-          onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
-          onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-        >
-          Home
-        </a>
-        <a 
-          href="/fixtures" 
-          style={{ 
-            color: '#6366f1', 
-            textDecoration: 'none', 
-            fontSize: '14px',
-            fontWeight: '500',
-            padding: '8px 12px',
-            borderRadius: '6px',
-            transition: 'background-color 0.2s',
-            minHeight: '36px',
-            display: 'flex',
-            alignItems: 'center'
-          }}
-          onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
-          onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-        >
-          Fixtures
-        </a>
         <a
-          href="/competitions"
+          href="/"
           style={{
             color: '#6366f1',
             textDecoration: 'none',
@@ -137,8 +109,119 @@ const Header: React.FC<HeaderProps> = React.memo(({
           onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
           onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
         >
-          Competitions
+          Home
         </a>
+        <a
+          href="/fixtures"
+          style={{
+            color: '#6366f1',
+            textDecoration: 'none',
+            fontSize: '14px',
+            fontWeight: '500',
+            padding: '8px 12px',
+            borderRadius: '6px',
+            transition: 'background-color 0.2s',
+            minHeight: '36px',
+            display: 'flex',
+            alignItems: 'center'
+          }}
+          onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
+          onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+        >
+          Fixtures
+        </a>
+
+        {/* Competitions Dropdown */}
+        <div
+          style={{ position: 'relative' }}
+          onMouseEnter={() => setCompetitionsDropdownOpen(true)}
+          onMouseLeave={() => setCompetitionsDropdownOpen(false)}
+        >
+          <a
+            href="/competitions"
+            style={{
+              color: '#6366f1',
+              textDecoration: 'none',
+              fontSize: '14px',
+              fontWeight: '500',
+              padding: '8px 12px',
+              borderRadius: '6px',
+              transition: 'background-color 0.2s',
+              minHeight: '36px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              backgroundColor: competitionsDropdownOpen ? '#f8fafc' : 'transparent'
+            }}
+          >
+            Competitions
+            <span style={{
+              fontSize: '10px',
+              transform: competitionsDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+              transition: 'transform 0.2s'
+            }}>
+              ▼
+            </span>
+          </a>
+
+          {/* Dropdown Menu */}
+          {competitionsDropdownOpen && (
+            <div style={{
+              position: 'absolute',
+              top: '100%',
+              left: 0,
+              background: 'white',
+              border: '1px solid #e5e7eb',
+              borderRadius: '8px',
+              boxShadow: '0 4px 12px rgb(0 0 0 / 0.15)',
+              minWidth: '220px',
+              zIndex: 1000,
+              marginTop: '4px'
+            }}>
+              <div style={{ padding: '8px 0' }}>
+                <a
+                  href="/competitions"
+                  style={{
+                    display: 'block',
+                    padding: '8px 16px',
+                    color: '#374151',
+                    textDecoration: 'none',
+                    fontSize: '13px',
+                    fontWeight: '600',
+                    borderBottom: '1px solid #f3f4f6',
+                    backgroundColor: 'transparent',
+                    transition: 'background-color 0.2s'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                >
+                  📊 All Competitions
+                </a>
+                {competitions.map((comp) => (
+                  <a
+                    key={comp.slug}
+                    href={`/competitions/${comp.slug}`}
+                    style={{
+                      display: 'block',
+                      padding: '10px 16px',
+                      color: '#6366f1',
+                      textDecoration: 'none',
+                      fontSize: '13px',
+                      fontWeight: '500',
+                      backgroundColor: 'transparent',
+                      transition: 'background-color 0.2s'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
+                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                  >
+                    {comp.icon} {comp.name}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
         <a
           href="/clubs"
           style={{
@@ -158,11 +241,11 @@ const Header: React.FC<HeaderProps> = React.memo(({
         >
           Clubs
         </a>
-        <a 
-          href="/about" 
-          style={{ 
-            color: '#6366f1', 
-            textDecoration: 'none', 
+        <a
+          href="/about"
+          style={{
+            color: '#6366f1',
+            textDecoration: 'none',
             fontSize: '14px',
             fontWeight: '500',
             padding: '8px 12px',
@@ -221,16 +304,16 @@ const Header: React.FC<HeaderProps> = React.memo(({
           borderTop: 'none',
           borderRadius: '0 0 8px 8px',
           boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
-          minWidth: '140px',
+          minWidth: '200px',
           zIndex: 50,
           display: window.innerWidth <= 768 ? 'block' : 'none'
         }}>
           <nav style={{ display: 'flex', flexDirection: 'column', padding: '8px 0' }}>
-            <a 
-              href="/" 
-              style={{ 
-                color: '#6366f1', 
-                textDecoration: 'none', 
+            <a
+              href="/"
+              style={{
+                color: '#6366f1',
+                textDecoration: 'none',
                 fontSize: '14px',
                 fontWeight: '500',
                 padding: '12px 16px',
@@ -243,11 +326,11 @@ const Header: React.FC<HeaderProps> = React.memo(({
             >
               Home
             </a>
-            <a 
-              href="/fixtures" 
-              style={{ 
-                color: '#6366f1', 
-                textDecoration: 'none', 
+            <a
+              href="/fixtures"
+              style={{
+                color: '#6366f1',
+                textDecoration: 'none',
                 fontSize: '14px',
                 fontWeight: '500',
                 padding: '12px 16px',
@@ -260,23 +343,58 @@ const Header: React.FC<HeaderProps> = React.memo(({
             >
               Fixtures
             </a>
-            <a
-              href="/competitions"
-              style={{
-                color: '#6366f1',
-                textDecoration: 'none',
-                fontSize: '14px',
-                fontWeight: '500',
-                padding: '12px 16px',
-                transition: 'background-color 0.2s',
-                display: 'block'
-              }}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
-              onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Competitions
-            </a>
+
+            {/* Mobile Competitions Section */}
+            <div style={{ borderTop: '1px solid #f3f4f6', marginTop: '8px', paddingTop: '8px' }}>
+              <div style={{
+                padding: '8px 16px',
+                fontSize: '12px',
+                fontWeight: '600',
+                color: '#9ca3af',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px'
+              }}>
+                Competitions
+              </div>
+              <a
+                href="/competitions"
+                style={{
+                  color: '#374151',
+                  textDecoration: 'none',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  padding: '10px 16px',
+                  transition: 'background-color 0.2s',
+                  display: 'block'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                📊 All Competitions
+              </a>
+              {competitions.map((comp) => (
+                <a
+                  key={comp.slug}
+                  href={`/competitions/${comp.slug}`}
+                  style={{
+                    color: '#6366f1',
+                    textDecoration: 'none',
+                    fontSize: '13px',
+                    fontWeight: '500',
+                    padding: '8px 16px 8px 32px',
+                    transition: 'background-color 0.2s',
+                    display: 'block'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {comp.icon} {comp.name}
+                </a>
+              ))}
+            </div>
+
             <a
               href="/clubs"
               style={{
@@ -286,7 +404,9 @@ const Header: React.FC<HeaderProps> = React.memo(({
                 fontWeight: '500',
                 padding: '12px 16px',
                 transition: 'background-color 0.2s',
-                display: 'block'
+                display: 'block',
+                borderTop: '1px solid #f3f4f6',
+                marginTop: '8px'
               }}
               onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
               onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
@@ -294,11 +414,11 @@ const Header: React.FC<HeaderProps> = React.memo(({
             >
               Clubs
             </a>
-            <a 
-              href="/about" 
-              style={{ 
-                color: '#6366f1', 
-                textDecoration: 'none', 
+            <a
+              href="/about"
+              style={{
+                color: '#6366f1',
+                textDecoration: 'none',
                 fontSize: '14px',
                 fontWeight: '500',
                 padding: '12px 16px',
