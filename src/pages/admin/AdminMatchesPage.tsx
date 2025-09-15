@@ -114,9 +114,9 @@ const AdminMatchesPage: React.FC = () => {
 
     // Broadcast status filter (with/without broadcast)
     if (broadcastStatusFilter === 'with_broadcast') {
-      filtered = filtered.filter(fixture => fixture.broadcast && fixture.broadcast.provider_id !== 999);
+      filtered = filtered.filter(fixture => fixture.broadcast && fixture.broadcast.provider_id !== -1);
     } else if (broadcastStatusFilter === 'no_broadcast') {
-      filtered = filtered.filter(fixture => !fixture.broadcast || fixture.broadcast.provider_id === 999);
+      filtered = filtered.filter(fixture => !fixture.broadcast || fixture.broadcast.provider_id === -1);
     }
 
     setFilteredFixtures(filtered);
@@ -128,8 +128,8 @@ const AdminMatchesPage: React.FC = () => {
     const scheduled = fixtures.filter(f => getActualStatus(f) === 'scheduled').length;
     const live = fixtures.filter(f => getActualStatus(f) === 'live').length;
     const finished = fixtures.filter(f => getActualStatus(f) === 'finished').length;
-    const withBroadcast = fixtures.filter(f => f.broadcast && f.broadcast.provider_id !== 999).length;
-    const noBroadcast = fixtures.filter(f => !f.broadcast || f.broadcast.provider_id === 999).length;
+    const withBroadcast = fixtures.filter(f => f.broadcast && f.broadcast.provider_id !== -1).length;
+    const noBroadcast = fixtures.filter(f => !f.broadcast || f.broadcast.provider_id === -1).length;
 
     return {
       total,
@@ -497,7 +497,7 @@ const AdminMatchesPage: React.FC = () => {
                     </span>
                   </td>
                   <td style={{ padding: '16px 12px', fontSize: '12px' }}>
-                    {fixture.broadcast && fixture.broadcast.provider_id !== 999 ? (
+                    {fixture.broadcast && fixture.broadcast.provider_id !== -1 ? (
                       <span style={{
                         background: '#f0fdf4',
                         color: '#166534',
@@ -507,7 +507,7 @@ const AdminMatchesPage: React.FC = () => {
                         {fixture.broadcast.provider_display_name || `Provider ${fixture.broadcast.provider_id}`}
                       </span>
                     ) : (
-                      <span style={{ color: '#9ca3af' }}>None</span>
+                      <span style={{ color: '#9ca3af' }}>Blackout</span>
                     )}
                   </td>
                   <td style={{ padding: '16px 12px' }}>
@@ -525,7 +525,7 @@ const AdminMatchesPage: React.FC = () => {
                           }}
                         >
                           <option value="">None</option>
-                          {BROADCASTERS.filter(b => b.id !== 999).map(broadcaster => (
+                          {BROADCASTERS.filter(b => b.id !== -1).map(broadcaster => (
                             <option key={broadcaster.id} value={broadcaster.id}>
                               {broadcaster.name}
                             </option>

@@ -183,7 +183,7 @@ const FixturesPage: React.FC = () => {
       
       <main>
         <div className="wrap">
-          <h1 style={{ margin: '0 0 24px 0', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>Premier League Fixtures</h1>
+          <h1 style={{ margin: '0 0 24px 0', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>Football Fixtures</h1>
 
           {/* Past Games Toggle Button */}
           <div style={{ marginBottom: '16px' }}>
