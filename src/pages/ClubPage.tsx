@@ -12,7 +12,8 @@ const ClubPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const getCompetitionDisplayName = (competition: string): string => {
+  const getCompetitionDisplayName = (competition?: string): string => {
+    if (!competition) return 'Football';
     switch (competition) {
       case 'premier-league':
         return 'Premier League';
@@ -29,7 +30,8 @@ const ClubPage: React.FC = () => {
     }
   };
 
-  const getCompetitionColor = (competition: string): { bg: string; text: string } => {
+  const getCompetitionColor = (competition?: string): { bg: string; text: string } => {
+    if (!competition) return { bg: '#6b7280', text: 'white' };
     switch (competition) {
       case 'premier-league':
         return { bg: '#3d1a78', text: 'white' };
