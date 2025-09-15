@@ -1,7 +1,7 @@
 # Match Locator - Development Guide
 
 ## Project Overview
-React 19 + TypeScript application for UK Premier League and Champions League TV schedules.
+React 19 + TypeScript application for UK and European football TV schedules across 9 major leagues.
 
 **Production**: https://matchlocator.com  
 **Tech Stack**: React + TypeScript + Supabase + Netlify
@@ -45,10 +45,10 @@ npx tsc --noEmit
 ### Database (Supabase)
 **Key Tables:**
 - `fixtures` - Match data with kickoff times
-- `teams` - Team information with crests
+- `teams` - Team information with crests (177 teams across 9 leagues)
 - `broadcasts` - TV broadcaster assignments
 - `providers` - Sky Sports, TNT Sports, etc.
-- `competitions` - Premier League, Champions League
+- `competitions` - 9 active leagues: Premier League, Champions League, Bundesliga, La Liga, Serie A, Ligue 1, Primeira Liga, Eredivisie, Championship
 
 **Important Views:**
 - `fixtures_with_teams` - Fixtures with team data joined
@@ -71,15 +71,30 @@ Frontend Pages (Anonymous Key for reads)
 ### Pages
 - `HomePage.tsx` - Main fixtures display with competition filtering
 - `AdminPage.tsx` - Broadcaster management interface
-- `FixturesPage.tsx` - Comprehensive fixtures with filtering
-- `ClubsPage.tsx` - Team directory
+- `FixturesPage.tsx` - Comprehensive fixtures with filtering (all 9 leagues)
+- `ClubsPage.tsx` - Dynamic team directory organized by competition
 - `ClubPage.tsx` - Individual team pages
 - `MatchPage.tsx` - Match details
+- `AboutPage.tsx` - About page using design system
+- `legal/PrivacyPolicy.tsx` - Privacy policy with consistent styling
+- `legal/Terms.tsx` - Terms & conditions with consistent styling
+
+### Design System Components
+- `ContentCard` - Unified card styling for text-heavy content
+- `TextContainer` - Standardized typography and spacing
+- `FixtureCard` - Match display cards with responsive design
+- `ClubCard` - Team cards with competition variants
+- `Badge` - Status indicators and labels
 
 ### Services
-- `supabase.ts` - Main database queries
+- `supabase.ts` - Main database queries with dynamic competition support
 - `supabase-simple.ts` - Admin and home page helpers
 - `netlify/functions/` - Server-side admin operations
+
+### Hooks
+- `useCompetitions.ts` - Dynamic competition loading
+- `usePublicCompetitions()` - Public-facing competitions only
+- `useAdminCompetitions()` - All competitions including hidden ones
 
 ### Key Features
 - **Competition Visibility**: Admin can show/hide competitions
