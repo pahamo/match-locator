@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import Header from './Header';
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -27,7 +26,61 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title, onLogout }) 
 
   return (
     <div className="admin-page">
-      <Header />
+      {/* Admin Header with Return Button */}
+      <header style={{
+        background: '#1f2937',
+        color: 'white',
+        padding: '16px 0',
+        borderBottom: '1px solid #374151'
+      }}>
+        <div className="wrap" style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '16px'
+          }}>
+            <h1 style={{
+              margin: '0',
+              fontSize: '20px',
+              fontWeight: '700'
+            }}>
+              MatchLocator Admin
+            </h1>
+          </div>
+
+          <Link
+            to="/"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              color: '#e5e7eb',
+              textDecoration: 'none',
+              fontSize: '14px',
+              fontWeight: '500',
+              padding: '8px 16px',
+              borderRadius: '6px',
+              border: '1px solid #4b5563',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#374151';
+              e.currentTarget.style.color = 'white';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.color = '#e5e7eb';
+            }}
+          >
+            <span>←</span>
+            Return to Main Site
+          </Link>
+        </div>
+      </header>
 
       <main>
         <div className="wrap">
