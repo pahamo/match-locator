@@ -183,6 +183,7 @@ const CompetitionsOverviewPage: React.FC = () => {
               }}>
                 View Fixtures & TV Schedule →
               </div>
+            </div>
             </Link>
           ))}
         </div>
