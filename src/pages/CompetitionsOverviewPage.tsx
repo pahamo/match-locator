@@ -29,6 +29,14 @@ const CompetitionsOverviewPage: React.FC = () => {
     }
   };
 
+  const getCompetitionLogo = (slug: string): string | null => {
+    const logos: Record<string, string> = {
+      'premier-league': 'https://cdn.brandfetch.io/id3ei9Uwhu/theme/dark/id4u-3dVa7.svg?c=1bxid64Mup7aczewSAYMX&t=1737356816110',
+      'champions-league': 'https://upload.wikimedia.org/wikipedia/en/f/f5/UEFA_Champions_League.svg'
+    };
+    return logos[slug] || null;
+  };
+
   const getCompetitionIcon = (slug: string): string => {
     const icons: Record<string, string> = {
       'premier-league': '⚽',
@@ -133,11 +141,37 @@ const CompetitionsOverviewPage: React.FC = () => {
               }}
             >
               <div style={{
-                fontSize: '2rem',
                 marginBottom: '10px',
-                textAlign: 'center'
+                textAlign: 'center',
+                height: '60px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
               }}>
-                {getCompetitionIcon(competition.slug)}
+                {getCompetitionLogo(competition.slug) ? (
+                  <img
+                    src={getCompetitionLogo(competition.slug)!}
+                    alt={`${competition.name} logo`}
+                    style={{
+                      height: '50px',
+                      width: 'auto',
+                      maxWidth: '100px',
+                      objectFit: 'contain'
+                    }}
+                    onError={(e) => {
+                      // Fallback to emoji icon if logo fails to load
+                      e.currentTarget.style.display = 'none';
+                      const fallback = document.createElement('div');
+                      fallback.style.fontSize = '2rem';
+                      fallback.textContent = getCompetitionIcon(competition.slug);
+                      e.currentTarget.parentNode?.appendChild(fallback);
+                    }}
+                  />
+                ) : (
+                  <div style={{ fontSize: '2rem' }}>
+                    {getCompetitionIcon(competition.slug)}
+                  </div>
+                )}
               </div>
 
               <h2 style={{

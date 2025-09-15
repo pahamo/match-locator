@@ -60,6 +60,14 @@ const CompetitionPage: React.FC = () => {
     loadCompetitionData();
   }, [loadCompetitionData]);
 
+  const getCompetitionLogo = (slug: string): string | null => {
+    const logos: Record<string, string> = {
+      'premier-league': 'https://cdn.brandfetch.io/id3ei9Uwhu/theme/dark/id4u-3dVa7.svg?c=1bxid64Mup7aczewSAYMX&t=1737356816110',
+      'champions-league': 'https://upload.wikimedia.org/wikipedia/en/f/f5/UEFA_Champions_League.svg'
+    };
+    return logos[slug] || null;
+  };
+
   const getUpcomingFixtures = (fixtures: SimpleFixture[], limit = 5) => {
     const now = new Date();
     return fixtures
@@ -151,9 +159,35 @@ const CompetitionPage: React.FC = () => {
             <span>{competition.name}</span>
           </nav>
 
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
-            {competition.name}
-          </h1>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '20px',
+            marginBottom: '0.5rem',
+            flexWrap: 'wrap'
+          }}>
+            {getCompetitionLogo(competition.slug) && (
+              <img
+                src={getCompetitionLogo(competition.slug)!}
+                alt={`${competition.name} logo`}
+                style={{
+                  height: '60px',
+                  width: 'auto',
+                  maxWidth: '120px',
+                  objectFit: 'contain'
+                }}
+              />
+            )}
+            <h1 style={{
+              fontSize: '2.5rem',
+              fontWeight: 'bold',
+              margin: 0,
+              textAlign: 'center'
+            }}>
+              {competition.name}
+            </h1>
+          </div>
           {competition.short_name && (
             <p style={{ fontSize: '1.125rem', color: '#6b7280', marginBottom: '1rem' }}>
               {competition.short_name}

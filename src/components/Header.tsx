@@ -16,8 +16,8 @@ const Header: React.FC<HeaderProps> = React.memo(({
   const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const competitions = [
-    { name: 'Premier League', slug: 'premier-league', icon: '⚽' },
-    { name: 'Champions League', slug: 'champions-league', icon: '🏆' },
+    { name: 'Premier League', slug: 'premier-league', icon: '⚽', logo: 'https://cdn.brandfetch.io/id3ei9Uwhu/w/177/h/224/theme/dark/logo.png?c=1bxid64Mup7aczewSAYMX&t=1737356858593' },
+    { name: 'Champions League', slug: 'champions-league', icon: '🏆', logo: 'https://upload.wikimedia.org/wikipedia/en/f/f5/UEFA_Champions_League.svg' },
     { name: 'Europa League', slug: 'europa-league', icon: '🌟' },
     { name: 'FA Cup', slug: 'fa-cup', icon: '🏅' },
     { name: 'League Cup', slug: 'league-cup', icon: '🥇' }
@@ -214,7 +214,9 @@ const Header: React.FC<HeaderProps> = React.memo(({
                     key={comp.slug}
                     href={`/competitions/${comp.slug}`}
                     style={{
-                      display: 'block',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
                       padding: '10px 16px',
                       color: '#6366f1',
                       textDecoration: 'none',
@@ -226,7 +228,20 @@ const Header: React.FC<HeaderProps> = React.memo(({
                     onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f9fafb'}
                     onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                   >
-                    {comp.icon} {comp.name}
+                    {comp.logo ? (
+                      <img
+                        src={comp.logo}
+                        alt={`${comp.name} logo`}
+                        style={{
+                          height: '16px',
+                          width: 'auto',
+                          objectFit: 'contain'
+                        }}
+                      />
+                    ) : (
+                      comp.icon
+                    )}
+                    {comp.name}
                   </a>
                 ))}
               </div>
@@ -396,13 +411,28 @@ const Header: React.FC<HeaderProps> = React.memo(({
                     fontWeight: '500',
                     padding: '8px 16px 8px 32px',
                     transition: 'background-color 0.2s',
-                    display: 'block'
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
                   }}
                   onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
                   onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  {comp.icon} {comp.name}
+                  {comp.logo ? (
+                    <img
+                      src={comp.logo}
+                      alt={`${comp.name} logo`}
+                      style={{
+                        height: '14px',
+                        width: 'auto',
+                        objectFit: 'contain'
+                      }}
+                    />
+                  ) : (
+                    comp.icon
+                  )}
+                  {comp.name}
                 </a>
               ))}
             </div>

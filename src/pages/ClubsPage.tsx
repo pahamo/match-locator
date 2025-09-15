@@ -28,6 +28,14 @@ const ClubsPage: React.FC = () => {
     loadTeams();
   }, []);
 
+  const getCompetitionLogo = (competition: string): string | null => {
+    const logos: Record<string, string> = {
+      'premier-league': 'https://cdn.brandfetch.io/id3ei9Uwhu/theme/dark/id4u-3dVa7.svg?c=1bxid64Mup7aczewSAYMX&t=1737356816110',
+      'champions-league': 'https://upload.wikimedia.org/wikipedia/en/f/f5/UEFA_Champions_League.svg'
+    };
+    return logos[competition] || null;
+  };
+
   const loadTeams = async () => {
     try {
       setLoading(true);
@@ -85,18 +93,31 @@ const ClubsPage: React.FC = () => {
           
           {/* Premier League Section */}
           <section style={{ marginBottom: '48px' }}>
-            <h2 style={{ 
-              fontSize: '1.5rem', 
-              fontWeight: '600', 
+            <h2 style={{
+              fontSize: '1.5rem',
+              fontWeight: '600',
               marginBottom: '16px',
               color: '#1f2937',
               borderBottom: '2px solid #6366f1',
               paddingBottom: '8px',
               display: 'flex',
               alignItems: 'center',
-              gap: '8px'
+              gap: '12px'
             }}>
-              ⚽ Premier League
+              {getCompetitionLogo('premier-league') ? (
+                <img
+                  src={getCompetitionLogo('premier-league')!}
+                  alt="Premier League logo"
+                  style={{
+                    height: '32px',
+                    width: 'auto',
+                    objectFit: 'contain'
+                  }}
+                />
+              ) : (
+                '⚽'
+              )}
+              Premier League
             </h2>
             
             <div style={{
@@ -141,12 +162,12 @@ const ClubsPage: React.FC = () => {
               paddingBottom: '8px',
               display: 'flex',
               alignItems: 'center',
-              gap: '8px'
+              gap: '12px'
             }}>
               <img
                 src="https://upload.wikimedia.org/wikipedia/en/f/f5/UEFA_Champions_League.svg"
                 alt="UEFA Champions League"
-                style={{ width: '24px', height: '24px' }}
+                style={{ height: '32px', width: 'auto', objectFit: 'contain' }}
               />
               UEFA Champions League
             </h2>
