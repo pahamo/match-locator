@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { getSimpleFixtures, getSimpleCompetitions } from '../services/supabase-simple';
-import type { SimpleFixture, Competition } from '../types';
+import { getSimpleFixtures } from '../services/supabase-simple';
+import type { SimpleFixture } from '../types';
 import Header from '../components/Header';
 import StructuredData from '../components/StructuredData';
 import { FixtureCardSkeleton } from '../components/SkeletonLoader';

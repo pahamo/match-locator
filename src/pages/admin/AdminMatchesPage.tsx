@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { getAdminFixtures, type AdminFixture, BROADCASTERS } from '../../services/supabase';
-import { getSimpleCompetitions, saveBroadcaster } from '../../services/supabase-simple';
-import type { Competition } from '../../types';
+import { saveBroadcaster } from '../../services/supabase-simple';
+import { useAdminCompetitions } from '../../hooks/useCompetitions';
 import AdminLayout from '../../components/AdminLayout';
 import AdminAuth from '../../components/AdminAuth';
 
-type CompetitionFilter = '' | 'epl' | 'ucl' | 'all';
+type CompetitionFilter = '' | number | 'all'; // Use competition IDs instead of hardcoded strings
 type MatchStatusFilter = '' | 'scheduled' | 'live' | 'finished';
 type BroadcastStatusFilter = '' | 'with_broadcast' | 'no_broadcast';
 
@@ -16,8 +16,11 @@ const AdminMatchesPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  // Load competitions dynamically
+  const { competitions } = useAdminCompetitions();
+
   // Filters
-  const [competitionFilter, setCompetitionFilter] = useState<CompetitionFilter>('epl'); // Default to EPL
+  const [competitionFilter, setCompetitionFilter] = useState<CompetitionFilter>(1); // Default to Premier League (ID: 1)
   const [matchStatusFilter, setMatchStatusFilter] = useState<MatchStatusFilter>('scheduled'); // Default to scheduled (future games)
   const [broadcastStatusFilter, setBroadcastStatusFilter] = useState<BroadcastStatusFilter>(''); // Default to all
   const [searchTerm, setSearchTerm] = useState('');
@@ -36,10 +39,10 @@ const AdminMatchesPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && competitions.length > 0) {
       loadData();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, competitions]);
 
   useEffect(() => {
     filterFixtures();
@@ -50,13 +53,12 @@ const AdminMatchesPage: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      // Get both EPL and UCL fixtures
-      const [eplFixtures, uclFixtures] = await Promise.all([
-        getAdminFixtures(1), // EPL fixtures
-        getAdminFixtures(2), // UCL fixtures
-      ]);
+      // Dynamically load fixtures from all active competitions
+      const fixturePromises = competitions.map(comp => getAdminFixtures(comp.id));
+      const allFixturesArrays = await Promise.all(fixturePromises);
 
-      const fixturesData = [...eplFixtures, ...uclFixtures];
+      // Flatten all fixtures into a single array
+      const fixturesData = allFixturesArrays.flat();
 
       setFixtures(fixturesData);
     } catch (err) {
@@ -93,11 +95,9 @@ const AdminMatchesPage: React.FC = () => {
       );
     }
 
-    // Competition filter
-    if (competitionFilter === 'epl') {
-      filtered = filtered.filter(fixture => fixture.competition_id === 1);
-    } else if (competitionFilter === 'ucl') {
-      filtered = filtered.filter(fixture => fixture.competition_id === 2);
+    // Competition filter - use dynamic competition IDs
+    if (competitionFilter && competitionFilter !== 'all') {
+      filtered = filtered.filter(fixture => fixture.competition_id === competitionFilter);
     }
 
     // Match status filter (scheduled, live, finished)
@@ -295,7 +295,10 @@ const AdminMatchesPage: React.FC = () => {
 
         <select
           value={competitionFilter}
-          onChange={(e) => setCompetitionFilter(e.target.value as CompetitionFilter)}
+          onChange={(e) => {
+            const value = e.target.value;
+            setCompetitionFilter(value === '' || value === 'all' ? '' : Number(value));
+          }}
           style={{
             padding: '8px 12px',
             border: '1px solid #d1d5db',
@@ -304,8 +307,12 @@ const AdminMatchesPage: React.FC = () => {
           }}
         >
           <option value="">All Competitions</option>
-          <option value="epl">Premier League</option>
-          <option value="ucl">Champions League</option>
+          {competitions.map(competition => (
+            <option key={competition.id} value={competition.id}>
+              {competition.name}
+              {competition.short_name && ` (${competition.short_name})`}
+            </option>
+          ))}
         </select>
 
         <select
@@ -522,7 +529,7 @@ const AdminMatchesPage: React.FC = () => {
                           }}
                         >
                           <option value="">None</option>
-                          {BROADCASTERS.filter(b => b.id !== -1).map(broadcaster => (
+                          {BROADCASTERS.map(broadcaster => (
                             <option key={broadcaster.id} value={broadcaster.id}>
                               {broadcaster.name}
                             </option>

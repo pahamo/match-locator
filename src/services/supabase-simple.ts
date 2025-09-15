@@ -12,7 +12,7 @@ export const SIMPLE_BROADCASTERS = [
 ];
 
 // Get fixtures with basic team info using simple JOINs
-export async function getSimpleFixtures(competitionId: number = 1): Promise<SimpleFixture[]> {
+export async function getSimpleFixtures(competitionId?: number): Promise<SimpleFixture[]> {
   try {
 
     // Step 1: Load fixture basics only
@@ -21,12 +21,18 @@ export async function getSimpleFixtures(competitionId: number = 1): Promise<Simp
     const seasonYear = now.getUTCMonth() >= 6 ? now.getUTCFullYear() : now.getUTCFullYear() - 1;
     const seasonStartIso = `${seasonYear}-08-01T00:00:00.000Z`;
 
-    const { data: fixtures, error } = await supabase
+    let query = supabase
       .from('fixtures_with_teams')
       .select('id, utc_kickoff, home_team_id, away_team_id, home_team, away_team, home_crest, away_crest, matchday, competition_id, stage, round')
-      .eq('competition_id', competitionId) // Support any competition
       .gte('utc_kickoff', seasonStartIso)
       .order('utc_kickoff', { ascending: true });
+
+    // Only filter by competition if competitionId is provided
+    if (competitionId !== undefined) {
+      query = query.eq('competition_id', competitionId);
+    }
+
+    const { data: fixtures, error } = await query;
 
     if (error) {
       throw error;

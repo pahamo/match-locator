@@ -4,6 +4,7 @@ import { getSimpleCompetitions } from '../services/supabase-simple';
 import type { Competition } from '../types';
 import Header from '../components/Header';
 import { FixtureCardSkeleton } from '../components/SkeletonLoader';
+import { getCompetitionLogo, getCompetitionIcon, getCompetitionDescription } from '../config/competitions';
 
 const CompetitionsOverviewPage: React.FC = () => {
   const [competitions, setCompetitions] = useState<Competition[]>([]);
@@ -29,35 +30,6 @@ const CompetitionsOverviewPage: React.FC = () => {
     }
   };
 
-  const getCompetitionLogo = (slug: string): string | null => {
-    const logos: Record<string, string> = {
-      'premier-league': 'https://cdn.brandfetch.io/id3ei9Uwhu/theme/dark/id4u-3dVa7.svg?c=1bxid64Mup7aczewSAYMX&t=1737356816110',
-      'champions-league': 'https://upload.wikimedia.org/wikipedia/en/f/f5/UEFA_Champions_League.svg'
-    };
-    return logos[slug] || null;
-  };
-
-  const getCompetitionIcon = (slug: string): string => {
-    const icons: Record<string, string> = {
-      'premier-league': '⚽',
-      'champions-league': '🏆',
-      'europa-league': '🌟',
-      'fa-cup': '🏅',
-      'league-cup': '🥇'
-    };
-    return icons[slug] || '🏁';
-  };
-
-  const getCompetitionDescription = (slug: string): string => {
-    const descriptions: Record<string, string> = {
-      'premier-league': 'The top flight of English football with 20 teams competing for the title.',
-      'champions-league': 'Europe\'s premier club competition featuring the best teams from across the continent.',
-      'europa-league': 'UEFA\'s second-tier European competition for clubs.',
-      'fa-cup': 'England\'s oldest football competition, open to all eligible clubs.',
-      'league-cup': 'English football\'s secondary cup competition.'
-    };
-    return descriptions[slug] || 'Football competition details.';
-  };
 
   if (loading) {
     return (

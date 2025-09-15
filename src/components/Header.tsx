@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { usePublicCompetitions } from '../hooks/useCompetitions';
+import { getCompetitionIcon, getCompetitionLogo } from '../config/competitions';
 
 interface HeaderProps {
   // Optional site/app title override
@@ -15,13 +17,16 @@ const Header: React.FC<HeaderProps> = React.memo(({
   const [competitionsDropdownOpen, setCompetitionsDropdownOpen] = useState(false);
   const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(null);
 
-  const competitions = [
-    { name: 'Premier League', slug: 'premier-league', icon: '⚽', logo: 'https://cdn.brandfetch.io/id3ei9Uwhu/w/177/h/224/theme/dark/logo.png?c=1bxid64Mup7aczewSAYMX&t=1737356858593' },
-    { name: 'Champions League', slug: 'champions-league', icon: '🏆', logo: 'https://upload.wikimedia.org/wikipedia/en/f/f5/UEFA_Champions_League.svg' },
-    { name: 'Europa League', slug: 'europa-league', icon: '🌟' },
-    { name: 'FA Cup', slug: 'fa-cup', icon: '🏅' },
-    { name: 'League Cup', slug: 'league-cup', icon: '🥇' }
-  ];
+  // Load competitions dynamically from database
+  const { competitions: competitionsData } = usePublicCompetitions();
+
+  // Format competitions for display with icons and logos
+  const competitions = competitionsData.map(comp => ({
+    name: comp.name,
+    slug: comp.slug,
+    icon: getCompetitionIcon(comp.slug),
+    logo: getCompetitionLogo(comp.slug)
+  }));
 
   return (
     <header style={{

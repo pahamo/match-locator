@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Fixture, FixturesApiParams, Provider, Team } from '../types';
+import { mapCompetitionIdToSlug } from '../utils/competitionMapping';
 
 // Require credentials from environment variables
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
@@ -64,7 +65,7 @@ function mapFixtureRow(row: FixtureRow, providersByFixture: Record<number, Provi
   return {
     id: row.id,
     sport: 'football',
-    competition: row.competition_id === 1 ? 'premier-league' : row.competition_id === 2 ? 'champions-league' : 'unknown',
+    competition: mapCompetitionIdToSlug(row.competition_id || 0),
     competition_id: row.competition_id,
     matchweek: mw,
     kickoff_utc: kickoffIso,

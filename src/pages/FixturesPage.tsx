@@ -58,11 +58,8 @@ const FixturesPage: React.FC = () => {
     }
 
     if (competitionFilter) {
-      // Filter by competition ID
-      const selectedCompetition = competitions.find(c => c.id === competitionFilter);
-      if (selectedCompetition) {
-        filtered = filtered.filter(f => f.competition === selectedCompetition.slug);
-      }
+      // Filter by competition ID - use competition_id for more reliable filtering
+      filtered = filtered.filter(f => f.competition_id === competitionFilter);
     }
 
     if (locationFilter) {

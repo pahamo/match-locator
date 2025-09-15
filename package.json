@@ -33,8 +33,13 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "prebuild": "node ./scripts/generate_sitemaps.mjs",
-    "teams:backfill": "node scripts/backfill_teams_from_fd.mjs",
-    "teams:backfill:dry": "node scripts/backfill_teams_from_fd.mjs --dry-run"
+    "import:premier-league": "node scripts/importers/index.mjs --competition=premier-league",
+    "import:champions-league": "node scripts/importers/index.mjs --competition=champions-league",
+    "import:all": "node scripts/importers/index.mjs --all",
+    "teams:backfill": "node scripts/maintenance/team-metadata-backfill.mjs",
+    "teams:backfill:dry": "node scripts/maintenance/team-metadata-backfill.mjs --dry-run",
+    "verify:data": "node scripts/verification/data-integrity-check.mjs",
+    "generate:sitemaps": "node scripts/generate_sitemaps.mjs"
   },
   "eslintConfig": {
     "extends": [

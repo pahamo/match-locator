@@ -7,6 +7,7 @@ import Header from '../components/Header';
 import StructuredData from '../components/StructuredData';
 import { FixtureCardSkeleton } from '../components/SkeletonLoader';
 import FixtureCard from '../design-system/components/FixtureCard';
+import { getCompetitionLogo } from '../config/competitions';
 
 const CompetitionPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -60,13 +61,6 @@ const CompetitionPage: React.FC = () => {
     loadCompetitionData();
   }, [loadCompetitionData]);
 
-  const getCompetitionLogo = (slug: string): string | null => {
-    const logos: Record<string, string> = {
-      'premier-league': 'https://cdn.brandfetch.io/id3ei9Uwhu/theme/dark/id4u-3dVa7.svg?c=1bxid64Mup7aczewSAYMX&t=1737356816110',
-      'champions-league': 'https://upload.wikimedia.org/wikipedia/en/f/f5/UEFA_Champions_League.svg'
-    };
-    return logos[slug] || null;
-  };
 
   const getUpcomingFixtures = (fixtures: SimpleFixture[], limit = 5) => {
     const now = new Date();
@@ -83,14 +77,6 @@ const CompetitionPage: React.FC = () => {
       .reverse();
   };
 
-  const getCompetitionStats = () => {
-    const totalFixtures = fixtures.length;
-    const confirmedBroadcasts = fixtures.filter(f => f.providerId && f.providerId !== 999).length;
-    const blackouts = fixtures.filter(f => f.isBlackout).length;
-    const pendingBroadcasts = totalFixtures - confirmedBroadcasts - blackouts;
-
-    return { totalFixtures, confirmedBroadcasts, blackouts, pendingBroadcasts };
-  };
 
   if (loading) {
     return (
@@ -131,7 +117,6 @@ const CompetitionPage: React.FC = () => {
 
   const upcomingFixtures = getUpcomingFixtures(fixtures);
   const recentResults = getRecentResults(fixtures);
-  const stats = getCompetitionStats();
 
   return (
     <div>
@@ -195,41 +180,6 @@ const CompetitionPage: React.FC = () => {
           )}
         </div>
 
-        {/* Competition Stats */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '1rem',
-          marginBottom: '2rem'
-        }}>
-          <div style={{ padding: '1rem', backgroundColor: '#f9fafb', borderRadius: '8px' }}>
-            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#111827' }}>
-              {stats.totalFixtures}
-            </div>
-            <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Total Fixtures</div>
-          </div>
-
-          <div style={{ padding: '1rem', backgroundColor: '#f9fafb', borderRadius: '8px' }}>
-            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#059669' }}>
-              {stats.confirmedBroadcasts}
-            </div>
-            <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Confirmed Broadcasts</div>
-          </div>
-
-          <div style={{ padding: '1rem', backgroundColor: '#f9fafb', borderRadius: '8px' }}>
-            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#dc2626' }}>
-              {stats.blackouts}
-            </div>
-            <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Blackout Games</div>
-          </div>
-
-          <div style={{ padding: '1rem', backgroundColor: '#f9fafb', borderRadius: '8px' }}>
-            <div style={{ fontSize: '2rem', fontWeight: 'bold', color: '#d97706' }}>
-              {stats.pendingBroadcasts}
-            </div>
-            <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>Pending TV Assignments</div>
-          </div>
-        </div>
 
         {/* Main Content Grid */}
         <div style={{

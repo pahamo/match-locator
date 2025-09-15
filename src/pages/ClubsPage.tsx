@@ -4,6 +4,7 @@ import type { Team } from '../types';
 import Header from '../components/Header';
 import { ClubCard } from '../design-system';
 import { generateClubsMeta, updateDocumentMeta } from '../utils/seo';
+import { getCompetitionLogo } from '../config/competitions';
 
 const ClubsPage: React.FC = () => {
   const [teams, setTeams] = useState<Team[]>([]);
@@ -28,13 +29,6 @@ const ClubsPage: React.FC = () => {
     loadTeams();
   }, []);
 
-  const getCompetitionLogo = (competition: string): string | null => {
-    const logos: Record<string, string> = {
-      'premier-league': 'https://cdn.brandfetch.io/id3ei9Uwhu/theme/dark/id4u-3dVa7.svg?c=1bxid64Mup7aczewSAYMX&t=1737356816110',
-      'champions-league': 'https://upload.wikimedia.org/wikipedia/en/f/f5/UEFA_Champions_League.svg'
-    };
-    return logos[competition] || null;
-  };
 
   const loadTeams = async () => {
     try {
