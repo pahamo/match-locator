@@ -19,6 +19,35 @@ const AdminTeamsPage: React.FC = () => {
   const [countryFilter, setCountryFilter] = useState<CountryFilter>('');
   const [searchTerm, setSearchTerm] = useState('');
 
+  // Helper function - must be defined before useMemo
+  const getTeamStats = () => {
+    const total = teams.length;
+    const eplCount = teams.filter(team => team.competition_id === 1).length;
+    console.log(`[DEBUG] getTeamStats: ${total} total teams, ${eplCount} EPL teams (competition_id === 1)`);
+
+    const withCrests = teams.filter(team => team.crest).length;
+    const withShortNames = teams.filter(team => team.short_name).length;
+    const withColors = teams.filter(team => team.club_colors).length;
+    const withWebsites = teams.filter(team => team.website).length;
+    const withVenues = teams.filter(team => team.venue).length;
+    const withCities = teams.filter(team => team.city).length;
+    const completeData = teams.filter(team =>
+      team.crest && team.short_name && team.club_colors && team.website && team.venue
+    ).length;
+
+    return {
+      total,
+      eplCount,
+      withCrests,
+      withShortNames,
+      withColors,
+      withWebsites,
+      withVenues,
+      withCities,
+      completeData
+    };
+  };
+
   // Derived state - must be before early returns
   const stats = useMemo(() => getTeamStats(), [teams]);
 
@@ -118,34 +147,6 @@ const AdminTeamsPage: React.FC = () => {
 
     console.log(`[DEBUG] filterTeams result: ${filtered.length} teams after filtering`);
     setFilteredTeams(filtered);
-  };
-
-  const getTeamStats = () => {
-    const total = teams.length;
-    const eplCount = teams.filter(team => team.competition_id === 1).length;
-    console.log(`[DEBUG] getTeamStats: ${total} total teams, ${eplCount} EPL teams (competition_id === 1)`);
-
-    const withCrests = teams.filter(team => team.crest).length;
-    const withShortNames = teams.filter(team => team.short_name).length;
-    const withColors = teams.filter(team => team.club_colors).length;
-    const withWebsites = teams.filter(team => team.website).length;
-    const withVenues = teams.filter(team => team.venue).length;
-    const withCities = teams.filter(team => team.city).length;
-    const completeData = teams.filter(team =>
-      team.crest && team.short_name && team.club_colors && team.website && team.venue
-    ).length;
-
-    return {
-      total,
-      eplCount,
-      withCrests,
-      withShortNames,
-      withColors,
-      withWebsites,
-      withVenues,
-      withCities,
-      completeData
-    };
   };
 
   const handleAuthenticated = () => {
