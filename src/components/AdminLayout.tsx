@@ -37,26 +37,26 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
             marginTop: '32px'
           }}>
             {/* Admin Navigation Sidebar */}
-            <nav style={{
-              minWidth: '200px',
-              background: '#f8fafc',
-              borderRadius: '8px',
-              padding: '16px',
-              border: '1px solid #e2e8f0'
-            }}>
+            <div style={{ minWidth: '160px' }}>
               <h2 style={{
-                fontSize: '16px',
+                fontSize: '14px',
                 fontWeight: '600',
                 color: '#1f2937',
-                margin: '0 0 16px 0',
+                margin: '0 0 12px 0',
                 textTransform: 'uppercase',
                 letterSpacing: '0.5px'
               }}>
                 Admin Panel
               </h2>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                {navItems.map((item) => (
+              <nav style={{
+                background: '#f8fafc',
+                borderRadius: '8px',
+                padding: '12px',
+                border: '1px solid #e2e8f0'
+              }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  {navItems.map((item) => (
                   <Link
                     key={item.path}
                     to={item.path}
@@ -79,8 +79,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
                     {item.label}
                   </Link>
                 ))}
-              </div>
-            </nav>
+                </div>
+              </nav>
+            </div>
 
             {/* Main Content */}
             <div style={{ flex: '1', minWidth: '0' }}>

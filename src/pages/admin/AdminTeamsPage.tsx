@@ -310,118 +310,198 @@ const AdminTeamsPage: React.FC = () => {
           background: 'white',
           border: '1px solid #e2e8f0',
           borderRadius: '8px',
-          overflow: 'hidden',
-          width: '100%'
+          overflow: 'auto',
+          width: '100%',
+          maxHeight: '70vh'
         }}>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: '60px 2fr 1fr 1fr 80px 1fr 1fr 1fr 1fr 1fr 100px',
-            gap: '12px',
-            padding: '16px',
-            background: '#f8fafc',
-            fontWeight: '600',
-            fontSize: '14px',
-            color: '#374151',
-            borderBottom: '1px solid #e2e8f0',
-            minWidth: '1200px'
-          }}>
-            <div>Crest</div>
-            <div>Team Name</div>
-            <div>Short Name</div>
-            <div>Slug</div>
-            <div>Comp ID</div>
-            <div>Colors</div>
-            <div>Website</div>
-            <div>Venue</div>
-            <div>Home Venue</div>
-            <div>City</div>
-            <div>Actions</div>
-          </div>
-
-          <div style={{ overflowX: 'auto' }}>
-            {filteredTeams.length === 0 ? (
-              <div style={{
-                padding: '32px',
-                textAlign: 'center',
-                color: '#6b7280'
-              }}>
-                No teams found matching your filters.
-              </div>
-            ) : (
-              filteredTeams.map((team) => (
-                <div
-                  key={team.id}
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: '60px 2fr 1fr 1fr 80px 1fr 1fr 1fr 1fr 1fr 100px',
-                    gap: '12px',
-                    padding: '16px',
-                    borderBottom: '1px solid #e2e8f0',
-                    alignItems: 'center',
-                    minWidth: '1200px'
-                  }}
-                >
-                  <div>
-                    {team.crest ? (
-                      <img
-                        src={team.crest}
-                        alt={`${team.name} crest`}
-                        style={{
+          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '1400px' }}>
+            <thead style={{
+              position: 'sticky',
+              top: 0,
+              background: '#f8fafc',
+              zIndex: 10
+            }}>
+              <tr>
+                <th style={{
+                  padding: '16px 12px',
+                  textAlign: 'left',
+                  fontWeight: '600',
+                  fontSize: '14px',
+                  color: '#374151',
+                  borderBottom: '1px solid #e2e8f0',
+                  width: '60px'
+                }}>Crest</th>
+                <th style={{
+                  padding: '16px 12px',
+                  textAlign: 'left',
+                  fontWeight: '600',
+                  fontSize: '14px',
+                  color: '#374151',
+                  borderBottom: '1px solid #e2e8f0',
+                  width: 'auto'
+                }}>Team Name</th>
+                <th style={{
+                  padding: '16px 12px',
+                  textAlign: 'left',
+                  fontWeight: '600',
+                  fontSize: '14px',
+                  color: '#374151',
+                  borderBottom: '1px solid #e2e8f0',
+                  width: '120px'
+                }}>Short Name</th>
+                <th style={{
+                  padding: '16px 12px',
+                  textAlign: 'left',
+                  fontWeight: '600',
+                  fontSize: '14px',
+                  color: '#374151',
+                  borderBottom: '1px solid #e2e8f0',
+                  width: '120px'
+                }}>Slug</th>
+                <th style={{
+                  padding: '16px 12px',
+                  textAlign: 'left',
+                  fontWeight: '600',
+                  fontSize: '14px',
+                  color: '#374151',
+                  borderBottom: '1px solid #e2e8f0',
+                  width: '80px'
+                }}>Competition</th>
+                <th style={{
+                  padding: '16px 12px',
+                  textAlign: 'left',
+                  fontWeight: '600',
+                  fontSize: '14px',
+                  color: '#374151',
+                  borderBottom: '1px solid #e2e8f0',
+                  width: '120px'
+                }}>Colors</th>
+                <th style={{
+                  padding: '16px 12px',
+                  textAlign: 'left',
+                  fontWeight: '600',
+                  fontSize: '14px',
+                  color: '#374151',
+                  borderBottom: '1px solid #e2e8f0',
+                  width: '120px'
+                }}>Website</th>
+                <th style={{
+                  padding: '16px 12px',
+                  textAlign: 'left',
+                  fontWeight: '600',
+                  fontSize: '14px',
+                  color: '#374151',
+                  borderBottom: '1px solid #e2e8f0',
+                  width: '120px'
+                }}>Venue</th>
+                <th style={{
+                  padding: '16px 12px',
+                  textAlign: 'left',
+                  fontWeight: '600',
+                  fontSize: '14px',
+                  color: '#374151',
+                  borderBottom: '1px solid #e2e8f0',
+                  width: '120px'
+                }}>Home Venue</th>
+                <th style={{
+                  padding: '16px 12px',
+                  textAlign: 'left',
+                  fontWeight: '600',
+                  fontSize: '14px',
+                  color: '#374151',
+                  borderBottom: '1px solid #e2e8f0',
+                  width: '120px'
+                }}>City</th>
+                <th style={{
+                  padding: '16px 12px',
+                  textAlign: 'left',
+                  fontWeight: '600',
+                  fontSize: '14px',
+                  color: '#374151',
+                  borderBottom: '1px solid #e2e8f0',
+                  width: '100px'
+                }}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredTeams.length === 0 ? (
+                <tr>
+                  <td colSpan={11} style={{
+                    padding: '32px',
+                    textAlign: 'center',
+                    color: '#6b7280'
+                  }}>
+                    No teams found matching your filters.
+                  </td>
+                </tr>
+              ) : (
+                filteredTeams.map((team) => (
+                  <tr key={team.id} style={{
+                    borderBottom: '1px solid #e2e8f0'
+                  }}>
+                    <td style={{ padding: '16px 12px' }}>
+                      {team.crest ? (
+                        <img
+                          src={team.crest}
+                          alt={`${team.name} crest`}
+                          style={{
+                            width: '32px',
+                            height: '32px',
+                            objectFit: 'contain',
+                            borderRadius: '4px'
+                          }}
+                        />
+                      ) : (
+                        <div style={{
                           width: '32px',
                           height: '32px',
-                          objectFit: 'contain',
-                          borderRadius: '4px'
-                        }}
-                      />
-                    ) : (
+                          background: '#f3f4f6',
+                          borderRadius: '4px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '12px',
+                          color: '#6b7280'
+                        }}>
+                          ?
+                        </div>
+                      )}
+                    </td>
+                    <td style={{ padding: '16px 12px', fontWeight: '600', fontSize: '14px' }}>{team.name}</td>
+                    <td style={{ padding: '16px 12px', fontSize: '13px', color: team.short_name ? '#1f2937' : '#9ca3af' }}>
+                      {team.short_name || 'None'}
+                    </td>
+                    <td style={{ padding: '16px 12px', fontSize: '12px', color: '#6b7280', fontFamily: 'monospace' }}>
+                      {team.slug}
+                    </td>
+                    <td style={{ padding: '16px 12px' }}>
                       <div style={{
-                        width: '32px',
-                        height: '32px',
-                        background: '#f3f4f6',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                        color: team.competition_id === 1 ? '#059669' : team.competition_id === 2 ? '#dc2626' : '#6b7280',
+                        textAlign: 'center',
+                        padding: '2px 4px',
                         borderRadius: '4px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '12px',
-                        color: '#6b7280'
+                        background: team.competition_id === 1 ? '#f0fdf4' : team.competition_id === 2 ? '#fef2f2' : '#f9fafb'
                       }}>
-                        ?
+                        {team.competition_id === 1 ? 'EPL' :
+                         team.competition_id === 2 ? 'UCL' :
+                         team.competition_id ? `C${team.competition_id}` : 'N/A'}
                       </div>
-                    )}
-                  </div>
-                  <div style={{ fontWeight: '600', fontSize: '14px' }}>{team.name}</div>
-                  <div style={{ fontSize: '13px', color: team.short_name ? '#1f2937' : '#9ca3af' }}>
-                    {team.short_name || 'None'}
-                  </div>
-                  <div style={{ fontSize: '12px', color: '#6b7280', fontFamily: 'monospace' }}>
-                    {team.slug}
-                  </div>
-                  <div style={{
-                    fontSize: '11px',
-                    fontWeight: '600',
-                    color: team.competition_id === 1 ? '#059669' : team.competition_id === 2 ? '#dc2626' : '#6b7280',
-                    textAlign: 'center',
-                    padding: '2px 4px',
-                    borderRadius: '4px',
-                    background: team.competition_id === 1 ? '#f0fdf4' : team.competition_id === 2 ? '#fef2f2' : '#f9fafb'
-                  }}>
-                    {team.competition_id === 1 ? 'EPL' :
-                     team.competition_id === 2 ? 'UCL' :
-                     team.competition_id ? `C${team.competition_id}` : 'N/A'}
-                  </div>
-                  <div style={{ fontSize: '12px', color: team.club_colors ? '#1f2937' : '#9ca3af' }}>
-                    {team.club_colors ? (
-                      <span style={{
-                        background: '#f0fdf4',
-                        color: '#166534',
-                        padding: '2px 6px',
-                        borderRadius: '4px'
-                      }}>
-                        {team.club_colors.length > 20 ? team.club_colors.substring(0, 20) + '...' : team.club_colors}
-                      </span>
-                    ) : 'None'}
-                  </div>
-                  <div style={{ fontSize: '12px' }}>
+                    </td>
+                    <td style={{ padding: '16px 12px', fontSize: '12px', color: team.club_colors ? '#1f2937' : '#9ca3af' }}>
+                      {team.club_colors ? (
+                        <span style={{
+                          background: '#f0fdf4',
+                          color: '#166534',
+                          padding: '2px 6px',
+                          borderRadius: '4px'
+                        }}>
+                          {team.club_colors.length > 20 ? team.club_colors.substring(0, 20) + '...' : team.club_colors}
+                        </span>
+                      ) : 'None'}
+                    </td>
+                    <td style={{ padding: '16px 12px', fontSize: '12px' }}>
                     {team.website ? (
                       <a
                         href={team.website}
@@ -429,39 +509,40 @@ const AdminTeamsPage: React.FC = () => {
                         rel="noopener noreferrer"
                         style={{ color: '#2563eb', textDecoration: 'none' }}
                       >
-                        {team.website.replace(/^https?:\/\//, '').split('/')[0]}
-                      </a>
-                    ) : (
-                      <span style={{ color: '#9ca3af' }}>None</span>
-                    )}
-                  </div>
-                  <div style={{ fontSize: '12px', color: team.venue ? '#1f2937' : '#9ca3af' }}>
-                    {team.venue || 'None'}
-                  </div>
-                  <div style={{ fontSize: '12px', color: team.home_venue ? '#1f2937' : '#9ca3af' }}>
-                    {team.home_venue || 'None'}
-                  </div>
-                  <div style={{ fontSize: '12px', color: team.city ? '#1f2937' : '#9ca3af' }}>
-                    {team.city || 'None'}
-                  </div>
-                  <div>
-                    <button
-                      style={{
-                        padding: '4px 8px',
-                        fontSize: '12px',
-                        border: '1px solid #d1d5db',
-                        borderRadius: '4px',
-                        background: 'white',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      Edit
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
+                          {team.website.replace(/^https?:\/\//, '').split('/')[0]}
+                        </a>
+                      ) : (
+                        <span style={{ color: '#9ca3af' }}>None</span>
+                      )}
+                    </td>
+                    <td style={{ padding: '16px 12px', fontSize: '12px', color: team.venue ? '#1f2937' : '#9ca3af' }}>
+                      {team.venue || 'None'}
+                    </td>
+                    <td style={{ padding: '16px 12px', fontSize: '12px', color: team.home_venue ? '#1f2937' : '#9ca3af' }}>
+                      {team.home_venue || 'None'}
+                    </td>
+                    <td style={{ padding: '16px 12px', fontSize: '12px', color: team.city ? '#1f2937' : '#9ca3af' }}>
+                      {team.city || 'None'}
+                    </td>
+                    <td style={{ padding: '16px 12px' }}>
+                      <button
+                        style={{
+                          padding: '4px 8px',
+                          fontSize: '12px',
+                          border: '1px solid #d1d5db',
+                          borderRadius: '4px',
+                          background: 'white',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Edit
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
 
         {/* Data Enrichment Info */}
