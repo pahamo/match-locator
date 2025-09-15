@@ -49,10 +49,14 @@ const AdminMatchesPage: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      const [fixturesData, competitionsData] = await Promise.all([
+      // Get both EPL and UCL fixtures
+      const [eplFixtures, uclFixtures, competitionsData] = await Promise.all([
         getAdminFixtures(1), // EPL fixtures
+        getAdminFixtures(2), // UCL fixtures
         getSimpleCompetitions(true) // Include hidden competitions
       ]);
+
+      const fixturesData = [...eplFixtures, ...uclFixtures];
 
       setFixtures(fixturesData);
       setCompetitions(competitionsData);
@@ -88,6 +92,13 @@ const AdminMatchesPage: React.FC = () => {
         fixture.home.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         fixture.away.name.toLowerCase().includes(searchTerm.toLowerCase())
       );
+    }
+
+    // Competition filter
+    if (competitionFilter === 'epl') {
+      filtered = filtered.filter(fixture => fixture.competition_id === 1);
+    } else if (competitionFilter === 'ucl') {
+      filtered = filtered.filter(fixture => fixture.competition_id === 2);
     }
 
     // Status filter
@@ -271,6 +282,21 @@ const AdminMatchesPage: React.FC = () => {
             minWidth: '200px'
           }}
         />
+
+        <select
+          value={competitionFilter}
+          onChange={(e) => setCompetitionFilter(e.target.value as CompetitionFilter)}
+          style={{
+            padding: '8px 12px',
+            border: '1px solid #d1d5db',
+            borderRadius: '6px',
+            fontSize: '14px'
+          }}
+        >
+          <option value="">All Competitions</option>
+          <option value="epl">Premier League</option>
+          <option value="ucl">Champions League</option>
+        </select>
 
         <select
           value={statusFilter}

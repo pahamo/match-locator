@@ -32,12 +32,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title }) => {
         <div className="wrap">
           <div style={{
             display: 'flex',
-            gap: '32px',
+            gap: '24px',
             alignItems: 'flex-start',
             marginTop: '32px'
           }}>
             {/* Admin Navigation Sidebar */}
-            <div style={{ minWidth: '160px' }}>
+            <div style={{ minWidth: '140px', flexShrink: 0 }}>
               <h2 style={{
                 fontSize: '14px',
                 fontWeight: '600',
