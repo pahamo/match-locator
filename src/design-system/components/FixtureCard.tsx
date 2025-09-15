@@ -294,6 +294,17 @@ const fixtureCardStyles = `
     display: none;
   }
 
+  /* Show short names on smaller screens */
+  @media (max-width: 768px) {
+    .team-name-full {
+      display: none;
+    }
+
+    .team-name-short {
+      display: inline;
+    }
+  }
+
   @media (max-width: 640px) {
     .broadcaster-info {
       display: none;
@@ -305,14 +316,6 @@ const fixtureCardStyles = `
       display: inline-flex;
       min-height: 44px;
       margin-left: 0;
-    }
-
-    .team-name-full {
-      display: none;
-    }
-
-    .team-name-short {
-      display: inline;
     }
   }
 `;
