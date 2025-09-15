@@ -13,7 +13,16 @@ const ClubsPage: React.FC = () => {
 
   // Filter teams by competition using competition_id
   const eplTeams = teams.filter(team => team.competition_id === 1);
-  const uclTeams = teams.filter(team => team.competition_id === 2);
+
+  // English teams that are in Champions League (both dedicated UCL teams and EPL teams in UCL)
+  const englishTeamsInUCL = [
+    'Arsenal', 'Aston Villa', 'Liverpool', 'Manchester City'
+  ];
+
+  const uclTeams = teams.filter(team => {
+    // Include teams marked as UCL (competition_id === 2) OR English teams that qualified for UCL
+    return team.competition_id === 2 || englishTeamsInUCL.includes(team.name);
+  });
 
   useEffect(() => {
     loadTeams();
@@ -151,7 +160,7 @@ const ClubsPage: React.FC = () => {
               color: '#0369a1',
               fontWeight: '500'
             }}>
-              {uclTeams.length} of 32 Champions League clubs tracked
+              {uclTeams.length} of 36 Champions League clubs tracked
             </div>
             
             <div 

@@ -167,17 +167,17 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
           .eq('is_production_visible', true);
         
         if (error) {
-          console.warn('[Supabase] Failed to load production-visible competitions, defaulting to Premier League only:', error);
-          allowedCompetitionIds = [1]; // Fallback to Premier League only
+          console.warn('[Supabase] Failed to load production-visible competitions, defaulting to EPL and UCL:', error);
+          allowedCompetitionIds = [1, 2]; // Fallback to Premier League and Champions League
         } else {
           allowedCompetitionIds = (competitions || []).map(c => c.id);
           if (allowedCompetitionIds.length === 0) {
-            allowedCompetitionIds = [1]; // Fallback to Premier League only
+            allowedCompetitionIds = [1, 2]; // Fallback to Premier League and Champions League
           }
         }
       } catch (e) {
-        console.warn('[Supabase] Failed to check competition visibility, defaulting to Premier League only:', e);
-        allowedCompetitionIds = [1]; // Fallback to Premier League only
+        console.warn('[Supabase] Failed to check competition visibility, defaulting to EPL and UCL:', e);
+        allowedCompetitionIds = [1, 2]; // Fallback to Premier League and Champions League
       }
     }
 

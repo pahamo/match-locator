@@ -13,6 +13,7 @@ const Header: React.FC<HeaderProps> = React.memo(({
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [competitionsDropdownOpen, setCompetitionsDropdownOpen] = useState(false);
+  const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const competitions = [
     { name: 'Premier League', slug: 'premier-league', icon: '⚽' },
@@ -134,8 +135,19 @@ const Header: React.FC<HeaderProps> = React.memo(({
         {/* Competitions Dropdown */}
         <div
           style={{ position: 'relative' }}
-          onMouseEnter={() => setCompetitionsDropdownOpen(true)}
-          onMouseLeave={() => setCompetitionsDropdownOpen(false)}
+          onMouseEnter={() => {
+            if (dropdownTimeout) {
+              clearTimeout(dropdownTimeout);
+              setDropdownTimeout(null);
+            }
+            setCompetitionsDropdownOpen(true);
+          }}
+          onMouseLeave={() => {
+            const timeout = setTimeout(() => {
+              setCompetitionsDropdownOpen(false);
+            }, 150);
+            setDropdownTimeout(timeout);
+          }}
         >
           <a
             href="/competitions"
@@ -176,7 +188,7 @@ const Header: React.FC<HeaderProps> = React.memo(({
               boxShadow: '0 4px 12px rgb(0 0 0 / 0.15)',
               minWidth: '220px',
               zIndex: 1000,
-              marginTop: '4px'
+              marginTop: '2px'
             }}>
               <div style={{ padding: '8px 0' }}>
                 <a
