@@ -90,11 +90,9 @@ const HomePage: React.FC = () => {
   const [matchWeek, setMatchWeek] = useState<MatchWeek | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [competitions, setCompetitions] = useState<Competition[]>([]);
   // Removed selectedCompetitionId - now showing all competitions
   const [pastGamesExpanded, setPastGamesExpanded] = useState(false);
 
-    const [blackoutIds, setBlackoutIds] = useState<string[]>([]);
     
   // Prepare data for hooks - call hooks unconditionally
   const { finishedFixtures, currentAndUpcomingFixtures } = matchWeek ? separateFixturesByStatus(matchWeek.fixtures) : { finishedFixtures: [], currentAndUpcomingFixtures: [] };
@@ -109,10 +107,7 @@ const HomePage: React.FC = () => {
         setError(null);
         
         // Load competitions
-        const competitionsData = await getSimpleCompetitions(false); // Only production-visible
-        if (!isCancelled) {
-          setCompetitions(competitionsData);
-        }
+        // Competitions data no longer needed in state
 
         // Load fixtures from all competitions (no competition filter)
         const fixturesData = await getSimpleFixtures();
@@ -123,10 +118,7 @@ const HomePage: React.FC = () => {
           const meta = generateHomeMeta();
           updateDocumentMeta(meta);
         }
-        try {
-          const stored = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
-          if (!isCancelled && Array.isArray(stored)) setBlackoutIds(stored);
-        } catch { /* ignore */ }
+        // Blackout IDs no longer needed in state
       } catch (err) {
         console.error('Failed to load fixtures:', err);
         if (!isCancelled) setError('Failed to load fixtures. Please try again later.');
@@ -147,12 +139,7 @@ const HomePage: React.FC = () => {
       setMatchWeek(currentMatchWeek);
 
       // Load blackout flags from localStorage
-      try {
-        const stored = JSON.parse(localStorage.getItem('blackoutFixtures') || '[]');
-        if (Array.isArray(stored)) setBlackoutIds(stored);
-      } catch {
-        // ignore
-      }
+      // Blackout IDs no longer needed in state
     } catch (err) {
       console.error('Failed to load fixtures:', err);
       setError('Failed to load fixtures. Please try again later.');

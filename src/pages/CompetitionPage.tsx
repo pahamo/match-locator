@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getSimpleFixtures, getSimpleCompetitions } from '../services/supabase-simple';
 import { getTeams } from '../services/supabase';
@@ -7,7 +7,6 @@ import Header from '../components/Header';
 import StructuredData from '../components/StructuredData';
 import { FixtureCardSkeleton } from '../components/SkeletonLoader';
 import FixtureCard from '../design-system/components/FixtureCard';
-import { generateMatchUrl } from '../utils/seo';
 
 const CompetitionPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -19,11 +18,7 @@ const CompetitionPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    loadCompetitionData();
-  }, [slug]);
-
-  const loadCompetitionData = async () => {
+  const loadCompetitionData = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -59,7 +54,11 @@ const CompetitionPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [slug, navigate]);
+
+  useEffect(() => {
+    loadCompetitionData();
+  }, [loadCompetitionData]);
 
   const getUpcomingFixtures = (fixtures: SimpleFixture[], limit = 5) => {
     const now = new Date();

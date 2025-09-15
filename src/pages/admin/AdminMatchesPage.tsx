@@ -12,7 +12,6 @@ type BroadcastStatusFilter = '' | 'with_broadcast' | 'no_broadcast';
 const AdminMatchesPage: React.FC = () => {
   const [fixtures, setFixtures] = useState<AdminFixture[]>([]);
   const [filteredFixtures, setFilteredFixtures] = useState<AdminFixture[]>([]);
-  const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -52,16 +51,14 @@ const AdminMatchesPage: React.FC = () => {
       setError(null);
 
       // Get both EPL and UCL fixtures
-      const [eplFixtures, uclFixtures, competitionsData] = await Promise.all([
+      const [eplFixtures, uclFixtures] = await Promise.all([
         getAdminFixtures(1), // EPL fixtures
         getAdminFixtures(2), // UCL fixtures
-        getSimpleCompetitions(true) // Include hidden competitions
       ]);
 
       const fixturesData = [...eplFixtures, ...uclFixtures];
 
       setFixtures(fixturesData);
-      setCompetitions(competitionsData);
     } catch (err) {
       console.error('Failed to load fixtures data:', err);
       setError('Failed to load fixtures. Please try again later.');

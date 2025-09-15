@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getSimpleFixtures, getSimpleCompetitions } from '../../services/supabase-simple';
 import { getTeams } from '../../services/supabase';
-import type { Team } from '../../types';
 import { getMatchStatus } from '../../utils/matchStatus';
 import AdminLayout from '../../components/AdminLayout';
 import AdminAuth from '../../components/AdminAuth';

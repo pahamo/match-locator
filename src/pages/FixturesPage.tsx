@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { getFixtures, getTeams } from '../services/supabase';
 import { getSimpleCompetitions } from '../services/supabase-simple';
 import type { Fixture, Team, Competition } from '../types';
 import Header from '../components/Header';
 import MobileFilterModal from '../components/MobileFilterModal';
 import { FixtureCard } from '../design-system';
-import { generateFixturesMeta, updateDocumentMeta, generateMatchUrl } from '../utils/seo';
-import { getMatchStatus, getMatchStatusStyles } from '../utils/matchStatus';
+import { generateFixturesMeta, updateDocumentMeta } from '../utils/seo';
+import { getMatchStatus } from '../utils/matchStatus';
 
 type FilterTeam = '' | string;
 type FilterMatchweek = '' | string;
@@ -43,7 +42,6 @@ const FixturesPage: React.FC = () => {
 
     // Filter out past games by default (unless showPastGames is true)
     if (!showPastGames) {
-      const now = new Date();
       filtered = filtered.filter(f => {
         const matchStatus = getMatchStatus(f.kickoff_utc);
         return matchStatus.status !== 'finished';
@@ -84,7 +82,7 @@ const FixturesPage: React.FC = () => {
     // Reset display count when filters change and update hasMore
     setDisplayCount(50);
     setHasMore(filtered.length > 50);
-  }, [fixtures, teamFilter, matchweekFilter, competitionFilter, locationFilter, showPastGames]);
+  }, [fixtures, teamFilter, matchweekFilter, competitionFilter, locationFilter, showPastGames, competitions]);
 
   const loadData = async () => {
     try {

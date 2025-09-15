@@ -54,8 +54,8 @@ const DayGroupCard = React.memo(forwardRef<HTMLDivElement, DayGroupCardProps>(
             zIndex: typeof window !== 'undefined' && window.innerWidth <= 768 ? '10' : 'auto',
             background: typeof window !== 'undefined' && window.innerWidth <= 768 ? 'rgba(255, 255, 255, 0.95)' : 'transparent',
             backdropFilter: typeof window !== 'undefined' && window.innerWidth <= 768 ? 'blur(8px)' : 'none',
-            marginLeft: typeof window !== 'undefined' && window.innerWidth <= 768 ? '-' + 'clamp(8px, 2vw, 16px)' : '0',
-            marginRight: typeof window !== 'undefined' && window.innerWidth <= 768 ? '-' + 'clamp(8px, 2vw, 16px)' : '0',
+            marginLeft: typeof window !== 'undefined' && window.innerWidth <= 768 ? '-clamp(8px, 2vw, 16px)' : '0',
+            marginRight: typeof window !== 'undefined' && window.innerWidth <= 768 ? '-clamp(8px, 2vw, 16px)' : '0',
             paddingLeft: typeof window !== 'undefined' && window.innerWidth <= 768 ? 'clamp(8px, 2vw, 16px)' : '12px',
             paddingRight: typeof window !== 'undefined' && window.innerWidth <= 768 ? 'clamp(8px, 2vw, 16px)' : '12px'
           }}

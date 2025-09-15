@@ -8,7 +8,7 @@ export type SimpleCompetition = Competition;
 export const SIMPLE_BROADCASTERS = [
   { id: 1, name: 'Sky Sports' },
   { id: 2, name: 'TNT Sports' },
-  { id: 999, name: '🚫 Blackout (No TV)' }
+  { id: -1, name: '🚫 Blackout (No TV)' }
 ];
 
 // Get fixtures with basic team info using simple JOINs
@@ -56,7 +56,7 @@ export async function getSimpleFixtures(competitionId: number = 1): Promise<Simp
     // Step 4: Map to simple format
     return validFixtures.map((fixture: any) => {
       const providerId = broadcastLookup[fixture.id];
-      const isBlackout = providerId === 999;
+      const isBlackout = providerId === -1;
       
       return {
         id: fixture.id,
@@ -86,8 +86,8 @@ export async function getSimpleFixtures(competitionId: number = 1): Promise<Simp
 export async function saveBroadcaster(fixtureId: number, providerId: number | null): Promise<void> {
   try {
     
-    // Normalize providerId (-1 blackout should be 999)
-    const normalizedProviderId = (providerId === -1) ? 999 : providerId;
+    // Use -1 for blackout consistently
+    const normalizedProviderId = providerId;
     
     const response = await fetch('/.netlify/functions/save-broadcaster', {
       method: 'POST',
