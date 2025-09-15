@@ -129,6 +129,7 @@ const CompetitionPage: React.FC = () => {
   return (
     <div>
       <StructuredData
+        type="competition"
         data={{
           "@context": "https://schema.org",
           "@type": "SportsOrganization",

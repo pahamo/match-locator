@@ -2,8 +2,8 @@ import React from 'react';
 import type { Fixture, SimpleFixture } from '../types';
 
 interface StructuredDataProps {
-  type: 'match' | 'organization' | 'website';
-  data?: Fixture | SimpleFixture;
+  type: 'match' | 'organization' | 'website' | 'competition';
+  data?: Fixture | SimpleFixture | any;
 }
 
 const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) => {
@@ -168,6 +168,10 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) => {
       break;
     case 'website':
       structuredData = generateWebsiteStructuredData();
+      break;
+    case 'competition':
+      if (!data) return null;
+      structuredData = data; // Use the passed data directly for competition
       break;
     default:
       return null;
