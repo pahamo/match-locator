@@ -7,6 +7,46 @@ interface StructuredDataProps {
 }
 
 const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) => {
+  const getCompetitionName = (fixture: Fixture | SimpleFixture): string => {
+    if ('competition' in fixture) {
+      switch (fixture.competition) {
+        case 'premier-league':
+          return 'Premier League';
+        case 'champions-league':
+          return 'UEFA Champions League';
+        case 'europa-league':
+          return 'UEFA Europa League';
+        case 'fa-cup':
+          return 'FA Cup';
+        case 'league-cup':
+          return 'EFL Cup';
+        default:
+          return 'Football Competition';
+      }
+    }
+    return 'Football Competition';
+  };
+
+  const getCompetitionUrl = (fixture: Fixture | SimpleFixture): string => {
+    if ('competition' in fixture) {
+      switch (fixture.competition) {
+        case 'premier-league':
+          return 'https://www.premierleague.com';
+        case 'champions-league':
+          return 'https://www.uefa.com/uefachampionsleague/';
+        case 'europa-league':
+          return 'https://www.uefa.com/uefaeuropaleague/';
+        case 'fa-cup':
+          return 'https://www.thefa.com/competitions/thefacup';
+        case 'league-cup':
+          return 'https://www.efl.com/carabao-cup/';
+        default:
+          return 'https://www.uefa.com';
+      }
+    }
+    return 'https://www.uefa.com';
+  };
+
   const generateMatchStructuredData = (fixture: Fixture | SimpleFixture) => {
     const isSimpleFixture = 'home_team' in fixture;
     
@@ -25,7 +65,7 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) => {
       "@context": "https://schema.org",
       "@type": "SportsEvent",
       "name": `${homeTeam} vs ${awayTeam}`,
-      "description": `Premier League match between ${homeTeam} and ${awayTeam}`,
+      "description": `Football match between ${homeTeam} and ${awayTeam}`,
       "startDate": kickoffDate,
       "sport": {
         "@type": "Sport",
@@ -55,8 +95,8 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) => {
       ],
       "organizer": {
         "@type": "SportsOrganization",
-        "name": "Premier League",
-        "url": "https://www.premierleague.com"
+        "name": getCompetitionName(fixture),
+        "url": getCompetitionUrl(fixture)
       },
       ...(venue && {
         "location": {
@@ -75,7 +115,7 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) => {
       "@context": "https://schema.org",
       "@type": "Organization", 
       "name": "fixtures.app",
-      "description": "Premier League TV Schedule for UK - Sky Sports & TNT Sports fixtures",
+      "description": "Football TV Schedule for UK - Premier League, Champions League and more. Sky Sports & TNT Sports fixtures",
       "url": "https://matchlocator.com",
       "logo": "https://matchlocator.com/favicon.png",
       "sameAs": [
@@ -84,6 +124,8 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) => {
       "foundingDate": "2024",
       "knowsAbout": [
         "Premier League",
+        "Champions League",
+        "Europa League",
         "Football Television Broadcasting",
         "UK Sports TV Guide",
         "Sky Sports",
@@ -96,8 +138,8 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) => {
     return {
       "@context": "https://schema.org",
       "@type": "WebSite",
-      "name": "fixtures.app - Premier League TV Guide UK",
-      "description": "Premier League TV Guide UK - Sky Sports & TNT Sports fixtures. Find which broadcaster shows every Premier League match.",
+      "name": "fixtures.app - Football TV Guide UK",
+      "description": "Football TV Guide UK - Premier League, Champions League and more. Sky Sports & TNT Sports fixtures.",
       "url": "https://matchlocator.com",
       "potentialAction": {
         "@type": "SearchAction",
@@ -109,7 +151,7 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) => {
       },
       "about": {
         "@type": "Thing",
-        "name": "Premier League TV Broadcasting"
+        "name": "Football TV Broadcasting"
       }
     };
   };

@@ -120,11 +120,30 @@ const Header: React.FC<HeaderProps> = React.memo(({
         >
           Fixtures
         </a>
-        <a 
-          href="/clubs" 
-          style={{ 
-            color: '#6366f1', 
-            textDecoration: 'none', 
+        <a
+          href="/competitions"
+          style={{
+            color: '#6366f1',
+            textDecoration: 'none',
+            fontSize: '14px',
+            fontWeight: '500',
+            padding: '8px 12px',
+            borderRadius: '6px',
+            transition: 'background-color 0.2s',
+            minHeight: '36px',
+            display: 'flex',
+            alignItems: 'center'
+          }}
+          onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
+          onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+        >
+          Competitions
+        </a>
+        <a
+          href="/clubs"
+          style={{
+            color: '#6366f1',
+            textDecoration: 'none',
             fontSize: '14px',
             fontWeight: '500',
             padding: '8px 12px',
@@ -241,11 +260,28 @@ const Header: React.FC<HeaderProps> = React.memo(({
             >
               Fixtures
             </a>
-            <a 
-              href="/clubs" 
-              style={{ 
-                color: '#6366f1', 
-                textDecoration: 'none', 
+            <a
+              href="/competitions"
+              style={{
+                color: '#6366f1',
+                textDecoration: 'none',
+                fontSize: '14px',
+                fontWeight: '500',
+                padding: '12px 16px',
+                transition: 'background-color 0.2s',
+                display: 'block'
+              }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Competitions
+            </a>
+            <a
+              href="/clubs"
+              style={{
+                color: '#6366f1',
+                textDecoration: 'none',
                 fontSize: '14px',
                 fontWeight: '500',
                 padding: '12px 16px',

@@ -91,7 +91,7 @@ const HomePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [competitions, setCompetitions] = useState<Competition[]>([]);
-  const [selectedCompetitionId, setSelectedCompetitionId] = useState<number>(1); // Default to Premier League
+  // Removed selectedCompetitionId - now showing all competitions
   const [pastGamesExpanded, setPastGamesExpanded] = useState(false);
 
     const [blackoutIds, setBlackoutIds] = useState<string[]>([]);
@@ -108,20 +108,14 @@ const HomePage: React.FC = () => {
         setLoading(true);
         setError(null);
         
-        // Load competitions first
-        const competitionsData = await getSimpleCompetitions();
+        // Load competitions
+        const competitionsData = await getSimpleCompetitions(false); // Only production-visible
         if (!isCancelled) {
           setCompetitions(competitionsData);
-          
-          // Auto-select first available competition if current selection is not visible
-          const isCurrentCompetitionVisible = competitionsData.some(c => c.id === selectedCompetitionId);
-          if (!isCurrentCompetitionVisible && competitionsData.length > 0) {
-            setSelectedCompetitionId(competitionsData[0].id);
-          }
         }
-        
-        // Load fixtures for selected competition
-        const fixturesData = await getSimpleFixtures(selectedCompetitionId);
+
+        // Load fixtures from all competitions (no competition filter)
+        const fixturesData = await getSimpleFixtures();
         const currentMatchWeek = getCurrentOrUpcomingMatchWeek(fixturesData);
         if (!isCancelled) {
           setMatchWeek(currentMatchWeek);
@@ -141,7 +135,7 @@ const HomePage: React.FC = () => {
       }
     })();
     return () => { isCancelled = true; };
-  }, [selectedCompetitionId]);
+  }, []); // No dependencies since we're loading all competitions
 
   const loadMatchWeek = async () => {
     try {
@@ -238,7 +232,7 @@ const HomePage: React.FC = () => {
         <main>
           <div className="wrap">
             <h1 style={{ margin: '0 0 24px 0', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>
-              Premier League TV Schedule (UK)
+              Football TV Schedule (UK)
             </h1>
             <FixtureCardSkeleton />
             <FixtureCardSkeleton />
@@ -286,7 +280,7 @@ const HomePage: React.FC = () => {
       
       <main>
         <div className="wrap" style={{ position: 'relative' }}>
-          <h1 style={{ marginTop: '32px', marginBottom: '32px' }}>Premier League TV Schedule</h1>
+          <h1 style={{ marginTop: '32px', marginBottom: '32px' }}>Football TV Schedule</h1>
 
           {/* Finished Matches - Collapsible Display */}
           {finishedFixtures.length > 0 && (
@@ -423,11 +417,22 @@ const HomePage: React.FC = () => {
               >
                 📺 All Fixtures
               </a>
-              <a 
-                href="/clubs" 
-                style={{ 
-                  color: '#6366f1', 
-                  textDecoration: 'underline', 
+              <a
+                href="/competitions"
+                style={{
+                  color: '#6366f1',
+                  textDecoration: 'underline',
+                  fontSize: '0.9rem',
+                  fontWeight: '500'
+                }}
+              >
+                🏆 Browse by Competition
+              </a>
+              <a
+                href="/clubs"
+                style={{
+                  color: '#6366f1',
+                  textDecoration: 'underline',
                   fontSize: '0.9rem',
                   fontWeight: '500'
                 }}

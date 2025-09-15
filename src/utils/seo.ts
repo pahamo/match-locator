@@ -140,7 +140,7 @@ export const generateMatchMeta = (fixture: Fixture) => {
       : fixture.providers_uk.length > 0
         ? `Watch on ${broadcaster}.`
         : 'Broadcaster to be confirmed.'
-  } UK Premier League TV schedule.`;
+  } UK football TV schedule.`;
 
   const ogImage = fixture.home.crest || fixture.away.crest || '/favicon.png';
   const canonical = `${CANONICAL_BASE}${generateMatchUrl(fixture)}`;
@@ -175,7 +175,7 @@ export const generateSimpleMatchMeta = (fixture: SimpleFixture) => {
       : fixture.broadcaster
         ? `Watch on ${broadcaster}.`
         : 'Broadcaster to be confirmed.'
-  } UK Premier League TV schedule.`;
+  } UK football TV schedule.`;
 
   const ogImage = fixture.home_crest || fixture.away_crest || '/favicon.png';
   const canonical = `${CANONICAL_BASE}${generateSimpleMatchUrl(fixture)}`;
@@ -192,8 +192,8 @@ export const generateSimpleMatchMeta = (fixture: SimpleFixture) => {
 };
 
 export const generateTeamMeta = (team: Team, upcomingCount: number = 0) => {
-  const title = `${team.name} fixtures and TV schedule - Premier League`;
-  const description = `${team.name} upcoming Premier League fixtures and TV schedule. ${upcomingCount} matches remaining. Sky Sports, TNT Sports, BBC viewing guide.`;
+  const title = `${team.name} fixtures and TV schedule - All competitions`;
+  const description = `${team.name} upcoming fixtures and TV schedule across all competitions. ${upcomingCount} matches remaining. Premier League, Champions League, and more. Sky Sports, TNT Sports, BBC viewing guide.`;
   const canonical = `${CANONICAL_BASE}/clubs/${team.slug}`;
 
   return {
@@ -208,8 +208,8 @@ export const generateTeamMeta = (team: Team, upcomingCount: number = 0) => {
 };
 
 export const generateHomeMeta = () => {
-  const title = 'fixtures.app - Premier League TV Guide UK';
-  const description = 'Premier League TV Guide UK - Sky Sports & TNT Sports fixtures. Find which broadcaster shows every Premier League match.';
+  const title = 'fixtures.app - Football TV Guide UK';
+  const description = 'Football TV Guide UK - Premier League, Champions League and more. Sky Sports & TNT Sports fixtures. Find which broadcaster shows every match.';
   const canonical = `${CANONICAL_BASE}/`;
 
   return {
@@ -224,8 +224,8 @@ export const generateHomeMeta = () => {
 };
 
 export const generateFixturesMeta = () => {
-  const title = 'Premier League Fixtures & TV Schedule - fixtures.app';
-  const description = 'Complete Premier League fixtures and TV schedule. Filter by team, matchweek, and broadcaster. Sky Sports, TNT Sports, BBC viewing guide.';
+  const title = 'Football Fixtures & TV Schedule - fixtures.app';
+  const description = 'Football fixtures and TV schedules from Premier League, Champions League and more. Filter by competition, team, and broadcaster. Sky Sports, TNT Sports, BBC viewing guide.';
   const canonical = `${CANONICAL_BASE}/fixtures`;
 
   return {
@@ -240,8 +240,8 @@ export const generateFixturesMeta = () => {
 };
 
 export const generateClubsMeta = () => {
-  const title = 'Premier League Teams - fixtures.app';
-  const description = 'All 20 Premier League teams. View fixtures, TV schedules, and viewing guides for every club.';
+  const title = 'Football Teams - fixtures.app';
+  const description = 'Football teams across all competitions. View fixtures, TV schedules, and viewing guides for every club.';
   const canonical = `${CANONICAL_BASE}/clubs`;
 
   return {

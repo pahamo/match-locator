@@ -12,6 +12,40 @@ const ClubPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const getCompetitionDisplayName = (competition: string): string => {
+    switch (competition) {
+      case 'premier-league':
+        return 'Premier League';
+      case 'champions-league':
+        return 'Champions League';
+      case 'europa-league':
+        return 'Europa League';
+      case 'fa-cup':
+        return 'FA Cup';
+      case 'league-cup':
+        return 'League Cup';
+      default:
+        return 'Football';
+    }
+  };
+
+  const getCompetitionColor = (competition: string): { bg: string; text: string } => {
+    switch (competition) {
+      case 'premier-league':
+        return { bg: '#3d1a78', text: 'white' };
+      case 'champions-league':
+        return { bg: '#003399', text: 'white' };
+      case 'europa-league':
+        return { bg: '#ff6600', text: 'white' };
+      case 'fa-cup':
+        return { bg: '#e63946', text: 'white' };
+      case 'league-cup':
+        return { bg: '#28a745', text: 'white' };
+      default:
+        return { bg: '#6b7280', text: 'white' };
+    }
+  };
+
   useEffect(() => {
     let ignore = false;
     const load = async () => {
@@ -69,10 +103,10 @@ const ClubPage: React.FC = () => {
               <section className="card" style={{ background: 'var(--color-card)', border: '1px solid var(--color-border)', borderRadius: 'var(--border-radius)', padding: 'var(--spacing-xl)', boxShadow: 'var(--shadow-sm)', marginBottom: 'var(--spacing-xl)' }}>
                 <h2 style={{ marginTop: 0 }}>How to watch {team?.name || 'this team'}</h2>
                 <p>
-                  In the UK, live Premier League TV coverage is typically carried by
+                  In the UK, live football TV coverage is typically carried by
                   <a href="https://www.skysports.com/football/fixtures-results" target="_blank" rel="noreferrer" style={{ marginLeft: 6 }}>Sky Sports</a>
                   {' '}and
-                  <a href="https://tntsports.co.uk/football" target="_blank" rel="noreferrer" style={{ marginLeft: 6 }}>TNT Sports</a> across the season.
+                  <a href="https://tntsports.co.uk/football" target="_blank" rel="noreferrer" style={{ marginLeft: 6 }}>TNT Sports</a> across different competitions.
                   Listings can change; always check the official broadcaster schedule.
                 </p>
                 <ul>
@@ -88,10 +122,22 @@ const ClubPage: React.FC = () => {
                 ) : (
                   fixtures.map(fx => (
                     <div key={fx.id} className="fixture-card">
-                      <div className="fixture-datetime">
-                        {new Date(fx.kickoff_utc).toLocaleDateString('en-GB', {
-                          weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/London'
-                        })}
+                      <div className="fixture-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                        <div className="fixture-datetime">
+                          {new Date(fx.kickoff_utc).toLocaleDateString('en-GB', {
+                            weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/London'
+                          })}
+                        </div>
+                        <div className="competition-badge" style={{
+                          fontSize: '0.75rem',
+                          fontWeight: '600',
+                          padding: '2px 8px',
+                          borderRadius: '12px',
+                          backgroundColor: getCompetitionColor(fx.competition).bg,
+                          color: getCompetitionColor(fx.competition).text
+                        }}>
+                          {getCompetitionDisplayName(fx.competition)}
+                        </div>
                       </div>
                       <div className="fixture-teams">
                         <div className="team">

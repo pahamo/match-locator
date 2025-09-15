@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getFixtures, getTeams } from '../services/supabase';
-import type { Fixture, Team } from '../types';
+import { getSimpleCompetitions } from '../services/supabase-simple';
+import type { Fixture, Team, Competition } from '../types';
 import Header from '../components/Header';
 import MobileFilterModal from '../components/MobileFilterModal';
 import { FixtureCard } from '../design-system';
@@ -10,13 +11,14 @@ import { getMatchStatus, getMatchStatusStyles } from '../utils/matchStatus';
 
 type FilterTeam = '' | string;
 type FilterMatchweek = '' | string;
-type FilterCompetition = '' | string;
+type FilterCompetition = '' | number;
 type FilterLocation = '' | 'tv' | 'streaming' | 'blackout' | 'tbd';
 
 const FixturesPage: React.FC = () => {
   const [fixtures, setFixtures] = useState<Fixture[]>([]);
   const [filteredFixtures, setFilteredFixtures] = useState<Fixture[]>([]);
   const [teams, setTeams] = useState<Team[]>([]);
+  const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -58,7 +60,11 @@ const FixturesPage: React.FC = () => {
     }
 
     if (competitionFilter) {
-      filtered = filtered.filter(f => f.competition === competitionFilter);
+      // Filter by competition ID
+      const selectedCompetition = competitions.find(c => c.id === competitionFilter);
+      if (selectedCompetition) {
+        filtered = filtered.filter(f => f.competition === selectedCompetition.slug);
+      }
     }
 
     if (locationFilter) {
@@ -84,19 +90,23 @@ const FixturesPage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      
-      const [fixturesData, teamsData] = await Promise.all([
+
+      // Load data from all visible competitions (no competitionId filter = multi-competition)
+      const [fixturesData, teamsData, competitionsData] = await Promise.all([
         getFixtures({
           limit: 500,
           order: 'asc'
+          // No competitionId parameter = loads from all production-visible competitions
         }),
-        getTeams()
+        getTeams(),
+        getSimpleCompetitions(false) // Only production-visible competitions
       ]);
-      
+
       setFixtures(fixturesData);
       setTeams(teamsData);
+      setCompetitions(competitionsData);
       setHasMore(fixturesData.length > 50);
-      
+
       // Update SEO meta tags for fixtures page
       const meta = generateFixturesMeta();
       updateDocumentMeta(meta);
@@ -119,11 +129,7 @@ const FixturesPage: React.FC = () => {
   };
 
   const getCompetitionOptions = () => {
-    const competitions = new Set<string>();
-    fixtures.forEach(f => {
-      if (f.competition) competitions.add(f.competition);
-    });
-    return Array.from(competitions).sort();
+    return competitions;
   };
 
 
@@ -147,7 +153,7 @@ const FixturesPage: React.FC = () => {
         <Header />
         <main>
           <div className="wrap">
-            <h1 style={{ margin: '0 0 24px 0', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>Premier League Fixtures</h1>
+            <h1 style={{ margin: '0 0 24px 0', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>Football Fixtures</h1>
             <div className="loading">Loading fixtures...</div>
           </div>
         </main>
@@ -161,7 +167,7 @@ const FixturesPage: React.FC = () => {
         <Header />
         <main>
           <div className="wrap">
-            <h1 style={{ margin: '0 0 24px 0', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>Premier League Fixtures</h1>
+            <h1 style={{ margin: '0 0 24px 0', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>Football Fixtures</h1>
             <div className="error">{error}</div>
             <button onClick={loadData}>Retry</button>
           </div>
@@ -290,11 +296,11 @@ const FixturesPage: React.FC = () => {
                 </label>
                 <select
                   value={competitionFilter}
-                  onChange={(e) => setCompetitionFilter(e.target.value)}
-                  style={{ 
-                    width: '100%', 
-                    padding: '12px', 
-                    border: '1px solid var(--color-border)', 
+                  onChange={(e) => setCompetitionFilter(e.target.value ? Number(e.target.value) : '')}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    border: '1px solid var(--color-border)',
                     borderRadius: '8px',
                     fontSize: '16px',
                     minHeight: '44px'
@@ -302,8 +308,8 @@ const FixturesPage: React.FC = () => {
                 >
                   <option value="">All competitions</option>
                   {getCompetitionOptions().map(comp => (
-                    <option key={comp} value={comp}>
-                      {comp === 'premier-league' ? 'Premier League' : comp}
+                    <option key={comp.id} value={comp.id}>
+                      {comp.name}
                     </option>
                   ))}
                 </select>
@@ -420,19 +426,19 @@ const FixturesPage: React.FC = () => {
               </label>
               <select
                 value={competitionFilter}
-                onChange={(e) => setCompetitionFilter(e.target.value)}
-                style={{ 
-                  width: '100%', 
-                  padding: '8px 12px', 
-                  border: '1px solid #d1d5db', 
+                onChange={(e) => setCompetitionFilter(e.target.value ? Number(e.target.value) : '')}
+                style={{
+                  width: '100%',
+                  padding: '8px 12px',
+                  border: '1px solid #d1d5db',
                   borderRadius: '6px',
                   fontSize: '14px'
                 }}
               >
                 <option value="">All competitions</option>
                 {getCompetitionOptions().map(comp => (
-                  <option key={comp} value={comp}>
-                    {comp === 'premier-league' ? 'Premier League' : comp}
+                  <option key={comp.id} value={comp.id}>
+                    {comp.name}
                   </option>
                 ))}
               </select>

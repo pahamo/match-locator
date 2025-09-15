@@ -29,6 +29,8 @@ const AdminMatchesPage = React.lazy(() => import('./pages/admin/AdminMatchesPage
 const AdminCompetitionsPage = React.lazy(() => import('./pages/admin/AdminCompetitionsPage'));
 const ClubsPage = React.lazy(() => import('./pages/ClubsPage'));
 const FixturesPage = React.lazy(() => import('./pages/FixturesPage'));
+const CompetitionsOverviewPage = React.lazy(() => import('./pages/CompetitionsOverviewPage'));
+const CompetitionPage = React.lazy(() => import('./pages/CompetitionPage'));
 const NotFoundPage = React.lazy(() => import('./pages/NotFoundPage'));
 const ProviderPage = React.lazy(() => import('./pages/ProviderPage'));
 const PrivacyPolicy = React.lazy(() => import('./pages/legal/PrivacyPolicy'));
@@ -72,6 +74,9 @@ function App() {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/fixtures" element={<FixturesPage />} />
+              {/* Competition routes */}
+              <Route path="/competitions" element={<CompetitionsOverviewPage />} />
+              <Route path="/competitions/:slug" element={<CompetitionPage />} />
               {/* SEO-friendly match URLs with slugs */}
               <Route path="/matches/:matchSlug" element={<MatchPage />} />
               {/* Legacy support for simple match IDs */}
