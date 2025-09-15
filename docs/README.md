@@ -64,6 +64,34 @@ This directory contains all technical documentation for the Match Locator projec
 - ✅ **Updated components**: nth-check ^2.1.1, postcss ^8.4.47, webpack-dev-server ^5.2.2
 - ✅ **Build compatibility**: All fixes maintain full backward compatibility with existing functionality
 
+### Multi-Competition Platform (September 2025)
+- ✅ **Competition Overview**: New `/competitions` page with interactive cards for all live competitions
+- ✅ **Individual Competition Pages**: Dedicated dashboards at `/competitions/[slug]` with fixtures and stats
+- ✅ **Enhanced Navigation**: Dropdown menu with hover functionality for easy competition access
+- ✅ **Multi-Competition Fixtures**: Default fixtures page shows all leagues with filtering capability
+- ✅ **Competition Badges**: Visual indicators on club pages showing which competition each match belongs to
+- ✅ **SEO Optimization**: All pages updated for multi-competition content with improved search visibility
+
+## 🚨 IMPORTANT: Public vs Admin Data Visibility
+
+### Public Website Restrictions
+**The public website must NOT display:**
+- Total fixture counts or statistics
+- Number of confirmed/pending broadcasts
+- Blackout game counts
+- Internal broadcast assignment metrics
+- Any data that reveals incomplete fixture coverage
+
+### Admin-Only Information
+**These statistics should ONLY appear in admin areas:**
+- Competition statistics (total fixtures, confirmed broadcasts, blackouts, pending)
+- Broadcast assignment progress indicators
+- Internal data completeness metrics
+- Editorial workflow information
+
+### Current Implementation Status
+⚠️ **Action Required**: Competition statistics currently visible on public competition pages at `/competitions/[slug]` need to be moved to admin-only areas.
+
 ---
 *Teams and season
 * The current season is 2025-26

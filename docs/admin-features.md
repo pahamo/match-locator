@@ -4,6 +4,31 @@
 
 The enhanced admin interface provides comprehensive management of competitions, broadcasters, and fixture assignments for the Match Locator platform.
 
+## 🚨 CRITICAL: Data Visibility Guidelines
+
+### Public Website Restrictions
+**NEVER display these statistics on public pages:**
+- Total fixture counts (`{stats.totalFixtures}`)
+- Confirmed broadcast counts (`{stats.confirmedBroadcasts}`)
+- Blackout game counts (`{stats.blackouts}`)
+- Pending broadcast counts (`{stats.pendingBroadcasts}`)
+- Any metrics revealing data completeness or editorial progress
+
+### Admin-Only Statistics
+**These should ONLY appear in admin interface:**
+- Competition dashboard statistics
+- Broadcast assignment progress
+- Data import/sync status
+- Editorial workflow metrics
+
+### Current Implementation Issues
+⚠️ **CompetitionPage.tsx** currently displays statistics publicly that should be admin-only:
+```typescript
+// REMOVE FROM PUBLIC PAGES:
+const stats = getCompetitionStats();
+// Statistics display in Competition Stats section (lines 164-198)
+```
+
 ## Features Implemented
 
 ### 1. Competition Overview Section
