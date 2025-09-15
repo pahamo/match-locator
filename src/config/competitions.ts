@@ -65,7 +65,7 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     slug: 'la-liga',
     name: 'La Liga',
     shortName: 'LAL',
-    logo: 'https://assets.laliga.com/assets/logos/laliga-v-1200x1200.png',
+    logo: 'https://cdn.brandfetch.io/idB6wr4svd/w/820/h/750/theme/dark/logo.png?c=1bxid64Mup7aczewSAYMX&t=1754867400907',
     icon: '🇪🇸',
     description: 'Spain\'s top football division with the world\'s best players.',
     colors: {
