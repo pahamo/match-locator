@@ -1,4 +1,4 @@
-# Match Locator Documentation
+/# Match Locator Documentation
 
 ## Documentation Overview
 
@@ -43,6 +43,26 @@ This directory contains all technical documentation for the Match Locator projec
 **Live Site**: https://matchlocator.com  
 **Admin Access**: https://matchlocator.com/admin  
 **Last Updated**: September 2025
+
+## Recent Improvements (September 2025)
+
+### Code Quality & Performance
+- ✅ **Removed legacy code**: Eliminated duplicate AdminPage.tsx (718 lines)
+- ✅ **Performance optimization**: Fixed window object access in FixtureCard component with CSS media queries
+- ✅ **Production cleanup**: Removed console.log statements from services layer
+- ✅ **Dependency updates**: Updated TypeScript 4.9→5.3, web-vitals 2.1→3.6, testing libraries
+- ✅ **Unused code removal**: Cleaned up unused dependencies (@types/jest, cross-fetch, whatwg-url)
+
+### Architecture Improvements
+- ✅ **Responsive design**: FixtureCard now uses CSS media queries instead of JavaScript window checks
+- ✅ **SSR compatibility**: Eliminated client-side window access for better server-side rendering
+- ✅ **Better separation**: Maintained clean separation between supabase.ts and supabase-simple.ts services
+
+### Security Fixes
+- ✅ **Zero vulnerabilities**: Resolved all 9 security vulnerabilities (3 moderate, 6 high)
+- ✅ **Package overrides**: Used npm overrides to force secure versions of vulnerable dependencies
+- ✅ **Updated components**: nth-check ^2.1.1, postcss ^8.4.47, webpack-dev-server ^5.2.2
+- ✅ **Build compatibility**: All fixes maintain full backward compatibility with existing functionality
 
 ---
 *Teams and season

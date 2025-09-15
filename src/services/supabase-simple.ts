@@ -14,7 +14,6 @@ export const SIMPLE_BROADCASTERS = [
 // Get fixtures with basic team info using simple JOINs
 export async function getSimpleFixtures(competitionId: number = 1): Promise<SimpleFixture[]> {
   try {
-    console.log(`[Supabase] Loading full season fixtures for competition ${competitionId}...`);
 
     // Step 1: Load fixture basics only
     // Use a dynamic season start (Aug 1 of current season year)
@@ -30,31 +29,15 @@ export async function getSimpleFixtures(competitionId: number = 1): Promise<Simp
       .order('utc_kickoff', { ascending: true });
 
     if (error) {
-      console.error('[Supabase] Error loading fixtures:', error);
       throw error;
     }
     if (!fixtures || fixtures.length === 0) {
-      console.warn('[Supabase] No fixtures returned');
       return [];
     }
 
     // Filter out test/dummy fixtures (same as main supabase service)
     const validFixtures = fixtures.filter(f => f.id && f.id > 30);
-    console.log(`[Supabase] Filtered ${fixtures.length} -> ${validFixtures.length} fixtures (excluded test fixtures <= 30)`);
     
-    // Debug: Log fixtures on the 13th for investigation
-    const fixtures13th = validFixtures.filter(f => {
-      const kickoffDate = new Date(f.utc_kickoff);
-      return kickoffDate.getUTCDate() === 13;
-    });
-    if (fixtures13th.length > 0) {
-      console.log(`[Debug] Found ${fixtures13th.length} fixtures on 13th:`, fixtures13th.map(f => ({
-        id: f.id,
-        kickoff: f.utc_kickoff,
-        home: f.home_team,
-        away: f.away_team
-      })));
-    }
 
     // Team names are now included directly from fixtures_with_teams view
 
@@ -95,7 +78,6 @@ export async function getSimpleFixtures(competitionId: number = 1): Promise<Simp
       };
     });
   } catch (error) {
-    console.error('[Supabase] Unexpected error:', error);
     return [];
   }
 }
@@ -103,7 +85,6 @@ export async function getSimpleFixtures(competitionId: number = 1): Promise<Simp
 // Save broadcaster assignment (via API endpoint with service role key)
 export async function saveBroadcaster(fixtureId: number, providerId: number | null): Promise<void> {
   try {
-    console.log(`[API] Saving broadcaster for fixture ${fixtureId}: provider ${providerId}`);
     
     // Normalize providerId (-1 blackout should be 999)
     const normalizedProviderId = (providerId === -1) ? 999 : providerId;
@@ -129,10 +110,8 @@ export async function saveBroadcaster(fixtureId: number, providerId: number | nu
       throw new Error(result.error || 'Unknown error');
     }
     
-    console.log(`[API] Successfully saved broadcaster for fixture ${fixtureId}`);
     
   } catch (error) {
-    console.error(`[API] Error saving broadcaster:`, error);
     throw error;
   }
 }
@@ -140,7 +119,6 @@ export async function saveBroadcaster(fixtureId: number, providerId: number | nu
 // Get available competitions (with optional admin flag to see all)
 export async function getSimpleCompetitions(includeHidden: boolean = false): Promise<Competition[]> {
   try {
-    console.log('[Supabase] Loading available competitions...');
     
     // First try with is_production_visible column
     let competitions: Competition[] = [];
@@ -160,9 +138,7 @@ export async function getSimpleCompetitions(includeHidden: boolean = false): Pro
       
     } catch (columnError: any) {
       // If is_production_visible column doesn't exist, fall back to basic query
-      console.error('[Supabase] Error loading competitions with is_production_visible:', columnError);
       if (columnError.code === '42703' || columnError.message?.includes('column "is_production_visible" does not exist')) {
-        console.log('[Supabase] is_production_visible column not found, using fallback...');
         const { data, error } = await supabase
           .from('competitions')
           .select('id, name, slug, short_name')
@@ -187,11 +163,9 @@ export async function getSimpleCompetitions(includeHidden: boolean = false): Pro
       }
     }
     
-    console.log(`[Supabase] Found ${competitions.length} competitions (includeHidden: ${includeHidden})`);
     return competitions;
     
   } catch (error) {
-    console.error('[Supabase] Unexpected error loading competitions:', error);
     // Return safe default - show all for admin, only EPL for production
     return includeHidden ? [
       { id: 1, name: 'Premier League', slug: 'premier-league', short_name: 'EPL', is_production_visible: true },
@@ -205,7 +179,6 @@ export async function getSimpleCompetitions(includeHidden: boolean = false): Pro
 // Save competition visibility setting (via API endpoint with service role key)
 export async function saveCompetitionVisibility(competitionId: number, isVisible: boolean): Promise<void> {
   try {
-    console.log(`[API] Updating competition ${competitionId} visibility to ${isVisible}...`);
     
     const response = await fetch('/.netlify/functions/save-competition-visibility', {
       method: 'POST',
@@ -228,10 +201,8 @@ export async function saveCompetitionVisibility(competitionId: number, isVisible
       throw new Error(result.error || 'Unknown error');
     }
     
-    console.log(`[API] Successfully updated competition ${competitionId} visibility`);
     
   } catch (error: any) {
-    console.error(`[API] Error updating competition visibility:`, error);
     throw error;
   }
 }

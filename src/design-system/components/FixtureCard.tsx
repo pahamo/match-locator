@@ -5,6 +5,7 @@ import type { SimpleFixture, Fixture } from '../../types';
 import { getMatchStatus, getMatchStatusStyles } from '../../utils/matchStatus';
 import { generateSimpleMatchUrl, generateMatchUrl } from '../../utils/seo';
 
+
 export interface FixtureCardProps {
   fixture: SimpleFixture | Fixture;
   variant?: 'default' | 'compact' | 'detailed' | 'minimized';
@@ -80,12 +81,6 @@ const FixtureCard: React.FC<FixtureCardProps> = ({
     ...style
   };
 
-  const kickoffDate = new Date(fixture.kickoff_utc);
-  const timeString = kickoffDate.toLocaleTimeString('en-GB', {
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'Europe/London'
-  });
   
   return (
     <div 
@@ -205,12 +200,7 @@ const FixtureCard: React.FC<FixtureCardProps> = ({
       
       {/* Broadcaster Info - Hidden in minimized view */}
       {!isMinimized && (
-        <div style={{
-          display: typeof window !== 'undefined' && window.innerWidth <= 640 ? 'none' : 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          flexShrink: 0
-        }}>
+        <div className="broadcaster-info">
           {fixtureData.isBlackout ? (
             <span style={{
               fontSize: '12px',
@@ -244,29 +234,7 @@ const FixtureCard: React.FC<FixtureCardProps> = ({
       {showViewButton && (
         <Link
           to={fixtureData.url}
-          style={{ 
-            color: '#6366f1', 
-            textDecoration: 'none',
-            fontSize: typeof window !== 'undefined' && window.innerWidth <= 640 ? '14px' : '12px',
-            fontWeight: '500',
-            padding: typeof window !== 'undefined' && window.innerWidth <= 640 ? '8px 16px' : '4px 8px',
-            borderRadius: '4px',
-            border: '1px solid #6366f1',
-            transition: 'all 0.2s',
-            display: typeof window !== 'undefined' && window.innerWidth <= 640 ? 'inline-flex' : 'inline-block',
-            minHeight: typeof window !== 'undefined' && window.innerWidth <= 640 ? '44px' : 'auto',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginLeft: typeof window !== 'undefined' && window.innerWidth > 640 ? '8px' : '0'
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.background = '#6366f1';
-            e.currentTarget.style.color = 'white';
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.background = 'transparent';
-            e.currentTarget.style.color = '#6366f1';
-          }}
+          className="view-button"
         >
           View
         </Link>
@@ -289,5 +257,57 @@ const FixtureCard: React.FC<FixtureCardProps> = ({
     </div>
   );
 };
+
+// Add CSS for responsive styles
+const fixtureCardStyles = `
+  .broadcaster-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .view-button {
+    color: #6366f1;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid #6366f1;
+    transition: all 0.2s;
+    display: inline-block;
+    align-items: center;
+    justify-content: center;
+    margin-left: 8px;
+  }
+
+  .view-button:hover {
+    background: #6366f1;
+    color: white;
+  }
+
+  @media (max-width: 640px) {
+    .broadcaster-info {
+      display: none;
+    }
+
+    .view-button {
+      font-size: 14px;
+      padding: 8px 16px;
+      display: inline-flex;
+      min-height: 44px;
+      margin-left: 0;
+    }
+  }
+`;
+
+// Inject styles if not already present
+if (typeof document !== 'undefined' && !document.getElementById('fixture-card-styles')) {
+  const styleSheet = document.createElement('style');
+  styleSheet.id = 'fixture-card-styles';
+  styleSheet.textContent = fixtureCardStyles;
+  document.head.appendChild(styleSheet);
+}
 
 export default FixtureCard;
