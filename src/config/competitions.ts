@@ -51,7 +51,7 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     slug: 'bundesliga',
     name: 'Bundesliga',
     shortName: 'BUN',
-    logo: 'https://logos-world.net/wp-content/uploads/2020/06/Bundesliga-Logo.png',
+    logo: 'https://cdn.brandfetch.io/idULAJYHGL/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1756046283501',
     icon: '🇩🇪',
     description: 'Germany\'s premier football league featuring 18 teams.',
     colors: {
@@ -79,7 +79,7 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     slug: 'serie-a',
     name: 'Serie A',
     shortName: 'SER',
-    logo: 'https://logos-world.net/wp-content/uploads/2020/06/Serie-A-Logo.png',
+    logo: 'https://cdn.brandfetch.io/id_NHLWhOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1751361578120',
     icon: '🇮🇹',
     description: 'Italy\'s premier football league known for tactical excellence.',
     colors: {
