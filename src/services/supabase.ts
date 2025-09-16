@@ -19,6 +19,8 @@ interface FixtureRow {
   venue?: string | null;
   status?: string;
   competition_id?: number;
+  stage?: string | null;
+  round?: string | null;
   home_team_id: number;
   home_team: string;
   home_slug: string;
@@ -78,6 +80,8 @@ function mapFixtureRow(row: FixtureRow, providersByFixture: Record<number, Provi
       reason: isBlackout ? 'No UK broadcaster announced' : null
     },
     status: row.status || 'scheduled',
+    stage: row.stage ?? undefined,
+    round: row.round ?? undefined,
   };
 }
 
@@ -185,7 +189,7 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
     let query = supabase
       .from('fixtures_with_teams')
       .select(`
-        id,matchday,utc_kickoff,venue,status,competition_id,
+        id,matchday,utc_kickoff,venue,status,competition_id,stage,round,
         home_team_id,home_team,home_slug,home_crest,
         away_team_id,away_team,away_slug,away_crest
       `)
@@ -264,7 +268,7 @@ export async function getFixtureById(id: number): Promise<Fixture | undefined> {
     const { data: rows, error } = await supabase
       .from('fixtures_with_teams')
       .select(`
-        id,matchday,utc_kickoff,venue,status,competition_id,
+        id,matchday,utc_kickoff,venue,status,competition_id,stage,round,
         home_team_id,home_team,home_slug,home_crest,
         away_team_id,away_team,away_slug,away_crest
       `)
@@ -325,7 +329,7 @@ export async function getAdminFixtures(competitionId: number = 1): Promise<Admin
     const { data: rows, error } = await supabase
       .from('fixtures_with_teams')
       .select(`
-        id,matchday,utc_kickoff,venue,status,competition_id,
+        id,matchday,utc_kickoff,venue,status,competition_id,stage,round,
         home_team_id,home_team,home_slug,home_crest,
         away_team_id,away_team,away_slug,away_crest
       `)

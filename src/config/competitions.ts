@@ -93,7 +93,7 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     slug: 'ligue-1',
     name: 'Ligue 1',
     shortName: 'L1',
-    logo: 'https://logos-world.net/wp-content/uploads/2020/06/Ligue-1-Logo.png',
+    logo: 'https://upload.wikimedia.org/wikipedia/fr/d/d9/Logo_Ligue_1_2024.svg',
     icon: '🇫🇷',
     description: 'France\'s top football division featuring PSG and top European talent.',
     colors: {
@@ -107,7 +107,7 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     slug: 'primeira-liga',
     name: 'Primeira Liga',
     shortName: 'POR',
-    logo: 'https://logos-world.net/wp-content/uploads/2020/06/Liga-Portugal-Logo.png',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/5/5a/S%C3%ADmbolo_da_Liga_Portuguesa_de_Futebol_Profissional.png',
     icon: '🇵🇹',
     description: 'Portugal\'s premier football league featuring Porto, Benfica, and Sporting CP.',
     colors: {
@@ -121,7 +121,7 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     slug: 'eredivisie',
     name: 'Eredivisie',
     shortName: 'ERE',
-    logo: 'https://logos-world.net/wp-content/uploads/2020/06/Eredivisie-Logo.png',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/4/46/Eredivisie_nuovo_logo.png',
     icon: '🇳🇱',
     description: 'Netherlands\' top football division known for developing young talent.',
     colors: {
@@ -135,7 +135,7 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     slug: 'championship',
     name: 'Championship',
     shortName: 'CHA',
-    logo: 'https://logos-world.net/wp-content/uploads/2020/06/EFL-Championship-Logo.png',
+    logo: 'https://upload.wikimedia.org/wikipedia/fr/c/c3/EFL_Championship.svg',
     icon: '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
     description: 'England\'s second tier featuring 24 teams competing for Premier League promotion.',
     colors: {

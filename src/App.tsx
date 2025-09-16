@@ -77,7 +77,7 @@ function App() {
               <Route path="/fixtures" element={<FixturesPage />} />
               {/* Competition routes */}
               <Route path="/competitions" element={<CompetitionsOverviewPage />} />
-              <Route path="/competitions/champions-league" element={<ChampionsLeagueGroupStagePage />} />
+              <Route path="/competitions/champions-league/group-stage" element={<ChampionsLeagueGroupStagePage />} />
               <Route path="/competitions/:slug" element={<CompetitionPage />} />
               {/* SEO-friendly match URLs with slugs */}
               <Route path="/matches/:matchSlug" element={<MatchPage />} />
