@@ -40,8 +40,7 @@ const ChampionsLeagueGroupStagePage: React.FC = () => {
         // Update SEO meta tags
         updateDocumentMeta({
           title: 'UEFA Champions League - Group Stage | Match Locator',
-          description: 'UEFA Champions League group stage fixtures and schedule. View all matches, times, and broadcasters.',
-          keywords: 'Champions League, UEFA, group stage, fixtures, schedule, football, TV'
+          description: 'UEFA Champions League group stage fixtures and schedule. View all matches, times, and broadcasters.'
         });
 
       } catch (err) {
