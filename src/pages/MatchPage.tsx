@@ -336,7 +336,7 @@ const MatchPage: React.FC = () => {
               {/* Competition Button */}
               {fixture.competition && (
                 <Link
-                  to={`/competitions/${fixture.competition.slug || fixture.competition.name.toLowerCase().replace(/\s+/g, '-')}`}
+                  to={`/competitions/${fixture.competition.toLowerCase().replace(/\s+/g, '-')}`}
                   style={{
                     padding: '8px 16px',
                     backgroundColor: '#059669',
@@ -350,7 +350,7 @@ const MatchPage: React.FC = () => {
                     gap: '6px'
                   }}
                 >
-                  🏆 {fixture.competition.name}
+                  🏆 {fixture.competition}
                 </Link>
               )}
             </div>
