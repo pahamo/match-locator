@@ -108,6 +108,35 @@ const ChampionsLeagueGroupStagePage: React.FC = () => {
     return opponents;
   };
 
+  // Get filtered teams for X-axis (columns) - excludes the selected team to avoid duplication
+  const getFilteredXAxisTeams = (): Team[] => {
+    if (expandedTeam === null) {
+      return teams;
+    }
+
+    const selectedTeam = teams.find(t => t.id === expandedTeam);
+    if (!selectedTeam) return teams;
+
+    const opponents = getTeamOpponents(selectedTeam);
+    const opponentIds = new Set(opponents.map(o => o.id));
+
+    // Return only opponents (not the selected team itself) in original order
+    return teams.filter(team => opponentIds.has(team.id));
+  };
+
+  // Y-axis teams stay the same when expanded, only filter to show the selected team
+  const getFilteredYAxisTeams = (): Team[] => {
+    if (expandedTeam === null) {
+      return teams;
+    }
+
+    // Return only the selected team for Y-axis
+    return teams.filter(team => team.id === expandedTeam);
+  };
+
+  const filteredXAxisTeams = getFilteredXAxisTeams();
+  const filteredYAxisTeams = getFilteredYAxisTeams();
+
   if (loading) {
     return (
       <div className="champions-league-page">
@@ -184,7 +213,7 @@ const ChampionsLeagueGroupStagePage: React.FC = () => {
             fontWeight: '600',
             color: '#6b7280'
           }}>
-            League Stage Matrix - {teams.length} Teams, {fixtures.length} Fixtures
+            League Stage Matrix - {expandedTeam ? `${filteredXAxisTeams.length} opponents of ${teams.find(t => t.id === expandedTeam)?.name}` : `${teams.length} Teams`}, {fixtures.length} Fixtures
           </h2>
 
           {teams.length === 0 ? (
@@ -225,13 +254,77 @@ const ChampionsLeagueGroupStagePage: React.FC = () => {
                 border: '1px solid #e2e8f0',
                 borderRadius: '8px'
               }}>
+                <style>
+                  {`
+                    .team-column {
+                      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+                      overflow: hidden;
+                    }
+                    .team-column.hidden {
+                      max-width: 0 !important;
+                      min-width: 0 !important;
+                      opacity: 0;
+                      transform: scaleX(0);
+                    }
+                    .team-row {
+                      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+                      overflow: hidden;
+                    }
+                    .team-row.hidden {
+                      max-height: 0 !important;
+                      min-height: 0 !important;
+                      opacity: 0;
+                      transform: scaleY(0);
+                      padding: 0 !important;
+                    }
+                  `}
+                </style>
+
+                {/* Show All Teams Button */}
+                {expandedTeam && (
+                  <div style={{
+                    marginBottom: '16px',
+                    display: 'flex',
+                    justifyContent: 'center'
+                  }}>
+                    <button
+                      onClick={() => setExpandedTeam(null)}
+                      style={{
+                        padding: '8px 16px',
+                        backgroundColor: '#6366f1',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = '#4f46e5';
+                        e.currentTarget.style.transform = 'translateY(-1px)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = '#6366f1';
+                        e.currentTarget.style.transform = 'translateY(0)';
+                      }}
+                    >
+                      ← Show All Teams
+                    </button>
+                  </div>
+                )}
+
                 <div style={{
                   display: 'grid',
-                  gridTemplateColumns: `120px repeat(${teams.length}, 60px)`,
+                  gridTemplateColumns: `120px repeat(${filteredXAxisTeams.length}, 60px)`,
                   gap: '1px',
-                  minWidth: `${120 + teams.length * 60}px`,
+                  minWidth: `${120 + filteredXAxisTeams.length * 60}px`,
                   overflow: 'hidden',
-                  background: '#e2e8f0'
+                  background: '#e2e8f0',
+                  transition: 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)'
                 }}>
                   {/* Top-left corner cell */}
                   <div style={{
@@ -248,7 +341,7 @@ const ChampionsLeagueGroupStagePage: React.FC = () => {
                   </div>
 
                   {/* Column headers (teams on X-axis) */}
-                  {teams.map(team => (
+                  {filteredXAxisTeams.map(team => (
                     <div key={`header-${team.id}`} style={{
                       background: '#f8fafc',
                       padding: '4px',
@@ -282,7 +375,7 @@ const ChampionsLeagueGroupStagePage: React.FC = () => {
                   ))}
 
                   {/* Matrix rows */}
-                  {teams.map(rowTeam => {
+                  {(expandedTeam ? filteredYAxisTeams : teams).map(rowTeam => {
                     const isExpanded = expandedTeam === rowTeam.id;
                     const opponents = getTeamOpponents(rowTeam);
 
@@ -346,27 +439,21 @@ const ChampionsLeagueGroupStagePage: React.FC = () => {
                         </div>
 
                         {/* Matrix cells */}
-                        {teams.map(colTeam => {
+                        {(expandedTeam ? filteredXAxisTeams : teams).map(colTeam => {
                           const matchup = getFixtureBetweenTeams(rowTeam, colTeam);
                           const isSameTeam = rowTeam.id === colTeam.id;
                           const isOpponent = opponents.some(opp => opp.id === colTeam.id);
 
-                          // When a team is expanded globally, highlight relevant cells
-                          const shouldHighlight = expandedTeam === null || expandedTeam === rowTeam.id || isOpponent;
-                          const cellOpacity = expandedTeam !== null && expandedTeam !== rowTeam.id && !isOpponent ? 0.1 : 1;
-
                           return (
                             <div key={`cell-${rowTeam.id}-${colTeam.id}`} style={{
-                              background: isSameTeam ? '#f1f5f9' :
-                                         matchup ? (isExpanded && isOpponent ? '#3b82f6' : '#dbeafe') : 'white',
+                              background: matchup ? (isExpanded && isOpponent ? '#3b82f6' : '#dbeafe') : 'white',
                               minHeight: '60px',
                               display: 'flex',
                               alignItems: 'center',
                               justifyContent: 'center',
                               cursor: matchup ? 'pointer' : 'default',
                               position: 'relative',
-                              opacity: cellOpacity,
-                              transition: 'all 0.3s ease'
+                              transition: 'all 0.4s ease'
                             }}
                             onClick={() => {
                               if (matchup) {
@@ -374,19 +461,17 @@ const ChampionsLeagueGroupStagePage: React.FC = () => {
                               }
                             }}
                             onMouseEnter={(e) => {
-                              if (matchup && shouldHighlight) {
+                              if (matchup) {
                                 e.currentTarget.style.background = isExpanded && isOpponent ? '#1e40af' : '#bfdbfe';
                               }
                             }}
                             onMouseLeave={(e) => {
-                              if (matchup && shouldHighlight) {
+                              if (matchup) {
                                 e.currentTarget.style.background = isExpanded && isOpponent ? '#3b82f6' : '#dbeafe';
                               }
                             }}
                             >
-                              {isSameTeam ? (
-                                <span style={{ fontSize: '12px', color: '#9ca3af' }}>—</span>
-                              ) : matchup ? (
+                              {matchup ? (
                                 <div style={{
                                   fontSize: '10px',
                                   fontWeight: '600',
