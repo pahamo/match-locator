@@ -191,11 +191,8 @@ const ChampionsLeagueGroupStagePage: React.FC = () => {
                   {/* Matches Grid */}
                   <div style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-                    gap: '16px',
-                    '@media (max-width: 768px)': {
-                      gridTemplateColumns: '1fr'
-                    }
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                    gap: '16px'
                   }}>
                     {groupedFixtures[date]
                       .sort((a, b) => new Date(a.kickoff_utc).getTime() - new Date(b.kickoff_utc).getTime())
