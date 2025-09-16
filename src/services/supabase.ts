@@ -310,9 +310,9 @@ export interface AdminFixture extends Fixture {
 export const BROADCASTERS = [
   { id: 1, name: 'Sky Sports', type: 'tv' },
   { id: 2, name: 'TNT Sports', type: 'tv' },
-  { id: 3, name: 'BBC Sport', type: 'tv' },
+  { id: 3, name: 'BBC Radio 5 Live', type: 'radio' },
   { id: 4, name: 'Amazon Prime Video', type: 'streaming' },
-  { id: -1, name: '🚫 Blackout (No TV)', type: 'blackout' }
+  { id: 999, name: '🚫 Blackout (No TV)', type: 'blackout' }
 ];
 
 export async function getAdminFixtures(competitionId: number = 1): Promise<AdminFixture[]> {

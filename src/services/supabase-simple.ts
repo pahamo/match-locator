@@ -8,7 +8,7 @@ export type SimpleCompetition = Competition;
 export const SIMPLE_BROADCASTERS = [
   { id: 1, name: 'Sky Sports' },
   { id: 2, name: 'TNT Sports' },
-  { id: -1, name: '🚫 Blackout (No TV)' }
+  { id: 999, name: '🚫 Blackout (No TV)' }
 ];
 
 // Get fixtures with basic team info using simple JOINs
@@ -62,7 +62,7 @@ export async function getSimpleFixtures(competitionId?: number): Promise<SimpleF
     // Step 4: Map to simple format
     return validFixtures.map((fixture: any) => {
       const providerId = broadcastLookup[fixture.id];
-      const isBlackout = providerId === -1;
+      const isBlackout = providerId === 999;
       
       return {
         id: fixture.id,

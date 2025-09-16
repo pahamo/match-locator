@@ -24,8 +24,9 @@ const AdminMatchesPage: React.FC = () => {
   const [matchStatusFilter, setMatchStatusFilter] = useState<MatchStatusFilter>('scheduled'); // Default to scheduled (future games)
   const [broadcastStatusFilter, setBroadcastStatusFilter] = useState<BroadcastStatusFilter>(''); // Default to all
   const [searchTerm, setSearchTerm] = useState('');
-  const [editingFixture, setEditingFixture] = useState<number | null>(null);
-  const [newBroadcast, setNewBroadcast] = useState<string>('');
+  const [pendingEdits, setPendingEdits] = useState<Record<number, string>>({});
+  const [savingFixtures, setSavingFixtures] = useState<Set<number>>(new Set());
+  const [bulkSaving, setBulkSaving] = useState(false);
 
   useEffect(() => {
     const checkAuth = () => {
@@ -111,9 +112,9 @@ const AdminMatchesPage: React.FC = () => {
 
     // Broadcast status filter (with/without broadcast)
     if (broadcastStatusFilter === 'with_broadcast') {
-      filtered = filtered.filter(fixture => fixture.broadcast && fixture.broadcast.provider_id !== -1);
+      filtered = filtered.filter(fixture => fixture.broadcast && fixture.broadcast.provider_id !== 999);
     } else if (broadcastStatusFilter === 'no_broadcast') {
-      filtered = filtered.filter(fixture => !fixture.broadcast || fixture.broadcast.provider_id === -1);
+      filtered = filtered.filter(fixture => !fixture.broadcast || fixture.broadcast.provider_id === 999);
     }
 
     setFilteredFixtures(filtered);
@@ -125,8 +126,8 @@ const AdminMatchesPage: React.FC = () => {
     const scheduled = fixtures.filter(f => getActualStatus(f) === 'scheduled').length;
     const live = fixtures.filter(f => getActualStatus(f) === 'live').length;
     const finished = fixtures.filter(f => getActualStatus(f) === 'finished').length;
-    const withBroadcast = fixtures.filter(f => f.broadcast && f.broadcast.provider_id !== -1).length;
-    const noBroadcast = fixtures.filter(f => !f.broadcast || f.broadcast.provider_id === -1).length;
+    const withBroadcast = fixtures.filter(f => f.broadcast && f.broadcast.provider_id !== 999).length;
+    const noBroadcast = fixtures.filter(f => !f.broadcast || f.broadcast.provider_id === 999).length;
 
     return {
       total,
@@ -153,30 +154,122 @@ const AdminMatchesPage: React.FC = () => {
   };
 
   const handleEditBroadcast = (fixtureId: number, currentProviderId?: number) => {
-    setEditingFixture(fixtureId);
-    setNewBroadcast(currentProviderId ? currentProviderId.toString() : '');
+    setPendingEdits(prev => ({
+      ...prev,
+      [fixtureId]: currentProviderId ? currentProviderId.toString() : ''
+    }));
   };
 
-  const handleCancelEdit = () => {
-    setEditingFixture(null);
-    setNewBroadcast('');
+  const handleCancelEdit = (fixtureId: number) => {
+    setPendingEdits(prev => {
+      const updated = { ...prev };
+      delete updated[fixtureId];
+      return updated;
+    });
+  };
+
+  const handleCancelAllEdits = () => {
+    setPendingEdits({});
   };
 
   const handleSaveBroadcast = async (fixtureId: number) => {
     try {
-      const providerId = newBroadcast === '' ? null : parseInt(newBroadcast);
-      // Use saveBroadcaster from supabase-simple which uses service role key
+      const broadcastValue = pendingEdits[fixtureId];
+      if (broadcastValue === undefined) return;
+
+      // Add to saving state
+      setSavingFixtures(prev => new Set([...Array.from(prev), fixtureId]));
+
+      const providerId = broadcastValue === '' ? null : parseInt(broadcastValue);
+
+      // Update local state optimistically
+      setFixtures(prev => prev.map(fixture => {
+        if (fixture.id === fixtureId) {
+          const updatedFixture = { ...fixture };
+          if (providerId === null) {
+            updatedFixture.broadcast = null;
+          } else {
+            const broadcasterName = BROADCASTERS.find(b => b.id === providerId)?.name || 'Unknown';
+            updatedFixture.broadcast = {
+              provider_id: providerId,
+              provider_display_name: broadcasterName
+            };
+          }
+          return updatedFixture;
+        }
+        return fixture;
+      }));
+
+      // Save to database
       await saveBroadcaster(fixtureId, providerId);
 
-      // Refresh data
-      await loadData();
-
-      // Clear editing state
-      setEditingFixture(null);
-      setNewBroadcast('');
+      // Remove from pending edits and saving state
+      setPendingEdits(prev => {
+        const updated = { ...prev };
+        delete updated[fixtureId];
+        return updated;
+      });
+      setSavingFixtures(prev => {
+        const updated = new Set(prev);
+        updated.delete(fixtureId);
+        return updated;
+      });
     } catch (err) {
       console.error('Failed to save broadcast:', err);
       alert('Failed to save broadcaster. Please try again.');
+
+      // Remove from saving state on error
+      setSavingFixtures(prev => {
+        const updated = new Set(prev);
+        updated.delete(fixtureId);
+        return updated;
+      });
+    }
+  };
+
+  const handleSaveAll = async () => {
+    if (Object.keys(pendingEdits).length === 0) return;
+
+    try {
+      setBulkSaving(true);
+
+      // Save all pending edits in parallel
+      const savePromises = Object.entries(pendingEdits).map(async ([fixtureIdStr, broadcastValue]) => {
+        const fixtureId = parseInt(fixtureIdStr);
+        const providerId = broadcastValue === '' ? null : parseInt(broadcastValue);
+
+        // Update local state optimistically
+        setFixtures(prev => prev.map(fixture => {
+          if (fixture.id === fixtureId) {
+            const updatedFixture = { ...fixture };
+            if (providerId === null) {
+              updatedFixture.broadcast = null;
+            } else {
+              const broadcasterName = BROADCASTERS.find(b => b.id === providerId)?.name || 'Unknown';
+              updatedFixture.broadcast = {
+                provider_id: providerId,
+                provider_display_name: broadcasterName
+              };
+            }
+            return updatedFixture;
+          }
+          return fixture;
+        }));
+
+        // Save to database
+        return saveBroadcaster(fixtureId, providerId);
+      });
+
+      await Promise.all(savePromises);
+
+      // Clear all pending edits
+      setPendingEdits({});
+
+    } catch (err) {
+      console.error('Failed to save all broadcasts:', err);
+      alert('Failed to save some broadcasters. Please try again.');
+    } finally {
+      setBulkSaving(false);
     }
   };
 
@@ -351,6 +444,56 @@ const AdminMatchesPage: React.FC = () => {
         </div>
       </div>
 
+      {/* Bulk Actions */}
+      {Object.keys(pendingEdits).length > 0 && (
+        <div style={{
+          background: '#fefce8',
+          border: '1px solid #facc15',
+          borderRadius: '8px',
+          padding: '16px',
+          marginBottom: '16px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}>
+          <div>
+            <strong>Pending changes: {Object.keys(pendingEdits).length} fixture{Object.keys(pendingEdits).length > 1 ? 's' : ''}</strong>
+          </div>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <button
+              onClick={handleSaveAll}
+              disabled={bulkSaving}
+              style={{
+                padding: '8px 16px',
+                fontSize: '14px',
+                border: '1px solid #16a34a',
+                borderRadius: '6px',
+                background: bulkSaving ? '#9ca3af' : '#16a34a',
+                color: 'white',
+                cursor: bulkSaving ? 'not-allowed' : 'pointer',
+                fontWeight: '600'
+              }}
+            >
+              {bulkSaving ? 'Saving All...' : 'Save All Changes'}
+            </button>
+            <button
+              onClick={handleCancelAllEdits}
+              style={{
+                padding: '8px 16px',
+                fontSize: '14px',
+                border: '1px solid #dc2626',
+                borderRadius: '6px',
+                background: '#dc2626',
+                color: 'white',
+                cursor: 'pointer'
+              }}
+            >
+              Cancel All
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Fixtures Table - Full Width */}
       <div style={{
         background: 'white',
@@ -501,7 +644,7 @@ const AdminMatchesPage: React.FC = () => {
                     </span>
                   </td>
                   <td style={{ padding: '16px 12px', fontSize: '12px' }}>
-                    {fixture.broadcast && fixture.broadcast.provider_id !== -1 ? (
+                    {fixture.broadcast && fixture.broadcast.provider_id !== 999 ? (
                       <span style={{
                         background: '#f0fdf4',
                         color: '#166534',
@@ -515,11 +658,11 @@ const AdminMatchesPage: React.FC = () => {
                     )}
                   </td>
                   <td style={{ padding: '16px 12px' }}>
-                    {editingFixture === fixture.id ? (
+                    {pendingEdits[fixture.id] !== undefined ? (
                       <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
                         <select
-                          value={newBroadcast}
-                          onChange={(e) => setNewBroadcast(e.target.value)}
+                          value={pendingEdits[fixture.id] || ''}
+                          onChange={(e) => setPendingEdits(prev => ({ ...prev, [fixture.id]: e.target.value }))}
                           style={{
                             padding: '2px 4px',
                             fontSize: '11px',
@@ -537,20 +680,21 @@ const AdminMatchesPage: React.FC = () => {
                         </select>
                         <button
                           onClick={() => handleSaveBroadcast(fixture.id)}
+                          disabled={savingFixtures.has(fixture.id)}
                           style={{
                             padding: '2px 6px',
                             fontSize: '11px',
                             border: '1px solid #16a34a',
                             borderRadius: '4px',
-                            background: '#16a34a',
+                            background: savingFixtures.has(fixture.id) ? '#9ca3af' : '#16a34a',
                             color: 'white',
-                            cursor: 'pointer'
+                            cursor: savingFixtures.has(fixture.id) ? 'not-allowed' : 'pointer'
                           }}
                         >
-                          Save
+                          {savingFixtures.has(fixture.id) ? 'Saving...' : 'Save'}
                         </button>
                         <button
-                          onClick={() => handleCancelEdit()}
+                          onClick={() => handleCancelEdit(fixture.id)}
                           style={{
                             padding: '2px 6px',
                             fontSize: '11px',
