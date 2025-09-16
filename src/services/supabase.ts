@@ -191,10 +191,16 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
       `)
       .order('utc_kickoff', { ascending: order === 'asc' })
       .limit(limit);
-      
+
     if (dateFrom) {
       query = query.gte('utc_kickoff', dateFrom);
+    } else {
+      // Default to upcoming fixtures (from 2 hours ago to show recent/live games)
+      const recentCutoff = new Date();
+      recentCutoff.setHours(recentCutoff.getHours() - 2);
+      query = query.gte('utc_kickoff', recentCutoff.toISOString());
     }
+
     if (dateTo) {
       query = query.lte('utc_kickoff', dateTo);
     }
