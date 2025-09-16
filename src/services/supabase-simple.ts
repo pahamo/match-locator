@@ -4,10 +4,11 @@ import type { SimpleFixture, Competition } from '../types';
 // Alias for backward compatibility
 export type SimpleCompetition = Competition;
 
-// Only Sky Sports and TNT Sports for simplicity (plus blackout)
+// Main UK broadcasters for frontend display
 export const SIMPLE_BROADCASTERS = [
   { id: 1, name: 'Sky Sports' },
   { id: 2, name: 'TNT Sports' },
+  { id: 4, name: 'Amazon Prime Video' },
   { id: 999, name: '🚫 Blackout (No TV)' }
 ];
 
