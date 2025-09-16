@@ -19,22 +19,6 @@ interface MatchWeek {
 }
 
 
-// Helper to separate fixtures by match status
-const separateFixturesByStatus = (fixtures: SimpleFixture[]) => {
-  const finishedFixtures: SimpleFixture[] = [];
-  const currentAndUpcomingFixtures: SimpleFixture[] = [];
-
-  fixtures.forEach(fixture => {
-    const status = getMatchStatus(fixture.kickoff_utc);
-    if (status.status === 'finished') {
-      finishedFixtures.push(fixture);
-    } else {
-      currentAndUpcomingFixtures.push(fixture);
-    }
-  });
-
-  return { finishedFixtures, currentAndUpcomingFixtures };
-};
 
 // Helper to group fixtures by date, then by time within each date for day card display
 const groupFixturesByDate = (fixtures: SimpleFixture[]) => {
@@ -87,12 +71,10 @@ const HomePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   // Removed selectedCompetitionId - now showing all competitions
-  const [pastGamesExpanded, setPastGamesExpanded] = useState(false);
 
     
   // Prepare data for hooks - call hooks unconditionally
-  const { finishedFixtures, currentAndUpcomingFixtures } = matchWeek ? separateFixturesByStatus(matchWeek.fixtures) : { finishedFixtures: [], currentAndUpcomingFixtures: [] };
-  const dayGroups = groupFixturesByDate(currentAndUpcomingFixtures);
+  const dayGroups = matchWeek ? groupFixturesByDate(matchWeek.fixtures) : [];
 
 
   useEffect(() => {
@@ -265,74 +247,6 @@ const HomePage: React.FC = () => {
         <div className="wrap" style={{ position: 'relative' }}>
           <h1 style={{ marginTop: '32px', marginBottom: '32px' }}>Football TV Schedule</h1>
 
-          {/* Finished Matches - Collapsible Display */}
-          {finishedFixtures.length > 0 && (
-            <div style={{ marginBottom: '32px' }}>
-              <button
-                onClick={() => setPastGamesExpanded(!pastGamesExpanded)}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  padding: '0',
-                  cursor: 'pointer',
-                  width: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginBottom: '12px'
-                }}
-              >
-                <h2 style={{
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  color: '#6b7280',
-                  margin: '0',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.5px'
-                }}>Recent Results ({finishedFixtures.length})</h2>
-                <span style={{
-                  fontSize: '18px',
-                  color: '#6b7280',
-                  transform: pastGamesExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-                  transition: 'transform 0.2s ease'
-                }}>
-                  ▼
-                </span>
-              </button>
-
-              {/* Collapsed State - Simple text indicator */}
-              {!pastGamesExpanded && (
-                <div style={{
-                  padding: '16px',
-                  background: '#f9fafb',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '6px',
-                  textAlign: 'center',
-                  color: '#6b7280',
-                  fontSize: '14px'
-                }}>
-                  {finishedFixtures.length} passed game{finishedFixtures.length !== 1 ? 's' : ''} - tap above to expand
-                </div>
-              )}
-
-              {/* Expanded State - Full list */}
-              {pastGamesExpanded && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                  {finishedFixtures
-                    .sort((a, b) => new Date(b.kickoff_utc).getTime() - new Date(a.kickoff_utc).getTime())
-                    .map(fixture => (
-                      <FixtureCard
-                        key={fixture.id}
-                        fixture={fixture}
-                        variant="minimized"
-                        showViewButton={false}
-                      />
-                    ))
-                  }
-                </div>
-              )}
-            </div>
-          )}
 
           {/* Day Cards */}
           <div className="fixtures-list" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
