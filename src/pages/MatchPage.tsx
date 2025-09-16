@@ -5,6 +5,7 @@ import type { Fixture } from '../types';
 import Header from '../components/Header';
 import StructuredData from '../components/StructuredData';
 import { parseMatchSlug, generateMatchMeta, updateDocumentMeta } from '../utils/seo';
+import { formatDetailedDate } from '../utils/dateFormat';
 import AffiliateDisclosure, { withAffiliateAriaLabel } from '../components/legal/AffiliateDisclosure';
 
 const MatchPage: React.FC = () => {
@@ -71,16 +72,7 @@ const MatchPage: React.FC = () => {
   }, [matchSlug, matchId, id]);
 
   const formatDateTime = (utcKickoff: string) => {
-    const date = new Date(utcKickoff);
-    return date.toLocaleDateString('en-GB', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      timeZone: 'Europe/London'
-    });
+    return formatDetailedDate(utcKickoff);
   };
 
   const getBroadcasterLink = (providerName: string, href?: string) => {
@@ -153,18 +145,16 @@ const MatchPage: React.FC = () => {
   return (
     <div className="match-page">
       <StructuredData type="match" data={fixture} />
-      <Header 
-        title={`${fixture.home.name} vs ${fixture.away.name}`}
-        subtitle="Match details and viewing information"
+      <Header
+        title="Match Locator"
+        subtitle="Football TV Schedule (UK)"
       />
-      
+
       <main>
         <div className="wrap">
-          {fixture && (
-            <h1 style={{ marginTop: 0, marginBottom: 16 }}>
-              {fixture.home.name} vs {fixture.away.name}
-            </h1>
-          )}
+          <h1 style={{ marginTop: 32, marginBottom: 16, fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>
+            {fixture.home.name} vs {fixture.away.name}
+          </h1>
           {/* Match Header */}
           <div className="fixture-card" style={{ marginBottom: '24px', padding: '24px' }}>
             <div className="fixture-datetime" style={{ fontSize: '1.1rem', marginBottom: '16px' }}>
@@ -285,10 +275,85 @@ const MatchPage: React.FC = () => {
             </div>
           </div>
 
-          <div style={{ marginTop: '8px' }}>
-            <Link to="/" style={{ color: '#6366f1', textDecoration: 'underline', fontSize: '0.95rem' }}>
-              ← Back to Schedule
-            </Link>
+          {/* See More Section */}
+          <div style={{
+            marginTop: '24px',
+            padding: '16px',
+            background: '#f9fafb',
+            borderRadius: '8px'
+          }}>
+            <h3 style={{
+              margin: '0 0 12px 0',
+              fontSize: '16px',
+              fontWeight: '600',
+              color: '#374151'
+            }}>
+              See more:
+            </h3>
+            <div style={{
+              display: 'flex',
+              gap: '12px',
+              flexWrap: 'wrap'
+            }}>
+              {/* Home Team Button */}
+              <Link
+                to={`/clubs/${fixture.home.slug || fixture.home.name.toLowerCase().replace(/\s+/g, '-')}`}
+                style={{
+                  padding: '8px 16px',
+                  backgroundColor: '#6366f1',
+                  color: 'white',
+                  textDecoration: 'none',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
+              >
+                🏟️ {fixture.home.name}
+              </Link>
+
+              {/* Away Team Button */}
+              <Link
+                to={`/clubs/${fixture.away.slug || fixture.away.name.toLowerCase().replace(/\s+/g, '-')}`}
+                style={{
+                  padding: '8px 16px',
+                  backgroundColor: '#6366f1',
+                  color: 'white',
+                  textDecoration: 'none',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}
+              >
+                🏟️ {fixture.away.name}
+              </Link>
+
+              {/* Competition Button */}
+              {fixture.competition && (
+                <Link
+                  to={`/competitions/${fixture.competition.slug || fixture.competition.name.toLowerCase().replace(/\s+/g, '-')}`}
+                  style={{
+                    padding: '8px 16px',
+                    backgroundColor: '#059669',
+                    color: 'white',
+                    textDecoration: 'none',
+                    borderRadius: '6px',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  🏆 {fixture.competition.name}
+                </Link>
+              )}
+            </div>
           </div>
           {/* Footer disclosure */}
           <AffiliateDisclosure position="footer" />

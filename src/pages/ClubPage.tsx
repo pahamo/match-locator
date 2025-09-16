@@ -4,6 +4,7 @@ import { getFixtures } from '../services/supabase';
 import type { Fixture } from '../types';
 import Header from '../components/Header';
 import { generateTeamMeta, updateDocumentMeta, generateMatchUrl } from '../utils/seo';
+import { formatCompactDate } from '../utils/dateFormat';
 
 const ClubPage: React.FC = () => {
   const { slug, clubId } = useParams<{ slug?: string; clubId?: string }>();
@@ -126,9 +127,7 @@ const ClubPage: React.FC = () => {
                     <div key={fx.id} className="fixture-card">
                       <div className="fixture-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                         <div className="fixture-datetime">
-                          {new Date(fx.kickoff_utc).toLocaleDateString('en-GB', {
-                            weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/London'
-                          })}
+                          {formatCompactDate(fx.kickoff_utc)}
                         </div>
                         <div className="competition-badge" style={{
                           fontSize: '0.75rem',

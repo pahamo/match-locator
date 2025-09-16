@@ -14,6 +14,7 @@ export interface FixtureCardProps {
   showViewButton?: boolean;
   className?: string;
   style?: React.CSSProperties;
+  groupPosition?: 'single' | 'first' | 'middle' | 'last';
 }
 
 // Helper functions to work with both fixture types
@@ -57,30 +58,56 @@ const FixtureCard: React.FC<FixtureCardProps> = ({
   showMatchweek = false,
   showViewButton = true,
   className = '',
-  style = {}
+  style = {},
+  groupPosition = 'single'
 }) => {
   const matchStatus = getMatchStatus(fixture.kickoff_utc);
   const statusStyles = getMatchStatusStyles(matchStatus);
   const fixtureData = getFixtureData(fixture);
   const isMinimized = variant === 'minimized';
 
-  // Card style variants
-  const baseCardStyle = {
-    background: statusStyles.card.background || 'white',
-    border: statusStyles.card.border || '1px solid #e2e8f0',
-    borderRadius: '6px',
-    padding: isMinimized ? '8px' : '12px',
-    marginBottom: isMinimized ? '4px' : '6px',
-    display: 'flex',
-    alignItems: 'center',
-    gap: isMinimized ? '8px' : '12px',
-    minHeight: 'auto',
-    position: 'relative' as const,
-    opacity: isMinimized ? 0.7 : 1,
-    fontSize: isMinimized ? '13px' : '14px',
-    ...statusStyles.card,
-    ...style
+  // Card style variants with grouped styling
+  const getGroupedCardStyle = () => {
+    let borderRadius = '6px';
+    let marginBottom = isMinimized ? '4px' : '6px';
+
+    // Handle grouped card styling
+    if (groupPosition !== 'single') {
+      switch (groupPosition) {
+        case 'first':
+          borderRadius = '6px 6px 0 0';
+          marginBottom = '1px';
+          break;
+        case 'middle':
+          borderRadius = '0';
+          marginBottom = '1px';
+          break;
+        case 'last':
+          borderRadius = '0 0 6px 6px';
+          marginBottom = isMinimized ? '4px' : '6px';
+          break;
+      }
+    }
+
+    return {
+      background: statusStyles.card.background || 'white',
+      border: statusStyles.card.border || '1px solid #e2e8f0',
+      borderRadius,
+      padding: isMinimized ? '8px' : '12px',
+      marginBottom,
+      display: 'flex',
+      alignItems: 'center',
+      gap: isMinimized ? '8px' : '12px',
+      minHeight: 'auto',
+      position: 'relative' as const,
+      opacity: isMinimized ? 0.7 : 1,
+      fontSize: isMinimized ? '13px' : '14px',
+      ...statusStyles.card,
+      ...style
+    };
   };
+
+  const baseCardStyle = getGroupedCardStyle();
 
   
   return (
@@ -194,10 +221,9 @@ const FixtureCard: React.FC<FixtureCardProps> = ({
       )}
 
       {/* Match Status Badge - hidden in minimized view */}
-      {!isMinimized && statusStyles.badge && (
+      {!isMinimized && statusStyles.badge && matchStatus.status === 'live' && (
         <div style={statusStyles.badge}>
-          {matchStatus.status === 'live' && '🔴 LIVE'}
-          {matchStatus.status === 'upNext' && `⏰ UP NEXT ${matchStatus.timeUntil ? `in ${matchStatus.timeUntil}` : ''}`}
+          🔴 LIVE
         </div>
       )}
       

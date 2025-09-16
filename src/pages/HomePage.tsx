@@ -8,6 +8,7 @@ import DayGroupCard from '../components/DayGroupCard';
 import { FixtureCard } from '../design-system';
 import { generateHomeMeta, updateDocumentMeta } from '../utils/seo';
 import { getMatchStatus } from '../utils/matchStatus';
+import { formatDateOnly } from '../utils/dateFormat';
 
 interface MatchWeek {
   matchweek: number;
@@ -41,12 +42,7 @@ const groupFixturesByDate = (fixtures: SimpleFixture[]) => {
   
   fixtures.forEach(fixture => {
     const date = new Date(fixture.kickoff_utc);
-    const dateKey = date.toLocaleDateString('en-GB', {
-      weekday: 'long',
-      month: 'short', 
-      day: 'numeric',
-      timeZone: 'Europe/London'
-    });
+    const dateKey = formatDateOnly(fixture.kickoff_utc);
     const timeKey = date.toLocaleTimeString('en-GB', {
       hour: '2-digit',
       minute: '2-digit',
@@ -183,9 +179,9 @@ const HomePage: React.FC = () => {
         const firstDate = new Date(sortedFixtures[0].kickoff_utc);
         const lastDate = new Date(sortedFixtures[sortedFixtures.length - 1].kickoff_utc);
         
-        const dateRange = firstDate.toDateString() === lastDate.toDateString() 
-          ? firstDate.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })
-          : `${firstDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })} - ${lastDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`;
+        const dateRange = firstDate.toDateString() === lastDate.toDateString()
+          ? formatDateOnly(sortedFixtures[0].kickoff_utc)
+          : `${formatDateOnly(sortedFixtures[0].kickoff_utc)} - ${formatDateOnly(sortedFixtures[sortedFixtures.length - 1].kickoff_utc)}`;
         
         // Check if any fixtures are today
         const today = new Date();
@@ -349,35 +345,79 @@ const HomePage: React.FC = () => {
                 kickoffTime={dayGroup.commonTime}
               >
                 {/* Time slots within the day */}
-                {dayGroup.timeSlots.map((timeSlot, timeIndex) => (
-                  <div key={timeIndex}>
-                    {/* Show time header if multiple time slots in a day */}
-                    {dayGroup.timeSlots.length > 1 && (
-                      <div style={{
-                        fontSize: '12px',
-                        fontWeight: '600',
-                        color: '#6b7280',
-                        margin: '8px 0 6px 0',
-                        padding: '4px 8px',
-                        background: '#f9fafb',
-                        borderRadius: '4px',
-                        width: 'fit-content'
-                      }}>
-                        {timeSlot.time}
-                      </div>
-                    )}
-                    
-                    {/* Compact Match Cards */}
-                    {timeSlot.fixtures.map(fixture => (
-                      <FixtureCard 
-                        key={fixture.id}
-                        fixture={fixture}
-                        variant="compact"
-                        showViewButton={true}
-                      />
-                    ))}
-                  </div>
-                ))}
+                {dayGroup.timeSlots.map((timeSlot, timeIndex) => {
+                  // Check if any fixture in this time slot is "up next"
+                  const hasUpNextFixture = timeSlot.fixtures.some(fixture => {
+                    const status = getMatchStatus(fixture.kickoff_utc);
+                    return status.status === 'upNext';
+                  });
+
+                  const upNextStatus = hasUpNextFixture ?
+                    getMatchStatus(timeSlot.fixtures[0].kickoff_utc) : null;
+
+                  return (
+                    <div key={timeIndex}>
+                      {/* Show time header if multiple time slots in a day OR if we need to show UP NEXT pill */}
+                      {(dayGroup.timeSlots.length > 1 || hasUpNextFixture) && (
+                        <div style={{
+                          fontSize: '12px',
+                          fontWeight: '600',
+                          color: '#6b7280',
+                          margin: '8px 0 6px 0',
+                          padding: '4px 8px',
+                          background: '#f9fafb',
+                          borderRadius: '4px',
+                          width: 'fit-content',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px'
+                        }}>
+                          <span>{timeSlot.time}</span>
+                          {/* UP NEXT pill - shown once per time slot */}
+                          {hasUpNextFixture && upNextStatus && (
+                            <span style={{
+                              fontSize: '11px',
+                              fontWeight: '600',
+                              padding: '2px 6px',
+                              borderRadius: '12px',
+                              background: '#3b82f6',
+                              color: 'white',
+                              textTransform: 'uppercase',
+                              letterSpacing: '0.025em'
+                            }}>
+                              ⏰ UP NEXT {upNextStatus.timeUntil ? `IN ${upNextStatus.timeUntil}` : ''}
+                            </span>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Compact Match Cards with grouped styling */}
+                      {timeSlot.fixtures.map((fixture, fixtureIndex) => {
+                        // Determine group position for styling
+                        let groupPosition: 'single' | 'first' | 'middle' | 'last' = 'single';
+                        if (timeSlot.fixtures.length > 1) {
+                          if (fixtureIndex === 0) {
+                            groupPosition = 'first';
+                          } else if (fixtureIndex === timeSlot.fixtures.length - 1) {
+                            groupPosition = 'last';
+                          } else {
+                            groupPosition = 'middle';
+                          }
+                        }
+
+                        return (
+                          <FixtureCard
+                            key={fixture.id}
+                            fixture={fixture}
+                            variant="compact"
+                            showViewButton={true}
+                            groupPosition={groupPosition}
+                          />
+                        );
+                      })}
+                    </div>
+                  );
+                })}
               </DayGroupCard>
             ))}
           </div>
