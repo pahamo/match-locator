@@ -264,7 +264,7 @@ export async function getFixtureById(id: number): Promise<Fixture | undefined> {
     const { data: rows, error } = await supabase
       .from('fixtures_with_teams')
       .select(`
-        id,matchday,utc_kickoff,venue,status,
+        id,matchday,utc_kickoff,venue,status,competition_id,
         home_team_id,home_team,home_slug,home_crest,
         away_team_id,away_team,away_slug,away_crest
       `)
