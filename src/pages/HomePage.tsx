@@ -249,60 +249,74 @@ const HomePage: React.FC = () => {
 
           {/* Day Cards */}
           <div className="fixtures-list" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            {dayGroups.map((dayGroup, dayIndex) => (
-              <DayGroupCard
-                key={dayIndex}
-                id={`group-${dayIndex}`}
-                date={dayGroup.date}
-                matchweek={`Matchweek ${matchWeek?.matchweek || 1}`}
-                kickoffTime={dayGroup.commonTime}
-              >
-                {/* Time slots within the day */}
-                {dayGroup.timeSlots.map((timeSlot, timeIndex) => {
-                  // Check if any fixture in this time slot is "up next"
-                  const hasUpNextFixture = timeSlot.fixtures.some(fixture => {
-                    const status = getMatchStatus(fixture.kickoff_utc);
-                    return status.status === 'upNext';
-                  });
+            {dayGroups.map((dayGroup, dayIndex) => {
+              // Find the earliest upcoming fixture in this day to show single UP NEXT badge
+              const allDayFixtures = dayGroup.timeSlots.flatMap(slot => slot.fixtures);
+              const upNextFixtures = allDayFixtures.filter(fixture => {
+                const status = getMatchStatus(fixture.kickoff_utc);
+                return status.status === 'upNext';
+              });
 
-                  const upNextStatus = hasUpNextFixture ?
-                    getMatchStatus(timeSlot.fixtures[0].kickoff_utc) : null;
+              // Find the earliest UP NEXT fixture for this day
+              const earliestUpNext = upNextFixtures.length > 0
+                ? upNextFixtures.reduce((earliest, current) =>
+                    new Date(current.kickoff_utc) < new Date(earliest.kickoff_utc) ? current : earliest
+                  )
+                : null;
 
-                  return (
-                    <div key={timeIndex}>
-                      {/* Show time header if multiple time slots in a day OR if we need to show UP NEXT pill */}
-                      {(dayGroup.timeSlots.length > 1 || hasUpNextFixture) && (
-                        <div style={{
-                          fontSize: '12px',
-                          fontWeight: '600',
-                          color: '#6b7280',
-                          margin: '8px 0 6px 0',
-                          padding: '4px 8px',
-                          background: '#f9fafb',
-                          borderRadius: '4px',
-                          width: 'fit-content',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '8px'
-                        }}>
-                          <span>{timeSlot.time}</span>
-                          {/* UP NEXT pill - shown once per time slot */}
-                          {hasUpNextFixture && upNextStatus && (
-                            <span style={{
-                              fontSize: '11px',
-                              fontWeight: '600',
-                              padding: '2px 6px',
-                              borderRadius: '12px',
-                              background: '#3b82f6',
-                              color: 'white',
-                              textTransform: 'uppercase',
-                              letterSpacing: '0.025em'
-                            }}>
-                              ⏰ UP NEXT {upNextStatus.timeUntil ? `IN ${upNextStatus.timeUntil}` : ''}
-                            </span>
-                          )}
-                        </div>
-                      )}
+              const upNextStatus = earliestUpNext ? getMatchStatus(earliestUpNext.kickoff_utc) : null;
+              const upNextTimeSlotIndex = earliestUpNext
+                ? dayGroup.timeSlots.findIndex(slot => slot.fixtures.includes(earliestUpNext))
+                : -1;
+
+              return (
+                <DayGroupCard
+                  key={dayIndex}
+                  id={`group-${dayIndex}`}
+                  date={dayGroup.date}
+                  matchweek={`Matchweek ${matchWeek?.matchweek || 1}`}
+                  kickoffTime={dayGroup.commonTime}
+                >
+                  {/* Time slots within the day */}
+                  {dayGroup.timeSlots.map((timeSlot, timeIndex) => {
+                    // Only show UP NEXT badge on the earliest time slot with UP NEXT fixture
+                    const shouldShowUpNext = timeIndex === upNextTimeSlotIndex;
+
+                    return (
+                      <div key={timeIndex}>
+                        {/* Show time header if multiple time slots in a day OR if we need to show UP NEXT pill */}
+                        {(dayGroup.timeSlots.length > 1 || shouldShowUpNext) && (
+                          <div style={{
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            color: '#6b7280',
+                            margin: '8px 0 6px 0',
+                            padding: '4px 8px',
+                            background: '#f9fafb',
+                            borderRadius: '4px',
+                            width: 'fit-content',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px'
+                          }}>
+                            <span>{timeSlot.time}</span>
+                            {/* UP NEXT pill - shown only once per day on earliest fixture */}
+                            {shouldShowUpNext && upNextStatus && (
+                              <span style={{
+                                fontSize: '11px',
+                                fontWeight: '600',
+                                padding: '2px 6px',
+                                borderRadius: '12px',
+                                background: '#3b82f6',
+                                color: 'white',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.025em'
+                              }}>
+                                ⏰ UP NEXT {upNextStatus.timeUntil ? `IN ${upNextStatus.timeUntil}` : ''}
+                              </span>
+                            )}
+                          </div>
+                        )}
 
                       {/* Compact Match Cards with grouped styling */}
                       {timeSlot.fixtures.map((fixture, fixtureIndex) => {
@@ -330,9 +344,10 @@ const HomePage: React.FC = () => {
                       })}
                     </div>
                   );
-                })}
-              </DayGroupCard>
-            ))}
+                  })}
+                </DayGroupCard>
+              );
+            })}
           </div>
 
           <div style={{ 
