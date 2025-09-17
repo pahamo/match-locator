@@ -8,6 +8,7 @@ interface CountdownTimerProps {
 }
 
 interface TimeRemaining {
+  days: number;
   hours: number;
   minutes: number;
   seconds: number;
@@ -21,6 +22,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
   style
 }) => {
   const [timeRemaining, setTimeRemaining] = useState<TimeRemaining>({
+    days: 0,
     hours: 0,
     minutes: 0,
     seconds: 0,
@@ -35,14 +37,15 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
     const difference = targetTime - now;
 
     if (difference <= 0) {
-      return { hours: 0, minutes: 0, seconds: 0, total: 0 };
+      return { days: 0, hours: 0, minutes: 0, seconds: 0, total: 0 };
     }
 
-    const hours = Math.floor(difference / (1000 * 60 * 60));
+    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-    return { hours, minutes, seconds, total: difference };
+    return { days, hours, minutes, seconds, total: difference };
   };
 
   useEffect(() => {
@@ -80,7 +83,15 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
   }
 
   const formatTime = (time: TimeRemaining) => {
-    if (time.hours > 0) {
+    if (time.days > 0) {
+      if (time.days >= 7) {
+        const weeks = Math.floor(time.days / 7);
+        const remainingDays = time.days % 7;
+        return remainingDays > 0 ? `${weeks}w ${remainingDays}d` : `${weeks}w`;
+      } else {
+        return `${time.days}d ${time.hours}h`;
+      }
+    } else if (time.hours > 0) {
       return `${time.hours}h ${time.minutes}m`;
     } else if (time.minutes > 0) {
       return `${time.minutes}m ${time.seconds}s`;

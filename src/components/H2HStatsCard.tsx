@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Fixture } from '../types';
 import { formatDetailedDate } from '../utils/dateFormat';
+import { FeatureFlag } from '../config/featureFlags';
 
 interface H2HStats {
   totalMatches: number;
@@ -87,145 +88,183 @@ const H2HStatsCard: React.FC<H2HStatsCardProps> = ({
         </p>
       </div>
 
-      {/* Main Stats */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr auto 1fr',
-        alignItems: 'center',
-        gap: '24px',
-        marginBottom: '32px'
-      }}>
-        {/* Team 1 Stats */}
-        <div style={{ textAlign: 'center' }}>
+      <FeatureFlag
+        feature="showH2HStats"
+        fallback={
           <div style={{
-            fontSize: '2rem',
-            fontWeight: '700',
-            color: '#16a34a',
-            marginBottom: '4px'
+            textAlign: 'center',
+            padding: '40px 20px',
+            background: '#f8fafc',
+            borderRadius: '12px',
+            marginBottom: '32px'
           }}>
-            {stats.team1Wins}
+            <div style={{
+              fontSize: '3rem',
+              marginBottom: '16px'
+            }}>
+              📊
+            </div>
+            <h3 style={{
+              fontSize: '1.25rem',
+              fontWeight: '600',
+              color: '#1e293b',
+              marginBottom: '8px'
+            }}>
+              Head-to-Head Stats Coming Soon
+            </h3>
+            <p style={{
+              color: '#64748b',
+              fontSize: '0.875rem',
+              margin: 0
+            }}>
+              We're working on bringing you detailed historical statistics between these teams.
+            </p>
           </div>
-          <div style={{
-            fontSize: '0.875rem',
-            color: '#64748b',
-            marginBottom: '8px'
-          }}>
-            {team1Name} wins
+        }
+      >
+        {/* Main Stats */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr auto 1fr',
+          alignItems: 'center',
+          gap: '24px',
+          marginBottom: '32px'
+        }}>
+          {/* Team 1 Stats */}
+          <div style={{ textAlign: 'center' }}>
+            <div style={{
+              fontSize: '2rem',
+              fontWeight: '700',
+              color: '#16a34a',
+              marginBottom: '4px'
+            }}>
+              {stats.team1Wins}
+            </div>
+            <div style={{
+              fontSize: '0.875rem',
+              color: '#64748b',
+              marginBottom: '8px'
+            }}>
+              {team1Name} wins
+            </div>
+            <div style={{
+              fontSize: '0.75rem',
+              color: '#94a3b8'
+            }}>
+              {winPercentage1}%
+            </div>
           </div>
-          <div style={{
-            fontSize: '0.75rem',
-            color: '#94a3b8'
-          }}>
-            {winPercentage1}%
+
+          {/* VS and Draws */}
+          <div style={{ textAlign: 'center' }}>
+            <div style={{
+              fontSize: '1.25rem',
+              fontWeight: '600',
+              color: '#64748b',
+              marginBottom: '8px'
+            }}>
+              VS
+            </div>
+            <div style={{
+              fontSize: '1rem',
+              color: '#64748b',
+              marginBottom: '4px'
+            }}>
+              {stats.draws} draws
+            </div>
+            <div style={{
+              fontSize: '0.75rem',
+              color: '#94a3b8'
+            }}>
+              {drawPercentage}%
+            </div>
+          </div>
+
+          {/* Team 2 Stats */}
+          <div style={{ textAlign: 'center' }}>
+            <div style={{
+              fontSize: '2rem',
+              fontWeight: '700',
+              color: '#16a34a',
+              marginBottom: '4px'
+            }}>
+              {stats.team2Wins}
+            </div>
+            <div style={{
+              fontSize: '0.875rem',
+              color: '#64748b',
+              marginBottom: '8px'
+            }}>
+              {team2Name} wins
+            </div>
+            <div style={{
+              fontSize: '0.75rem',
+              color: '#94a3b8'
+            }}>
+              {winPercentage2}%
+            </div>
           </div>
         </div>
+      </FeatureFlag>
 
-        {/* VS and Draws */}
-        <div style={{ textAlign: 'center' }}>
-          <div style={{
-            fontSize: '1.25rem',
-            fontWeight: '600',
-            color: '#64748b',
-            marginBottom: '8px'
-          }}>
-            VS
+      {/* Goals Stats */}
+      <FeatureFlag feature="showGoalStats">
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: '16px',
+          padding: '16px',
+          background: '#f8fafc',
+          borderRadius: '8px',
+          marginBottom: '24px'
+        }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{
+              fontSize: '1.5rem',
+              fontWeight: '700',
+              color: '#1e293b'
+            }}>
+              {stats.team1Goals}
+            </div>
+            <div style={{
+              fontSize: '0.75rem',
+              color: '#64748b'
+            }}>
+              Goals
+            </div>
           </div>
+
           <div style={{
             fontSize: '1rem',
             color: '#64748b',
-            marginBottom: '4px'
+            fontWeight: '500'
           }}>
-            {stats.draws} draws
+            -
           </div>
-          <div style={{
-            fontSize: '0.75rem',
-            color: '#94a3b8'
-          }}>
-            {drawPercentage}%
-          </div>
-        </div>
 
-        {/* Team 2 Stats */}
-        <div style={{ textAlign: 'center' }}>
-          <div style={{
-            fontSize: '2rem',
-            fontWeight: '700',
-            color: '#16a34a',
-            marginBottom: '4px'
-          }}>
-            {stats.team2Wins}
-          </div>
-          <div style={{
-            fontSize: '0.875rem',
-            color: '#64748b',
-            marginBottom: '8px'
-          }}>
-            {team2Name} wins
-          </div>
-          <div style={{
-            fontSize: '0.75rem',
-            color: '#94a3b8'
-          }}>
-            {winPercentage2}%
+          <div style={{ textAlign: 'center' }}>
+            <div style={{
+              fontSize: '1.5rem',
+              fontWeight: '700',
+              color: '#1e293b'
+            }}>
+              {stats.team2Goals}
+            </div>
+            <div style={{
+              fontSize: '0.75rem',
+              color: '#64748b'
+            }}>
+              Goals
+            </div>
           </div>
         </div>
-      </div>
-
-      {/* Goals Stats */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        gap: '16px',
-        padding: '16px',
-        background: '#f8fafc',
-        borderRadius: '8px',
-        marginBottom: '24px'
-      }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{
-            fontSize: '1.5rem',
-            fontWeight: '700',
-            color: '#1e293b'
-          }}>
-            {stats.team1Goals}
-          </div>
-          <div style={{
-            fontSize: '0.75rem',
-            color: '#64748b'
-          }}>
-            Goals
-          </div>
-        </div>
-
-        <div style={{
-          fontSize: '1rem',
-          color: '#64748b',
-          fontWeight: '500'
-        }}>
-          -
-        </div>
-
-        <div style={{ textAlign: 'center' }}>
-          <div style={{
-            fontSize: '1.5rem',
-            fontWeight: '700',
-            color: '#1e293b'
-          }}>
-            {stats.team2Goals}
-          </div>
-          <div style={{
-            fontSize: '0.75rem',
-            color: '#64748b'
-          }}>
-            Goals
-          </div>
-        </div>
-      </div>
+      </FeatureFlag>
 
       {/* Last 5 Meetings */}
-      {stats.lastMeetings.length > 0 && (
-        <div>
+      <FeatureFlag feature="showH2HPastResults">
+        {stats.lastMeetings.length > 0 && (
+          <div>
           <h3 style={{
             fontSize: '1.125rem',
             fontWeight: '600',
@@ -311,7 +350,8 @@ const H2HStatsCard: React.FC<H2HStatsCardProps> = ({
             })}
           </div>
         </div>
-      )}
+        )}
+      </FeatureFlag>
     </div>
   );
 };

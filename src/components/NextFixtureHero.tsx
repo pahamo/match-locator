@@ -1,8 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import type { Fixture } from '../types';
 import { formatDetailedDate } from '../utils/dateFormat';
-import { generateSeoMatchUrl } from '../utils/seo';
+import { mapCompetitionSlugToName } from '../utils/competitionMapping';
 import CountdownTimer from './CountdownTimer';
 import LiveBadge from './LiveBadge';
 import { getMatchStatus } from '../utils/matchStatus';
@@ -113,9 +112,26 @@ const NextFixtureHero: React.FC<NextFixtureHeroProps> = ({
               alignItems: 'center',
               justifyContent: 'center',
               margin: '0 auto 12px',
-              fontSize: '2rem'
+              fontSize: '2rem',
+              overflow: 'hidden'
             }}>
-              ⚽
+              {fixture.home.crest ? (
+                <img
+                  src={fixture.home.crest}
+                  alt={`${fixture.home.name} crest`}
+                  style={{
+                    width: '60px',
+                    height: '60px',
+                    objectFit: 'contain'
+                  }}
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.parentElement!.innerHTML = '⚽';
+                  }}
+                />
+              ) : (
+                '⚽'
+              )}
             </div>
             <h3 style={{
               fontSize: '1.25rem',
@@ -144,7 +160,7 @@ const NextFixtureHero: React.FC<NextFixtureHeroProps> = ({
               fontSize: '0.875rem',
               fontWeight: '500'
             }}>
-              {fixture.competition || 'Premier League'}
+              {fixture.competition ? mapCompetitionSlugToName(fixture.competition) : 'Premier League'}
             </div>
           </div>
 
@@ -159,9 +175,26 @@ const NextFixtureHero: React.FC<NextFixtureHeroProps> = ({
               alignItems: 'center',
               justifyContent: 'center',
               margin: '0 auto 12px',
-              fontSize: '2rem'
+              fontSize: '2rem',
+              overflow: 'hidden'
             }}>
-              ⚽
+              {fixture.away.crest ? (
+                <img
+                  src={fixture.away.crest}
+                  alt={`${fixture.away.name} crest`}
+                  style={{
+                    width: '60px',
+                    height: '60px',
+                    objectFit: 'contain'
+                  }}
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.parentElement!.innerHTML = '⚽';
+                  }}
+                />
+              ) : (
+                '⚽'
+              )}
             </div>
             <h3 style={{
               fontSize: '1.25rem',
@@ -258,39 +291,6 @@ const NextFixtureHero: React.FC<NextFixtureHeroProps> = ({
           </div>
         </div>
 
-        {/* CTA Button */}
-        <div style={{ textAlign: 'center' }}>
-          <Link
-            to={generateSeoMatchUrl(fixture)}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              background: 'rgba(255,255,255,0.9)',
-              color: '#4c1d95',
-              padding: '12px 24px',
-              borderRadius: '25px',
-              textDecoration: 'none',
-              fontSize: '1rem',
-              fontWeight: '600',
-              transition: 'all 0.2s ease',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.background = 'white';
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 6px 16px rgba(0,0,0,0.3)';
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.background = 'rgba(255,255,255,0.9)';
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
-            }}
-          >
-            <span>📺</span>
-            View Match Details
-          </Link>
-        </div>
       </div>
     </div>
   );

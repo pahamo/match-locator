@@ -23,6 +23,16 @@ export function mapCompetitionSlugToId(slug: string): number | null {
 }
 
 /**
+ * Map competition slug to display name
+ */
+export function mapCompetitionSlugToName(slug: string): string {
+  const config = COMPETITION_CONFIGS[slug];
+  return config?.name || slug.split('-').map(word =>
+    word.charAt(0).toUpperCase() + word.slice(1)
+  ).join(' ');
+}
+
+/**
  * Get all competition ID to slug mappings
  */
 export function getAllCompetitionMappings(): Record<number, string> {
