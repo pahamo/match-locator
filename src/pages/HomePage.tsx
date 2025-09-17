@@ -193,16 +193,27 @@ const HomePage: React.FC = () => {
     // Find current or upcoming matchweek
     const sortedMatchweeks = Array.from(fixturesByMatchweek.keys()).sort((a, b) => a - b);
     
-    // First check if there's a matchweek with games today or in the future
+    // First check if there's a matchweek with games that are live, upcoming, or today
     for (const matchweek of sortedMatchweeks) {
       const matchweekFixtures = fixturesByMatchweek.get(matchweek)!;
-      const upcomingFixtures = matchweekFixtures.filter(f => new Date(f.kickoff_utc) >= now);
-      
-      if (upcomingFixtures.length > 0) {
-        // Sort fixtures by kickoff time and only include upcoming fixtures
-        const sortedFixtures = upcomingFixtures.sort((a, b) =>
-          new Date(a.kickoff_utc).getTime() - new Date(b.kickoff_utc).getTime()
-        );
+      const relevantFixtures = matchweekFixtures.filter(f => {
+        const status = getMatchStatus(f.kickoff_utc);
+        return status.status === 'live' || status.status === 'upNext' || new Date(f.kickoff_utc) >= now;
+      });
+
+      if (relevantFixtures.length > 0) {
+        // Sort fixtures by kickoff time - live games first, then by kickoff time
+        const sortedFixtures = relevantFixtures.sort((a, b) => {
+          const statusA = getMatchStatus(a.kickoff_utc);
+          const statusB = getMatchStatus(b.kickoff_utc);
+
+          // Live games always come first
+          if (statusA.status === 'live' && statusB.status !== 'live') return -1;
+          if (statusB.status === 'live' && statusA.status !== 'live') return 1;
+
+          // Then sort by kickoff time
+          return new Date(a.kickoff_utc).getTime() - new Date(b.kickoff_utc).getTime();
+        });
         
         // Calculate date range
         const firstDate = new Date(sortedFixtures[0].kickoff_utc);

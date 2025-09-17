@@ -36,6 +36,8 @@ const isH2HUrl = (slug: string): boolean => {
 /**
  * Smart router that determines whether to show MatchPage or HeadToHeadPage
  * based on the URL pattern
+ *
+ * TEMPORARILY DISABLED H2H ROUTING - ALL ROUTES GO TO MATCHPAGE
  */
 const SmartFixtureRouter: React.FC = () => {
   const { matchSlug } = useParams<{ matchSlug: string }>();
@@ -44,22 +46,28 @@ const SmartFixtureRouter: React.FC = () => {
     return <div>Invalid URL</div>;
   }
 
-  // Check if this is a pure H2H pattern (team1-vs-team2 only)
-  if (isH2HUrl(matchSlug)) {
-    // This is a Head-to-Head URL
-    return (
-      <Suspense fallback={<PageLoader />}>
-        <HeadToHeadPage />
-      </Suspense>
-    );
-  } else {
-    // This is a regular match URL (includes competition/date)
-    return (
-      <Suspense fallback={<PageLoader />}>
-        <MatchPage />
-      </Suspense>
-    );
-  }
+  // TEMPORARILY DISABLED: H2H routing causing issues with individual game pages
+  // Always route to MatchPage for now
+  return (
+    <Suspense fallback={<PageLoader />}>
+      <MatchPage />
+    </Suspense>
+  );
+
+  // Original H2H logic (disabled):
+  // if (isH2HUrl(matchSlug)) {
+  //   return (
+  //     <Suspense fallback={<PageLoader />}>
+  //       <HeadToHeadPage />
+  //     </Suspense>
+  //   );
+  // } else {
+  //   return (
+  //     <Suspense fallback={<PageLoader />}>
+  //       <MatchPage />
+  //     </Suspense>
+  //   );
+  // }
 };
 
 export default SmartFixtureRouter;
