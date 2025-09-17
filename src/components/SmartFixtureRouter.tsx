@@ -16,15 +16,21 @@ const PageLoader = () => (
 
 /**
  * Check if URL is pure H2H format (team1-vs-team2 only, no competition/date)
+ * Match URLs follow format: team1-vs-team2-competition-17-sep-2024
+ * H2H URLs follow format: team1-vs-team2
  */
 const isH2HUrl = (slug: string): boolean => {
   const h2hPattern = parseH2HSlug(slug);
   if (!h2hPattern) return false;
 
-  // If the slug exactly matches "team1-vs-team2", it's H2H
-  // If it has extra segments (competition, date), it's a match URL
-  const reconstructed = `${h2hPattern.team1Slug}-vs-${h2hPattern.team2Slug}`;
-  return slug === reconstructed;
+  // Check if URL contains a date pattern at the end (dd-mmm-yyyy)
+  // Match URLs end with patterns like: "17-sept-2025", "03-jan-2025", etc.
+  const datePattern = /\d{1,2}-(jan|feb|mar|apr|may|jun|jul|aug|sept|oct|nov|dec)-\d{4}$/i;
+  const hasDateSuffix = datePattern.test(slug);
+
+  // If it has a date suffix, it's a match URL
+  // If no date suffix, it's likely an H2H URL
+  return !hasDateSuffix;
 };
 
 /**
