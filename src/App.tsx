@@ -52,10 +52,8 @@ const ProviderPage = React.lazy(() => import('./pages/ProviderPage'));
 const PrivacyPolicy = React.lazy(() => import('./pages/legal/PrivacyPolicy'));
 const CookiePolicy = React.lazy(() => import('./pages/legal/CookiePolicy'));
 const Terms = React.lazy(() => import('./pages/legal/Terms'));
-const AffiliateDisclosure = React.lazy(() => import('./pages/legal/AffiliateDisclosure'));
-const HowWeMakeMoneyPage = React.lazy(() => import('./pages/HowWeMakeMoneyPage'));
+const HowWeSupportThisSitePage = React.lazy(() => import('./pages/HowWeSupportThisSitePage'));
 const ContactPage = React.lazy(() => import('./pages/ContactPage'));
-const EditorialGuidelinesPage = React.lazy(() => import('./pages/EditorialGuidelinesPage'));
 const TodayFixturesPage = React.lazy(() => import('./pages/TodayFixturesPage'));
 const TomorrowFixturesPage = React.lazy(() => import('./pages/TomorrowFixturesPage'));
 const CookieSettingsModal = React.lazy(() => import('./components/cookies/CookieSettingsModal'));
@@ -123,10 +121,9 @@ function App() {
               <Route path="/legal/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/legal/cookie-policy" element={<CookiePolicy />} />
               <Route path="/legal/terms" element={<Terms />} />
-              <Route path="/affiliate-disclosure" element={<AffiliateDisclosure />} />
-              <Route path="/how-we-make-money" element={<HowWeMakeMoneyPage />} />
+              <Route path="/support" element={<HowWeSupportThisSitePage />} />
+              <Route path="/how-we-make-money" element={<HowWeSupportThisSitePage />} />
               <Route path="/contact" element={<ContactPage />} />
-              <Route path="/editorial-guidelines" element={<EditorialGuidelinesPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Suspense>

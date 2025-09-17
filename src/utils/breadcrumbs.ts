@@ -200,12 +200,12 @@ export const generateBreadcrumbs = (
       breadcrumbs.push({ label: 'Contact' });
       break;
 
-    case 'how-we-make-money':
-      breadcrumbs.push({ label: 'How We Make Money' });
+    case 'support':
+      breadcrumbs.push({ label: 'How We Support This Site' });
       break;
 
-    case 'editorial-guidelines':
-      breadcrumbs.push({ label: 'Editorial Guidelines' });
+    case 'how-we-make-money':
+      breadcrumbs.push({ label: 'How We Support This Site' });
       break;
 
     case 'affiliate-disclosure':

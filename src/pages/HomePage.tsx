@@ -151,8 +151,8 @@ const HomePage: React.FC = () => {
       const upcomingFixtures = matchweekFixtures.filter(f => new Date(f.kickoff_utc) >= now);
       
       if (upcomingFixtures.length > 0) {
-        // Sort fixtures by kickoff time
-        const sortedFixtures = matchweekFixtures.sort((a, b) => 
+        // Sort fixtures by kickoff time and only include upcoming fixtures
+        const sortedFixtures = upcomingFixtures.sort((a, b) =>
           new Date(a.kickoff_utc).getTime() - new Date(b.kickoff_utc).getTime()
         );
         
@@ -170,7 +170,7 @@ const HomePage: React.FC = () => {
         const tomorrow = new Date(today);
         tomorrow.setDate(tomorrow.getDate() + 1);
         
-        const hasToday = matchweekFixtures.some(f => {
+        const hasToday = sortedFixtures.some(f => {
           const fixtureDate = new Date(f.kickoff_utc);
           fixtureDate.setHours(0, 0, 0, 0);
           return fixtureDate.getTime() === today.getTime();
