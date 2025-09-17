@@ -75,118 +75,47 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
   const fixtureData = React.useMemo(() => getFixtureData(fixture), [fixture]);
   const isMinimized = variant === 'minimized';
 
-  // Card style variants with grouped styling
-  const getGroupedCardStyle = () => {
-    let borderRadius = '6px';
-    let marginBottom = isMinimized ? '4px' : '6px';
+  // Generate CSS class names instead of inline styles
+  const getCardClasses = () => {
+    const classes = ['fixture-card'];
 
-    // Handle grouped card styling
-    if (groupPosition !== 'single') {
-      switch (groupPosition) {
-        case 'first':
-          borderRadius = '6px 6px 0 0';
-          marginBottom = '1px';
-          break;
-        case 'middle':
-          borderRadius = '0';
-          marginBottom = '1px';
-          break;
-        case 'last':
-          borderRadius = '0 0 6px 6px';
-          marginBottom = isMinimized ? '4px' : '6px';
-          break;
-      }
-    }
+    if (isMinimized) classes.push('minimized');
+    if (groupPosition !== 'single') classes.push(groupPosition);
 
-    return {
-      background: (actualStatusStyles.card as any)?.background || 'white',
-      border: (actualStatusStyles.card as any)?.border || '1px solid #e2e8f0',
-      borderRadius,
-      padding: isMinimized ? '8px' : '12px',
-      marginBottom,
-      display: 'flex',
-      alignItems: 'center',
-      gap: isMinimized ? '8px' : '12px',
-      minHeight: 'auto',
-      position: 'relative' as const,
-      opacity: isMinimized ? 0.7 : 1,
-      fontSize: isMinimized ? '13px' : '14px',
-      ...actualStatusStyles.card,
-      ...style
-    };
+    return classes.join(' ');
   };
 
-  const baseCardStyle = getGroupedCardStyle();
+  const cardClasses = getCardClasses();
 
   
   return (
-    <div 
-      className={`fixture-card-compact ${className}`}
-      style={baseCardStyle}
+    <div
+      className={`${cardClasses} ${className}`}
+      style={{ ...actualStatusStyles.card, ...style }}
     >
-      {/* Teams Section - More Compact */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-        flex: '1',
-        minWidth: '0'
-      }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '4px',
-          flex: '1',
-          minWidth: '0'
-        }}>
+      {/* Teams Section */}
+      <div className="teams-section">
+        <div className="team-container">
           {fixtureData.homeCrest && (
             <OptimizedImage
               src={fixtureData.homeCrest}
               alt={`${fixtureData.homeTeam} crest`}
               width={isMinimized ? 14 : 18}
               height={isMinimized ? 14 : 18}
-              style={{
-                flexShrink: 0
-              }}
+              className="flex-shrink-0"
               onError={() => {}}
             />
           )}
-          <span style={{
-            fontSize: isMinimized ? '13px' : '14px',
-            fontWeight: '500',
-            lineHeight: '1.3',
-            wordBreak: 'break-word',
-            hyphens: 'auto',
-            minWidth: 0
-          }}>
+          <span className={`team-name ${isMinimized ? 'minimized' : ''}`}>
             <span className="team-name-full">{fixtureData.homeTeam}</span>
             <span className="team-name-short">{getDisplayTeamName(fixtureData.homeTeam, true)}</span>
           </span>
         </div>
-        
-        <div style={{
-          fontSize: '12px',
-          color: '#9ca3af',
-          fontWeight: '500',
-          flexShrink: 0
-        }}>vs</div>
-        
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '4px',
-          flex: '1',
-          minWidth: '0',
-          justifyContent: 'flex-end'
-        }}>
-          <span style={{
-            fontSize: isMinimized ? '13px' : '14px',
-            fontWeight: '500',
-            lineHeight: '1.3',
-            wordBreak: 'break-word',
-            hyphens: 'auto',
-            minWidth: 0
-          }}>
+
+        <div className="vs-divider">vs</div>
+
+        <div className="team-container away-team">
+          <span className={`team-name ${isMinimized ? 'minimized' : ''}`}>
             <span className="team-name-full">{fixtureData.awayTeam}</span>
             <span className="team-name-short">{getDisplayTeamName(fixtureData.awayTeam, true)}</span>
           </span>
@@ -196,9 +125,7 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
               alt={`${fixtureData.awayTeam} crest`}
               width={isMinimized ? 14 : 18}
               height={isMinimized ? 14 : 18}
-              style={{
-                flexShrink: 0
-              }}
+              className="flex-shrink-0"
               onError={() => {}}
             />
           )}
@@ -207,96 +134,50 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
       
       {/* Live indicator dot */}
       {matchStatus.status === 'live' && (
-        <div
-          className="live-pulse"
-          style={{
-            width: isMinimized ? '6px' : '8px',
-            height: isMinimized ? '6px' : '8px',
-            background: tokens.colors.live.primary,
-            borderRadius: tokens.borderRadius.full,
-            flexShrink: 0
-          }}
-        />
+        <div className={`live-indicator ${isMinimized ? 'minimized' : ''} live-pulse`} />
       )}
 
       {/* Match Status Badge - hidden in minimized view and when in live group */}
       {!isMinimized && !isInLiveGroup && actualStatusStyles.badge && matchStatus.status === 'live' && (
-        <div style={actualStatusStyles.badge}>
+        <div className="live-badge" style={actualStatusStyles.badge}>
           🔴 LIVE
         </div>
       )}
-      
+
       {/* Broadcaster Info - Hidden in minimized view */}
       {!isMinimized && (
         <div className="broadcaster-info">
           {fixtureData.isBlackout ? (
-            <span style={{
-              fontSize: '12px',
-              padding: '2px 6px',
-              borderRadius: '4px',
-              background: '#fee2e2',
-              color: '#dc2626'
-            }}>🚫 Blackout</span>
+            <span className="broadcaster-badge blackout">🚫 Blackout</span>
           ) : fixtureData.broadcaster ? (
             fixtureData.broadcaster === 'Sky Sports' ? (
               <SkyAffiliateLink
                 href="https://www.sky.com/deals/sports"
                 trackingLabel="fixture-card"
                 pageType="fixtures"
-                style={{
-                  fontSize: '12px',
-                  padding: '2px 6px',
-                  borderRadius: '4px',
-                  background: '#dcfce7',
-                  color: '#16a34a',
-                  fontWeight: '500'
-                }}
+                className="broadcaster-badge available"
               >
                 {fixtureData.broadcaster}
               </SkyAffiliateLink>
             ) : (
-              <span style={{
-                fontSize: '12px',
-                padding: '2px 6px',
-                borderRadius: '4px',
-                background: '#dcfce7',
-                color: '#16a34a',
-                fontWeight: '500'
-              }}>{fixtureData.broadcaster}</span>
+              <span className="broadcaster-badge available">{fixtureData.broadcaster}</span>
             )
           ) : (
-            <span style={{
-              fontSize: '12px',
-              padding: '2px 6px',
-              borderRadius: '4px',
-              background: '#fef3c7',
-              color: '#d97706'
-            }}>TBD</span>
+            <span className="broadcaster-badge tbd">TBD</span>
           )}
         </div>
       )}
 
       {/* View Button - Always Visible */}
       {showViewButton && (
-        <Link
-          to={fixtureData.url}
-          className="view-button"
-        >
+        <Link to={fixtureData.url} className="view-button">
           View
         </Link>
       )}
-      
+
       {/* Matchweek (if requested) */}
       {showMatchweek && fixtureData.matchweek && (
-        <div style={{
-          fontSize: '12px',
-          color: '#6b7280',
-          fontWeight: '500',
-          background: '#f3f4f6',
-          padding: '2px 6px',
-          borderRadius: '4px',
-          flexShrink: 0
-        }}>
+        <div className="matchweek-badge">
           MW{fixtureData.matchweek}
         </div>
       )}

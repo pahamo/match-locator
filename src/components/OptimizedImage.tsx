@@ -85,34 +85,21 @@ const OptimizedImage: React.FC<OptimizedImageProps> = React.memo(({
     );
   }
 
+  // Skip loading placeholder for small images to reduce DOM complexity
+  const showLoader = width >= 50 && height >= 50;
+
   return (
-    <>
-      {/* Loading placeholder */}
-      {!isLoaded && (
-        <div
-          style={{
-            width: `${width}px`,
-            height: `${height}px`,
-            backgroundColor: '#f3f4f6',
-            borderRadius: '4px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            position: 'absolute',
-            ...style
-          }}
-        >
-          <div
-            style={{
-              width: '16px',
-              height: '16px',
-              border: '2px solid #e5e7eb',
-              borderTop: '2px solid #3b82f6',
-              borderRadius: '50%',
-              animation: 'spin 1s linear infinite'
-            }}
-          />
-        </div>
+    <div
+      className={`image-placeholder ${className}`}
+      style={{
+        width: `${width}px`,
+        height: `${height}px`,
+        ...style
+      }}
+    >
+      {/* Only show loader for larger images */}
+      {!isLoaded && showLoader && (
+        <div className="image-loader" />
       )}
 
       <img
@@ -120,30 +107,18 @@ const OptimizedImage: React.FC<OptimizedImageProps> = React.memo(({
         alt={alt}
         width={width}
         height={height}
-        className={className}
+        className="optimized-image"
         style={{
-          objectFit: 'contain',
-          opacity: isLoaded ? 1 : 0,
-          transition: 'opacity 0.2s ease-in-out',
-          ...style
+          opacity: isLoaded ? 1 : 0
         }}
         loading={lazy ? 'lazy' : 'eager'}
         onError={handleError}
         onLoad={handleLoad}
-        // Add size hints for browser optimization
         sizes={`${width}px`}
-        // Provide width/height attributes for layout stability
         {...(width && { width })}
         {...(height && { height })}
       />
-
-      <style>{`
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-      `}</style>
-    </>
+    </div>
   );
 });
 
