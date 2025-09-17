@@ -5,6 +5,7 @@ import type { SimpleFixture, Fixture } from '../../types';
 import { getMatchStatus, getMatchStatusStyles } from '../../utils/matchStatus';
 import { generateSeoSimpleMatchUrl, generateSeoMatchUrl } from '../../utils/seo';
 import { getDisplayTeamName } from '../../utils/teamNames';
+import OptimizedImage from '../../components/OptimizedImage';
 
 
 export interface FixtureCardProps {
@@ -138,20 +139,15 @@ const FixtureCard: React.FC<FixtureCardProps> = ({
           minWidth: '0'
         }}>
           {fixtureData.homeCrest && (
-            <img
+            <OptimizedImage
               src={fixtureData.homeCrest}
               alt={`${fixtureData.homeTeam} crest`}
+              width={isMinimized ? 14 : 18}
+              height={isMinimized ? 14 : 18}
               style={{
-                width: isMinimized ? '14px' : '18px',
-                height: isMinimized ? '14px' : '18px',
-                objectFit: 'contain',
                 flexShrink: 0
               }}
-              loading="lazy"
-              decoding="async"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
-              }}
+              onError={() => {}}
             />
           )}
           <span style={{
@@ -194,20 +190,15 @@ const FixtureCard: React.FC<FixtureCardProps> = ({
             <span className="team-name-short">{getDisplayTeamName(fixtureData.awayTeam, true)}</span>
           </span>
           {fixtureData.awayCrest && (
-            <img
+            <OptimizedImage
               src={fixtureData.awayCrest}
               alt={`${fixtureData.awayTeam} crest`}
+              width={isMinimized ? 14 : 18}
+              height={isMinimized ? 14 : 18}
               style={{
-                width: isMinimized ? '14px' : '18px',
-                height: isMinimized ? '14px' : '18px',
-                objectFit: 'contain',
                 flexShrink: 0
               }}
-              loading="lazy"
-              decoding="async"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
-              }}
+              onError={() => {}}
             />
           )}
         </div>

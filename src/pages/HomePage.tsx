@@ -10,6 +10,7 @@ import { generateHomeMeta, updateDocumentMeta } from '../utils/seo';
 import { getMatchStatus } from '../utils/matchStatus';
 import { formatDateOnly } from '../utils/dateFormat';
 import { COMPETITION_CONFIGS } from '../config/competitions';
+import OptimizedImage from '../components/OptimizedImage';
 
 interface MatchWeek {
   matchweek: number;
@@ -48,15 +49,16 @@ const CompetitionPill: React.FC<{ competitionId?: number }> = ({ competitionId }
       marginRight: '8px'
     }}>
       {competition.logo ? (
-        <img
+        <OptimizedImage
           src={competition.logo}
           alt={competition.name}
+          width={14}
+          height={14}
           style={{
-            width: '14px',
-            height: '14px',
-            objectFit: 'contain',
             filter: competition.colors.secondary === '#ffffff' ? 'brightness(0) invert(1)' : 'none'
           }}
+          fallback={undefined}
+          lazy={false} // Competition logos are above fold
         />
       ) : (
         <span>{competition.icon}</span>

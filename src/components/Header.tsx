@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { usePublicCompetitions } from '../hooks/useCompetitions';
 import { getCompetitionIcon, getCompetitionLogo } from '../config/competitions';
+import OptimizedImage from './OptimizedImage';
 
 interface HeaderProps {
   // Optional site/app title override
@@ -54,7 +55,7 @@ const Header: React.FC<HeaderProps> = React.memo(({
           }}
           aria-label="Match Locator home page"
         >
-          <img src="/logo.svg" alt="Match Locator logo" style={{ height: '28px', width: '28px' }} />
+          <OptimizedImage src="/logo.svg" alt="Match Locator logo" width={28} height={28} lazy={false} />
         </a>
         <div style={{ minWidth: 0, flex: 1 }}>
           <a
@@ -234,14 +235,11 @@ const Header: React.FC<HeaderProps> = React.memo(({
                     onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                   >
                     {comp.logo ? (
-                      <img
+                      <OptimizedImage
                         src={comp.logo}
                         alt={`${comp.name} logo`}
-                        style={{
-                          height: '16px',
-                          width: 'auto',
-                          objectFit: 'contain'
-                        }}
+                        width={16}
+                        height={16}
                       />
                     ) : (
                       comp.icon
@@ -425,14 +423,11 @@ const Header: React.FC<HeaderProps> = React.memo(({
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {comp.logo ? (
-                    <img
+                    <OptimizedImage
                       src={comp.logo}
                       alt={`${comp.name} logo`}
-                      style={{
-                        height: '14px',
-                        width: 'auto',
-                        objectFit: 'contain'
-                      }}
+                      width={14}
+                      height={14}
                     />
                   ) : (
                     comp.icon
