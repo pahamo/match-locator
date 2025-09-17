@@ -20,6 +20,7 @@
 
 - **[STATUS.md](STATUS.md)** - Current project status and weekly focus areas
 - **[CLAUDE_STARTER.md](CLAUDE_STARTER.md)** - Quick context for Claude Code sessions
+- **[FEATURE_FLAGS.md](FEATURE_FLAGS.md)** - Feature flag system for managing incomplete data
 - **[docs-map.md](docs-map.md)** - Documentation consolidation mapping
 
 ### 📦 Archive

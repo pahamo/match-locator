@@ -6,12 +6,13 @@
 
 1. [System Overview](#system-overview)
 2. [Project Structure](#project-structure)
-3. [Type System & Data Models](#type-system--data-models)
-4. [React Patterns & Best Practices](#react-patterns--best-practices)
-5. [Dynamic Data Architecture](#dynamic-data-architecture)
-6. [Component Architecture](#component-architecture)
-7. [Troubleshooting & Common Issues](#troubleshooting--common-issues)
-8. [Code Quality & Refactoring](#code-quality--refactoring)
+3. [Feature Flag System](#feature-flag-system)
+4. [Type System & Data Models](#type-system--data-models)
+5. [React Patterns & Best Practices](#react-patterns--best-practices)
+6. [Dynamic Data Architecture](#dynamic-data-architecture)
+7. [Component Architecture](#component-architecture)
+8. [Troubleshooting & Common Issues](#troubleshooting--common-issues)
+9. [Code Quality & Refactoring](#code-quality--refactoring)
 
 ---
 
@@ -96,6 +97,63 @@ src/
 3. **Type Safety**: Comprehensive TypeScript coverage
 4. **Performance**: Optimized queries and lazy loading
 5. **Maintainability**: Consistent patterns and conventions
+
+---
+
+## Feature Flag System
+
+### Overview
+
+The application uses a centralized feature flag system to control the visibility of components that require complete or reliable data. This prevents users from seeing incorrect information while data quality is being improved.
+
+### Architecture
+
+**Configuration File: `src/config/featureFlags.ts`**
+```typescript
+export interface FeatureFlags {
+  showH2HStats: boolean;
+  showH2HPastResults: boolean;
+  showMatchScores: boolean;
+  showGoalStats: boolean;
+}
+
+export const FEATURE_FLAGS: FeatureFlags = {
+  showH2HStats: false,        // Hide win/loss/draw stats
+  showH2HPastResults: false,  // Hide historical results
+  showMatchScores: false,     // Hide individual scores
+  showGoalStats: false        // Hide goal statistics
+};
+```
+
+### Usage Pattern
+
+**FeatureFlag Component Wrapper**
+```typescript
+import { FeatureFlag } from '../config/featureFlags';
+
+<FeatureFlag
+  feature="showH2HStats"
+  fallback={<ComingSoonMessage />}
+>
+  <H2HStatistics data={stats} />
+</FeatureFlag>
+```
+
+### Implementation Benefits
+
+1. **Clean UX**: Users see "Coming Soon" instead of confusing `0` values
+2. **Easy Rollout**: Enable features when data becomes reliable
+3. **No Code Changes**: Toggle visibility without refactoring components
+4. **Documentation**: Clear tracking of incomplete features
+
+### When to Use Feature Flags
+
+- **Incomplete Data**: Database contains null, 0, or incorrect values
+- **Work in Progress**: Features under development
+- **A/B Testing**: Gradual rollout to user segments
+- **Emergency Rollback**: Quick disable of problematic features
+
+**📖 See [FEATURE_FLAGS.md](FEATURE_FLAGS.md) for complete implementation details**
 
 ---
 
