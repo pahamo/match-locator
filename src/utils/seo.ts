@@ -162,39 +162,71 @@ export const generateSeoSimpleMatchUrl = (fixture: SimpleFixture): string => `/f
 
 // Parse new SEO-friendly URLs to extract match information
 export const parseSeoMatchSlug = (slug: string): { homeTeam: string; awayTeam: string; competition: string; date: string } | null => {
-  // Expected format: "arsenal-vs-manchester-city-premier-league-22-sep-2024"
-  const parts = slug.split('-');
+  try {
+    // Expected format: "liverpool-vs-club-atltico-de-madrid-champions-league-17-sept-2025"
+    const parts = slug.split('-');
+    if (parts.length < 6) return null;
 
-  if (parts.length < 6) return null; // Minimum parts: team1, vs, team2, competition, day, month, year
+    const vsIndex = parts.indexOf('vs');
+    if (vsIndex === -1) return null;
 
-  const vsIndex = parts.indexOf('vs');
-  if (vsIndex === -1) return null;
+    // Find date parts (last 3 parts should be day-month-year)
+    const year = parts[parts.length - 1];
+    const month = parts[parts.length - 2];
+    const day = parts[parts.length - 3];
 
-  // Find date parts (last 3 parts should be day-month-year)
-  const year = parts[parts.length - 1];
-  const month = parts[parts.length - 2];
-  const day = parts[parts.length - 3];
+    // Validate date format
+    if (!/^\d{4}$/.test(year) || !/^\d{1,2}$/.test(day)) return null;
 
-  if (!/^\d{4}$/.test(year) || !/^\d{1,2}$/.test(day)) return null;
+    // Known competition slugs to help identify where competition starts
+    const knownCompetitions = [
+      'premier-league', 'champions-league', 'europa-league', 'bundesliga',
+      'la-liga', 'serie-a', 'ligue-1', 'championship', 'fa-cup', 'league-cup',
+      'primeira-liga', 'eredivisie'
+    ];
 
-  const homeTeam = parts.slice(0, vsIndex).join('-');
-  const awayTeam = parts.slice(vsIndex + 1, parts.length - 3).join('-');
+    // Home team is everything before 'vs'
+    const homeTeam = parts.slice(0, vsIndex).join('-');
 
-  // The competition is between away team end and date start
-  const competitionStart = vsIndex + 1 + awayTeam.split('-').length;
-  const competitionParts = parts.slice(competitionStart, parts.length - 3);
-  const actualCompetition = competitionParts.join('-');
+    // Find competition by looking for known competition slugs
+    let competitionIndex = -1;
+    let competitionSlug = '';
 
-  // Recalculate away team without competition parts
-  const awayTeamEnd = competitionStart;
-  const actualAwayTeam = parts.slice(vsIndex + 1, awayTeamEnd).join('-');
+    for (const comp of knownCompetitions) {
+      const compParts = comp.split('-');
+      const compLength = compParts.length;
 
-  return {
-    homeTeam,
-    awayTeam: actualAwayTeam,
-    competition: actualCompetition,
-    date: `${day}-${month}-${year}`
-  };
+      // Check if this competition appears before the date
+      for (let i = vsIndex + 1; i <= parts.length - 3 - compLength; i++) {
+        const potentialComp = parts.slice(i, i + compLength).join('-');
+        if (potentialComp === comp) {
+          competitionIndex = i;
+          competitionSlug = comp;
+          break;
+        }
+      }
+      if (competitionIndex !== -1) break;
+    }
+
+    if (competitionIndex === -1) {
+      // Fallback: assume competition is everything after away team and before date
+      console.warn('Could not identify competition in URL:', slug);
+      return null;
+    }
+
+    // Away team is everything between 'vs' and competition
+    const awayTeam = parts.slice(vsIndex + 1, competitionIndex).join('-');
+
+    return {
+      homeTeam,
+      awayTeam,
+      competition: competitionSlug,
+      date: `${day}-${month}-${year}`
+    };
+  } catch (error) {
+    console.error('Error parsing SEO match slug:', slug, error);
+    return null;
+  }
 };
 
 export const updateDocumentMeta = (meta: {

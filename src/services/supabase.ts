@@ -309,7 +309,7 @@ export async function getFixtureByTeamsAndDate(homeTeam: string, awayTeam: strin
     const [day, monthStr, year] = date.split('-');
     const monthMap: Record<string, string> = {
       'jan': '01', 'feb': '02', 'mar': '03', 'apr': '04', 'may': '05', 'jun': '06',
-      'jul': '07', 'aug': '08', 'sep': '09', 'oct': '10', 'nov': '11', 'dec': '12'
+      'jul': '07', 'aug': '08', 'sep': '09', 'sept': '09', 'oct': '10', 'nov': '11', 'dec': '12'
     };
     const month = monthMap[monthStr.toLowerCase()];
     if (!month) return undefined;
