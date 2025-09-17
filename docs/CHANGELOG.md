@@ -68,7 +68,7 @@ This changelog follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ---
 
-## [1.9.0] - 2025-01-15 - Multi-Competition Platform
+## [1.9.0] - 2025-09-10 - Multi-Competition Platform
 
 ### Added
 - **9 European Leagues**: Premier League, Champions League, Bundesliga, La Liga, Serie A, Ligue 1, Primeira Liga, Eredivisie, Championship
@@ -89,7 +89,7 @@ This changelog follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ---
 
-## [1.8.0] - 2025-01-10 - Admin Broadcaster System Overhaul
+## [1.8.0] - 2025-09-05 - Admin Broadcaster System Overhaul
 
 ### Added
 - **Bulk Broadcaster Editing**: "Save All Changes" button for multiple assignments
@@ -107,7 +107,7 @@ This changelog follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ---
 
-## [1.7.0] - 2025-01-05 - Visual Identity & Performance
+## [1.7.0] - 2025-09-01 - Visual Identity & Performance
 
 ### Added
 - **High-Quality Competition Logos**: Updated Bundesliga, La Liga, Serie A with official assets
@@ -255,9 +255,9 @@ This changelog follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 |---------|------|----------------|
 | **2.1.0** | 2025-09-17 | Documentation consolidation, improved developer experience |
 | **2.0.0** | 2025-09-15 | Champions League matrix, affiliate platform readiness |
-| **1.9.0** | 2025-01-15 | Multi-competition platform (9 leagues) |
-| **1.8.0** | 2025-01-10 | Admin broadcaster system overhaul |
-| **1.7.0** | 2025-01-05 | Visual identity updates, performance improvements |
+| **1.9.0** | 2025-09-10 | Multi-competition platform (9 leagues) |
+| **1.8.0** | 2025-09-05 | Admin broadcaster system overhaul |
+| **1.7.0** | 2025-09-01 | Visual identity updates, performance improvements |
 | **1.6.0** | 2024-12-20 | Legal framework, security updates |
 | **1.5.0** | 2024-12-10 | Code quality improvements, TypeScript updates |
 | **1.4.0** | 2024-11-25 | Multi-league implementation (177 teams) |
