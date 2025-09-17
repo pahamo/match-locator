@@ -1,3 +1,17 @@
+/**
+ * Football TV Schedule - Live at matchlocator.com
+ *
+ * 🚀 Live Site: https://matchlocator.com
+ * 🔧 Admin: https://matchlocator.com/admin
+ * 📚 Docs: /docs folder (README.md, ARCHITECTURE.md, etc.)
+ * 📊 Analytics: [Plausible Analytics - add URL when available]
+ * 🗃️ Database: Supabase Dashboard
+ * 🚀 Hosting: Netlify Dashboard
+ *
+ * Current: v2.1.0 - Multi-competition platform with affiliate readiness
+ * Stack: React 18 + TypeScript + Supabase + Netlify
+ */
+
 import React, { Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage'; // Keep HomePage eager for LCP
@@ -37,6 +51,10 @@ const ProviderPage = React.lazy(() => import('./pages/ProviderPage'));
 const PrivacyPolicy = React.lazy(() => import('./pages/legal/PrivacyPolicy'));
 const CookiePolicy = React.lazy(() => import('./pages/legal/CookiePolicy'));
 const Terms = React.lazy(() => import('./pages/legal/Terms'));
+const AffiliateDisclosure = React.lazy(() => import('./pages/legal/AffiliateDisclosure'));
+const HowWeMakeMoneyPage = React.lazy(() => import('./pages/HowWeMakeMoneyPage'));
+const ContactPage = React.lazy(() => import('./pages/ContactPage'));
+const EditorialGuidelinesPage = React.lazy(() => import('./pages/EditorialGuidelinesPage'));
 const CookieSettingsModal = React.lazy(() => import('./components/cookies/CookieSettingsModal'));
 
 // Loading fallback component
@@ -97,6 +115,10 @@ function App() {
               <Route path="/legal/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/legal/cookie-policy" element={<CookiePolicy />} />
               <Route path="/legal/terms" element={<Terms />} />
+              <Route path="/affiliate-disclosure" element={<AffiliateDisclosure />} />
+              <Route path="/how-we-make-money" element={<HowWeMakeMoneyPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/editorial-guidelines" element={<EditorialGuidelinesPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Suspense>
