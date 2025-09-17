@@ -6,6 +6,7 @@ import { getMatchStatus, getMatchStatusStyles } from '../../utils/matchStatus';
 import { generateSeoSimpleMatchUrl, generateSeoMatchUrl } from '../../utils/seo';
 import { getDisplayTeamName } from '../../utils/teamNames';
 import OptimizedImage from '../../components/OptimizedImage';
+import { SkyAffiliateLink } from '../../components/affiliate/AffiliateLink';
 
 
 export interface FixtureCardProps {
@@ -237,14 +238,32 @@ const FixtureCard: React.FC<FixtureCardProps> = ({
               color: '#dc2626'
             }}>🚫 Blackout</span>
           ) : fixtureData.broadcaster ? (
-            <span style={{
-              fontSize: '12px',
-              padding: '2px 6px',
-              borderRadius: '4px',
-              background: '#dcfce7',
-              color: '#16a34a',
-              fontWeight: '500'
-            }}>{fixtureData.broadcaster}</span>
+            fixtureData.broadcaster === 'Sky Sports' ? (
+              <SkyAffiliateLink
+                href="https://www.sky.com/deals/sports"
+                trackingLabel="fixture-card"
+                pageType="fixtures"
+                style={{
+                  fontSize: '12px',
+                  padding: '2px 6px',
+                  borderRadius: '4px',
+                  background: '#dcfce7',
+                  color: '#16a34a',
+                  fontWeight: '500'
+                }}
+              >
+                {fixtureData.broadcaster}
+              </SkyAffiliateLink>
+            ) : (
+              <span style={{
+                fontSize: '12px',
+                padding: '2px 6px',
+                borderRadius: '4px',
+                background: '#dcfce7',
+                color: '#16a34a',
+                fontWeight: '500'
+              }}>{fixtureData.broadcaster}</span>
+            )
           ) : (
             <span style={{
               fontSize: '12px',

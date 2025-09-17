@@ -4,6 +4,9 @@ interface AffiliateLinkProps {
   href: string;
   children: React.ReactNode;
   partner: string;
+  trackingLabel?: 'fixture-card' | 'competition-hero' | 'match-detail' | 'header-nav' | 'footer' | 'sidebar' | 'content';
+  pageType?: string;
+  competition?: string;
   className?: string;
   style?: React.CSSProperties;
   showDisclosure?: boolean;
@@ -11,6 +14,22 @@ interface AffiliateLinkProps {
   trackingId?: string;
   target?: '_blank' | '_self';
   ariaLabel?: string;
+}
+
+interface AffiliateClickData {
+  partner: string;
+  placement: string;
+  pageType: string;
+  competition?: string;
+  timestamp: number;
+  url: string;
+}
+
+declare global {
+  interface Window {
+    plausible?: (event: string, options?: { props?: Record<string, string | number> }) => void;
+    gtag?: (command: string, action: string, parameters: any) => void;
+  }
 }
 
 /**
@@ -21,6 +40,9 @@ export const AffiliateLink: React.FC<AffiliateLinkProps> = ({
   href,
   children,
   partner,
+  trackingLabel = 'content',
+  pageType = 'unknown',
+  competition,
   className = '',
   style,
   showDisclosure = true,
@@ -32,8 +54,51 @@ export const AffiliateLink: React.FC<AffiliateLinkProps> = ({
   // Track affiliate link clicks for analytics
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
     try {
-      // Basic click tracking
-      if (typeof window !== 'undefined' && window.gtag) {
+      // Track to Plausible Analytics
+      if (window.plausible) {
+        // Send general affiliate click event
+        window.plausible('Affiliate Click', {
+          props: {
+            partner: partner,
+            placement: trackingLabel,
+            pageType: pageType,
+            ...(competition && { competition })
+          }
+        });
+
+        // Send partner-specific event
+        window.plausible(`Click: ${partner}`, {
+          props: {
+            placement: trackingLabel,
+            pageType: pageType,
+            ...(competition && { competition })
+          }
+        });
+      }
+
+      // Store in localStorage for pre-approval analysis
+      const clickData: AffiliateClickData = {
+        partner: partner,
+        placement: trackingLabel,
+        pageType: pageType,
+        competition: competition,
+        timestamp: Date.now(),
+        url: href
+      };
+
+      const existingData = localStorage.getItem('affiliate_clicks');
+      const clicks: AffiliateClickData[] = existingData ? JSON.parse(existingData) : [];
+      clicks.push(clickData);
+
+      // Keep only last 100 clicks to prevent localStorage bloat
+      if (clicks.length > 100) {
+        clicks.splice(0, clicks.length - 100);
+      }
+
+      localStorage.setItem('affiliate_clicks', JSON.stringify(clicks));
+
+      // Legacy gtag tracking for backwards compatibility
+      if (window.gtag) {
         window.gtag('event', 'affiliate_click', {
           partner: partner,
           url: href,
@@ -42,7 +107,7 @@ export const AffiliateLink: React.FC<AffiliateLinkProps> = ({
       }
 
       // Console logging for development
-      console.log(`[Affiliate] Click tracked: ${partner} -> ${href}`);
+      console.log(`[Affiliate] Click tracked: ${partner} -> ${href}`, clickData);
     } catch (error) {
       console.warn('[Affiliate] Tracking failed:', error);
     }
@@ -60,7 +125,7 @@ export const AffiliateLink: React.FC<AffiliateLinkProps> = ({
       <a
         href={href}
         target={target}
-        rel="sponsored nofollow noopener" // FTC-compliant attributes
+        rel="noopener noreferrer sponsored" // FTC-compliant attributes
         className={`affiliate-link ${className}`}
         style={style}
         onClick={handleClick}
@@ -75,14 +140,15 @@ export const AffiliateLink: React.FC<AffiliateLinkProps> = ({
         <span
           className="affiliate-disclosure-inline"
           style={{
-            fontSize: '11px',
-            color: '#6b7280',
+            fontSize: '12px',
+            opacity: 0.6,
             marginLeft: '4px',
-            fontStyle: 'italic'
+            lineHeight: 1
           }}
           title={finalDisclosureText}
+          aria-label="Affiliate link disclosure"
         >
-          (affiliate)
+          ℹ️
         </span>
       )}
     </span>
@@ -103,6 +169,10 @@ export const AmazonAffiliateLink: React.FC<Omit<AffiliateLinkProps, 'partner'>> 
 
 export const TNTAffiliateLink: React.FC<Omit<AffiliateLinkProps, 'partner'>> = (props) => (
   <AffiliateLink {...props} partner="TNT Sports" />
+);
+
+export const NOWTVAffiliateLink: React.FC<Omit<AffiliateLinkProps, 'partner'>> = (props) => (
+  <AffiliateLink {...props} partner="NOW TV" />
 );
 
 /**
