@@ -1,0 +1,20 @@
+# Netlify cache headers to prevent JavaScript caching issues
+
+# JavaScript and CSS files - shorter cache for development agility
+/static/js/*
+  Cache-Control: public, max-age=86400, must-revalidate
+
+/static/css/*
+  Cache-Control: public, max-age=86400, must-revalidate
+
+# HTML files - no cache to ensure routing works
+/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Service worker - immediate update for routing fixes
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+
+# Ensure all fixture routes are handled by React
+/fixtures/*
+  Cache-Control: public, max-age=0, must-revalidate

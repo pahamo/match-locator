@@ -1,5 +1,5 @@
 // Simple service worker for basic offline support
-const CACHE_NAME = 'match-locator-v2'; // Increment version to clear old cache
+const CACHE_NAME = 'match-locator-v3'; // Increment version to clear old cache
 const urlsToCache = [
   '/',
   '/logo.svg',
