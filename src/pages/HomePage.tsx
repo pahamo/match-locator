@@ -29,8 +29,7 @@ const groupFixturesByDate = (fixtures: SimpleFixture[]) => {
     const dateKey = formatDateOnly(fixture.kickoff_utc);
     const timeKey = date.toLocaleTimeString('en-GB', {
       hour: '2-digit',
-      minute: '2-digit',
-      timeZone: 'Europe/London'
+      minute: '2-digit'
     });
     
     if (!dateGroups[dateKey]) {

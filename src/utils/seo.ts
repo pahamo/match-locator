@@ -1,4 +1,5 @@
 import type { Fixture, Team, SimpleFixture } from '../types';
+import { mapCompetitionIdToSlug } from './competitionMapping';
 
 // Determine canonical base from env or window origin
 const CANONICAL_BASE = (
@@ -17,6 +18,24 @@ export const slugify = (text: string): string => {
 
 export const formatDateForUrl = (date: string): string => {
   return new Date(date).toISOString().split('T')[0]; // YYYY-MM-DD
+};
+
+// New SEO-friendly date format: "22-sep-2024"
+export const formatDateForSeoUrl = (date: string): string => {
+  const d = new Date(date);
+  const day = d.getDate();
+  const month = d.toLocaleDateString('en-GB', { month: 'short' }).toLowerCase();
+  const year = d.getFullYear();
+  return `${day}-${month}-${year}`;
+};
+
+// Clean team names by removing common suffixes
+export const cleanTeamName = (teamName: string): string => {
+  return teamName
+    .replace(/\s+(FC|AFC|CF|United|City)$/i, '') // Remove common suffixes
+    .replace(/\s+FC$/i, '') // Remove FC specifically
+    .replace(/\s+AFC$/i, '') // Remove AFC specifically
+    .trim();
 };
 
 export const generateMatchSlug = (fixture: Fixture): string => {
@@ -44,6 +63,67 @@ export const generateSimpleMatchSlug = (fixture: SimpleFixture): string => {
 };
 
 export const generateSimpleMatchUrl = (fixture: SimpleFixture): string => `/matches/${generateSimpleMatchSlug(fixture)}`;
+
+// NEW SEO-FRIENDLY URL FUNCTIONS
+
+export const generateSeoMatchSlug = (fixture: Fixture): string => {
+  const homeSlug = slugify(cleanTeamName(fixture.home.name));
+  const awaySlug = slugify(cleanTeamName(fixture.away.name));
+  const competitionSlug = fixture.competition_id ? mapCompetitionIdToSlug(fixture.competition_id) : 'unknown';
+  const dateSlug = formatDateForSeoUrl(fixture.kickoff_utc);
+
+  return `${homeSlug}-vs-${awaySlug}-${competitionSlug}-${dateSlug}`;
+};
+
+export const generateSeoMatchUrl = (fixture: Fixture): string => `/fixtures/${generateSeoMatchSlug(fixture)}`;
+
+export const generateSeoSimpleMatchSlug = (fixture: SimpleFixture): string => {
+  const homeSlug = slugify(cleanTeamName(fixture.home_team));
+  const awaySlug = slugify(cleanTeamName(fixture.away_team));
+  const competitionSlug = fixture.competition_id ? mapCompetitionIdToSlug(fixture.competition_id) : 'unknown';
+  const dateSlug = formatDateForSeoUrl(fixture.kickoff_utc);
+
+  return `${homeSlug}-vs-${awaySlug}-${competitionSlug}-${dateSlug}`;
+};
+
+export const generateSeoSimpleMatchUrl = (fixture: SimpleFixture): string => `/fixtures/${generateSeoSimpleMatchSlug(fixture)}`;
+
+// Parse new SEO-friendly URLs to extract match information
+export const parseSeoMatchSlug = (slug: string): { homeTeam: string; awayTeam: string; competition: string; date: string } | null => {
+  // Expected format: "arsenal-vs-manchester-city-premier-league-22-sep-2024"
+  const parts = slug.split('-');
+
+  if (parts.length < 6) return null; // Minimum parts: team1, vs, team2, competition, day, month, year
+
+  const vsIndex = parts.indexOf('vs');
+  if (vsIndex === -1) return null;
+
+  // Find date parts (last 3 parts should be day-month-year)
+  const year = parts[parts.length - 1];
+  const month = parts[parts.length - 2];
+  const day = parts[parts.length - 3];
+
+  if (!/^\d{4}$/.test(year) || !/^\d{1,2}$/.test(day)) return null;
+
+  const homeTeam = parts.slice(0, vsIndex).join('-');
+  const awayTeam = parts.slice(vsIndex + 1, parts.length - 3).join('-');
+
+  // The competition is between away team end and date start
+  const competitionStart = vsIndex + 1 + awayTeam.split('-').length;
+  const competitionParts = parts.slice(competitionStart, parts.length - 3);
+  const actualCompetition = competitionParts.join('-');
+
+  // Recalculate away team without competition parts
+  const awayTeamEnd = competitionStart;
+  const actualAwayTeam = parts.slice(vsIndex + 1, awayTeamEnd).join('-');
+
+  return {
+    homeTeam,
+    awayTeam: actualAwayTeam,
+    competition: actualCompetition,
+    date: `${day}-${month}-${year}`
+  };
+};
 
 export const updateDocumentMeta = (meta: {
   title?: string;
@@ -250,6 +330,24 @@ export const generateClubsMeta = () => {
     canonical,
     ogTitle: title,
     ogDescription: description,
+    ogImage: '/favicon.png',
+    ogUrl: canonical
+  };
+};
+
+export const generatePageMeta = (params: {
+  title: string;
+  description: string;
+  path: string;
+}) => {
+  const canonical = `${CANONICAL_BASE}${params.path}`;
+
+  return {
+    title: params.title,
+    description: params.description,
+    canonical,
+    ogTitle: params.title,
+    ogDescription: params.description,
     ogImage: '/favicon.png',
     ogUrl: canonical
   };

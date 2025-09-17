@@ -22,7 +22,7 @@ export function formatDynamicDate(
   const {
     showTime = true,
     showYear = false,
-    timezone = 'Europe/London'
+    timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
   } = options;
 
   const date = new Date(utcDate);

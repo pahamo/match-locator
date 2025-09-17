@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { getFixtures } from '../services/supabase';
 import type { Fixture } from '../types';
 import Header from '../components/Header';
-import { generateTeamMeta, updateDocumentMeta, generateMatchUrl } from '../utils/seo';
+import { generateTeamMeta, updateDocumentMeta, generateSeoMatchUrl } from '../utils/seo';
 import { formatCompactDate } from '../utils/dateFormat';
 
 const ClubPage: React.FC = () => {
@@ -187,7 +187,7 @@ const ClubPage: React.FC = () => {
                       )}
                       <div style={{ marginTop: '12px', textAlign: 'right' }}>
                         <Link 
-                          to={generateMatchUrl(fx)} 
+                          to={generateSeoMatchUrl(fx)} 
                           style={{ 
                             color: '#6366f1', 
                             textDecoration: 'underline', 

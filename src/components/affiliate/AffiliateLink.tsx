@@ -1,0 +1,218 @@
+import React from 'react';
+
+interface AffiliateLinkProps {
+  href: string;
+  children: React.ReactNode;
+  partner: string;
+  className?: string;
+  style?: React.CSSProperties;
+  showDisclosure?: boolean;
+  disclosureText?: string;
+  trackingId?: string;
+  target?: '_blank' | '_self';
+  ariaLabel?: string;
+}
+
+/**
+ * AffiliateLink component for FTC-compliant affiliate marketing
+ * Automatically adds proper rel attributes and tracking
+ */
+export const AffiliateLink: React.FC<AffiliateLinkProps> = ({
+  href,
+  children,
+  partner,
+  className = '',
+  style,
+  showDisclosure = true,
+  disclosureText,
+  trackingId,
+  target = '_blank',
+  ariaLabel
+}) => {
+  // Track affiliate link clicks for analytics
+  const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    try {
+      // Basic click tracking
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', 'affiliate_click', {
+          partner: partner,
+          url: href,
+          tracking_id: trackingId || 'unknown'
+        });
+      }
+
+      // Console logging for development
+      console.log(`[Affiliate] Click tracked: ${partner} -> ${href}`);
+    } catch (error) {
+      console.warn('[Affiliate] Tracking failed:', error);
+    }
+  };
+
+  // Generate disclosure text
+  const defaultDisclosureText = `Affiliate link to ${partner}`;
+  const finalDisclosureText = disclosureText || defaultDisclosureText;
+
+  // Enhanced aria-label for accessibility
+  const enhancedAriaLabel = ariaLabel || `${children} (affiliate link to ${partner})`;
+
+  return (
+    <span className="affiliate-link-wrapper">
+      <a
+        href={href}
+        target={target}
+        rel="sponsored nofollow noopener" // FTC-compliant attributes
+        className={`affiliate-link ${className}`}
+        style={style}
+        onClick={handleClick}
+        aria-label={enhancedAriaLabel}
+        data-affiliate-partner={partner}
+        data-tracking-id={trackingId}
+      >
+        {children}
+      </a>
+
+      {showDisclosure && (
+        <span
+          className="affiliate-disclosure-inline"
+          style={{
+            fontSize: '11px',
+            color: '#6b7280',
+            marginLeft: '4px',
+            fontStyle: 'italic'
+          }}
+          title={finalDisclosureText}
+        >
+          (affiliate)
+        </span>
+      )}
+    </span>
+  );
+};
+
+/**
+ * Provider-specific affiliate link components
+ */
+
+export const SkyAffiliateLink: React.FC<Omit<AffiliateLinkProps, 'partner'>> = (props) => (
+  <AffiliateLink {...props} partner="Sky Sports" />
+);
+
+export const AmazonAffiliateLink: React.FC<Omit<AffiliateLinkProps, 'partner'>> = (props) => (
+  <AffiliateLink {...props} partner="Amazon Prime Video" />
+);
+
+export const TNTAffiliateLink: React.FC<Omit<AffiliateLinkProps, 'partner'>> = (props) => (
+  <AffiliateLink {...props} partner="TNT Sports" />
+);
+
+/**
+ * Affiliate button component for prominent CTAs
+ */
+interface AffiliateButtonProps extends AffiliateLinkProps {
+  variant?: 'primary' | 'secondary' | 'outline';
+  size?: 'small' | 'medium' | 'large';
+}
+
+export const AffiliateButton: React.FC<AffiliateButtonProps> = ({
+  variant = 'primary',
+  size = 'medium',
+  className = '',
+  style,
+  children,
+  showDisclosure = true,
+  ...props
+}) => {
+  const buttonStyles: React.CSSProperties = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '8px',
+    padding: size === 'small' ? '8px 16px' : size === 'large' ? '16px 32px' : '12px 24px',
+    borderRadius: '6px',
+    fontWeight: '600',
+    textDecoration: 'none',
+    transition: 'all 0.2s ease',
+    fontSize: size === 'small' ? '14px' : size === 'large' ? '18px' : '16px',
+    ...(variant === 'primary' && {
+      background: '#3b82f6',
+      color: 'white',
+      border: '2px solid #3b82f6'
+    }),
+    ...(variant === 'secondary' && {
+      background: '#6b7280',
+      color: 'white',
+      border: '2px solid #6b7280'
+    }),
+    ...(variant === 'outline' && {
+      background: 'transparent',
+      color: '#3b82f6',
+      border: '2px solid #3b82f6'
+    }),
+    ...style
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px' }}>
+      <AffiliateLink
+        {...props}
+        className={`affiliate-button ${className}`}
+        style={buttonStyles}
+        showDisclosure={false} // Show disclosure separately for buttons
+      >
+        {children}
+      </AffiliateLink>
+
+      {showDisclosure && (
+        <span style={{
+          fontSize: '11px',
+          color: '#6b7280',
+          fontStyle: 'italic'
+        }}>
+          Affiliate partnership - we may earn commission
+        </span>
+      )}
+    </div>
+  );
+};
+
+/**
+ * Inline disclosure component for content sections
+ */
+interface InlineDisclosureProps {
+  style?: React.CSSProperties;
+  className?: string;
+}
+
+export const InlineDisclosure: React.FC<InlineDisclosureProps> = ({
+  style,
+  className = ''
+}) => (
+  <div
+    className={`inline-disclosure ${className}`}
+    style={{
+      fontSize: '13px',
+      color: '#6b7280',
+      fontStyle: 'italic',
+      padding: '8px 12px',
+      background: '#f9fafb',
+      border: '1px solid #e5e7eb',
+      borderRadius: '4px',
+      marginTop: '12px',
+      ...style
+    }}
+  >
+    💡 <strong>Disclosure:</strong> Links marked "affiliate" earn us commission.
+    <a
+      href="/affiliate-disclosure"
+      style={{ color: '#3b82f6', textDecoration: 'underline', marginLeft: '4px' }}
+    >
+      Learn more
+    </a>
+  </div>
+);
+
+// Type declaration for Google Analytics
+declare global {
+  interface Window {
+    gtag?: (command: string, action: string, parameters: any) => void;
+  }
+}

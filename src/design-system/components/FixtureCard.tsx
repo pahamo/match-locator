@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { tokens } from '../tokens';
 import type { SimpleFixture, Fixture } from '../../types';
 import { getMatchStatus, getMatchStatusStyles } from '../../utils/matchStatus';
-import { generateSimpleMatchUrl, generateMatchUrl } from '../../utils/seo';
+import { generateSeoSimpleMatchUrl, generateSeoMatchUrl } from '../../utils/seo';
 import { getDisplayTeamName } from '../../utils/teamNames';
 
 
@@ -32,7 +32,7 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
       broadcaster: fixture.broadcaster,
       isBlackout: fixture.isBlackout || false,
       matchweek: fixture.matchweek,
-      url: generateSimpleMatchUrl(fixture)
+      url: generateSeoSimpleMatchUrl(fixture)
     };
   } else {
     const hasProviders = fixture.providers_uk && fixture.providers_uk.length > 0;
@@ -47,7 +47,7 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
       broadcaster: isBlackout ? undefined : broadcasterName,
       isBlackout: isBlackout,
       matchweek: fixture.matchweek,
-      url: generateMatchUrl(fixture)
+      url: generateSeoMatchUrl(fixture)
     };
   }
 };

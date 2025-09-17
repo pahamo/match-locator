@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getFixtureById } from '../services/supabase';
+import { getFixtureById, getFixtureByTeamsAndDate } from '../services/supabase';
 import type { Fixture } from '../types';
 import Header from '../components/Header';
 import StructuredData from '../components/StructuredData';
-import { parseMatchSlug, generateMatchMeta, updateDocumentMeta } from '../utils/seo';
+import { parseMatchSlug, parseSeoMatchSlug, generateMatchMeta, generateSeoMatchUrl, updateDocumentMeta } from '../utils/seo';
 import { formatDetailedDate } from '../utils/dateFormat';
 import AffiliateDisclosure, { withAffiliateAriaLabel } from '../components/legal/AffiliateDisclosure';
 
@@ -16,48 +16,76 @@ const MatchPage: React.FC = () => {
 
   useEffect(() => {
     const loadFixture = async () => {
-      let parsedId: number;
-      
-      // Handle new SEO-friendly URLs with slugs
-      if (matchSlug) {
-        parsedId = parseMatchSlug(matchSlug) || 0;
-      } else {
-        // Handle legacy URLs
-        const raw = matchId ?? id;
-        if (!raw) {
-          setError('No match ID provided');
-          setLoading(false);
-          return;
-        }
-        parsedId = parseInt(raw, 10);
-      }
-
-      if (!parsedId || isNaN(parsedId)) {
-        setError('Invalid match ID');
-        setLoading(false);
-        return;
-      }
-
       try {
         setLoading(true);
         setError(null);
-        
-        // Add debug logging
-        console.log('MatchPage: Loading fixture with ID:', parsedId);
-        const startTime = performance.now();
-        
-        const fixtureData = await getFixtureById(parsedId);
-        
-        const endTime = performance.now();
-        console.log(`MatchPage: Fixture loaded in ${endTime - startTime}ms`);
-        
+
+        let fixtureData: Fixture | undefined;
+
+        if (matchSlug) {
+          const currentPath = window.location.pathname;
+
+          // Check if it's the new SEO-friendly format (/fixtures/team-vs-team-competition-date)
+          if (currentPath.startsWith('/fixtures/')) {
+            const seoData = parseSeoMatchSlug(matchSlug);
+            if (seoData) {
+              console.log('MatchPage: Loading fixture with SEO slug:', seoData);
+              const startTime = performance.now();
+
+              fixtureData = await getFixtureByTeamsAndDate(seoData.homeTeam, seoData.awayTeam, seoData.date);
+
+              const endTime = performance.now();
+              console.log(`MatchPage: Fixture loaded via SEO search in ${endTime - startTime}ms`);
+            }
+          } else {
+            // Legacy format with ID (/matches/id-team-vs-team-date)
+            const parsedId = parseMatchSlug(matchSlug);
+            if (parsedId) {
+              console.log('MatchPage: Loading fixture with legacy ID:', parsedId);
+              const startTime = performance.now();
+
+              fixtureData = await getFixtureById(parsedId);
+
+              const endTime = performance.now();
+              console.log(`MatchPage: Fixture loaded via ID in ${endTime - startTime}ms`);
+            }
+          }
+        } else {
+          // Handle pure legacy URLs with just IDs
+          const raw = matchId ?? id;
+          if (!raw) {
+            setError('No match ID provided');
+            setLoading(false);
+            return;
+          }
+
+          const parsedId = parseInt(raw, 10);
+          if (isNaN(parsedId)) {
+            setError('Invalid match ID');
+            setLoading(false);
+            return;
+          }
+
+          console.log('MatchPage: Loading fixture with pure ID:', parsedId);
+          fixtureData = await getFixtureById(parsedId);
+        }
+
         if (!fixtureData) {
           setError('Match not found');
         } else {
           setFixture(fixtureData);
-          
+
           // Update SEO meta tags
           const meta = generateMatchMeta(fixtureData);
+
+          // If this is a legacy URL (/matches/), set canonical to new format (/fixtures/)
+          const currentPath = window.location.pathname;
+          if (currentPath.startsWith('/matches/') || currentPath.startsWith('/match/')) {
+            const newCanonicalUrl = `${window.location.origin}${generateSeoMatchUrl(fixtureData)}`;
+            meta.canonical = newCanonicalUrl;
+            meta.ogUrl = newCanonicalUrl;
+          }
+
           updateDocumentMeta(meta);
         }
       } catch (err) {

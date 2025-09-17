@@ -97,7 +97,9 @@ function App() {
               <Route path="/competitions" element={<CompetitionsOverviewPage />} />
               <Route path="/competitions/champions-league/group-stage" element={<ChampionsLeagueGroupStagePage />} />
               <Route path="/competitions/:slug" element={<CompetitionPage />} />
-              {/* SEO-friendly match URLs with slugs */}
+              {/* SEO-friendly match URLs - new format */}
+              <Route path="/fixtures/:matchSlug" element={<MatchPage />} />
+              {/* SEO-friendly match URLs - legacy format with IDs */}
               <Route path="/matches/:matchSlug" element={<MatchPage />} />
               {/* Legacy support for simple match IDs */}
               <Route path="/match/:matchId" element={<MatchPage />} />

@@ -301,6 +301,77 @@ export async function getFixtureById(id: number): Promise<Fixture | undefined> {
   }
 }
 
+export async function getFixtureByTeamsAndDate(homeTeam: string, awayTeam: string, date: string): Promise<Fixture | undefined> {
+  try {
+    if (!homeTeam || !awayTeam || !date) return undefined;
+
+    // Parse date format: "22-sep-2024" to "2024-09-22"
+    const [day, monthStr, year] = date.split('-');
+    const monthMap: Record<string, string> = {
+      'jan': '01', 'feb': '02', 'mar': '03', 'apr': '04', 'may': '05', 'jun': '06',
+      'jul': '07', 'aug': '08', 'sep': '09', 'oct': '10', 'nov': '11', 'dec': '12'
+    };
+    const month = monthMap[monthStr.toLowerCase()];
+    if (!month) return undefined;
+
+    const searchDate = `${year}-${month}-${day.padStart(2, '0')}`;
+
+    // Search for fixture on the given date with matching teams (flexible team name matching)
+    const { data: rows, error } = await supabase
+      .from('fixtures_with_teams')
+      .select(`
+        id,matchday,utc_kickoff,venue,status,competition_id,stage,round,
+        home_team_id,home_team,home_slug,home_crest,
+        away_team_id,away_team,away_slug,away_crest
+      `)
+      .gte('utc_kickoff', `${searchDate}T00:00:00.000Z`)
+      .lt('utc_kickoff', `${searchDate}T23:59:59.999Z`)
+      .limit(20); // Get potential matches for the date
+
+    if (error) {
+      console.warn('[Supabase] getFixtureByTeamsAndDate error', error);
+      return undefined;
+    }
+
+    if (!rows?.length) return undefined;
+
+    // Find matching fixture by team names (normalize for comparison)
+    const normalizeTeamName = (name: string) => name.toLowerCase()
+      .replace(/\s+(fc|afc|cf|united|city)$/i, '')
+      .replace(/\s+fc$/i, '')
+      .replace(/\s+afc$/i, '')
+      .replace(/[^a-z0-9]/g, '');
+
+    const normalizedHome = normalizeTeamName(homeTeam);
+    const normalizedAway = normalizeTeamName(awayTeam);
+
+    const matchingFixture = rows.find(row => {
+      const rowHome = normalizeTeamName(row.home_team);
+      const rowAway = normalizeTeamName(row.away_team);
+      return rowHome === normalizedHome && rowAway === normalizedAway;
+    });
+
+    if (!matchingFixture) return undefined;
+
+    // Load providers for the matching fixture
+    const bcasts = await getBroadcastsForFixtures([matchingFixture.id]);
+    const providerIds = Array.from(new Set(bcasts.map(b => b.provider_id).filter(Boolean)));
+    const provs = providerIds.length ? await getProvidersByIds(providerIds) : [];
+    const byPk = Object.fromEntries(provs.map(p => [p.id, p]));
+
+    const providersByFixture: Record<number, Provider[]> = {};
+    providersByFixture[matchingFixture.id] = bcasts.map(b => {
+      const p = byPk[String(b.provider_id)];
+      return p ? { ...p } : null;
+    }).filter(Boolean) as Provider[];
+
+    return mapFixtureRow(matchingFixture, providersByFixture);
+  } catch (e) {
+    console.warn('[Supabase] getFixtureByTeamsAndDate error', e);
+    return undefined;
+  }
+}
+
 // Admin API functions
 
 export interface AdminFixture extends Fixture {
