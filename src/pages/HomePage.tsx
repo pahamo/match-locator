@@ -9,6 +9,7 @@ import { FixtureCard } from '../design-system';
 import { generateHomeMeta, updateDocumentMeta } from '../utils/seo';
 import { getMatchStatus } from '../utils/matchStatus';
 import { formatDateOnly } from '../utils/dateFormat';
+import { COMPETITION_CONFIGS } from '../config/competitions';
 
 interface MatchWeek {
   matchweek: number;
@@ -17,6 +18,53 @@ interface MatchWeek {
   hasToday: boolean;
   isUpcoming: boolean;
 }
+
+// Helper to get competition info from competition_id
+const getCompetitionInfo = (competitionId?: number) => {
+  if (!competitionId) return null;
+
+  // Find competition by ID
+  const competition = Object.values(COMPETITION_CONFIGS).find(c => c.id === competitionId);
+  return competition || null;
+};
+
+// Competition pill component
+const CompetitionPill: React.FC<{ competitionId?: number }> = ({ competitionId }) => {
+  const competition = getCompetitionInfo(competitionId);
+
+  if (!competition) return null;
+
+  return (
+    <div style={{
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: '6px',
+      padding: '4px 8px',
+      background: competition.colors.primary,
+      color: competition.colors.secondary,
+      borderRadius: '12px',
+      fontSize: '11px',
+      fontWeight: '600',
+      marginRight: '8px'
+    }}>
+      {competition.logo ? (
+        <img
+          src={competition.logo}
+          alt={competition.name}
+          style={{
+            width: '14px',
+            height: '14px',
+            objectFit: 'contain',
+            filter: competition.colors.secondary === '#ffffff' ? 'brightness(0) invert(1)' : 'none'
+          }}
+        />
+      ) : (
+        <span>{competition.icon}</span>
+      )}
+      <span>{competition.shortName}</span>
+    </div>
+  );
+};
 
 
 
@@ -269,14 +317,34 @@ const HomePage: React.FC = () => {
                 ? dayGroup.timeSlots.findIndex(slot => slot.fixtures.includes(earliestUpNext))
                 : -1;
 
+              // Get unique competitions for this day
+              const dayCompetitions = Array.from(
+                new Set(allDayFixtures.map(f => f.competition_id).filter(Boolean))
+              ).sort();
+
               return (
-                <DayGroupCard
-                  key={dayIndex}
-                  id={`group-${dayIndex}`}
-                  date={dayGroup.date}
-                  matchweek={`Matchweek ${matchWeek?.matchweek || 1}`}
-                  kickoffTime={dayGroup.commonTime}
-                >
+                <div key={dayIndex}>
+                  {/* Competition pills for this day */}
+                  {dayCompetitions.length > 0 && (
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      marginBottom: '8px',
+                      flexWrap: 'wrap'
+                    }}>
+                      {dayCompetitions.map(competitionId => (
+                        <CompetitionPill key={competitionId} competitionId={competitionId} />
+                      ))}
+                    </div>
+                  )}
+
+                  <DayGroupCard
+                    id={`group-${dayIndex}`}
+                    date={dayGroup.date}
+                    matchweek={`Matchweek ${matchWeek?.matchweek || 1}`}
+                    kickoffTime={dayGroup.commonTime}
+                  >
                   {/* Time slots within the day */}
                   {dayGroup.timeSlots.map((timeSlot, timeIndex) => {
                     // Only show UP NEXT badge on the earliest time slot with UP NEXT fixture
@@ -346,6 +414,7 @@ const HomePage: React.FC = () => {
                   );
                   })}
                 </DayGroupCard>
+                </div>
               );
             })}
           </div>
