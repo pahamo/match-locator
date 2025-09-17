@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import { ContentCard, TextContainer } from '../../design-system';
+import Header from '../../components/Header';
 
 interface TocItem { id: string; label: string }
 
@@ -41,6 +42,7 @@ const LegalLayout: React.FC<LegalLayoutProps> = ({
 
   return (
     <div className="legal-layout">
+      <Header />
       <main ref={mainRef} tabIndex={-1} className="wrap" aria-labelledby="legal-title" style={{ paddingTop: 'var(--layout-page-top-margin)' }}>
         <ContentCard>
           <TextContainer>

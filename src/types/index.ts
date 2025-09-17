@@ -16,13 +16,20 @@ export interface Provider {
   id: string;
   name: string;
   type: string;
+  slug?: string;
+  url?: string;
   href?: string;
-  status: string;
+  status?: string;
 }
 
 export interface BlackoutInfo {
   is_blackout: boolean;
   reason?: string | null;
+}
+
+export interface FixtureScore {
+  home: number | null;
+  away: number | null;
 }
 
 // Unified fixture interface combining both approaches
@@ -39,6 +46,7 @@ export interface Fixture {
   providers_uk: Provider[];
   blackout: BlackoutInfo;
   status: string;
+  score?: FixtureScore;
   // Champions League specific fields
   stage?: string;
   round?: string;

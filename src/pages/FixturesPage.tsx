@@ -3,9 +3,11 @@ import { getFixtures, getTeams } from '../services/supabase';
 import { getSimpleCompetitions } from '../services/supabase-simple';
 import type { Fixture, Team, Competition } from '../types';
 import Header from '../components/Header';
+import Breadcrumbs from '../components/Breadcrumbs';
 import MobileFilterModal from '../components/MobileFilterModal';
 import { FixtureCard } from '../design-system';
 import { generateFixturesMeta, updateDocumentMeta } from '../utils/seo';
+import { generateBreadcrumbs } from '../utils/breadcrumbs';
 import { getMatchStatus } from '../utils/matchStatus';
 
 type FilterTeam = '' | string;
@@ -146,6 +148,7 @@ const FixturesPage: React.FC = () => {
     return (
       <div className="fixtures-page">
         <Header />
+        <Breadcrumbs items={generateBreadcrumbs('/fixtures')} />
         <main>
           <div className="wrap">
             <h1 style={{ margin: '0 0 24px 0', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>Football Fixtures</h1>
@@ -160,6 +163,7 @@ const FixturesPage: React.FC = () => {
     return (
       <div className="fixtures-page">
         <Header />
+        <Breadcrumbs items={generateBreadcrumbs('/fixtures')} />
         <main>
           <div className="wrap">
             <h1 style={{ margin: '0 0 24px 0', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>Football Fixtures</h1>
@@ -175,7 +179,8 @@ const FixturesPage: React.FC = () => {
   return (
     <div className="fixtures-page">
       <Header />
-      
+      <Breadcrumbs items={generateBreadcrumbs('/fixtures')} />
+
       <main>
         <div className="wrap">
           <h1 style={{ margin: '0 0 24px 0', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>Football Fixtures</h1>

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import Header from '../components/Header';
+import { ContentCard, TextContainer } from '../design-system';
 import { generatePageMeta, updateDocumentMeta } from '../utils/seo';
 
 const EditorialGuidelinesPage: React.FC = () => {
@@ -15,33 +16,18 @@ const EditorialGuidelinesPage: React.FC = () => {
   return (
     <div className="editorial-guidelines-page">
       <Header />
-      <main>
-        <div className="wrap" style={{ maxWidth: '800px', margin: '0 auto', padding: '32px 20px' }}>
-          <h1 style={{ marginBottom: '32px', fontSize: '2rem', fontWeight: '700' }}>
-            Editorial Guidelines
-          </h1>
+      <main className="wrap" style={{ paddingTop: 'var(--layout-page-top-margin)' }}>
+        <ContentCard>
+          <TextContainer>
+            <header>
+              <h1>Editorial Guidelines</h1>
+            </header>
+            <blockquote>
+              <strong>🎯 Our Editorial Mission:</strong> To provide the most accurate, timely, and comprehensive football TV schedules in the UK while maintaining complete editorial independence from our commercial partnerships.
+            </blockquote>
 
-          <div style={{ fontSize: '16px', lineHeight: '1.7', color: '#374151' }}>
-            <div style={{
-              background: '#e0f2fe',
-              border: '1px solid #0284c7',
-              borderRadius: '8px',
-              padding: '20px',
-              marginBottom: '32px'
-            }}>
-              <h2 style={{ margin: '0 0 12px 0', fontSize: '1.2rem', fontWeight: '600', color: '#0c4a6e' }}>
-                🎯 Our Editorial Mission
-              </h2>
-              <p style={{ margin: '0', color: '#0c4a6e' }}>
-                To provide the most accurate, timely, and comprehensive football TV schedules in the UK
-                while maintaining complete editorial independence from our commercial partnerships.
-              </p>
-            </div>
-
-            <section style={{ marginBottom: '40px' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '20px', color: '#111827' }}>
-                Core Editorial Principles
-              </h2>
+            <section>
+              <h2>Core Editorial Principles</h2>
 
               <div style={{ display: 'grid', gap: '20px' }}>
                 <div style={{
@@ -106,10 +92,8 @@ const EditorialGuidelinesPage: React.FC = () => {
               </div>
             </section>
 
-            <section style={{ marginBottom: '40px' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '20px', color: '#111827' }}>
-                Content Standards
-              </h2>
+            <section>
+              <h2>Content Standards</h2>
 
               <div style={{ marginBottom: '24px' }}>
                 <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '16px', color: '#1f2937' }}>
@@ -151,10 +135,8 @@ const EditorialGuidelinesPage: React.FC = () => {
               </div>
             </section>
 
-            <section style={{ marginBottom: '40px' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '20px', color: '#111827' }}>
-                Source Verification Process
-              </h2>
+            <section>
+              <h2>Source Verification Process</h2>
 
               <div style={{
                 background: '#f9fafb',
@@ -206,10 +188,8 @@ const EditorialGuidelinesPage: React.FC = () => {
               </div>
             </section>
 
-            <section style={{ marginBottom: '40px' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '20px', color: '#111827' }}>
-                Conflict of Interest Policy
-              </h2>
+            <section>
+              <h2>Conflict of Interest Policy</h2>
 
               <div style={{
                 background: '#fefce8',
@@ -247,10 +227,8 @@ const EditorialGuidelinesPage: React.FC = () => {
               </div>
             </section>
 
-            <section style={{ marginBottom: '40px' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '20px', color: '#111827' }}>
-                Error Correction Policy
-              </h2>
+            <section>
+              <h2>Error Correction Policy</h2>
 
               <div style={{ display: 'grid', gap: '16px' }}>
                 <div style={{
@@ -291,10 +269,8 @@ const EditorialGuidelinesPage: React.FC = () => {
               </div>
             </section>
 
-            <section style={{ marginBottom: '40px' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '20px', color: '#111827' }}>
-                User Privacy & Data Protection
-              </h2>
+            <section>
+              <h2>User Privacy &amp; Data Protection</h2>
 
               <div style={{ marginBottom: '20px' }}>
                 <h4 style={{ fontWeight: '600', marginBottom: '12px' }}>Data Collection</h4>
@@ -317,10 +293,8 @@ const EditorialGuidelinesPage: React.FC = () => {
               </div>
             </section>
 
-            <section style={{ marginBottom: '40px' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '20px', color: '#111827' }}>
-                Community Standards
-              </h2>
+            <section>
+              <h2>Community Standards</h2>
 
               <p style={{ marginBottom: '16px' }}>
                 While our primary focus is providing TV schedules, we maintain high standards
@@ -336,10 +310,8 @@ const EditorialGuidelinesPage: React.FC = () => {
               </ul>
             </section>
 
-            <section style={{ marginBottom: '40px' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '20px', color: '#111827' }}>
-                Continuous Improvement
-              </h2>
+            <section>
+              <h2>Continuous Improvement</h2>
 
               <div style={{
                 background: '#f0f9ff',
@@ -425,8 +397,8 @@ const EditorialGuidelinesPage: React.FC = () => {
                 These guidelines are reviewed quarterly and updated as needed to maintain the highest standards.
               </p>
             </div>
-          </div>
-        </div>
+          </TextContainer>
+        </ContentCard>
       </main>
     </div>
   );

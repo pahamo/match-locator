@@ -3,9 +3,11 @@ import { useParams, Link } from 'react-router-dom';
 import { getFixtureById, getFixtureByTeamsAndDate } from '../services/supabase';
 import type { Fixture } from '../types';
 import Header from '../components/Header';
+import Breadcrumbs from '../components/Breadcrumbs';
 import StructuredData from '../components/StructuredData';
 import { parseMatchSlug, parseSeoMatchSlug, generateMatchMeta, generateSeoMatchUrl, updateDocumentMeta } from '../utils/seo';
 import { formatDetailedDate } from '../utils/dateFormat';
+import { generateBreadcrumbs } from '../utils/breadcrumbs';
 import AffiliateDisclosure, { withAffiliateAriaLabel } from '../components/legal/AffiliateDisclosure';
 
 const MatchPage: React.FC = () => {
@@ -120,10 +122,11 @@ const MatchPage: React.FC = () => {
   if (loading) {
     return (
       <div className="match-page">
-        <Header 
+        <Header
           title="Match Details"
           subtitle="Loading match information..."
         />
+        <Breadcrumbs items={generateBreadcrumbs(window.location.pathname)} />
         
         <main>
           <div className="wrap">
@@ -137,10 +140,11 @@ const MatchPage: React.FC = () => {
   if (error) {
     return (
       <div className="match-page">
-        <Header 
+        <Header
           title="Match Details"
           subtitle="Error loading match information"
         />
+        <Breadcrumbs items={generateBreadcrumbs(window.location.pathname)} />
         
         <main>
           <div className="wrap">
@@ -154,10 +158,11 @@ const MatchPage: React.FC = () => {
   if (!fixture) {
     return (
       <div className="match-page">
-        <Header 
+        <Header
           title="Match Details"
           subtitle="Match not found"
         />
+        <Breadcrumbs items={generateBreadcrumbs(window.location.pathname)} />
         
         <main>
           <div className="wrap">
@@ -177,6 +182,7 @@ const MatchPage: React.FC = () => {
         title="Match Locator"
         subtitle="Football TV Schedule (UK)"
       />
+      <Breadcrumbs items={generateBreadcrumbs(window.location.pathname, { matchTitle: `${fixture.home.name} vs ${fixture.away.name}` })} />
 
       <main>
         <div className="wrap">

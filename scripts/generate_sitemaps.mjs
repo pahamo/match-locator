@@ -27,7 +27,7 @@ async function fetchFixtures() {
   const startIso = `${seasonYear}-08-01T00:00:00.000Z`;
   const { data, error } = await supabase
     .from('fixtures_with_teams')
-    .select('id,utc_kickoff,home_team,away_team')
+    .select('id,utc_kickoff,home_team,away_team,competition_id')
     .gte('utc_kickoff', startIso)
     .order('utc_kickoff', { ascending: true })
     .limit(2000);
@@ -36,6 +36,20 @@ async function fetchFixtures() {
 }
 function slugify(t) { return String(t).toLowerCase().replace(/[^\w\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').trim(); }
 function ymd(iso) { return new Date(iso).toISOString().split('T')[0]; }
+function mapCompetitionIdToSlug(competitionId) {
+  const mappings = { 1: 'premier-league', 2: 'champions-league', 3: 'bundesliga' };
+  return mappings[competitionId] || 'unknown';
+}
+function cleanTeamName(teamName) {
+  return teamName.replace(/\s+(FC|AFC|CF|United|City)$/i, '').replace(/\s+FC$/i, '').replace(/\s+AFC$/i, '').trim();
+}
+function formatDateForSeoUrl(date) {
+  const d = new Date(date);
+  const day = d.getDate();
+  const month = d.toLocaleDateString('en-GB', { month: 'short' }).toLowerCase();
+  const year = d.getFullYear();
+  return `${day}-${month}-${year}`;
+}
 
 async function fetchTeams() {
   if (!supabase) return [];
@@ -67,9 +81,15 @@ async function build() {
   ].join('\n');
   writeXml(path.join(sitemapsDir, 'sitemap-legal.xml'), legalXml);
 
-  // Matches
+  // Matches (using new SEO-friendly URLs without IDs)
   const fixtures = await fetchFixtures();
-  const matchUrls = fixtures.map(f => `${CANONICAL_BASE}/matches/${f.id}-${slugify(f.home_team)}-vs-${slugify(f.away_team)}-${ymd(f.utc_kickoff)}`);
+  const matchUrls = fixtures.map(f => {
+    const homeSlug = slugify(cleanTeamName(f.home_team));
+    const awaySlug = slugify(cleanTeamName(f.away_team));
+    const competitionSlug = mapCompetitionIdToSlug(f.competition_id);
+    const dateSlug = formatDateForSeoUrl(f.utc_kickoff);
+    return `${CANONICAL_BASE}/fixtures/${homeSlug}-vs-${awaySlug}-${competitionSlug}-${dateSlug}`;
+  });
   const matchesXml = [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',

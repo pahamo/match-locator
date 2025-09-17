@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import Header from '../components/Header';
+import { ContentCard, TextContainer } from '../design-system';
 import { generatePageMeta, updateDocumentMeta } from '../utils/seo';
 
 const ContactPage: React.FC = () => {
@@ -15,140 +16,79 @@ const ContactPage: React.FC = () => {
   return (
     <div className="contact-page">
       <Header />
-      <main>
-        <div className="wrap" style={{ maxWidth: '800px', margin: '0 auto', padding: '32px 20px' }}>
-          <h1 style={{ marginBottom: '32px', fontSize: '2rem', fontWeight: '700' }}>
-            Contact Us
-          </h1>
+      <main className="wrap" style={{ paddingTop: 'var(--layout-page-top-margin)' }}>
+        <ContentCard>
+          <TextContainer>
+            <header>
+              <h1>Contact Us</h1>
+            </header>
+            <blockquote>
+              📧 We typically respond within 24 hours during weekdays.
+              For urgent broadcast updates, we monitor messages throughout match days.
+            </blockquote>
 
-          <div style={{ fontSize: '16px', lineHeight: '1.7', color: '#374151' }}>
-            <div style={{
-              background: '#e0f2fe',
-              border: '1px solid #0284c7',
-              borderRadius: '8px',
-              padding: '20px',
-              marginBottom: '32px'
-            }}>
-              <p style={{ margin: '0', color: '#0c4a6e', fontSize: '18px', fontWeight: '500' }}>
-                📧 We typically respond within 24 hours during weekdays.
-                For urgent broadcast updates, we monitor messages throughout match days.
-              </p>
-            </div>
-
-            <section style={{ marginBottom: '40px' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '24px', color: '#111827' }}>
-                Get in Touch
-              </h2>
+            <section>
+              <h2>Get in Touch</h2>
 
               <div style={{ display: 'grid', gap: '24px' }}>
                 <div style={{
                   padding: '24px',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '8px',
-                  background: '#ffffff'
+                  border: '1px solid var(--color-border)',
+                  borderRadius: 'var(--border-radius-md)',
+                  background: 'var(--color-surface)'
                 }}>
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '16px', color: '#1f2937', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    💌 General Inquiries
-                  </h3>
-                  <p style={{ marginBottom: '12px' }}>
+                  <h3>💌 General Inquiries</h3>
+                  <p>
                     For general questions, feedback, or suggestions about our football TV schedules:
                   </p>
-                  <div style={{
-                    background: '#f8fafc',
-                    padding: '16px',
-                    borderRadius: '6px',
-                    fontFamily: 'monospace',
-                    fontSize: '16px',
-                    fontWeight: '600'
-                  }}>
-                    hello@footballtvschedule.com
-                  </div>
+                  <code>hello@footballtvschedule.com</code>
                 </div>
 
                 <div style={{
                   padding: '24px',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '8px',
-                  background: '#ffffff'
+                  border: '1px solid var(--color-border)',
+                  borderRadius: 'var(--border-radius-md)',
+                  background: 'var(--color-surface)'
                 }}>
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '16px', color: '#1f2937', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    📺 Broadcast Updates & Corrections
-                  </h3>
-                  <p style={{ marginBottom: '12px' }}>
+                  <h3>📺 Broadcast Updates & Corrections</h3>
+                  <p>
                     Found an incorrect broadcast time or missing channel information? Let us know:
                   </p>
-                  <div style={{
-                    background: '#f8fafc',
-                    padding: '16px',
-                    borderRadius: '6px',
-                    fontFamily: 'monospace',
-                    fontSize: '16px',
-                    fontWeight: '600'
-                  }}>
-                    updates@footballtvschedule.com
-                  </div>
-                  <p style={{ marginTop: '12px', fontSize: '14px', color: '#6b7280' }}>
-                    Please include: Match details, correct broadcast info, and your source if possible.
-                  </p>
+                  <code>updates@footballtvschedule.com</code>
+                  <p><em>Please include: Match details, correct broadcast info, and your source if possible.</em></p>
                 </div>
 
                 <div style={{
                   padding: '24px',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '8px',
-                  background: '#ffffff'
+                  border: '1px solid var(--color-border)',
+                  borderRadius: 'var(--border-radius-md)',
+                  background: 'var(--color-surface)'
                 }}>
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '16px', color: '#1f2937', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    🤝 Business & Partnerships
-                  </h3>
-                  <p style={{ marginBottom: '12px' }}>
+                  <h3>🤝 Business & Partnerships</h3>
+                  <p>
                     For business inquiries, affiliate partnerships, or media requests:
                   </p>
-                  <div style={{
-                    background: '#f8fafc',
-                    padding: '16px',
-                    borderRadius: '6px',
-                    fontFamily: 'monospace',
-                    fontSize: '16px',
-                    fontWeight: '600'
-                  }}>
-                    business@footballtvschedule.com
-                  </div>
+                  <code>business@footballtvschedule.com</code>
                 </div>
 
                 <div style={{
                   padding: '24px',
-                  border: '1px solid #e5e7eb',
-                  borderRadius: '8px',
-                  background: '#ffffff'
+                  border: '1px solid var(--color-border)',
+                  borderRadius: 'var(--border-radius-md)',
+                  background: 'var(--color-surface)'
                 }}>
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: '600', marginBottom: '16px', color: '#1f2937', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    🛠️ Technical Support
-                  </h3>
-                  <p style={{ marginBottom: '12px' }}>
+                  <h3>🛠️ Technical Support</h3>
+                  <p>
                     Experiencing technical issues with our website? Report bugs or problems:
                   </p>
-                  <div style={{
-                    background: '#f8fafc',
-                    padding: '16px',
-                    borderRadius: '6px',
-                    fontFamily: 'monospace',
-                    fontSize: '16px',
-                    fontWeight: '600'
-                  }}>
-                    support@footballtvschedule.com
-                  </div>
-                  <p style={{ marginTop: '12px', fontSize: '14px', color: '#6b7280' }}>
-                    Please include: Your browser, device, and steps to reproduce the issue.
-                  </p>
+                  <code>support@footballtvschedule.com</code>
+                  <p><em>Please include: Your browser, device, and steps to reproduce the issue.</em></p>
                 </div>
               </div>
             </section>
 
-            <section style={{ marginBottom: '40px' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '20px', color: '#111827' }}>
-                Company Information
-              </h2>
+            <section>
+              <h2>Company Information</h2>
               <div style={{
                 background: '#f9fafb',
                 border: '1px solid #e5e7eb',
@@ -180,10 +120,8 @@ const ContactPage: React.FC = () => {
               </div>
             </section>
 
-            <section style={{ marginBottom: '40px' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '20px', color: '#111827' }}>
-                Response Times
-              </h2>
+            <section>
+              <h2>Response Times</h2>
               <div style={{ display: 'grid', gap: '12px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 0', borderBottom: '1px solid #e5e7eb' }}>
                   <span>General Inquiries</span>
@@ -207,10 +145,8 @@ const ContactPage: React.FC = () => {
               </p>
             </section>
 
-            <section style={{ marginBottom: '40px' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '20px', color: '#111827' }}>
-                Frequently Asked Questions
-              </h2>
+            <section>
+              <h2>Frequently Asked Questions</h2>
               <div style={{ display: 'grid', gap: '20px' }}>
                 <div style={{
                   padding: '20px',
@@ -259,10 +195,8 @@ const ContactPage: React.FC = () => {
               </div>
             </section>
 
-            <section style={{ marginBottom: '40px' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '20px', color: '#111827' }}>
-                Legal & Privacy
-              </h2>
+            <section>
+              <h2>Legal & Privacy</h2>
               <p style={{ marginBottom: '16px' }}>
                 For legal matters, privacy concerns, or data protection questions:
               </p>
@@ -316,8 +250,8 @@ const ContactPage: React.FC = () => {
                 we'd love to hear from you.
               </p>
             </div>
-          </div>
-        </div>
+          </TextContainer>
+        </ContentCard>
       </main>
     </div>
   );

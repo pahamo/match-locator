@@ -15,7 +15,8 @@
 import React, { Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage'; // Keep HomePage eager for LCP
-import MatchPage from './pages/MatchPage'; // Keep MatchPage eager for SEO
+import MatchPage from './pages/MatchPage'; // Keep MatchPage for legacy routes
+import SmartFixtureRouter from './components/SmartFixtureRouter';
 
 import Footer from './components/Footer';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -55,6 +56,8 @@ const AffiliateDisclosure = React.lazy(() => import('./pages/legal/AffiliateDisc
 const HowWeMakeMoneyPage = React.lazy(() => import('./pages/HowWeMakeMoneyPage'));
 const ContactPage = React.lazy(() => import('./pages/ContactPage'));
 const EditorialGuidelinesPage = React.lazy(() => import('./pages/EditorialGuidelinesPage'));
+const TodayFixturesPage = React.lazy(() => import('./pages/TodayFixturesPage'));
+const TomorrowFixturesPage = React.lazy(() => import('./pages/TomorrowFixturesPage'));
 const CookieSettingsModal = React.lazy(() => import('./components/cookies/CookieSettingsModal'));
 
 // Loading fallback component
@@ -93,12 +96,15 @@ function App() {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/fixtures" element={<FixturesPage />} />
+              {/* Dynamic fixtures pages */}
+              <Route path="/fixtures/today" element={<TodayFixturesPage />} />
+              <Route path="/fixtures/tomorrow" element={<TomorrowFixturesPage />} />
               {/* Competition routes */}
               <Route path="/competitions" element={<CompetitionsOverviewPage />} />
               <Route path="/competitions/champions-league/group-stage" element={<ChampionsLeagueGroupStagePage />} />
               <Route path="/competitions/:slug" element={<CompetitionPage />} />
-              {/* SEO-friendly match URLs - new format */}
-              <Route path="/fixtures/:matchSlug" element={<MatchPage />} />
+              {/* SEO-friendly match URLs and H2H - new format */}
+              <Route path="/fixtures/:matchSlug" element={<SmartFixtureRouter />} />
               {/* SEO-friendly match URLs - legacy format with IDs */}
               <Route path="/matches/:matchSlug" element={<MatchPage />} />
               {/* Legacy support for simple match IDs */}

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import Header from '../components/Header';
+import { ContentCard, TextContainer } from '../design-system';
 import { generatePageMeta, updateDocumentMeta } from '../utils/seo';
 
 const HowWeMakeMoneyPage: React.FC = () => {
@@ -15,33 +16,18 @@ const HowWeMakeMoneyPage: React.FC = () => {
   return (
     <div className="how-we-make-money-page">
       <Header />
-      <main>
-        <div className="wrap" style={{ maxWidth: '800px', margin: '0 auto', padding: '32px 20px' }}>
-          <h1 style={{ marginBottom: '32px', fontSize: '2rem', fontWeight: '700' }}>
-            How We Make Money
-          </h1>
+      <main className="wrap" style={{ paddingTop: 'var(--layout-page-top-margin)' }}>
+        <ContentCard>
+          <TextContainer>
+            <header>
+              <h1>How We Make Money</h1>
+            </header>
+            <blockquote>
+              <strong>🎯 Our Mission:</strong> To provide the most accurate, up-to-date football TV schedules completely free for all users. Our revenue model supports this mission while maintaining editorial independence.
+            </blockquote>
 
-          <div style={{ fontSize: '16px', lineHeight: '1.7', color: '#374151' }}>
-            <div style={{
-              background: '#e0f2fe',
-              border: '1px solid #0284c7',
-              borderRadius: '8px',
-              padding: '20px',
-              marginBottom: '32px'
-            }}>
-              <h2 style={{ margin: '0 0 12px 0', fontSize: '1.2rem', fontWeight: '600', color: '#0c4a6e' }}>
-                🎯 Our Mission
-              </h2>
-              <p style={{ margin: '0', color: '#0c4a6e' }}>
-                To provide the most accurate, up-to-date football TV schedules completely free for all users.
-                Our revenue model supports this mission while maintaining editorial independence.
-              </p>
-            </div>
-
-            <section style={{ marginBottom: '40px' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '20px', color: '#111827' }}>
-                Our Revenue Sources
-              </h2>
+            <section>
+              <h2>Our Revenue Sources</h2>
 
               <div style={{ display: 'grid', gap: '24px' }}>
                 <div style={{
@@ -94,10 +80,8 @@ const HowWeMakeMoneyPage: React.FC = () => {
               </div>
             </section>
 
-            <section style={{ marginBottom: '40px' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '20px', color: '#111827' }}>
-                What Your Support Funds
-              </h2>
+            <section>
+              <h2>What Your Support Funds</h2>
               <div style={{ display: 'grid', gap: '16px' }}>
                 <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
                   <span style={{ fontSize: '20px' }}>🖥️</span>
@@ -141,10 +125,8 @@ const HowWeMakeMoneyPage: React.FC = () => {
               </div>
             </section>
 
-            <section style={{ marginBottom: '40px' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '20px', color: '#111827' }}>
-                Our Editorial Independence
-              </h2>
+            <section>
+              <h2>Our Editorial Independence</h2>
               <div style={{
                 background: '#f0fdf4',
                 border: '1px solid #22c55e',
@@ -172,10 +154,8 @@ const HowWeMakeMoneyPage: React.FC = () => {
               </div>
             </section>
 
-            <section style={{ marginBottom: '40px' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '20px', color: '#111827' }}>
-                Supporting Us
-              </h2>
+            <section>
+              <h2>Supporting Us</h2>
               <p style={{ marginBottom: '16px' }}>
                 The best way to support Football TV Schedule is to use our affiliate links when you're
                 ready to sign up for streaming services or TV packages. Here's how:
@@ -213,10 +193,8 @@ const HowWeMakeMoneyPage: React.FC = () => {
               </p>
             </section>
 
-            <section style={{ marginBottom: '40px' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '20px', color: '#111827' }}>
-                Transparency Report
-              </h2>
+            <section>
+              <h2>Transparency Report</h2>
               <p>
                 We believe in complete transparency about our business. Here are our key metrics:
               </p>
@@ -287,8 +265,8 @@ const HowWeMakeMoneyPage: React.FC = () => {
                 </a>
               </div>
             </div>
-          </div>
-        </div>
+          </TextContainer>
+        </ContentCard>
       </main>
     </div>
   );

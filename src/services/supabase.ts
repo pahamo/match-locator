@@ -548,3 +548,175 @@ export async function getTeams(): Promise<Team[]> {
     return [];
   }
 }
+
+// Get fixtures for a specific date range (e.g., today or tomorrow)
+export async function getFixturesByDateRange(startDate: string, endDate: string): Promise<Fixture[]> {
+  return getFixtures({
+    dateFrom: startDate,
+    dateTo: endDate,
+    limit: 50,
+    order: 'asc'
+  });
+}
+
+/**
+ * Get all fixtures between two teams (Head-to-Head)
+ */
+export async function getHeadToHeadFixtures(teamSlug1: string, teamSlug2: string): Promise<Fixture[]> {
+  try {
+    console.log(`Fetching H2H fixtures between ${teamSlug1} and ${teamSlug2}`);
+
+    // Get fixtures with raw query for better performance
+    const { data: fixtureRows, error: fixturesError } = await supabase
+      .from('fixtures_with_teams')
+      .select('*')
+      .or(`and(home_slug.eq.${teamSlug1},away_slug.eq.${teamSlug2}),and(home_slug.eq.${teamSlug2},away_slug.eq.${teamSlug1})`)
+      .order('utc_kickoff', { ascending: false });
+
+    if (fixturesError) {
+      console.error('Error fetching H2H fixtures:', fixturesError);
+      throw fixturesError;
+    }
+
+    if (!fixtureRows || fixtureRows.length === 0) {
+      console.log('No H2H fixtures found');
+      return [];
+    }
+
+    // Get fixture IDs for broadcast lookup
+    const fixtureIds = fixtureRows.map(row => row.id);
+
+    // Get broadcast data for these fixtures
+    const { data: broadcastRows, error: broadcastError } = await supabase
+      .from('broadcasts_with_providers')
+      .select('fixture_id, provider_id, provider_name, provider_type, provider_slug, provider_url')
+      .in('fixture_id', fixtureIds);
+
+    if (broadcastError) {
+      console.error('Error fetching broadcast data:', broadcastError);
+      // Continue without broadcast data rather than fail completely
+    }
+
+    // Group providers by fixture
+    const providersByFixture: Record<number, Provider[]> = {};
+    if (broadcastRows) {
+      broadcastRows.forEach(row => {
+        if (!providersByFixture[row.fixture_id]) {
+          providersByFixture[row.fixture_id] = [];
+        }
+        providersByFixture[row.fixture_id].push({
+          id: row.provider_id,
+          name: row.provider_name || 'Unknown',
+          type: row.provider_type || 'tv',
+          slug: row.provider_slug || '',
+          url: row.provider_url || ''
+        });
+      });
+    }
+
+    // Map to Fixture objects
+    const fixtures = fixtureRows.map(row => mapFixtureRow(row, providersByFixture));
+
+    console.log(`Found ${fixtures.length} H2H fixtures`);
+    return fixtures;
+
+  } catch (error) {
+    console.error('Failed to fetch H2H fixtures:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get the next upcoming fixture between two teams
+ */
+export async function getNextHeadToHeadFixture(teamSlug1: string, teamSlug2: string): Promise<Fixture | null> {
+  try {
+    const now = new Date().toISOString();
+
+    const { data: fixtureRows, error: fixturesError } = await supabase
+      .from('fixtures_with_teams')
+      .select('*')
+      .or(`and(home_slug.eq.${teamSlug1},away_slug.eq.${teamSlug2}),and(home_slug.eq.${teamSlug2},away_slug.eq.${teamSlug1})`)
+      .gte('utc_kickoff', now)
+      .order('utc_kickoff', { ascending: true })
+      .limit(1);
+
+    if (fixturesError) {
+      console.error('Error fetching next H2H fixture:', fixturesError);
+      throw fixturesError;
+    }
+
+    if (!fixtureRows || fixtureRows.length === 0) {
+      return null;
+    }
+
+    const row = fixtureRows[0];
+
+    // Get broadcast data for this fixture
+    const { data: broadcastRows, error: broadcastError } = await supabase
+      .from('broadcasts_with_providers')
+      .select('fixture_id, provider_id, provider_name, provider_type, provider_slug, provider_url')
+      .eq('fixture_id', row.id);
+
+    if (broadcastError) {
+      console.error('Error fetching broadcast data for next fixture:', broadcastError);
+    }
+
+    // Map providers
+    const providers: Provider[] = [];
+    if (broadcastRows) {
+      broadcastRows.forEach(broadcastRow => {
+        providers.push({
+          id: broadcastRow.provider_id,
+          name: broadcastRow.provider_name || 'Unknown',
+          type: broadcastRow.provider_type || 'tv',
+          slug: broadcastRow.provider_slug || '',
+          url: broadcastRow.provider_url || ''
+        });
+      });
+    }
+
+    const providersByFixture = { [row.id]: providers };
+    return mapFixtureRow(row, providersByFixture);
+
+  } catch (error) {
+    console.error('Failed to fetch next H2H fixture:', error);
+    throw error;
+  }
+}
+
+/**
+ * Get team by slug
+ */
+export async function getTeamBySlug(slug: string): Promise<Team | null> {
+  try {
+    const { data, error } = await supabase
+      .from('teams')
+      .select('*')
+      .eq('slug', slug)
+      .limit(1)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        // No rows returned
+        return null;
+      }
+      console.error('Error fetching team by slug:', error);
+      throw error;
+    }
+
+    return {
+      id: data.id,
+      name: data.name,
+      slug: data.slug,
+      crest: data.crest,
+      short_name: data.short_name,
+      competition_id: data.competition_id
+    };
+
+  } catch (error) {
+    console.error('Failed to fetch team by slug:', error);
+    throw error;
+  }
+}

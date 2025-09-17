@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
+import LegalLayout from './LegalLayout';
 import { generatePageMeta, updateDocumentMeta } from '../../utils/seo';
 
 const AffiliateDisclosure: React.FC = () => {
@@ -14,32 +13,17 @@ const AffiliateDisclosure: React.FC = () => {
   }, []);
 
   return (
-    <div className="legal-page">
-      <Header />
-      <main>
-        <div className="wrap" style={{ maxWidth: '800px', margin: '0 auto', padding: '32px 20px' }}>
-          <h1 style={{ marginBottom: '32px', fontSize: '2rem', fontWeight: '700' }}>
-            Affiliate Disclosure
-          </h1>
+    <LegalLayout
+      title="Affiliate Disclosure"
+      lastUpdated="2025-09-17"
+      robotsNoIndex={false}
+    >
+      <blockquote>
+        <strong>🚨 Important Disclosure:</strong> Football TV Schedule participates in affiliate marketing programs. We may earn commission from purchases made through links on our website.
+      </blockquote>
 
-          <div style={{ fontSize: '16px', lineHeight: '1.7', color: '#374151' }}>
-            <div style={{
-              background: '#fef3c7',
-              border: '1px solid #f59e0b',
-              borderRadius: '8px',
-              padding: '16px',
-              marginBottom: '32px'
-            }}>
-              <p style={{ margin: '0', fontWeight: '600', color: '#92400e' }}>
-                🚨 <strong>Important Disclosure:</strong> Football TV Schedule participates in affiliate marketing programs.
-                We may earn commission from purchases made through links on our website.
-              </p>
-            </div>
-
-            <section style={{ marginBottom: '32px' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '16px', color: '#111827' }}>
-                What Are Affiliate Links?
-              </h2>
+      <section>
+        <h2>What Are Affiliate Links?</h2>
               <p>
                 Affiliate links are special tracking links that allow us to earn a commission when you make a purchase
                 through our recommendations. When you click on an affiliate link and make a purchase, the company pays
@@ -47,10 +31,8 @@ const AffiliateDisclosure: React.FC = () => {
               </p>
             </section>
 
-            <section style={{ marginBottom: '32px' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '16px', color: '#111827' }}>
-                Our Affiliate Partners
-              </h2>
+      <section>
+        <h2>Our Affiliate Partners</h2>
               <p>
                 We partner with streaming services, sports broadcasters, and TV providers to help you find the best
                 ways to watch football matches. Our current and potential affiliate partners include:
@@ -66,10 +48,8 @@ const AffiliateDisclosure: React.FC = () => {
               </ul>
             </section>
 
-            <section style={{ marginBottom: '32px' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '16px', color: '#111827' }}>
-                How We Identify Affiliate Links
-              </h2>
+      <section>
+        <h2>How We Identify Affiliate Links</h2>
               <p>
                 We clearly mark affiliate content in the following ways:
               </p>
@@ -81,10 +61,8 @@ const AffiliateDisclosure: React.FC = () => {
               </ul>
             </section>
 
-            <section style={{ marginBottom: '32px' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '16px', color: '#111827' }}>
-                Our Editorial Independence
-              </h2>
+      <section>
+        <h2>Our Editorial Independence</h2>
               <p>
                 <strong>Your trust is our priority.</strong> We maintain strict editorial independence and only
                 recommend services we genuinely believe will benefit our users. Here's our commitment:
@@ -98,10 +76,8 @@ const AffiliateDisclosure: React.FC = () => {
               </ul>
             </section>
 
-            <section style={{ marginBottom: '32px' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '16px', color: '#111827' }}>
-                How Affiliate Revenue Supports Our Service
-              </h2>
+      <section>
+        <h2>How Affiliate Revenue Supports Our Service</h2>
               <p>
                 Revenue from affiliate partnerships helps us:
               </p>
@@ -114,20 +90,16 @@ const AffiliateDisclosure: React.FC = () => {
               </ul>
             </section>
 
-            <section style={{ marginBottom: '32px' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '16px', color: '#111827' }}>
-                FTC Compliance
-              </h2>
+      <section>
+        <h2>FTC Compliance</h2>
               <p>
                 This disclosure complies with the Federal Trade Commission's (FTC) guidelines for affiliate marketing
                 and endorsements. We follow international best practices for transparency in digital marketing.
               </p>
             </section>
 
-            <section style={{ marginBottom: '32px' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '16px', color: '#111827' }}>
-                Your Choices
-              </h2>
+      <section>
+        <h2>Your Choices</h2>
               <p>
                 You are never obligated to purchase anything through our affiliate links. You can:
               </p>
@@ -139,44 +111,18 @@ const AffiliateDisclosure: React.FC = () => {
               </ul>
             </section>
 
-            <section style={{ marginBottom: '32px' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '16px', color: '#111827' }}>
-                Questions About Our Affiliate Program?
-              </h2>
+      <section>
+        <h2>Questions About Our Affiliate Program?</h2>
               <p>
                 If you have questions about our affiliate partnerships or this disclosure, please contact us at{' '}
-                <a
-                  href="/contact"
-                  style={{ color: '#3b82f6', textDecoration: 'underline' }}
-                >
-                  our contact page
-                </a>
+                <a href="/contact">our contact page</a>
                 . We're committed to transparency and will gladly answer any questions.
               </p>
             </section>
 
-            <div style={{
-              background: '#f3f4f6',
-              borderRadius: '8px',
-              padding: '20px',
-              marginTop: '32px',
-              borderLeft: '4px solid #3b82f6'
-            }}>
-              <p style={{ margin: '0', fontSize: '14px', color: '#6b7280' }}>
-                <strong>Last Updated:</strong> {new Date().toLocaleDateString('en-GB', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric'
-                })}
-              </p>
-              <p style={{ margin: '8px 0 0 0', fontSize: '14px', color: '#6b7280' }}>
-                We may update this disclosure from time to time. Check this page for the latest information.
-              </p>
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
+      <hr />
+      <p><em>We may update this disclosure from time to time. Check this page for the latest information.</em></p>
+    </LegalLayout>
   );
 };
 

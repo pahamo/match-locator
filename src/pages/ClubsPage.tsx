@@ -3,9 +3,11 @@ import { getTeams } from '../services/supabase';
 import type { Team } from '../types';
 import { usePublicCompetitions } from '../hooks/useCompetitions';
 import Header from '../components/Header';
+import Breadcrumbs from '../components/Breadcrumbs';
 import { ClubCard } from '../design-system';
 import { generateClubsMeta, updateDocumentMeta } from '../utils/seo';
 import { getCompetitionLogo, getCompetitionIcon } from '../config/competitions';
+import { generateBreadcrumbs } from '../utils/breadcrumbs';
 
 const ClubsPage: React.FC = () => {
   const [teams, setTeams] = useState<Team[]>([]);
@@ -53,6 +55,7 @@ const ClubsPage: React.FC = () => {
     return (
       <div className="clubs-page">
         <Header />
+        <Breadcrumbs items={generateBreadcrumbs('/clubs')} />
         <main>
           <div className="wrap">
             <h1 style={{ margin: '0 0 24px 0', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>Football Clubs</h1>
@@ -67,6 +70,7 @@ const ClubsPage: React.FC = () => {
     return (
       <div className="clubs-page">
         <Header />
+        <Breadcrumbs items={generateBreadcrumbs('/clubs')} />
         <main>
           <div className="wrap">
             <h1 style={{ margin: '0 0 24px 0', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>Football Clubs</h1>
@@ -81,6 +85,7 @@ const ClubsPage: React.FC = () => {
   return (
     <div className="clubs-page">
       <Header />
+      <Breadcrumbs items={generateBreadcrumbs('/clubs')} />
 
       <main>
         <div className="wrap">

@@ -115,11 +115,8 @@ export const formatCompetitionName = (competitionSlug: string): string => {
 };
 
 export const generateMatchSlug = (fixture: Fixture): string => {
-  const homeSlug = slugify(fixture.home.name);
-  const awaySlug = slugify(fixture.away.name);
-  const dateSlug = formatDateForUrl(fixture.kickoff_utc);
-  
-  return `${fixture.id}-${homeSlug}-vs-${awaySlug}-${dateSlug}`;
+  // Legacy function - now returns SEO slug without ID
+  return generateSeoMatchSlug(fixture);
 };
 
 export const parseMatchSlug = (slug: string): number | null => {
@@ -128,17 +125,16 @@ export const parseMatchSlug = (slug: string): number | null => {
   return match ? parseInt(match[1], 10) : null;
 };
 
-export const generateMatchUrl = (fixture: Fixture): string => `/matches/${generateMatchSlug(fixture)}`;
+// LEGACY FUNCTIONS - DO NOT USE - Use generateSeoMatchUrl and generateSeoSimpleMatchUrl instead
+// These are kept for backward compatibility but redirect to new SEO URLs
+export const generateMatchUrl = (fixture: Fixture): string => generateSeoMatchUrl(fixture);
 
 export const generateSimpleMatchSlug = (fixture: SimpleFixture): string => {
-  const homeSlug = slugify(fixture.home_team);
-  const awaySlug = slugify(fixture.away_team);
-  const dateSlug = formatDateForUrl(fixture.kickoff_utc);
-  
-  return `${fixture.id}-${homeSlug}-vs-${awaySlug}-${dateSlug}`;
+  // Legacy function - now returns SEO slug without ID
+  return generateSeoSimpleMatchSlug(fixture);
 };
 
-export const generateSimpleMatchUrl = (fixture: SimpleFixture): string => `/matches/${generateSimpleMatchSlug(fixture)}`;
+export const generateSimpleMatchUrl = (fixture: SimpleFixture): string => generateSeoSimpleMatchUrl(fixture);
 
 // NEW SEO-FRIENDLY URL FUNCTIONS
 
