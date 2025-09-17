@@ -5,6 +5,7 @@ import type { Competition } from '../types';
 import Header from '../components/Header';
 import { FixtureCardSkeleton } from '../components/SkeletonLoader';
 import { getCompetitionLogo, getCompetitionIcon, getCompetitionDescription } from '../config/competitions';
+import { generateCompetitionsOverviewMeta, updateDocumentMeta } from '../utils/seo';
 
 const CompetitionsOverviewPage: React.FC = () => {
   const [competitions, setCompetitions] = useState<Competition[]>([]);
@@ -12,6 +13,10 @@ const CompetitionsOverviewPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Set SEO meta for competitions overview page
+    const meta = generateCompetitionsOverviewMeta();
+    updateDocumentMeta(meta);
+
     loadCompetitions();
   }, []);
 

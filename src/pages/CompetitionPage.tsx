@@ -8,6 +8,7 @@ import StructuredData from '../components/StructuredData';
 import { FixtureCardSkeleton } from '../components/SkeletonLoader';
 import FixtureCard from '../design-system/components/FixtureCard';
 import { getCompetitionLogo } from '../config/competitions';
+import { generateCompetitionMeta, updateDocumentMeta } from '../utils/seo';
 
 const CompetitionPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -34,6 +35,12 @@ const CompetitionPage: React.FC = () => {
       }
 
       setCompetition(currentCompetition);
+
+      // Update SEO meta tags for this competition
+      if (slug) {
+        const meta = generateCompetitionMeta(slug);
+        updateDocumentMeta(meta);
+      }
 
       // Load fixtures and teams for this competition
       const [fixturesData, teamsData] = await Promise.all([

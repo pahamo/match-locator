@@ -38,6 +38,82 @@ export const cleanTeamName = (teamName: string): string => {
     .trim();
 };
 
+// SEO helper functions for title tags and meta descriptions
+
+// Format team name for SEO titles (shorter version)
+export const formatTeamNameShort = (teamName: string): string => {
+  return cleanTeamName(teamName)
+    .replace(/\s+Football Club$/i, '')
+    .replace(/\s+Association Football Club$/i, '')
+    .replace(/\s+United$/i, ' Utd')
+    .replace(/\s+City$/i, ' City')
+    .trim();
+};
+
+// Format date for title tags: "22 Sep 2024"
+export const formatDateForTitle = (dateString: string): string => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric'
+  });
+};
+
+// Format time for meta descriptions: "16:30"
+export const formatTimeForMeta = (dateString: string): string => {
+  const date = new Date(dateString);
+  return date.toLocaleTimeString('en-GB', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  });
+};
+
+// Get broadcaster list for a competition (helper for competition meta)
+export const getBroadcasterList = (competitionSlug: string): string => {
+  const broadcasters: Record<string, string> = {
+    'premier-league': 'Sky, TNT, Amazon',
+    'champions-league': 'TNT Sports',
+    'europa-league': 'TNT Sports',
+    'bundesliga': 'Sky Sports',
+    'la-liga': 'Premier Sports',
+    'serie-a': 'TNT Sports',
+    'ligue-1': 'TNT Sports',
+    'primeira-liga': 'Premier Sports',
+    'eredivisie': 'Premier Sports',
+    'championship': 'Sky Sports'
+  };
+  return broadcasters[competitionSlug] || 'Sky, TNT, Amazon';
+};
+
+// Get current season string: "2024/25"
+export const getCurrentSeason = (): string => {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const isNewSeason = now.getMonth() >= 6; // August onwards
+  const seasonStart = isNewSeason ? currentYear : currentYear - 1;
+  const seasonEnd = seasonStart + 1;
+  return `${seasonStart}/${seasonEnd.toString().slice(-2)}`;
+};
+
+// Format competition name for display
+export const formatCompetitionName = (competitionSlug: string): string => {
+  const competitionNames: Record<string, string> = {
+    'premier-league': 'Premier League',
+    'champions-league': 'Champions League',
+    'europa-league': 'Europa League',
+    'bundesliga': 'Bundesliga',
+    'la-liga': 'La Liga',
+    'serie-a': 'Serie A',
+    'ligue-1': 'Ligue 1',
+    'primeira-liga': 'Primeira Liga',
+    'eredivisie': 'Eredivisie',
+    'championship': 'Championship'
+  };
+  return competitionNames[competitionSlug] || competitionSlug;
+};
+
 export const generateMatchSlug = (fixture: Fixture): string => {
   const homeSlug = slugify(fixture.home.name);
   const awaySlug = slugify(fixture.away.name);
@@ -200,30 +276,37 @@ export const updateDocumentMeta = (meta: {
 };
 
 export const generateMatchMeta = (fixture: Fixture) => {
-  const date = new Date(fixture.kickoff_utc).toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric'
-  });
+  const homeShort = formatTeamNameShort(fixture.home.name);
+  const awayShort = formatTeamNameShort(fixture.away.name);
+  const date = formatDateForTitle(fixture.kickoff_utc);
+  const time = formatTimeForMeta(fixture.kickoff_utc);
 
-  const broadcaster = fixture.blackout?.is_blackout
-    ? 'Not available in UK'
+  // Get broadcaster info for title
+  const broadcasterForTitle = fixture.blackout?.is_blackout
+    ? 'Blackout'
+    : fixture.providers_uk.length > 0
+      ? fixture.providers_uk[0].name // Use first/main broadcaster for title
+      : 'TV Info';
+
+  // Build optimized title: "[Home] vs [Away] - [Broadcaster] - [Date] | Match Locator"
+  const title = `${homeShort} vs ${awayShort} - ${broadcasterForTitle} - ${date} | Match Locator`;
+
+  // Get broadcaster list for description
+  const broadcasterText = fixture.blackout?.is_blackout
+    ? 'Not shown on UK TV'
     : fixture.providers_uk.length > 0
       ? fixture.providers_uk.map(p => p.name).join(', ')
-      : 'TBD';
+      : 'Broadcaster to be confirmed';
 
-  const title = `${fixture.home.name} vs ${fixture.away.name}`;
-
-  const description = `${fixture.home.name} vs ${fixture.away.name} on ${date}. ${
-    fixture.blackout?.is_blackout
-      ? 'Not shown on UK TV.'
-      : fixture.providers_uk.length > 0
-        ? `Watch on ${broadcaster}.`
-        : 'Broadcaster to be confirmed.'
-  } UK football TV schedule.`;
+  // Optimized description: "Find out where to watch [Home] vs [Away] on [Date]. Live on [Broadcaster] at [Time]. Get full TV schedule and streaming info."
+  const description = fixture.blackout?.is_blackout
+    ? `Find out where to watch ${homeShort} vs ${awayShort} on ${date}. Not shown on UK TV. Get full TV schedule and streaming info.`
+    : fixture.providers_uk.length > 0
+      ? `Find out where to watch ${homeShort} vs ${awayShort} on ${date}. Live on ${broadcasterText} at ${time}. Get full TV schedule and streaming info.`
+      : `Find out where to watch ${homeShort} vs ${awayShort} on ${date}. Broadcaster to be confirmed. Get full TV schedule and streaming info.`;
 
   const ogImage = fixture.home.crest || fixture.away.crest || '/favicon.png';
-  const canonical = `${CANONICAL_BASE}${generateMatchUrl(fixture)}`;
+  const canonical = `${CANONICAL_BASE}${generateSeoMatchUrl(fixture)}`;
 
   return {
     title,
@@ -237,28 +320,28 @@ export const generateMatchMeta = (fixture: Fixture) => {
 };
 
 export const generateSimpleMatchMeta = (fixture: SimpleFixture) => {
-  const date = new Date(fixture.kickoff_utc).toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric'
-  });
+  const homeShort = formatTeamNameShort(fixture.home_team);
+  const awayShort = formatTeamNameShort(fixture.away_team);
+  const date = formatDateForTitle(fixture.kickoff_utc);
+  const time = formatTimeForMeta(fixture.kickoff_utc);
 
-  const broadcaster = fixture.isBlackout
-    ? 'Not available in UK'
-    : fixture.broadcaster || 'TBD';
+  // Get broadcaster info for title
+  const broadcasterForTitle = fixture.isBlackout
+    ? 'Blackout'
+    : fixture.broadcaster || 'TV Info';
 
-  const title = `${fixture.home_team} vs ${fixture.away_team}`;
+  // Build optimized title: "[Home] vs [Away] - [Broadcaster] - [Date] | Match Locator"
+  const title = `${homeShort} vs ${awayShort} - ${broadcasterForTitle} - ${date} | Match Locator`;
 
-  const description = `${fixture.home_team} vs ${fixture.away_team} on ${date}. ${
-    fixture.isBlackout
-      ? 'Not shown on UK TV.'
-      : fixture.broadcaster
-        ? `Watch on ${broadcaster}.`
-        : 'Broadcaster to be confirmed.'
-  } UK football TV schedule.`;
+  // Optimized description
+  const description = fixture.isBlackout
+    ? `Find out where to watch ${homeShort} vs ${awayShort} on ${date}. Not shown on UK TV. Get full TV schedule and streaming info.`
+    : fixture.broadcaster
+      ? `Find out where to watch ${homeShort} vs ${awayShort} on ${date}. Live on ${fixture.broadcaster} at ${time}. Get full TV schedule and streaming info.`
+      : `Find out where to watch ${homeShort} vs ${awayShort} on ${date}. Broadcaster to be confirmed. Get full TV schedule and streaming info.`;
 
   const ogImage = fixture.home_crest || fixture.away_crest || '/favicon.png';
-  const canonical = `${CANONICAL_BASE}${generateSimpleMatchUrl(fixture)}`;
+  const canonical = `${CANONICAL_BASE}${generateSeoSimpleMatchUrl(fixture)}`;
 
   return {
     title,
@@ -272,8 +355,14 @@ export const generateSimpleMatchMeta = (fixture: SimpleFixture) => {
 };
 
 export const generateTeamMeta = (team: Team, upcomingCount: number = 0) => {
-  const title = `${team.name} fixtures and TV schedule - All competitions`;
-  const description = `${team.name} upcoming fixtures and TV schedule across all competitions. ${upcomingCount} matches remaining. Premier League, Champions League, and more. Sky Sports, TNT Sports, BBC viewing guide.`;
+  const teamShort = formatTeamNameShort(team.name);
+
+  // Optimized title: "[Team] Fixtures & TV Schedule - Where to Watch | Match Locator"
+  const title = `${teamShort} Fixtures & TV Schedule - Where to Watch | Match Locator`;
+
+  // Optimized description: "Never miss a [Team] match. Complete fixtures list with UK TV channels and streaming info. Sky, TNT, Amazon Prime coverage."
+  const description = `Never miss a ${teamShort} match. Complete fixtures list with UK TV channels and streaming info. Sky, TNT, Amazon Prime coverage.`;
+
   const canonical = `${CANONICAL_BASE}/clubs/${team.slug}`;
 
   return {
@@ -288,8 +377,12 @@ export const generateTeamMeta = (team: Team, upcomingCount: number = 0) => {
 };
 
 export const generateHomeMeta = () => {
-  const title = 'fixtures.app - Football TV Guide UK';
-  const description = 'Football TV Guide UK - Premier League, Champions League and more. Sky Sports & TNT Sports fixtures. Find which broadcaster shows every match.';
+  // Optimized homepage title
+  const title = 'Football TV Schedule UK - Premier League, Champions League & More | Match Locator';
+
+  // Optimized homepage description
+  const description = 'UK\'s football TV guide. Find out what matches are on TV today, tonight and this week. Premier League, Champions League and more.';
+
   const canonical = `${CANONICAL_BASE}/`;
 
   return {
@@ -304,8 +397,12 @@ export const generateHomeMeta = () => {
 };
 
 export const generateFixturesMeta = () => {
-  const title = 'Football Fixtures & TV Schedule - fixtures.app';
-  const description = 'Football fixtures and TV schedules from Premier League, Champions League and more. Filter by competition, team, and broadcaster. Sky Sports, TNT Sports, BBC viewing guide.';
+  // Optimized fixtures page title
+  const title = 'Football Fixtures Today & This Week - UK TV Schedule | Match Locator';
+
+  // Optimized fixtures page description
+  const description = 'Complete football fixtures and TV schedules from Premier League, Champions League and more. Filter by competition, team, and broadcaster. Sky Sports, TNT Sports viewing guide.';
+
   const canonical = `${CANONICAL_BASE}/fixtures`;
 
   return {
@@ -320,9 +417,57 @@ export const generateFixturesMeta = () => {
 };
 
 export const generateClubsMeta = () => {
-  const title = 'Football Teams - fixtures.app';
-  const description = 'Football teams across all competitions. View fixtures, TV schedules, and viewing guides for every club.';
+  // Optimized clubs page title
+  const title = 'All Premier League & European Football Teams - TV Schedules | Match Locator';
+
+  // Optimized clubs page description
+  const description = 'Complete list of football teams across all competitions. View fixtures, TV schedules, and viewing guides for every club. Premier League, Champions League teams.';
+
   const canonical = `${CANONICAL_BASE}/clubs`;
+
+  return {
+    title,
+    description,
+    canonical,
+    ogTitle: title,
+    ogDescription: description,
+    ogImage: '/favicon.png',
+    ogUrl: canonical
+  };
+};
+
+export const generateCompetitionMeta = (competitionSlug: string) => {
+  const competitionName = formatCompetitionName(competitionSlug);
+  const season = getCurrentSeason();
+  const broadcasters = getBroadcasterList(competitionSlug);
+
+  // Optimized competition title: "[Competition] TV Schedule 2024/25 - Sky, TNT, Amazon | Match Locator"
+  const title = `${competitionName} TV Schedule ${season} - ${broadcasters} | Match Locator`;
+
+  // Optimized competition description: "Complete [Competition] TV schedule for UK viewers. Find out which matches are on Sky Sports, TNT Sports, Amazon Prime and more."
+  const description = `Complete ${competitionName} TV schedule for UK viewers. Find out which matches are on ${broadcasters} and more. All fixtures and broadcast info.`;
+
+  const canonical = `${CANONICAL_BASE}/competitions/${competitionSlug}`;
+
+  return {
+    title,
+    description,
+    canonical,
+    ogTitle: title,
+    ogDescription: description,
+    ogImage: '/favicon.png',
+    ogUrl: canonical
+  };
+};
+
+export const generateCompetitionsOverviewMeta = () => {
+  // Optimized competitions overview title
+  const title = 'Football Competitions TV Guide UK - All Leagues | Match Locator';
+
+  // Optimized competitions overview description
+  const description = 'Complete guide to football competitions on UK TV. Premier League, Champions League, Europa League and more. Find fixtures and broadcast info for all leagues.';
+
+  const canonical = `${CANONICAL_BASE}/competitions`;
 
   return {
     title,
