@@ -299,6 +299,32 @@ const HomePage: React.FC = () => {
     <div className="home-page">
       <StructuredData type="website" />
       <StructuredData type="organization" />
+
+      {/* Live game animations */}
+      <style>{`
+        @keyframes pulse-border {
+          0%, 100% {
+            border-color: #ef4444;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+          }
+          50% {
+            border-color: #dc2626;
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.6);
+          }
+        }
+
+        @keyframes pulse-glow {
+          0%, 100% {
+            background: #ef4444;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+          }
+          50% {
+            background: #dc2626;
+            box-shadow: 0 0 25px rgba(239, 68, 68, 0.9);
+          }
+        }
+      `}</style>
+
       <Header />
       
       <main>
@@ -398,29 +424,98 @@ const HomePage: React.FC = () => {
                         )}
 
                       {/* Compact Match Cards with grouped styling */}
-                      {timeSlot.fixtures.map((fixture, fixtureIndex) => {
-                        // Determine group position for styling
-                        let groupPosition: 'single' | 'first' | 'middle' | 'last' = 'single';
-                        if (timeSlot.fixtures.length > 1) {
-                          if (fixtureIndex === 0) {
-                            groupPosition = 'first';
-                          } else if (fixtureIndex === timeSlot.fixtures.length - 1) {
-                            groupPosition = 'last';
-                          } else {
-                            groupPosition = 'middle';
-                          }
-                        }
+                      {(() => {
+                        // Check if any fixtures in this time slot are live
+                        const liveFixtures = timeSlot.fixtures.filter(fixture => {
+                          const status = getMatchStatus(fixture.kickoff_utc);
+                          return status.status === 'live';
+                        });
 
-                        return (
-                          <FixtureCard
-                            key={fixture.id}
-                            fixture={fixture}
-                            variant="compact"
-                            showViewButton={true}
-                            groupPosition={groupPosition}
-                          />
-                        );
-                      })}
+                        const hasLiveGames = liveFixtures.length > 0;
+
+                        // If there are live games, wrap them in a special container
+                        if (hasLiveGames) {
+                          return (
+                            <div style={{
+                              border: '3px solid #ef4444',
+                              borderRadius: '12px',
+                              padding: '8px',
+                              background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(255, 255, 255, 0.95) 100%)',
+                              boxShadow: '0 0 20px rgba(239, 68, 68, 0.3)',
+                              animation: 'pulse-border 2s ease-in-out infinite',
+                              position: 'relative'
+                            }}>
+                              {/* LIVE indicator */}
+                              <div style={{
+                                position: 'absolute',
+                                top: '-8px',
+                                left: '12px',
+                                background: '#ef4444',
+                                color: 'white',
+                                padding: '2px 8px',
+                                borderRadius: '8px',
+                                fontSize: '10px',
+                                fontWeight: '700',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.5px',
+                                animation: 'pulse-glow 1.5s ease-in-out infinite'
+                              }}>
+                                🔴 LIVE
+                              </div>
+
+                              {timeSlot.fixtures.map((fixture, fixtureIndex) => {
+                                // Determine group position for styling
+                                let groupPosition: 'single' | 'first' | 'middle' | 'last' = 'single';
+                                if (timeSlot.fixtures.length > 1) {
+                                  if (fixtureIndex === 0) {
+                                    groupPosition = 'first';
+                                  } else if (fixtureIndex === timeSlot.fixtures.length - 1) {
+                                    groupPosition = 'last';
+                                  } else {
+                                    groupPosition = 'middle';
+                                  }
+                                }
+
+                                return (
+                                  <FixtureCard
+                                    key={fixture.id}
+                                    fixture={fixture}
+                                    variant="compact"
+                                    showViewButton={true}
+                                    groupPosition={groupPosition}
+                                    isInLiveGroup={true} // New prop to disable individual live styling
+                                  />
+                                );
+                              })}
+                            </div>
+                          );
+                        } else {
+                          // Regular rendering for non-live games
+                          return timeSlot.fixtures.map((fixture, fixtureIndex) => {
+                            // Determine group position for styling
+                            let groupPosition: 'single' | 'first' | 'middle' | 'last' = 'single';
+                            if (timeSlot.fixtures.length > 1) {
+                              if (fixtureIndex === 0) {
+                                groupPosition = 'first';
+                              } else if (fixtureIndex === timeSlot.fixtures.length - 1) {
+                                groupPosition = 'last';
+                              } else {
+                                groupPosition = 'middle';
+                              }
+                            }
+
+                            return (
+                              <FixtureCard
+                                key={fixture.id}
+                                fixture={fixture}
+                                variant="compact"
+                                showViewButton={true}
+                                groupPosition={groupPosition}
+                              />
+                            );
+                          });
+                        }
+                      })()}
                     </div>
                   );
                   })}

@@ -15,6 +15,7 @@ export interface FixtureCardProps {
   className?: string;
   style?: React.CSSProperties;
   groupPosition?: 'single' | 'first' | 'middle' | 'last';
+  isInLiveGroup?: boolean; // New prop to disable individual live styling when in a live group
 }
 
 // Helper functions to work with both fixture types
@@ -59,10 +60,16 @@ const FixtureCard: React.FC<FixtureCardProps> = ({
   showViewButton = true,
   className = '',
   style = {},
-  groupPosition = 'single'
+  groupPosition = 'single',
+  isInLiveGroup = false
 }) => {
   const matchStatus = getMatchStatus(fixture.kickoff_utc);
   const statusStyles = getMatchStatusStyles(matchStatus);
+
+  // If this card is in a live group, disable individual live styling
+  const actualStatusStyles = isInLiveGroup && matchStatus.status === 'live'
+    ? { card: {}, badge: statusStyles.badge } // Keep badge but remove card styling
+    : statusStyles;
   const fixtureData = getFixtureData(fixture);
   const isMinimized = variant === 'minimized';
 
@@ -90,8 +97,8 @@ const FixtureCard: React.FC<FixtureCardProps> = ({
     }
 
     return {
-      background: statusStyles.card.background || 'white',
-      border: statusStyles.card.border || '1px solid #e2e8f0',
+      background: (actualStatusStyles.card as any)?.background || 'white',
+      border: (actualStatusStyles.card as any)?.border || '1px solid #e2e8f0',
       borderRadius,
       padding: isMinimized ? '8px' : '12px',
       marginBottom,
@@ -102,7 +109,7 @@ const FixtureCard: React.FC<FixtureCardProps> = ({
       position: 'relative' as const,
       opacity: isMinimized ? 0.7 : 1,
       fontSize: isMinimized ? '13px' : '14px',
-      ...statusStyles.card,
+      ...actualStatusStyles.card,
       ...style
     };
   };
@@ -220,9 +227,9 @@ const FixtureCard: React.FC<FixtureCardProps> = ({
         />
       )}
 
-      {/* Match Status Badge - hidden in minimized view */}
-      {!isMinimized && statusStyles.badge && matchStatus.status === 'live' && (
-        <div style={statusStyles.badge}>
+      {/* Match Status Badge - hidden in minimized view and when in live group */}
+      {!isMinimized && !isInLiveGroup && actualStatusStyles.badge && matchStatus.status === 'live' && (
+        <div style={actualStatusStyles.badge}>
           🔴 LIVE
         </div>
       )}
