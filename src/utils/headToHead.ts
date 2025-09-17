@@ -2,6 +2,9 @@
  * Utilities for Head-to-Head pages
  */
 
+// Import SEO-friendly team slug utilities
+import { normalizeTeamSlug, mapSeoSlugToDbSlug } from './teamSlugs';
+
 export interface TeamPair {
   team1Slug: string;
   team2Slug: string;
@@ -93,33 +96,6 @@ export function cleanTeamNameForDisplay(slug: string): string {
     .split('-')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
-}
-
-/**
- * Team name variations mapping (for handling different URL formats)
- */
-const TEAM_NAME_VARIATIONS: Record<string, string> = {
-  'man-city': 'manchester-city',
-  'man-utd': 'manchester-united',
-  'man-united': 'manchester-united',
-  'tottenham': 'tottenham-hotspur',
-  'spurs': 'tottenham-hotspur',
-  'leicester': 'leicester-city',
-  'wolves': 'wolverhampton-wanderers',
-  'brighton': 'brighton-hove-albion',
-  'west-ham': 'west-ham-united',
-  'newcastle': 'newcastle-united',
-  'nottm-forest': 'nottingham-forest',
-  'crystal-palace': 'crystal-palace',
-  'sheffield-utd': 'sheffield-united'
-};
-
-/**
- * Normalize team slug (handle variations)
- */
-export function normalizeTeamSlug(slug: string): string {
-  const normalized = slug.toLowerCase().trim();
-  return TEAM_NAME_VARIATIONS[normalized] || normalized;
 }
 
 /**

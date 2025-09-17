@@ -17,9 +17,9 @@ import {
   needsCanonicalRedirect,
   generateH2HMeta,
   cleanTeamNameForDisplay,
-  normalizeTeamSlug,
   calculateH2HStats
 } from '../utils/headToHead';
+import { normalizeTeamSlug, mapSeoSlugToDbSlug } from '../utils/teamSlugs';
 import type { Fixture, Team } from '../types';
 
 const HeadToHeadPage: React.FC = () => {
@@ -64,23 +64,28 @@ const HeadToHeadPage: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      // Normalize team slugs to handle variations
-      const normalizedTeam1Slug = normalizeTeamSlug(parsedTeams.team1Slug);
-      const normalizedTeam2Slug = normalizeTeamSlug(parsedTeams.team2Slug);
+      // Normalize team slugs to handle variations (SEO-friendly)
+      const seoTeam1Slug = normalizeTeamSlug(parsedTeams.team1Slug);
+      const seoTeam2Slug = normalizeTeamSlug(parsedTeams.team2Slug);
 
-      console.log(`Loading H2H data for ${normalizedTeam1Slug} vs ${normalizedTeam2Slug}`);
+      // Map SEO slugs to database slugs (which have -fc suffix)
+      const dbTeam1Slug = mapSeoSlugToDbSlug(seoTeam1Slug);
+      const dbTeam2Slug = mapSeoSlugToDbSlug(seoTeam2Slug);
 
-      // Load teams and fixtures in parallel
+      console.log(`Loading H2H data for ${seoTeam1Slug} vs ${seoTeam2Slug}`);
+      console.log(`Database lookup: ${dbTeam1Slug} vs ${dbTeam2Slug}`);
+
+      // Load teams and fixtures in parallel using database slugs
       const [team1Data, team2Data, fixturesData, nextFixtureData] = await Promise.all([
-        getTeamBySlug(normalizedTeam1Slug),
-        getTeamBySlug(normalizedTeam2Slug),
-        getHeadToHeadFixtures(normalizedTeam1Slug, normalizedTeam2Slug),
-        getNextHeadToHeadFixture(normalizedTeam1Slug, normalizedTeam2Slug)
+        getTeamBySlug(dbTeam1Slug),
+        getTeamBySlug(dbTeam2Slug),
+        getHeadToHeadFixtures(dbTeam1Slug, dbTeam2Slug),
+        getNextHeadToHeadFixture(dbTeam1Slug, dbTeam2Slug)
       ]);
 
       // Validate teams exist
       if (!team1Data || !team2Data) {
-        const missingTeam = !team1Data ? normalizedTeam1Slug : normalizedTeam2Slug;
+        const missingTeam = !team1Data ? seoTeam1Slug : seoTeam2Slug;
         setError(`Team not found: ${cleanTeamNameForDisplay(missingTeam)}`);
         setLoading(false);
         return;
