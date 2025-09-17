@@ -53,64 +53,67 @@ export const AffiliateLink: React.FC<AffiliateLinkProps> = ({
 }) => {
   // Track affiliate link clicks for analytics
   const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
-    try {
-      // Track to Plausible Analytics
-      if (window.plausible) {
-        // Send general affiliate click event
-        window.plausible('Affiliate Click', {
-          props: {
-            partner: partner,
-            placement: trackingLabel,
-            pageType: pageType,
-            ...(competition && { competition })
-          }
-        });
+    // Defer tracking to prevent blocking main thread
+    setTimeout(() => {
+      try {
+        // Track to Plausible Analytics
+        if (window.plausible) {
+          // Send general affiliate click event
+          window.plausible('Affiliate Click', {
+            props: {
+              partner: partner,
+              placement: trackingLabel,
+              pageType: pageType,
+              ...(competition && { competition })
+            }
+          });
 
-        // Send partner-specific event
-        window.plausible(`Click: ${partner}`, {
-          props: {
-            placement: trackingLabel,
-            pageType: pageType,
-            ...(competition && { competition })
-          }
-        });
-      }
+          // Send partner-specific event
+          window.plausible(`Click: ${partner}`, {
+            props: {
+              placement: trackingLabel,
+              pageType: pageType,
+              ...(competition && { competition })
+            }
+          });
+        }
 
-      // Store in localStorage for pre-approval analysis
-      const clickData: AffiliateClickData = {
-        partner: partner,
-        placement: trackingLabel,
-        pageType: pageType,
-        competition: competition,
-        timestamp: Date.now(),
-        url: href
-      };
-
-      const existingData = localStorage.getItem('affiliate_clicks');
-      const clicks: AffiliateClickData[] = existingData ? JSON.parse(existingData) : [];
-      clicks.push(clickData);
-
-      // Keep only last 100 clicks to prevent localStorage bloat
-      if (clicks.length > 100) {
-        clicks.splice(0, clicks.length - 100);
-      }
-
-      localStorage.setItem('affiliate_clicks', JSON.stringify(clicks));
-
-      // Legacy gtag tracking for backwards compatibility
-      if (window.gtag) {
-        window.gtag('event', 'affiliate_click', {
+        // Store in localStorage for pre-approval analysis
+        const clickData: AffiliateClickData = {
           partner: partner,
-          url: href,
-          tracking_id: trackingId || 'unknown'
-        });
-      }
+          placement: trackingLabel,
+          pageType: pageType,
+          competition: competition,
+          timestamp: Date.now(),
+          url: href
+        };
 
-      // Console logging for development
-      console.log(`[Affiliate] Click tracked: ${partner} -> ${href}`, clickData);
-    } catch (error) {
-      console.warn('[Affiliate] Tracking failed:', error);
-    }
+        const existingData = localStorage.getItem('affiliate_clicks');
+        const clicks: AffiliateClickData[] = existingData ? JSON.parse(existingData) : [];
+        clicks.push(clickData);
+
+        // Keep only last 100 clicks to prevent localStorage bloat
+        if (clicks.length > 100) {
+          clicks.splice(0, clicks.length - 100);
+        }
+
+        localStorage.setItem('affiliate_clicks', JSON.stringify(clicks));
+
+        // Legacy gtag tracking for backwards compatibility
+        if (window.gtag) {
+          window.gtag('event', 'affiliate_click', {
+            partner: partner,
+            url: href,
+            tracking_id: trackingId || 'unknown'
+          });
+        }
+
+        // Console logging for development
+        console.log(`[Affiliate] Click tracked: ${partner} -> ${href}`, clickData);
+      } catch (error) {
+        console.warn('[Affiliate] Tracking failed:', error);
+      }
+    }, 0);
   };
 
   // Generate disclosure text

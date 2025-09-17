@@ -55,7 +55,7 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
   }
 };
 
-const FixtureCard: React.FC<FixtureCardProps> = ({
+const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
   fixture,
   variant = 'compact',
   showMatchweek = false,
@@ -65,14 +65,14 @@ const FixtureCard: React.FC<FixtureCardProps> = ({
   groupPosition = 'single',
   isInLiveGroup = false
 }) => {
-  const matchStatus = getMatchStatus(fixture.kickoff_utc);
-  const statusStyles = getMatchStatusStyles(matchStatus);
+  const matchStatus = React.useMemo(() => getMatchStatus(fixture.kickoff_utc), [fixture.kickoff_utc]);
+  const statusStyles = React.useMemo(() => getMatchStatusStyles(matchStatus), [matchStatus]);
 
   // If this card is in a live group, disable individual live styling
   const actualStatusStyles = isInLiveGroup && matchStatus.status === 'live'
     ? { card: {}, badge: statusStyles.badge } // Keep badge but remove card styling
     : statusStyles;
-  const fixtureData = getFixtureData(fixture);
+  const fixtureData = React.useMemo(() => getFixtureData(fixture), [fixture]);
   const isMinimized = variant === 'minimized';
 
   // Card style variants with grouped styling
@@ -302,7 +302,7 @@ const FixtureCard: React.FC<FixtureCardProps> = ({
       )}
     </div>
   );
-};
+});
 
 // Add CSS for responsive styles
 const fixtureCardStyles = `

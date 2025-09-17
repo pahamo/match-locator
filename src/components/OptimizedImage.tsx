@@ -19,7 +19,7 @@ interface OptimizedImageProps {
  * - Error handling with fallback
  * - Responsive sizing
  */
-const OptimizedImage: React.FC<OptimizedImageProps> = ({
+const OptimizedImage: React.FC<OptimizedImageProps> = React.memo(({
   src,
   alt,
   width,
@@ -145,6 +145,6 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
       `}</style>
     </>
   );
-};
+});
 
 export default OptimizedImage;
