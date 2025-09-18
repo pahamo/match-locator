@@ -341,29 +341,30 @@ const getHowToWatchContent = (slug: string): HowToWatchContent | null => {
 
 const HowToWatchPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
+  const content = slug ? getHowToWatchContent(slug) : null;
+
+  useEffect(() => {
+    if (content && slug) {
+      const meta = {
+        title: content.metaTitle,
+        description: content.metaDescription,
+        canonical: `${process.env.REACT_APP_CANONICAL_BASE || 'https://matchlocator.com'}/how-to-watch/${slug}`,
+        ogTitle: content.title,
+        ogDescription: content.metaDescription,
+        ogImage: `${process.env.REACT_APP_CANONICAL_BASE || 'https://matchlocator.com'}/og-how-to-watch-${slug}.jpg`
+      };
+
+      updateDocumentMeta(meta);
+    }
+  }, [slug, content]);
 
   if (!slug) {
     return <div>Invalid page</div>;
   }
 
-  const content = getHowToWatchContent(slug);
-
   if (!content) {
     return <div>Page not found</div>;
   }
-
-  useEffect(() => {
-    const meta = {
-      title: content.metaTitle,
-      description: content.metaDescription,
-      canonical: `${process.env.REACT_APP_CANONICAL_BASE || 'https://matchlocator.com'}/how-to-watch/${slug}`,
-      ogTitle: content.title,
-      ogDescription: content.metaDescription,
-      ogImage: `${process.env.REACT_APP_CANONICAL_BASE || 'https://matchlocator.com'}/og-how-to-watch-${slug}.jpg`
-    };
-
-    updateDocumentMeta(meta);
-  }, [slug, content]);
 
   return (
     <div>

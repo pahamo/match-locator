@@ -4,7 +4,7 @@ interface AffiliateLinkProps {
   href: string;
   children: React.ReactNode;
   partner: string;
-  trackingLabel?: 'fixture-card' | 'competition-hero' | 'match-detail' | 'header-nav' | 'footer' | 'sidebar' | 'content';
+  trackingLabel?: 'fixture-card' | 'competition-hero' | 'match-detail' | 'header-nav' | 'footer' | 'sidebar' | 'content' | 'how-to-watch';
   pageType?: string;
   competition?: string;
   className?: string;

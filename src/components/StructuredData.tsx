@@ -47,25 +47,91 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) => {
     return 'https://www.uefa.com';
   };
 
+  // Map venue names to proper address data for rich results
+  const getVenueAddressData = (venueName: string): { city: string; address: string } => {
+    const venueMap: Record<string, { city: string; address: string }> = {
+      // Premier League venues
+      'Emirates Stadium': { city: 'London', address: 'Ashburton Grove, London N5 1BU' },
+      'Stamford Bridge': { city: 'London', address: 'Fulham Rd, London SW6 1HS' },
+      'Anfield': { city: 'Liverpool', address: 'Anfield Rd, Liverpool L4 0TH' },
+      'Old Trafford': { city: 'Manchester', address: 'Sir Matt Busby Way, Manchester M16 0RA' },
+      'Etihad Stadium': { city: 'Manchester', address: 'Ashton New Rd, Manchester M11 3FF' },
+      'Tottenham Hotspur Stadium': { city: 'London', address: '782 High Rd, London N17 0BX' },
+      'London Stadium': { city: 'London', address: 'Queen Elizabeth Olympic Park, London E20 2ST' },
+      'Craven Cottage': { city: 'London', address: 'Stevenage Rd, London SW6 6HH' },
+      'Goodison Park': { city: 'Liverpool', address: 'Goodison Rd, Liverpool L4 4EL' },
+      'Villa Park': { city: 'Birmingham', address: 'Trinity Rd, Birmingham B6 6HE' },
+      'St. James\' Park': { city: 'Newcastle', address: 'Barrack Rd, Newcastle upon Tyne NE1 4ST' },
+      'Selhurst Park': { city: 'London', address: 'Holmesdale Rd, London SE25 6PU' },
+      'Molineux Stadium': { city: 'Wolverhampton', address: 'Waterloo Rd, Wolverhampton WV1 4QR' },
+      'The Amex Stadium': { city: 'Brighton', address: 'Village Way, Brighton BN1 9BL' },
+      'Turf Moor': { city: 'Burnley', address: 'Harry Potts Way, Burnley BB10 4BX' },
+      'Bramall Lane': { city: 'Sheffield', address: 'Bramall Ln, Sheffield S2 4SU' },
+      'Elland Road': { city: 'Leeds', address: 'Elland Rd, Leeds LS11 0ES' },
+      'Carrow Road': { city: 'Norwich', address: 'Carrow Rd, Norwich NR1 1JE' },
+      'Vicarage Road': { city: 'Watford', address: 'Vicarage Rd, Watford WD18 0ER' },
+      'Brentford Community Stadium': { city: 'London', address: 'Lionel Rd S, Brentford TW8 0RU' },
+
+      // Champions League venues
+      'Wembley Stadium': { city: 'London', address: 'Wembley, London HA9 0WS' },
+      'Santiago Bernabéu': { city: 'Madrid', address: 'Av. de Concha Espina, 1, 28036 Madrid, Spain' },
+      'Camp Nou': { city: 'Barcelona', address: 'C. d\'Arístides Maillol, 12, 08028 Barcelona, Spain' },
+      'Allianz Arena': { city: 'Munich', address: 'Werner-Heisenberg-Allee 25, 80939 München, Germany' },
+      'San Siro': { city: 'Milan', address: 'Piazzale Angelo Moratti, 20151 Milano MI, Italy' },
+      'Parc des Princes': { city: 'Paris', address: '24 Rue du Commandant Guilbaud, 75016 Paris, France' }
+    };
+
+    return venueMap[venueName] || { city: 'United Kingdom', address: 'Football Stadium, United Kingdom' };
+  };
+
   const generateMatchStructuredData = (fixture: Fixture | SimpleFixture) => {
     const isSimpleFixture = 'home_team' in fixture;
-    
+
     const homeTeam = isSimpleFixture ? fixture.home_team : fixture.home.name;
     const awayTeam = isSimpleFixture ? fixture.away_team : fixture.away.name;
     const venue = !isSimpleFixture && fixture.venue ? fixture.venue : undefined;
-    
+
     const kickoffDate = new Date(fixture.kickoff_utc).toISOString();
-    
+
     // Generate SEO-friendly URL for the match
-    const matchUrl = isSimpleFixture ? 
+    const matchUrl = isSimpleFixture ?
       `https://matchlocator.com/matches/${fixture.id}-${homeTeam.toLowerCase().replace(/\s+/g, '-')}-vs-${awayTeam.toLowerCase().replace(/\s+/g, '-')}-${kickoffDate.split('T')[0]}` :
       `https://matchlocator.com/matches/${fixture.id}-${fixture.home.name.toLowerCase().replace(/\s+/g, '-')}-vs-${fixture.away.name.toLowerCase().replace(/\s+/g, '-')}-${kickoffDate.split('T')[0]}`;
-    
+
+    // Get proper location data - always include location for Google rich results
+    const getLocationData = () => {
+      if (venue) {
+        // Try to map known venues to proper address data
+        const venueData = getVenueAddressData(venue);
+        return {
+          "@type": "Place",
+          "name": venue,
+          "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "GB",
+            "addressLocality": venueData.city,
+            "streetAddress": venueData.address
+          }
+        };
+      } else {
+        // Default location for matches without specific venue
+        return {
+          "@type": "Place",
+          "name": "UK Football Venue",
+          "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "GB",
+            "addressLocality": "United Kingdom"
+          }
+        };
+      }
+    };
+
     return {
       "@context": "https://schema.org",
       "@type": "SportsEvent",
       "name": `${homeTeam} vs ${awayTeam}`,
-      "description": `Football match between ${homeTeam} and ${awayTeam}`,
+      "description": `Football match between ${homeTeam} and ${awayTeam} in ${getCompetitionName(fixture)}`,
       "startDate": kickoffDate,
       "sport": {
         "@type": "Sport",
@@ -77,7 +143,7 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) => {
         "sport": "Football"
       },
       "awayTeam": {
-        "@type": "SportsTeam", 
+        "@type": "SportsTeam",
         "name": awayTeam,
         "sport": "Football"
       },
@@ -98,15 +164,17 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) => {
         "name": getCompetitionName(fixture),
         "url": getCompetitionUrl(fixture)
       },
-      ...(venue && {
-        "location": {
-          "@type": "Place",
-          "name": venue
-        }
-      }),
+      "location": getLocationData(),
       "url": matchUrl,
       "isAccessibleForFree": false,
-      "eventStatus": "https://schema.org/EventScheduled"
+      "eventStatus": "https://schema.org/EventScheduled",
+      "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+      "offers": {
+        "@type": "Offer",
+        "name": "TV Broadcasting",
+        "description": "Watch this football match on UK television",
+        "availability": "https://schema.org/InStock"
+      }
     };
   };
 
