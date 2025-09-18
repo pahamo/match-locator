@@ -2,7 +2,7 @@ import React from 'react';
 import type { Fixture, SimpleFixture } from '../types';
 
 interface StructuredDataProps {
-  type: 'match' | 'organization' | 'website' | 'competition';
+  type: 'match' | 'organization' | 'website' | 'competition' | 'faq';
   data?: Fixture | SimpleFixture | any;
 }
 
@@ -156,6 +156,50 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) => {
     };
   };
 
+  const generateFAQStructuredData = (faqData?: Array<{question: string; answer: string}>) => {
+    const defaultFAQs = [
+      {
+        question: "What TV channels show Premier League matches in the UK?",
+        answer: "Premier League matches in the UK are primarily shown on Sky Sports, TNT Sports (formerly BT Sport), and Amazon Prime Video. BBC and ITV occasionally show selected matches. Sky Sports shows the majority of televised Premier League games."
+      },
+      {
+        question: "How can I watch Champions League football on TV?",
+        answer: "Champions League matches are exclusively shown on TNT Sports (formerly BT Sport) in the UK. You can watch via TNT Sports on Sky, Virgin Media, BT TV, or through the TNT Sports app with a subscription."
+      },
+      {
+        question: "Are all Premier League matches shown on TV?",
+        answer: "No, not all Premier League matches are televised. Due to the 3pm Saturday blackout rule in the UK, matches kicking off at 3pm on Saturday are not shown live on UK television. Only selected matches are chosen for broadcast."
+      },
+      {
+        question: "What is the 3pm blackout rule?",
+        answer: "The 3pm blackout is a UEFA rule that prevents live football broadcasts between 2:45pm and 5:15pm on Saturdays in the UK. This is designed to protect attendance at lower league matches by encouraging fans to attend local games instead of watching Premier League on TV."
+      },
+      {
+        question: "How much does Sky Sports cost to watch football?",
+        answer: "Sky Sports pricing varies depending on your package. Sky Sports typically costs around £25-30 per month when added to a Sky TV package. You can also access Sky Sports through streaming services like NOW TV with day, week, or month passes available."
+      },
+      {
+        question: "Can I watch football matches for free on TV?",
+        answer: "Some football matches are available free-to-air on BBC and ITV, particularly FA Cup matches, England international games, and selected Champions League matches. However, most Premier League games require a Sky Sports or TNT Sports subscription."
+      }
+    ];
+
+    const faqsToUse = faqData || defaultFAQs;
+
+    return {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": faqsToUse.map(faq => ({
+        "@type": "Question",
+        "name": faq.question,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": faq.answer
+        }
+      }))
+    };
+  };
+
   let structuredData;
   
   switch (type) {
@@ -172,6 +216,9 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) => {
     case 'competition':
       if (!data) return null;
       structuredData = data; // Use the passed data directly for competition
+      break;
+    case 'faq':
+      structuredData = generateFAQStructuredData(data);
       break;
     default:
       return null;

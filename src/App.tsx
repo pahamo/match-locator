@@ -56,6 +56,8 @@ const HowWeSupportThisSitePage = React.lazy(() => import('./pages/HowWeSupportTh
 const ContactPage = React.lazy(() => import('./pages/ContactPage'));
 const TodayFixturesPage = React.lazy(() => import('./pages/TodayFixturesPage'));
 const TomorrowFixturesPage = React.lazy(() => import('./pages/TomorrowFixturesPage'));
+const ThisWeekendFixturesPage = React.lazy(() => import('./pages/ThisWeekendFixturesPage'));
+const HowToWatchPage = React.lazy(() => import('./pages/HowToWatchPage'));
 const CookieSettingsModal = React.lazy(() => import('./components/cookies/CookieSettingsModal'));
 
 // Loading fallback component
@@ -97,6 +99,7 @@ function App() {
               {/* Dynamic fixtures pages */}
               <Route path="/fixtures/today" element={<TodayFixturesPage />} />
               <Route path="/fixtures/tomorrow" element={<TomorrowFixturesPage />} />
+              <Route path="/fixtures/this-weekend" element={<ThisWeekendFixturesPage />} />
               {/* Competition routes */}
               <Route path="/competitions" element={<CompetitionsOverviewPage />} />
               <Route path="/competitions/champions-league/group-stage" element={<ChampionsLeagueGroupStagePage />} />
@@ -125,6 +128,7 @@ function App() {
               <Route path="/legal/terms" element={<Terms />} />
               <Route path="/support" element={<HowWeSupportThisSitePage />} />
               <Route path="/how-we-make-money" element={<HowWeSupportThisSitePage />} />
+              <Route path="/how-to-watch/:slug" element={<HowToWatchPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>

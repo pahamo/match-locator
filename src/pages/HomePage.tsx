@@ -301,6 +301,7 @@ const HomePage: React.FC = () => {
     <div className="home-page">
       <StructuredData type="website" />
       <StructuredData type="organization" />
+      <StructuredData type="faq" />
 
       {/* Live game animations */}
       <style>{`

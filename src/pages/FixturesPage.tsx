@@ -5,6 +5,7 @@ import type { Fixture, Team, Competition } from '../types';
 import Header from '../components/Header';
 import Breadcrumbs from '../components/Breadcrumbs';
 import MobileFilterModal from '../components/MobileFilterModal';
+import StructuredData from '../components/StructuredData';
 import { FixtureCard } from '../design-system';
 import { generateFixturesMeta, updateDocumentMeta } from '../utils/seo';
 import { generateBreadcrumbs } from '../utils/breadcrumbs';
@@ -178,6 +179,7 @@ const FixturesPage: React.FC = () => {
 
   return (
     <div className="fixtures-page">
+      <StructuredData type="faq" />
       <Header />
 
       <main>

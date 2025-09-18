@@ -97,6 +97,12 @@ export const generateBreadcrumbs = (
           { label: 'Fixtures', href: '/fixtures' },
           { label: 'Tomorrow' }
         );
+      } else if (pathParts[1] === 'this-weekend') {
+        // /fixtures/this-weekend
+        breadcrumbs.push(
+          { label: 'Fixtures', href: '/fixtures' },
+          { label: 'This Weekend' }
+        );
       } else {
         // /fixtures/match-slug (individual match)
         const matchSlug = pathParts[1];
@@ -227,6 +233,32 @@ export const generateBreadcrumbs = (
 
     case 'contact':
       breadcrumbs.push({ label: 'Contact' });
+      break;
+
+    case 'how-to-watch':
+      if (pathParts.length === 1) {
+        // /how-to-watch
+        breadcrumbs.push({ label: 'How to Watch' });
+      } else {
+        // /how-to-watch/provider-slug
+        breadcrumbs.push(
+          { label: 'How to Watch', href: '/how-to-watch' }
+        );
+
+        if (options.customTitle) {
+          breadcrumbs.push({ label: options.customTitle });
+        } else {
+          const providerSlug = pathParts[1];
+          let providerName = providerSlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+          // Special cases for better display names
+          if (providerSlug === 'sky-sports') providerName = 'Sky Sports';
+          if (providerSlug === 'tnt-sports') providerName = 'TNT Sports';
+          if (providerSlug === 'premier-league') providerName = 'Premier League';
+
+          breadcrumbs.push({ label: providerName });
+        }
+      }
       break;
 
     case 'support':
