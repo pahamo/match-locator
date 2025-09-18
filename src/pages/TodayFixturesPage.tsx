@@ -143,8 +143,8 @@ const TodayFixturesPage: React.FC = () => {
   return (
     <div>
       <Header />
-      <Breadcrumbs items={generateBreadcrumbs('/fixtures/today')} />
       <main className="wrap" style={{ paddingTop: 'var(--layout-page-top-margin)' }}>
+        <Breadcrumbs items={generateBreadcrumbs('/fixtures/today')} />
         {/* Page Header */}
         <div style={{ marginBottom: '32px' }}>
           <h1 style={{

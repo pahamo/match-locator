@@ -85,10 +85,10 @@ const ClubsPage: React.FC = () => {
   return (
     <div className="clubs-page">
       <Header />
-      <Breadcrumbs items={generateBreadcrumbs('/clubs')} />
 
       <main>
         <div className="wrap">
+          <Breadcrumbs items={generateBreadcrumbs('/clubs')} />
           <h1 style={{ margin: '0 0 24px 0', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>Football Clubs</h1>
 
           {/* Dynamic Competition Sections */}

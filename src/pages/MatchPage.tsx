@@ -182,10 +182,10 @@ const MatchPage: React.FC = () => {
         title="Match Locator"
         subtitle="Football TV Schedule (UK)"
       />
-      <Breadcrumbs items={generateBreadcrumbs(window.location.pathname, { matchTitle: `${fixture.home.name} vs ${fixture.away.name}` })} />
 
       <main>
         <div className="wrap">
+          <Breadcrumbs items={generateBreadcrumbs(window.location.pathname, { matchTitle: `${fixture.home.name} vs ${fixture.away.name}` })} />
           <h1 style={{ marginTop: 32, marginBottom: 16, fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>
             {fixture.home.name} vs {fixture.away.name}
           </h1>

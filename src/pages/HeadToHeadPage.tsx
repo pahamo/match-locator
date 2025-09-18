@@ -188,12 +188,12 @@ const HeadToHeadPage: React.FC = () => {
   return (
     <div className="h2h-page">
       <Header />
-      <Breadcrumbs items={generateBreadcrumbs(window.location.pathname, {
-        matchTitle: `${team1.name} vs ${team2.name}`
-      })} />
 
       <main>
         <div className="wrap">
+          <Breadcrumbs items={generateBreadcrumbs(window.location.pathname, {
+            matchTitle: `${team1.name} vs ${team2.name}`
+          })} />
           {/* Page Header */}
           <div style={{
             textAlign: 'center',
