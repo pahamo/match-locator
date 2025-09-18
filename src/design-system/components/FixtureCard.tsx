@@ -4,8 +4,7 @@ import type { SimpleFixture, Fixture } from '../../types';
 import { getMatchStatus, getMatchStatusStyles } from '../../utils/matchStatus';
 import { shouldCreateMatchPage } from '../../utils/matchPageFilter';
 import { generateH2HUrl } from '../../utils/headToHead';
-import { generateSeoTeamSlug } from '../../utils/teamSlugs';
-import { isSupportedTeam } from '../../utils/teamSlugs';
+import { getCanonicalTeamSlug } from '../../utils/teamSlugs';
 import { getDisplayTeamName } from '../../utils/teamNames';
 import { formatTime } from '../../utils/dateFormat';
 import OptimizedImage from '../../components/OptimizedImage';
@@ -29,18 +28,14 @@ const isSimpleFixture = (fixture: SimpleFixture | Fixture): fixture is SimpleFix
 };
 
 const getFixtureData = (fixture: SimpleFixture | Fixture) => {
-  // Always generate H2H URLs for relevant matches
+  // SIMPLIFIED: Only use shouldCreateMatchPage to determine if View button shows
   const shouldCreatePage = shouldCreateMatchPage(fixture);
 
   if (isSimpleFixture(fixture)) {
     // Generate H2H URL from SimpleFixture
-    const homeSlug = generateSeoTeamSlug(fixture.home_team);
-    const awaySlug = generateSeoTeamSlug(fixture.away_team);
-    const h2hSlug = `${homeSlug}-vs-${awaySlug}`;
-
-    // Check if both teams are supported (Premier League or Champions League)
-    const isValidH2H = isSupportedTeam(homeSlug) && isSupportedTeam(awaySlug);
-    const h2hUrl = isValidH2H ? generateH2HUrl(homeSlug, awaySlug) : null;
+    const homeSlug = getCanonicalTeamSlug(fixture.home_team);
+    const awaySlug = getCanonicalTeamSlug(fixture.away_team);
+    const h2hUrl = shouldCreatePage ? generateH2HUrl(homeSlug, awaySlug) : null;
 
     return {
       homeTeam: fixture.home_team,
@@ -50,8 +45,8 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
       broadcaster: fixture.broadcaster,
       isBlackout: fixture.isBlackout || false,
       matchweek: fixture.matchweek,
-      url: shouldCreatePage && isValidH2H ? h2hUrl : null,
-      shouldCreatePage: shouldCreatePage && isValidH2H
+      url: h2hUrl,
+      shouldCreatePage: shouldCreatePage
     };
   } else {
     const hasProviders = fixture.providers_uk && fixture.providers_uk.length > 0;
@@ -59,13 +54,9 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
     const isBlackout = fixture.blackout?.is_blackout || false;
 
     // Generate H2H URL from Fixture
-    const homeSlug = generateSeoTeamSlug(fixture.home.name);
-    const awaySlug = generateSeoTeamSlug(fixture.away.name);
-    const h2hSlug = `${homeSlug}-vs-${awaySlug}`;
-
-    // Check if both teams are supported (Premier League or Champions League)
-    const isValidH2H = isSupportedTeam(homeSlug) && isSupportedTeam(awaySlug);
-    const h2hUrl = isValidH2H ? generateH2HUrl(homeSlug, awaySlug) : null;
+    const homeSlug = getCanonicalTeamSlug(fixture.home.name);
+    const awaySlug = getCanonicalTeamSlug(fixture.away.name);
+    const h2hUrl = shouldCreatePage ? generateH2HUrl(homeSlug, awaySlug) : null;
 
     return {
       homeTeam: fixture.home.name,
@@ -75,8 +66,8 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
       broadcaster: isBlackout ? undefined : broadcasterName,
       isBlackout: isBlackout,
       matchweek: fixture.matchweek,
-      url: shouldCreatePage && isValidH2H ? h2hUrl : null,
-      shouldCreatePage: shouldCreatePage && isValidH2H
+      url: h2hUrl,
+      shouldCreatePage: shouldCreatePage
     };
   }
 };
@@ -213,10 +204,17 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
         </Link>
       )}
 
-      {/* Alternative message for matches without individual pages */}
+      {/* Show "No UK Broadcast" only for explicitly blackout games */}
       {showViewButton && !fixtureData.shouldCreatePage && (
-        <span className="view-button disabled" title="See team pages for more details">
-          No UK Broadcast
+        <span className="view-button disabled" title="Not available for this competition">
+          Not Available
+        </span>
+      )}
+
+      {/* Show "No UK Broadcast" only for blackout games that have H2H pages */}
+      {showViewButton && fixtureData.shouldCreatePage && fixtureData.isBlackout && (
+        <span className="view-button disabled" title="This match is subject to a UK broadcast blackout">
+          🚫 Blackout
         </span>
       )}
 

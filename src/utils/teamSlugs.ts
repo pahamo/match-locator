@@ -125,89 +125,280 @@ export const TEAM_VARIATIONS: Record<string, string> = {
 };
 
 /**
- * International team slug mappings for Champions League teams
- * Maps generated slugs to their actual database slugs
+ * SIMPLIFIED: All team variations map to canonical slugs
+ * Supports common names, abbreviations, and database variations
  */
-export const INTERNATIONAL_TEAM_MAPPINGS: Record<string, string> = {
-  // German teams
-  'bayer-04-leverkusen': 'bayer-04-leverkusen',
-  'bayern-munich': 'fc-bayern-munchen',
-  'borussia-dortmund': 'borussia-dortmund',
-  'rb-leipzig': 'rb-leipzig',
+export const ALL_TEAM_MAPPINGS: Record<string, string> = {
+  // === PREMIER LEAGUE TEAMS ===
+  // Arsenal
+  'arsenal': 'arsenal',
+  'arsenal-fc': 'arsenal',
 
+  // Liverpool
+  'liverpool': 'liverpool',
+  'liverpool-fc': 'liverpool',
+
+  // Chelsea
+  'chelsea': 'chelsea',
+  'chelsea-fc': 'chelsea',
+
+  // Manchester United
+  'manchester-united': 'manchester-united',
+  'manchester-united-fc': 'manchester-united',
+  'man-united': 'manchester-united',
+  'man-utd': 'manchester-united',
+
+  // Manchester City
+  'manchester-city': 'manchester-city',
+  'manchester-city-fc': 'manchester-city',
+  'man-city': 'manchester-city',
+
+  // Tottenham
+  'tottenham-hotspur': 'tottenham-hotspur',
+  'tottenham-hotspur-fc': 'tottenham-hotspur',
+  'tottenham': 'tottenham-hotspur',
+  'spurs': 'tottenham-hotspur',
+
+  // Newcastle
+  'newcastle-united': 'newcastle-united',
+  'newcastle-united-fc': 'newcastle-united',
+  'newcastle': 'newcastle-united',
+
+  // Brighton
+  'brighton-hove-albion': 'brighton-hove-albion',
+  'brighton-hove-albion-fc': 'brighton-hove-albion',
+  'brighton': 'brighton-hove-albion',
+
+  // West Ham
+  'west-ham': 'west-ham',
+  'west-ham-united': 'west-ham',
+  'west-ham-united-fc': 'west-ham',
+
+  // Aston Villa
+  'aston-villa': 'aston-villa',
+  'aston-villa-fc': 'aston-villa',
+
+  // AFC Bournemouth
+  'afc-bournemouth': 'afc-bournemouth',
+  'afc-bournemouth-fc': 'afc-bournemouth',
+  'bournemouth': 'afc-bournemouth',
+
+  // Crystal Palace
+  'crystal-palace': 'crystal-palace',
+  'crystal-palace-fc': 'crystal-palace',
+  'palace': 'crystal-palace',
+
+  // Everton
+  'everton': 'everton',
+  'everton-fc': 'everton',
+
+  // Brentford
+  'brentford': 'brentford',
+  'brentford-fc': 'brentford',
+
+  // Fulham
+  'fulham': 'fulham',
+  'fulham-fc': 'fulham',
+
+  // Ipswich Town
+  'ipswich-town': 'ipswich-town',
+  'ipswich-town-fc': 'ipswich-town',
+  'ipswich': 'ipswich-town',
+
+  // Leicester City
+  'leicester-city': 'leicester-city',
+  'leicester-city-fc': 'leicester-city',
+  'leicester': 'leicester-city',
+
+  // Nottingham Forest
+  'nottingham-forest': 'nottingham-forest',
+  'nottingham-forest-fc': 'nottingham-forest',
+  'nottm-forest': 'nottingham-forest',
+
+  // Southampton
+  'southampton': 'southampton',
+  'southampton-fc': 'southampton',
+
+  // Wolverhampton Wanderers
+  'wolverhampton-wanderers': 'wolverhampton-wanderers',
+  'wolverhampton-wanderers-fc': 'wolverhampton-wanderers',
+  'wolves': 'wolverhampton-wanderers',
+
+  // === CHAMPIONS LEAGUE TEAMS (Common names first) ===
   // Spanish teams
-  'real-madrid': 'real-madrid-cf',
-  'barcelona': 'fc-barcelona',
-  'atletico-madrid': 'club-atletico-de-madrid',
-  'athletic-bilbao': 'athletic-club',
+  'real-madrid': 'real-madrid',
+  'real-madrid-cf': 'real-madrid',
+  'madrid': 'real-madrid',
+
+  'barcelona': 'barcelona',
+  'fc-barcelona': 'barcelona',
+  'barca': 'barcelona',
+
+  'atletico-madrid': 'atletico-madrid',
+  'club-atletico-de-madrid': 'atletico-madrid',
+  'atletico': 'atletico-madrid',
+
+  'athletic-bilbao': 'athletic-bilbao',
+  'athletic-club': 'athletic-bilbao',
+
+  // German teams
+  'bayern-munich': 'bayern-munich',
+  'fc-bayern-munchen': 'bayern-munich',
+  'bayern': 'bayern-munich',
+
+  'borussia-dortmund': 'borussia-dortmund',
+  'dortmund': 'borussia-dortmund',
+  'bvb': 'borussia-dortmund',
+
+  'bayer-leverkusen': 'bayer-leverkusen',
+  'bayer-04-leverkusen': 'bayer-leverkusen',
+  'leverkusen': 'bayer-leverkusen',
+
+  'rb-leipzig': 'rb-leipzig',
+  'leipzig': 'rb-leipzig',
 
   // Italian teams
-  'juventus': 'juventus-fc',
+  'juventus': 'juventus',
+  'juventus-fc': 'juventus',
+  'juve': 'juventus',
+
   'ac-milan': 'ac-milan',
-  'inter-milan': 'fc-internazionale-milano',
-  'napoli': 'ssc-napoli',
-  'atalanta': 'atalanta-bc',
-  'roma': 'as-roma',
-  'lazio': 'ss-lazio',
+  'milan': 'ac-milan',
+
+  'inter-milan': 'inter-milan',
+  'fc-internazionale-milano': 'inter-milan',
+  'inter': 'inter-milan',
+
+  'napoli': 'napoli',
+  'ssc-napoli': 'napoli',
+
+  'atalanta': 'atalanta',
+  'atalanta-bc': 'atalanta',
+
+  'roma': 'roma',
+  'as-roma': 'roma',
+
+  'lazio': 'lazio',
+  'ss-lazio': 'lazio',
 
   // French teams
-  'paris-saint-germain': 'paris-saint-germain-fc',
-  'psg': 'paris-saint-germain-fc',
-  'monaco': 'as-monaco-fc',
-  'lille': 'lille-osc',
-  'lyon': 'olympique-lyonnais',
-  'marseille': 'olympique-de-marseille',
+  'psg': 'psg',
+  'paris-saint-germain': 'psg',
+  'paris-saint-germain-fc': 'psg',
+  'paris-sg': 'psg',
+
+  'monaco': 'monaco',
+  'as-monaco': 'monaco',
+  'as-monaco-fc': 'monaco',
+
+  'lille': 'lille',
+  'lille-osc': 'lille',
+
+  'lyon': 'lyon',
+  'olympique-lyonnais': 'lyon',
+  'ol': 'lyon',
+
+  'marseille': 'marseille',
+  'olympique-de-marseille': 'marseille',
+  'om': 'marseille',
 
   // Dutch teams
-  'ajax': 'afc-ajax',
+  'ajax': 'ajax',
+  'afc-ajax': 'ajax',
+
+  'psv': 'psv',
   'psv-eindhoven': 'psv',
+
   'feyenoord': 'feyenoord',
 
   // Portuguese teams
-  'porto': 'fc-porto',
-  'benfica': 'sl-benfica',
-  'sporting-clube-de-portugal': 'sporting-cp',
-  'sporting-cp': 'sporting-cp',
+  'porto': 'porto',
+  'fc-porto': 'porto',
 
-  // Other teams
-  'fc-kbenhavn': 'fc-kobenhavn', // Danish
-  'fk-kairat': 'fc-kairat-almaty', // Kazakhstani
-  'red-bull-salzburg': 'fc-red-bull-salzburg', // Austrian
-  'dinamo-zagreb': 'gnk-dinamo-zagreb', // Croatian
-  'shakhtar-donetsk': 'fc-shakhtar-donetsk', // Ukrainian
-  'celtic': 'celtic-fc', // Scottish
-  'rangers': 'rangers-fc', // Scottish
+  'benfica': 'benfica',
+  'sl-benfica': 'benfica',
+
+  'sporting': 'sporting',
+  'sporting-cp': 'sporting',
+  'sporting-clube-de-portugal': 'sporting',
+
+  // Other European teams
+  'red-bull-salzburg': 'red-bull-salzburg',
+  'fc-red-bull-salzburg': 'red-bull-salzburg',
+  'salzburg': 'red-bull-salzburg',
+
+  'dinamo-zagreb': 'dinamo-zagreb',
+  'gnk-dinamo-zagreb': 'dinamo-zagreb',
+  'zagreb': 'dinamo-zagreb',
+
+  'shakhtar-donetsk': 'shakhtar-donetsk',
+  'fc-shakhtar-donetsk': 'shakhtar-donetsk',
+  'shakhtar': 'shakhtar-donetsk',
+
+  'celtic': 'celtic',
+  'celtic-fc': 'celtic',
+
+  'rangers': 'rangers',
+  'rangers-fc': 'rangers',
 };
 
 /**
- * Enhanced slug mapping that handles both Premier League and international teams
+ * SIMPLIFIED: Get canonical team slug from any variation
  */
-export function mapSeoSlugToDbSlugEnhanced(seoSlug: string): string {
-  // First check international mappings
-  if (INTERNATIONAL_TEAM_MAPPINGS[seoSlug]) {
-    return INTERNATIONAL_TEAM_MAPPINGS[seoSlug];
+export function getCanonicalTeamSlug(teamName: string): string {
+  // Convert team name to lowercase slug format
+  const slug = teamName.toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '') // Remove special characters except spaces and hyphens
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/-+/g, '-') // Replace multiple hyphens with single
+    .replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+
+  // Return canonical mapping or the slug itself
+  return ALL_TEAM_MAPPINGS[slug] || slug;
+}
+
+/**
+ * Check if a team is supported (EPL or UCL)
+ */
+export function isSupportedTeam(teamSlug: string): boolean {
+  const canonical = getCanonicalTeamSlug(teamSlug);
+  return !!ALL_TEAM_MAPPINGS[canonical] || !!ALL_TEAM_MAPPINGS[teamSlug];
+}
+
+/**
+ * Get database slug for a team (for backwards compatibility)
+ */
+export function getDbSlugForTeam(teamSlug: string): string {
+  const canonical = getCanonicalTeamSlug(teamSlug);
+
+  // Premier League teams need -fc suffix for database
+  const plTeams = [
+    'arsenal', 'liverpool', 'chelsea', 'manchester-united', 'manchester-city',
+    'tottenham-hotspur', 'newcastle-united', 'brighton-hove-albion', 'west-ham',
+    'aston-villa', 'afc-bournemouth', 'crystal-palace', 'everton', 'brentford',
+    'fulham', 'ipswich-town', 'leicester-city', 'nottingham-forest',
+    'southampton', 'wolverhampton-wanderers'
+  ];
+
+  if (plTeams.includes(canonical)) {
+    // Special cases for Premier League
+    if (canonical === 'west-ham') return 'west-ham-united-fc';
+    if (canonical === 'afc-bournemouth') return 'afc-bournemouth-fc';
+    return `${canonical}-fc`;
   }
 
-  // Fall back to Premier League mapping
-  return mapSeoSlugToDbSlug(seoSlug);
+  // Champions League teams use canonical names as database slugs
+  return canonical;
 }
 
 /**
- * Check if a team is supported (Premier League or mapped international team)
+ * Legacy compatibility functions
  */
-export function isSupportedTeam(seoSlug: string): boolean {
-  // Check if it's a Premier League team
-  const plTeam = PREMIER_LEAGUE_TEAMS.find(team => team.seoSlug === seoSlug);
-  if (plTeam) return true;
-
-  // Check if it's a mapped international team
-  return !!INTERNATIONAL_TEAM_MAPPINGS[seoSlug];
+export function mapSeoSlugToDbSlugEnhanced(seoSlug: string): string {
+  return getDbSlugForTeam(seoSlug);
 }
 
-/**
- * Normalize user input to canonical SEO slug
- */
 export function normalizeTeamSlug(userSlug: string): string {
-  const normalized = userSlug.toLowerCase().trim();
-  return TEAM_VARIATIONS[normalized] || normalized;
+  return getCanonicalTeamSlug(userSlug);
 }

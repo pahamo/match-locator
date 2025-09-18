@@ -92,39 +92,24 @@ function hasBigTeam(fixture: Fixture | SimpleFixture): boolean {
 }
 
 /**
- * Determine if we should create an H2H page for this fixture
+ * SIMPLIFIED: Should we create an H2H page for this fixture?
  *
- * UPDATED FOR H2H ARCHITECTURE: Now creates H2H pages instead of individual match pages.
- * H2H pages provide value even for blackout matches (historical stats, future fixtures).
+ * RULES:
+ * - Premier League: ALWAYS show View button
+ * - Champions League: ALWAYS show View button
+ * - Everything else: NO View button
+ * - "No UK Broadcast" only for explicitly marked blackout games
  */
 export function shouldCreateMatchPage(fixture: Fixture | SimpleFixture): boolean {
-  // 1. Check competition relevance
+  // 1. Only check competition - simple and clear
   const competitionSlug = getCompetitionSlug(fixture);
-  const isUKRelevant = UK_RELEVANT_COMPETITIONS.includes(competitionSlug);
-  const hasPopularTeams = hasBigTeam(fixture);
 
-  if (!isUKRelevant && !hasPopularTeams) {
-    return false; // Don't create H2H page for random foreign league matches
-  }
-
-  // 2. Must be within reasonable timeframe
-  const daysUntilMatch = getDaysUntil(fixture.kickoff_utc);
-  if (daysUntilMatch > 30 || daysUntilMatch < -7) {
-    return false; // Don't create page for matches too far in future or past
-  }
-
-  // 3. H2H pages are valuable for UK-relevant competitions even without broadcaster
-  if (isUKRelevant) {
-    // Allow H2H pages for UK competitions (Premier League, etc.) regardless of broadcast status
-    // This includes blackout matches - users still want to see H2H stats and future fixtures
+  // 2. Premier League and Champions League ALWAYS get H2H pages
+  if (competitionSlug === 'premier-league' || competitionSlug === 'champions-league') {
     return true;
   }
 
-  // 4. For non-UK competitions with big teams, require confirmed broadcaster
-  if (hasPopularTeams && hasConfirmedBroadcaster(fixture)) {
-    return true;
-  }
-
+  // 3. Everything else gets no H2H page
   return false;
 }
 
