@@ -202,14 +202,19 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
 const fixtureCardStyles = `
   .fixture-card.with-time {
     display: grid;
-    grid-template-columns: auto 1fr auto auto auto;
+    grid-template-columns: auto 1fr auto auto;
     align-items: center;
     gap: 12px;
     padding: 12px;
+    min-height: auto;
   }
 
   .fixture-card.with-time .teams-section {
-    display: contents;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
   }
 
   .time-column {
@@ -283,6 +288,10 @@ const fixtureCardStyles = `
       display: inline-flex;
       min-height: 44px;
       margin-left: 0;
+    }
+
+    .fixture-card.with-time {
+      grid-template-columns: auto 1fr auto;
     }
   }
 `;
