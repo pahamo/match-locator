@@ -23,7 +23,10 @@ import { normalizeTeamSlug, mapSeoSlugToDbSlug } from '../utils/teamSlugs';
 import type { Fixture, Team } from '../types';
 
 const HeadToHeadPage: React.FC = () => {
-  const { matchSlug } = useParams<{ matchSlug: string }>();
+  const { matchSlug, contentSlug } = useParams<{ matchSlug?: string; contentSlug?: string }>();
+
+  // Use contentSlug if available (from /content/ route), otherwise use matchSlug (from /fixtures/ route)
+  const slug = contentSlug || matchSlug;
   const [fixtures, setFixtures] = useState<Fixture[]>([]);
   const [nextFixture, setNextFixture] = useState<Fixture | null>(null);
   const [team1, setTeam1] = useState<Team | null>(null);
@@ -33,11 +36,11 @@ const HeadToHeadPage: React.FC = () => {
   const [shouldRedirect, setShouldRedirect] = useState<string | null>(null);
 
   // Parse team slugs from URL
-  const parsedTeams = matchSlug ? parseH2HSlug(matchSlug) : null;
+  const parsedTeams = slug ? parseH2HSlug(slug) : null;
 
   useEffect(() => {
     // Check if we need to redirect to canonical URL
-    const canonicalSlug = matchSlug ? needsCanonicalRedirect(matchSlug) : null;
+    const canonicalSlug = slug ? needsCanonicalRedirect(slug) : null;
     if (canonicalSlug) {
       setShouldRedirect(canonicalSlug);
       return;
@@ -50,11 +53,12 @@ const HeadToHeadPage: React.FC = () => {
     }
 
     loadH2HData();
-  }, [matchSlug]);
+  }, [slug]);
 
   // Handle redirect after hooks
   if (shouldRedirect) {
-    return <Navigate to={`/fixtures/${shouldRedirect}`} replace />;
+    // Redirect to content path (since we're moving H2H pages there)
+    return <Navigate to={`/content/${shouldRedirect}`} replace />;
   }
 
   const loadH2HData = async () => {
