@@ -176,7 +176,7 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
       {!isMinimized && (
         <div className="broadcaster-info">
           {fixtureData.isBlackout ? (
-            <span className="broadcaster-badge blackout">🚫 Blackout</span>
+            <span className="broadcaster-badge blackout">🚫 No UK Broadcast</span>
           ) : fixtureData.broadcaster ? (
             fixtureData.broadcaster === 'Sky Sports' ? (
               <SkyAffiliateLink
@@ -192,7 +192,7 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
               <span className="broadcaster-badge available">{fixtureData.broadcaster}</span>
             )
           ) : (
-            <span className="broadcaster-badge tbd">TBD</span>
+            <span className="broadcaster-badge tbd">Broadcast TBD</span>
           )}
         </div>
       )}
