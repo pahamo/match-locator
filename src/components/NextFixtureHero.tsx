@@ -133,14 +133,24 @@ const NextFixtureHero: React.FC<NextFixtureHeroProps> = ({
                 '⚽'
               )}
             </div>
-            <h3 style={{
-              fontSize: '1.25rem',
-              fontWeight: '600',
-              margin: 0,
-              textShadow: '0 1px 2px rgba(0,0,0,0.3)'
-            }}>
-              {fixture.home.name}
-            </h3>
+            <a
+              href={`/clubs/${fixture.home.slug}`}
+              style={{
+                color: 'inherit',
+                textDecoration: 'none'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
+              onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
+            >
+              <h3 style={{
+                fontSize: '1.25rem',
+                fontWeight: '600',
+                margin: 0,
+                textShadow: '0 1px 2px rgba(0,0,0,0.3)'
+              }}>
+                {fixture.home.name}
+              </h3>
+            </a>
           </div>
 
           {/* VS and Competition */}
@@ -153,15 +163,24 @@ const NextFixtureHero: React.FC<NextFixtureHeroProps> = ({
             }}>
               VS
             </div>
-            <div style={{
-              background: 'rgba(255,255,255,0.2)',
-              borderRadius: '20px',
-              padding: '4px 12px',
-              fontSize: '0.875rem',
-              fontWeight: '500'
-            }}>
+            <a
+              href={`/competitions/${fixture.competition || 'premier-league'}`}
+              style={{
+                background: 'rgba(255,255,255,0.2)',
+                borderRadius: '20px',
+                padding: '4px 12px',
+                fontSize: '0.875rem',
+                fontWeight: '500',
+                textDecoration: 'none',
+                color: 'inherit',
+                display: 'inline-block',
+                transition: 'background 0.2s ease'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.3)'}
+              onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.2)'}
+            >
               {fixture.competition ? mapCompetitionSlugToName(fixture.competition) : 'Premier League'}
-            </div>
+            </a>
           </div>
 
           {/* Away Team */}
@@ -196,14 +215,24 @@ const NextFixtureHero: React.FC<NextFixtureHeroProps> = ({
                 '⚽'
               )}
             </div>
-            <h3 style={{
-              fontSize: '1.25rem',
-              fontWeight: '600',
-              margin: 0,
-              textShadow: '0 1px 2px rgba(0,0,0,0.3)'
-            }}>
-              {fixture.away.name}
-            </h3>
+            <a
+              href={`/clubs/${fixture.away.slug}`}
+              style={{
+                color: 'inherit',
+                textDecoration: 'none'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
+              onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
+            >
+              <h3 style={{
+                fontSize: '1.25rem',
+                fontWeight: '600',
+                margin: 0,
+                textShadow: '0 1px 2px rgba(0,0,0,0.3)'
+              }}>
+                {fixture.away.name}
+              </h3>
+            </a>
           </div>
         </div>
 

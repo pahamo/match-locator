@@ -210,7 +210,29 @@ const HeadToHeadPage: React.FC = () => {
               color: '#1e293b',
               marginBottom: '8px'
             }}>
-              {team1.name} vs {team2.name}
+              <a
+                href={`/clubs/${team1.slug}`}
+                style={{
+                  color: 'inherit',
+                  textDecoration: 'none'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
+                onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
+              >
+                {team1.name}
+              </a>
+              {' vs '}
+              <a
+                href={`/clubs/${team2.slug}`}
+                style={{
+                  color: 'inherit',
+                  textDecoration: 'none'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
+                onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
+              >
+                {team2.name}
+              </a>
             </h1>
             <p style={{
               fontSize: '1.125rem',
