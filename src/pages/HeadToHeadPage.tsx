@@ -20,6 +20,7 @@ import {
   calculateH2HStats
 } from '../utils/headToHead';
 import { normalizeTeamSlug, mapSeoSlugToDbSlug } from '../utils/teamSlugs';
+import { isValidPremierLeagueH2H } from '../utils/generateH2HRoutes';
 import type { Fixture, Team } from '../types';
 
 const HeadToHeadPage: React.FC = () => {
@@ -48,6 +49,13 @@ const HeadToHeadPage: React.FC = () => {
 
     if (!parsedTeams) {
       setError('Invalid team matchup URL');
+      setLoading(false);
+      return;
+    }
+
+    // Validate this is a Premier League H2H matchup
+    if (!isValidPremierLeagueH2H(slug)) {
+      setError('H2H pages are currently available for Premier League teams only');
       setLoading(false);
       return;
     }
