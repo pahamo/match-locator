@@ -5,10 +5,13 @@ import type { Fixture } from '../types';
 import Header from '../components/Header';
 import Breadcrumbs from '../components/Breadcrumbs';
 import StructuredData from '../components/StructuredData';
+import ContextCard from '../components/ContextCard';
+import BroadcastCard from '../components/BroadcastCard';
+import MatchPreview from '../components/MatchPreview';
 import { parseMatchSlug, parseSeoMatchSlug, generateMatchMeta, generateSeoMatchUrl, updateDocumentMeta } from '../utils/seo';
 import { formatDetailedDate } from '../utils/dateFormat';
 import { generateBreadcrumbs } from '../utils/breadcrumbs';
-import AffiliateDisclosure, { withAffiliateAriaLabel } from '../components/legal/AffiliateDisclosure';
+import AffiliateDisclosure from '../components/legal/AffiliateDisclosure';
 
 const MatchPage: React.FC = () => {
   const { matchSlug, matchId, id } = useParams<{ matchSlug?: string; matchId?: string; id?: string }>();
@@ -105,19 +108,17 @@ const MatchPage: React.FC = () => {
     return formatDetailedDate(utcKickoff);
   };
 
-  const getBroadcasterLink = (providerName: string, href?: string) => {
-    if (href) return href;
-    
-    // Fallback URLs as specified
-    switch (providerName) {
-      case 'Sky Sports':
-        return 'https://www.skysports.com/football/fixtures-results';
-      case 'TNT Sports':
-        return 'https://tntsports.co.uk/football';
-      default:
-        return undefined;
-    }
+  const formatCompetitionName = (competition: string) => {
+    // Convert slug-style names to proper format
+    return competition
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ')
+      .replace(/Uefa/g, 'UEFA')
+      .replace(/Fa /g, 'FA ')
+      .replace(/Pl /g, 'Premier League ');
   };
+
 
   if (loading) {
     return (
@@ -186,143 +187,175 @@ const MatchPage: React.FC = () => {
       <main>
         <div className="wrap">
           <Breadcrumbs items={generateBreadcrumbs(window.location.pathname, { matchTitle: `${fixture.home.name} vs ${fixture.away.name}` })} />
-          <h1 style={{ marginTop: 32, marginBottom: 16, fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>
+
+          {/* Page Title */}
+          <h1 style={{
+            marginTop: 32,
+            marginBottom: 24,
+            fontSize: 'clamp(1.75rem, 5vw, 2.25rem)',
+            fontWeight: '700',
+            color: '#1f2937',
+            lineHeight: 1.2
+          }}>
             {fixture.home.name} vs {fixture.away.name}
           </h1>
-          {/* Match Header */}
-          <div className="fixture-card" style={{ marginBottom: '24px', padding: '24px' }}>
-            <div className="fixture-datetime" style={{ fontSize: '1.1rem', marginBottom: '16px' }}>
+
+          {/* Match Header Card */}
+          <div style={{
+            background: 'white',
+            border: '1px solid #e5e7eb',
+            borderRadius: '16px',
+            padding: '24px',
+            marginBottom: '24px',
+            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)'
+          }}>
+            {/* Kick-off Time */}
+            <div style={{
+              fontSize: '18px',
+              fontWeight: '600',
+              color: '#374151',
+              marginBottom: '20px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              <span style={{ fontSize: '20px' }}>⏰</span>
               {formatDateTime(fixture.kickoff_utc)}
             </div>
-            
-            <div className="fixture-teams" style={{ marginBottom: '16px' }}>
-              <div className="team home-team">
+
+            {/* Teams */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '20px',
+              gap: '16px',
+              flexWrap: 'wrap'
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                flex: '1',
+                minWidth: '0'
+              }}>
                 {fixture.home.crest && (
-                  <img 
-                    src={fixture.home.crest} 
+                  <img
+                    src={fixture.home.crest}
                     alt={`${fixture.home.name} crest`}
-                    className="team-crest"
-                    style={{ width: '32px', height: '32px' }}
+                    style={{
+                      width: '40px',
+                      height: '40px',
+                      objectFit: 'contain',
+                      flexShrink: 0
+                    }}
                   />
                 )}
-                <span className="team-name" style={{ fontSize: '1.2rem', fontWeight: '600' }}>
+                <span style={{
+                  fontSize: '20px',
+                  fontWeight: '700',
+                  color: '#1f2937'
+                }}>
                   {fixture.home.name}
                 </span>
               </div>
-              
-              <div className="vs" style={{ fontSize: '1.1rem', fontWeight: '600' }}>vs</div>
-              
-              <div className="team away-team">
-                {fixture.away.crest && (
-                  <img 
-                    src={fixture.away.crest} 
-                    alt={`${fixture.away.name} crest`}
-                    className="team-crest"
-                    style={{ width: '32px', height: '32px' }}
-                  />
-                )}
-                <span className="team-name" style={{ fontSize: '1.2rem', fontWeight: '600' }}>
+
+              <div style={{
+                fontSize: '18px',
+                fontWeight: '600',
+                color: '#6b7280',
+                flexShrink: 0
+              }}>
+                vs
+              </div>
+
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+                flex: '1',
+                minWidth: '0',
+                justifyContent: 'flex-end'
+              }}>
+                <span style={{
+                  fontSize: '20px',
+                  fontWeight: '700',
+                  color: '#1f2937'
+                }}>
                   {fixture.away.name}
                 </span>
+                {fixture.away.crest && (
+                  <img
+                    src={fixture.away.crest}
+                    alt={`${fixture.away.name} crest`}
+                    style={{
+                      width: '40px',
+                      height: '40px',
+                      objectFit: 'contain',
+                      flexShrink: 0
+                    }}
+                  />
+                )}
               </div>
             </div>
+          </div>
 
-            {/* Venue */}
+          {/* How to Watch Section - Moved above for prominence */}
+          <BroadcastCard fixture={fixture} />
+
+          {/* Context Cards Section */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+            gap: '16px',
+            marginBottom: '32px'
+          }}>
+            {/* Venue/Stadium - Replaces Match Status */}
             {fixture.venue && (
-              <div className="fixture-venue" style={{ marginBottom: '16px', fontSize: '0.9rem' }}>
-                📍 {fixture.venue}
-              </div>
+              <ContextCard
+                icon="🏟️"
+                label="Stadium"
+                value={fixture.venue}
+              />
+            )}
+
+            {/* Competition Round */}
+            {fixture.competition && (
+              <ContextCard
+                icon="🏆"
+                label="Competition"
+                value={formatCompetitionName(fixture.competition)}
+              />
             )}
 
             {/* Matchweek */}
             {fixture.matchweek && (
-              <div style={{ marginBottom: '16px', fontSize: '0.9rem', color: 'var(--color-muted)' }}>
-                Matchweek {fixture.matchweek}
-              </div>
+              <ContextCard
+                icon="📅"
+                label="Matchweek"
+                value={`Week ${fixture.matchweek}`}
+              />
             )}
-
-            {/* Broadcasters */}
-            <div className="broadcaster-info">
-              {fixture.blackout?.is_blackout ? (
-                <div className="blackout">
-                  <span className="blackout-text" style={{ color: '#dc2626', fontWeight: '600' }}>
-                    📺 Blackout
-                  </span>
-                  {fixture.blackout.reason && (
-                    <div className="blackout-reason" style={{ fontSize: '0.9rem', color: 'var(--color-muted)', marginTop: '4px' }}>
-                      {fixture.blackout.reason}
-                    </div>
-                  )}
-                </div>
-              ) : fixture.providers_uk.length > 0 ? (
-                <div>
-                  <div style={{ fontWeight: '600', marginBottom: '8px', color: '#059669' }}>📺 Available on:</div>
-                  <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                    {fixture.providers_uk.map((provider) => {
-                      const link = getBroadcasterLink(provider.name, provider.href);
-                      return link ? (
-                        <a
-                          key={provider.id}
-                          href={link}
-                          target="_blank"
-                          rel="noreferrer noopener"
-                          {...withAffiliateAriaLabel(provider.name)}
-                          className="provider"
-                          style={{
-                            padding: '8px 16px',
-                            backgroundColor: '#6366f1',
-                            color: 'white',
-                            textDecoration: 'none',
-                            borderRadius: '8px',
-                            fontSize: '0.9rem',
-                            fontWeight: '500'
-                          }}
-                        >
-                          {provider.name} →
-                        </a>
-                      ) : (
-                        <span
-                          key={provider.id}
-                          className="provider"
-                          style={{
-                            padding: '8px 16px',
-                            backgroundColor: 'var(--color-muted)',
-                            color: 'white',
-                            borderRadius: '8px',
-                            fontSize: '0.9rem',
-                            fontWeight: '500'
-                          }}
-                        >
-                          {provider.name}
-                        </span>
-                      );
-                    })}
-                  </div>
-                </div>
-              ) : (
-                <div className="tbd">
-                  <span className="tbd-text" style={{ color: '#d97706', fontWeight: '600' }}>
-                    📺 TBC - Broadcaster to be confirmed
-                  </span>
-                </div>
-              )}
-            </div>
           </div>
+
+          {/* Match Preview Content */}
+          <MatchPreview fixture={fixture} />
 
           {/* See More Section */}
           <div style={{
-            marginTop: '24px',
-            padding: '16px',
+            marginTop: '32px',
+            padding: '20px',
             background: '#f9fafb',
-            borderRadius: '8px'
+            borderRadius: '12px',
+            border: '1px solid #e5e7eb'
           }}>
             <h3 style={{
-              margin: '0 0 12px 0',
-              fontSize: '16px',
-              fontWeight: '600',
+              margin: '0 0 16px 0',
+              fontSize: '18px',
+              fontWeight: '700',
               color: '#374151'
             }}>
-              See more:
+              Explore More
             </h3>
             <div style={{
               display: 'flex',
@@ -333,16 +366,25 @@ const MatchPage: React.FC = () => {
               <Link
                 to={`/clubs/${fixture.home.slug || fixture.home.name.toLowerCase().replace(/\s+/g, '-')}`}
                 style={{
-                  padding: '8px 16px',
+                  padding: '12px 18px',
                   backgroundColor: '#6366f1',
                   color: 'white',
                   textDecoration: 'none',
-                  borderRadius: '6px',
+                  borderRadius: '8px',
                   fontSize: '14px',
-                  fontWeight: '500',
+                  fontWeight: '600',
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '6px'
+                  gap: '8px',
+                  transition: 'all 0.2s ease-in-out'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = '#5b21b6';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = '#6366f1';
+                  e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
                 🏟️ {fixture.home.name}
@@ -352,16 +394,25 @@ const MatchPage: React.FC = () => {
               <Link
                 to={`/clubs/${fixture.away.slug || fixture.away.name.toLowerCase().replace(/\s+/g, '-')}`}
                 style={{
-                  padding: '8px 16px',
+                  padding: '12px 18px',
                   backgroundColor: '#6366f1',
                   color: 'white',
                   textDecoration: 'none',
-                  borderRadius: '6px',
+                  borderRadius: '8px',
                   fontSize: '14px',
-                  fontWeight: '500',
+                  fontWeight: '600',
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '6px'
+                  gap: '8px',
+                  transition: 'all 0.2s ease-in-out'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = '#5b21b6';
+                  e.currentTarget.style.transform = 'translateY(-1px)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = '#6366f1';
+                  e.currentTarget.style.transform = 'translateY(0)';
                 }}
               >
                 🏟️ {fixture.away.name}
@@ -372,16 +423,25 @@ const MatchPage: React.FC = () => {
                 <Link
                   to={`/competitions/${fixture.competition.toLowerCase().replace(/\s+/g, '-')}`}
                   style={{
-                    padding: '8px 16px',
+                    padding: '12px 18px',
                     backgroundColor: '#059669',
                     color: 'white',
                     textDecoration: 'none',
-                    borderRadius: '6px',
+                    borderRadius: '8px',
                     fontSize: '14px',
-                    fontWeight: '500',
+                    fontWeight: '600',
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: '6px'
+                    gap: '8px',
+                    transition: 'all 0.2s ease-in-out'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.backgroundColor = '#047857';
+                    e.currentTarget.style.transform = 'translateY(-1px)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.backgroundColor = '#059669';
+                    e.currentTarget.style.transform = 'translateY(0)';
                   }}
                 >
                   🏆 {fixture.competition}
@@ -389,6 +449,7 @@ const MatchPage: React.FC = () => {
               )}
             </div>
           </div>
+
           {/* Footer disclosure */}
           <AffiliateDisclosure position="footer" />
         </div>

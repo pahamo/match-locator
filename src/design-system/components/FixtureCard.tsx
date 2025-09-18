@@ -4,7 +4,6 @@ import { tokens } from '../tokens';
 import type { SimpleFixture, Fixture } from '../../types';
 import { getMatchStatus, getMatchStatusStyles } from '../../utils/matchStatus';
 import { generateSeoSimpleMatchUrl, generateSeoMatchUrl } from '../../utils/seo';
-import { shouldCreateMatchPage } from '../../utils/matchPageFilter';
 import { getDisplayTeamName } from '../../utils/teamNames';
 import { formatTime } from '../../utils/dateFormat';
 import OptimizedImage from '../../components/OptimizedImage';
@@ -28,7 +27,7 @@ const isSimpleFixture = (fixture: SimpleFixture | Fixture): fixture is SimpleFix
 };
 
 const getFixtureData = (fixture: SimpleFixture | Fixture) => {
-  const shouldCreatePage = shouldCreateMatchPage(fixture);
+  const shouldCreatePage = true; // Always create match pages
 
   if (isSimpleFixture(fixture)) {
     return {

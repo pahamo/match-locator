@@ -336,12 +336,15 @@ export const generateMatchMeta = (fixture: Fixture) => {
       ? fixture.providers_uk.map(p => p.name).join(', ')
       : 'Broadcaster to be confirmed';
 
-  // Optimized description: "Find out where to watch [Home] vs [Away] on [Date]. Live on [Broadcaster] at [Time]. Get full TV schedule and streaming info."
+  // Enhanced description with preview content and venue info
+  const venueText = fixture.venue ? ` at ${fixture.venue}` : '';
+  const competitionText = fixture.competition ? ` in the ${fixture.competition}` : '';
+
   const description = fixture.blackout?.is_blackout
-    ? `Find out where to watch ${homeShort} vs ${awayShort} on ${date}. Not shown on UK TV. Get full TV schedule and streaming info.`
+    ? `${homeShort} vs ${awayShort}${competitionText} on ${date}${venueText}. Not shown on UK TV. Get match preview, team form analysis, and alternative viewing options.`
     : fixture.providers_uk.length > 0
-      ? `Find out where to watch ${homeShort} vs ${awayShort} on ${date}. Live on ${broadcasterText} at ${time}. Get full TV schedule and streaming info.`
-      : `Find out where to watch ${homeShort} vs ${awayShort} on ${date}. Broadcaster to be confirmed. Get full TV schedule and streaming info.`;
+      ? `${homeShort} vs ${awayShort}${competitionText} on ${date}${venueText}. Watch live on ${broadcasterText} at ${time}. Full match preview, team form, and viewing guide included.`
+      : `${homeShort} vs ${awayShort}${competitionText} on ${date}${venueText}. Broadcaster to be confirmed. Complete match preview, team analysis, and TV schedule information.`;
 
   const ogImage = fixture.home.crest || fixture.away.crest || '/favicon.png';
   const canonical = `${CANONICAL_BASE}${generateSeoMatchUrl(fixture)}`;

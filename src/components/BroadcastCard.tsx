@@ -197,42 +197,17 @@ const BroadcastCard: React.FC<BroadcastCardProps> = ({ fixture }) => {
         </div>
       </div>
 
-      {/* Provider details */}
+      {/* Simplified call-to-action description */}
       <div style={{ marginBottom: '20px' }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-          gap: '12px',
-          marginBottom: '16px'
+        <p style={{
+          margin: 0,
+          fontSize: '15px',
+          lineHeight: '1.5',
+          color: '#1e3a8a',
+          textAlign: 'center'
         }}>
-          <div style={{
-            background: 'rgba(59, 130, 246, 0.1)',
-            padding: '8px 12px',
-            borderRadius: '8px',
-            fontSize: '12px'
-          }}>
-            <div style={{ fontWeight: '600', color: '#1e40af', marginBottom: '2px' }}>Quality</div>
-            <div style={{ color: '#1e3a8a' }}>{details.quality}</div>
-          </div>
-          <div style={{
-            background: 'rgba(59, 130, 246, 0.1)',
-            padding: '8px 12px',
-            borderRadius: '8px',
-            fontSize: '12px'
-          }}>
-            <div style={{ fontWeight: '600', color: '#1e40af', marginBottom: '2px' }}>Commentary</div>
-            <div style={{ color: '#1e3a8a' }}>{details.commentary}</div>
-          </div>
-          <div style={{
-            background: 'rgba(59, 130, 246, 0.1)',
-            padding: '8px 12px',
-            borderRadius: '8px',
-            fontSize: '12px'
-          }}>
-            <div style={{ fontWeight: '600', color: '#1e40af', marginBottom: '2px' }}>Extras</div>
-            <div style={{ color: '#1e3a8a' }}>{details.extras}</div>
-          </div>
-        </div>
+          Click below to access live coverage with full HD quality, expert commentary, and match highlights all in one place.
+        </p>
       </div>
 
       {/* Primary CTA */}

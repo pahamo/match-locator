@@ -136,9 +136,12 @@ const HomePage: React.FC = () => {
         // Load competitions
         // Competitions data no longer needed in state
 
-        // Load fixtures from all competitions (no competition filter)
-        const fixturesData = await getSimpleFixtures();
-        const currentMatchWeek = getCurrentOrUpcomingMatchWeek(fixturesData);
+        // Load all fixtures and filter for Premier League (ID: 1) and Champions League (ID: 2)
+        const allFixtures = await getSimpleFixtures();
+        const featuredFixtures = allFixtures.filter(fixture =>
+          fixture.competition_id === 1 || fixture.competition_id === 2 // EPL or UCL only
+        );
+        const currentMatchWeek = getCurrentOrUpcomingMatchWeek(featuredFixtures);
         if (!isCancelled) {
           setMatchWeek(currentMatchWeek);
           // Update SEO meta tags for homepage
@@ -257,7 +260,7 @@ const HomePage: React.FC = () => {
         <main>
           <div className="wrap">
             <h1 style={{ margin: '0 0 24px 0', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>
-              Football TV Schedule (UK)
+              Premier League & Champions League TV Schedule
             </h1>
             <FixtureCardSkeleton />
             <FixtureCardSkeleton />
@@ -332,7 +335,68 @@ const HomePage: React.FC = () => {
       
       <main>
         <div className="wrap" style={{ position: 'relative' }}>
-          <h1 style={{ marginTop: '32px', marginBottom: '32px' }}>Football TV Schedule</h1>
+          {/* Header with See All Fixtures Button */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'flex-start',
+            marginTop: '32px',
+            marginBottom: '32px',
+            gap: '16px',
+            flexWrap: 'wrap'
+          }}>
+            <h1 style={{
+              margin: 0,
+              fontSize: 'clamp(1.75rem, 5vw, 2.25rem)',
+              fontWeight: '700',
+              color: '#1f2937',
+              lineHeight: 1.2
+            }}>
+              Premier League & Champions League
+            </h1>
+
+            <a
+              href="/fixtures"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '12px 20px',
+                backgroundColor: '#6366f1',
+                color: 'white',
+                textDecoration: 'none',
+                borderRadius: '10px',
+                fontSize: '15px',
+                fontWeight: '600',
+                boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)',
+                transition: 'all 0.2s ease-in-out',
+                flexShrink: 0
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = '#5b21b6';
+                e.currentTarget.style.transform = 'translateY(-1px)';
+                e.currentTarget.style.boxShadow = '0 6px 16px rgba(99, 102, 241, 0.4)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = '#6366f1';
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(99, 102, 241, 0.3)';
+              }}
+            >
+              <span style={{ fontSize: '16px' }}>📺</span>
+              See All Fixtures
+            </a>
+          </div>
+
+          {/* Subtitle */}
+          <p style={{
+            margin: '0 0 24px 0',
+            fontSize: '16px',
+            color: '#6b7280',
+            lineHeight: '1.5'
+          }}>
+            Current and upcoming matches from Europe's top competitions. For all leagues and tournaments, visit our complete fixtures page.
+          </p>
 
 
           {/* Day Cards */}
@@ -528,49 +592,123 @@ const HomePage: React.FC = () => {
             })}
           </div>
 
-          <div style={{ 
-            marginTop: '32px', 
-            padding: '16px', 
-            background: '#f9fafb', 
-            borderRadius: '8px',
-            textAlign: 'center'
+          <div style={{
+            marginTop: '32px',
+            padding: '20px',
+            background: '#f9fafb',
+            borderRadius: '12px',
+            border: '1px solid #e5e7eb'
           }}>
-            <p style={{ margin: '0 0 12px 0', color: '#6b7280', fontSize: '14px' }}>
-              Want to see all upcoming fixtures or manage broadcasts?
+            <h3 style={{
+              margin: '0 0 8px 0',
+              fontSize: '18px',
+              fontWeight: '700',
+              color: '#374151',
+              textAlign: 'center'
+            }}>
+              Looking for More?
+            </h3>
+            <p style={{
+              margin: '0 0 16px 0',
+              color: '#6b7280',
+              fontSize: '14px',
+              textAlign: 'center'
+            }}>
+              Find all leagues, tournaments, and team-specific fixtures
             </p>
-            <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <a 
-                href="/fixtures" 
-                style={{ 
-                  color: '#6366f1', 
-                  textDecoration: 'underline', 
-                  fontSize: '0.9rem',
-                  fontWeight: '500'
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+              gap: '12px',
+              maxWidth: '540px',
+              margin: '0 auto'
+            }}>
+              <a
+                href="/fixtures"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '12px 16px',
+                  backgroundColor: '#ffffff',
+                  color: '#6366f1',
+                  textDecoration: 'none',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  border: '1px solid #e5e7eb',
+                  transition: 'all 0.2s ease-in-out',
+                  justifyContent: 'center'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = '#f8fafc';
+                  e.currentTarget.style.borderColor = '#6366f1';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = '#ffffff';
+                  e.currentTarget.style.borderColor = '#e5e7eb';
                 }}
               >
-                📺 All Fixtures
+                <span>📺</span>
+                All Fixtures
               </a>
               <a
                 href="/competitions"
                 style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '12px 16px',
+                  backgroundColor: '#ffffff',
                   color: '#6366f1',
-                  textDecoration: 'underline',
-                  fontSize: '0.9rem',
-                  fontWeight: '500'
+                  textDecoration: 'none',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  border: '1px solid #e5e7eb',
+                  transition: 'all 0.2s ease-in-out',
+                  justifyContent: 'center'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = '#f8fafc';
+                  e.currentTarget.style.borderColor = '#6366f1';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = '#ffffff';
+                  e.currentTarget.style.borderColor = '#e5e7eb';
                 }}
               >
-                🏆 Browse by Competition
+                <span>🏆</span>
+                All Competitions
               </a>
               <a
                 href="/clubs"
                 style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '12px 16px',
+                  backgroundColor: '#ffffff',
                   color: '#6366f1',
-                  textDecoration: 'underline',
-                  fontSize: '0.9rem',
-                  fontWeight: '500'
+                  textDecoration: 'none',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  border: '1px solid #e5e7eb',
+                  transition: 'all 0.2s ease-in-out',
+                  justifyContent: 'center'
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor = '#f8fafc';
+                  e.currentTarget.style.borderColor = '#6366f1';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = '#ffffff';
+                  e.currentTarget.style.borderColor = '#e5e7eb';
                 }}
               >
-                🏟️ Browse by Club
+                <span>🏟️</span>
+                Browse by Club
               </a>
             </div>
           </div>
