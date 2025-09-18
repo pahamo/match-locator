@@ -54,7 +54,7 @@ const HeadToHeadPage: React.FC = () => {
     }
 
     // Validate this is a Premier League H2H matchup
-    if (!isValidPremierLeagueH2H(slug)) {
+    if (!slug || !isValidPremierLeagueH2H(slug)) {
       setError('H2H pages are currently available for Premier League teams only');
       setLoading(false);
       return;
