@@ -99,6 +99,20 @@ export function formatCompactDate(utcDate: string): string {
 }
 
 /**
+ * Formats just the time portion of a date
+ * @param utcDate - ISO date string in UTC
+ * @returns Time in HH:MM format
+ */
+export function formatTime(utcDate: string): string {
+  const date = new Date(utcDate);
+  return date.toLocaleTimeString('en-GB', {
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'Europe/London'
+  });
+}
+
+/**
  * Formats a date for detailed display (used in match pages)
  * @param utcDate - ISO date string in UTC
  * @returns Detailed formatted date
