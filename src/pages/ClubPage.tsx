@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { getFixtures } from '../services/supabase';
 import type { Fixture } from '../types';
 import Header from '../components/Header';
-import { generateTeamMeta, updateDocumentMeta, generateSeoMatchUrl } from '../utils/seo';
-import { formatCompactDate } from '../utils/dateFormat';
+import { generateTeamMeta, updateDocumentMeta } from '../utils/seo';
+import { FixtureCard } from '../design-system';
 
 const ClubPage: React.FC = () => {
   const { slug, clubId } = useParams<{ slug?: string; clubId?: string }>();
@@ -13,41 +13,6 @@ const ClubPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const getCompetitionDisplayName = (competition?: string): string => {
-    if (!competition) return 'Football';
-    switch (competition) {
-      case 'premier-league':
-        return 'Premier League';
-      case 'champions-league':
-        return 'Champions League';
-      case 'europa-league':
-        return 'Europa League';
-      case 'fa-cup':
-        return 'FA Cup';
-      case 'league-cup':
-        return 'League Cup';
-      default:
-        return 'Football';
-    }
-  };
-
-  const getCompetitionColor = (competition?: string): { bg: string; text: string } => {
-    if (!competition) return { bg: '#6b7280', text: 'white' };
-    switch (competition) {
-      case 'premier-league':
-        return { bg: '#3d1a78', text: 'white' };
-      case 'champions-league':
-        return { bg: '#003399', text: 'white' };
-      case 'europa-league':
-        return { bg: '#ff6600', text: 'white' };
-      case 'fa-cup':
-        return { bg: '#e63946', text: 'white' };
-      case 'league-cup':
-        return { bg: '#28a745', text: 'white' };
-      default:
-        return { bg: '#6b7280', text: 'white' };
-    }
-  };
 
   useEffect(() => {
     let ignore = false;
@@ -123,83 +88,16 @@ const ClubPage: React.FC = () => {
                 {fixtures.length === 0 ? (
                   <div className="no-fixtures">No upcoming fixtures found.</div>
                 ) : (
-                  fixtures.map(fx => (
-                    <div key={fx.id} className="fixture-card">
-                      <div className="fixture-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                        <div className="fixture-datetime">
-                          {formatCompactDate(fx.kickoff_utc)}
-                        </div>
-                        <div className="competition-badge" style={{
-                          fontSize: '0.75rem',
-                          fontWeight: '600',
-                          padding: '2px 8px',
-                          borderRadius: '12px',
-                          backgroundColor: getCompetitionColor(fx.competition).bg,
-                          color: getCompetitionColor(fx.competition).text
-                        }}>
-                          {getCompetitionDisplayName(fx.competition)}
-                        </div>
-                      </div>
-                      <div className="fixture-teams">
-                        <div className="team">
-                          {fx.home.crest && (
-                            <img 
-                              className="team-crest" 
-                              src={fx.home.crest} 
-                              alt={`${fx.home.name} crest`}
-                              loading="lazy"
-                              decoding="async"
-                              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                            />
-                          )}
-                          <span className="team-name">{fx.home.name}</span>
-                        </div>
-                        <div className="vs">vs</div>
-                        <div className="team away-team">
-                          {fx.away.crest && (
-                            <img 
-                              className="team-crest" 
-                              src={fx.away.crest} 
-                              alt={`${fx.away.name} crest`}
-                              loading="lazy"
-                              decoding="async"
-                              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                            />
-                          )}
-                          <span className="team-name">{fx.away.name}</span>
-                        </div>
-                      </div>
-                      <div className="broadcaster-info">
-                        {fx.blackout?.is_blackout ? (
-                          <span className="provider blackout" style={{ color: '#dc2626' }}>🚫 Blackout</span>
-                        ) : fx.providers_uk && fx.providers_uk.length > 0 ? (
-                          fx.providers_uk.map(p => (
-                            <a key={p.id} href={p.href || (p.name.includes('Sky') ? 'https://www.skysports.com/football/fixtures-results' : p.name.includes('TNT') ? 'https://tntsports.co.uk/football' : undefined)} target="_blank" rel="noreferrer" className="provider confirmed" style={{ marginRight: 8, textDecoration: 'none', color: '#059669' }}>
-                              {p.name}
-                            </a>
-                          ))
-                        ) : (
-                          <span className="tbd-text">TBD</span>
-                        )}
-                      </div>
-                      {fx.venue && (
-                        <div className="fixture-venue">{fx.venue}</div>
-                      )}
-                      <div style={{ marginTop: '12px', textAlign: 'right' }}>
-                        <Link 
-                          to={generateSeoMatchUrl(fx)} 
-                          style={{ 
-                            color: '#6366f1', 
-                            textDecoration: 'underline', 
-                            fontSize: '0.9rem',
-                            fontWeight: '500'
-                          }}
-                        >
-                          Details →
-                        </Link>
-                      </div>
-                    </div>
-                  ))
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {fixtures.map(fx => (
+                      <FixtureCard
+                        key={fx.id}
+                        fixture={fx}
+                        variant="default"
+                        showViewButton={true}
+                      />
+                    ))}
+                  </div>
                 )}
               </section>
 
