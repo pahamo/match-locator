@@ -20,24 +20,49 @@ const PageLoader = () => (
  * H2H URLs follow format: team1-vs-team2
  */
 const isH2HUrl = (slug: string): boolean => {
-  const h2hPattern = parseH2HSlug(slug);
-  if (!h2hPattern) return false;
+  // First check basic H2H pattern (must contain exactly one "-vs-")
+  const parts = slug.split('-vs-');
+  if (parts.length !== 2) return false;
+
+  const beforeVs = parts[0];
+  const afterVs = parts[1];
+
+  // Basic validation: both parts should exist and not be empty
+  if (!beforeVs || !afterVs) return false;
+
+  // Check if URL contains competition names (strong indicator of match URL)
+  const competitionPatterns = [
+    '-premier-league-',
+    '-champions-league-',
+    '-europa-league-',
+    '-bundesliga-',
+    '-la-liga-',
+    '-serie-a-',
+    '-ligue-1-',
+    '-championship-'
+  ];
+
+  const hasCompetition = competitionPatterns.some(pattern => slug.includes(pattern));
+  if (hasCompetition) return false;
 
   // Check if URL contains a date pattern at the end (dd-mmm-yyyy)
-  // Match URLs end with patterns like: "17-sept-2025", "03-jan-2025", etc.
   const datePattern = /\d{1,2}-(jan|feb|mar|apr|may|jun|jul|aug|sept|oct|nov|dec)-\d{4}$/i;
   const hasDateSuffix = datePattern.test(slug);
+  if (hasDateSuffix) return false;
 
-  // If it has a date suffix, it's a match URL
-  // If no date suffix, it's likely an H2H URL
-  return !hasDateSuffix;
+  // Additional safety: if afterVs contains more than 3 parts, likely a match URL
+  const afterVsParts = afterVs.split('-');
+  if (afterVsParts.length > 3) return false;
+
+  // If it passes all checks, it's likely a pure H2H URL
+  return true;
 };
 
 /**
  * Smart router that determines whether to show MatchPage or HeadToHeadPage
  * based on the URL pattern
  *
- * TEMPORARILY DISABLED H2H ROUTING - ALL ROUTES GO TO MATCHPAGE
+ * IMPROVED H2H ROUTING - NOW WITH BETTER PATTERN DETECTION
  */
 const SmartFixtureRouter: React.FC = () => {
   const { matchSlug } = useParams<{ matchSlug: string }>();
@@ -46,28 +71,32 @@ const SmartFixtureRouter: React.FC = () => {
     return <div>Invalid URL</div>;
   }
 
-  // TEMPORARILY DISABLED: H2H routing causing issues with individual game pages
-  // Always route to MatchPage for now
-  return (
-    <Suspense fallback={<PageLoader />}>
-      <MatchPage />
-    </Suspense>
-  );
-
-  // Original H2H logic (disabled):
-  // if (isH2HUrl(matchSlug)) {
-  //   return (
-  //     <Suspense fallback={<PageLoader />}>
-  //       <HeadToHeadPage />
-  //     </Suspense>
-  //   );
-  // } else {
-  //   return (
-  //     <Suspense fallback={<PageLoader />}>
-  //       <MatchPage />
-  //     </Suspense>
-  //   );
-  // }
+  try {
+    // Check if this is a pure H2H pattern with improved logic
+    if (isH2HUrl(matchSlug)) {
+      // This is a Head-to-Head URL
+      return (
+        <Suspense fallback={<PageLoader />}>
+          <HeadToHeadPage />
+        </Suspense>
+      );
+    } else {
+      // This is a regular match URL (includes competition/date)
+      return (
+        <Suspense fallback={<PageLoader />}>
+          <MatchPage />
+        </Suspense>
+      );
+    }
+  } catch (error) {
+    // Fallback to MatchPage if there's any routing error
+    console.error('SmartFixtureRouter error:', error);
+    return (
+      <Suspense fallback={<PageLoader />}>
+        <MatchPage />
+      </Suspense>
+    );
+  }
 };
 
 export default SmartFixtureRouter;
