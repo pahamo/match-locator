@@ -498,8 +498,8 @@ const FixturesPage: React.FC = () => {
 
           {/* Fixtures List */}
           {filteredFixtures.length === 0 ? (
-            <div style={{ 
-              textAlign: 'center', 
+            <div style={{
+              textAlign: 'center',
               padding: '48px 24px',
               background: '#fafafa',
               borderRadius: '8px'
@@ -510,18 +510,151 @@ const FixturesPage: React.FC = () => {
             </div>
           ) : (
             <>
-              <div className="fixtures-list">
-                {filteredFixtures.slice(0, displayCount).map(fixture => (
-                  <FixtureCard
-                    key={fixture.id}
-                    fixture={fixture}
-                    variant="withTime"
-                    showMatchweek={true}
-                    showViewButton={true}
-                    style={{ marginBottom: '8px' }}
-                  />
-                ))}
-              </div>
+              {(() => {
+                // Group fixtures by status for better visual organization
+                const displayFixtures = filteredFixtures.slice(0, displayCount);
+                const liveFixtures = displayFixtures.filter(f => {
+                  const status = getMatchStatus(f.kickoff_utc);
+                  return status.status === 'live';
+                });
+
+                const upNextFixtures = displayFixtures.filter(f => {
+                  const status = getMatchStatus(f.kickoff_utc);
+                  return status.status === 'upNext';
+                });
+
+                const otherFixtures = displayFixtures.filter(f => {
+                  const status = getMatchStatus(f.kickoff_utc);
+                  return status.status !== 'live' && status.status !== 'upNext';
+                });
+
+                return (
+                  <div className="fixtures-list">
+                    {/* Live game animations */}
+                    <style>{`
+                      @keyframes pulse-glow {
+                        0%, 100% {
+                          background: #ef4444;
+                          box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+                        }
+                        50% {
+                          background: #dc2626;
+                          box-shadow: 0 0 25px rgba(239, 68, 68, 0.9);
+                        }
+                      }
+
+                      @keyframes pulse-border {
+                        0%, 100% {
+                          border-color: #ef4444;
+                          box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+                        }
+                        50% {
+                          border-color: #dc2626;
+                          box-shadow: 0 0 30px rgba(239, 68, 68, 0.6);
+                        }
+                      }
+                    `}</style>
+
+                    {/* Live Games Section */}
+                    {liveFixtures.length > 0 && (
+                      <div style={{ marginBottom: '32px' }}>
+                        <div style={{
+                          border: '3px solid #ef4444',
+                          borderRadius: '12px',
+                          padding: '16px',
+                          background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(255, 255, 255, 0.95) 100%)',
+                          boxShadow: '0 0 20px rgba(239, 68, 68, 0.3)',
+                          animation: 'pulse-border 2s ease-in-out infinite',
+                          position: 'relative'
+                        }}>
+                          {/* LIVE indicator */}
+                          <div style={{
+                            position: 'absolute',
+                            top: '-12px',
+                            left: '16px',
+                            background: '#ef4444',
+                            color: 'white',
+                            padding: '4px 12px',
+                            borderRadius: '8px',
+                            fontSize: '12px',
+                            fontWeight: '700',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px',
+                            animation: 'pulse-glow 1.5s ease-in-out infinite'
+                          }}>
+                            🔴 LIVE NOW
+                          </div>
+
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
+                            {liveFixtures.map((fixture) => (
+                              <FixtureCard
+                                key={fixture.id}
+                                fixture={fixture}
+                                variant="withTime"
+                                showMatchweek={true}
+                                showViewButton={true}
+                                isInLiveGroup={true}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Up Next Games Section */}
+                    {upNextFixtures.length > 0 && (
+                      <div style={{ marginBottom: '24px' }}>
+                        <div style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          marginBottom: '12px'
+                        }}>
+                          <div style={{
+                            background: '#3b82f6',
+                            color: 'white',
+                            padding: '4px 12px',
+                            borderRadius: '8px',
+                            fontSize: '12px',
+                            fontWeight: '700',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px'
+                          }}>
+                            🔵 UP NEXT
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                          {upNextFixtures.map((fixture) => (
+                            <FixtureCard
+                              key={fixture.id}
+                              fixture={fixture}
+                              variant="withTime"
+                              showMatchweek={true}
+                              showViewButton={true}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Other Fixtures */}
+                    {otherFixtures.length > 0 && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        {otherFixtures.map((fixture) => (
+                          <FixtureCard
+                            key={fixture.id}
+                            fixture={fixture}
+                            variant="withTime"
+                            showMatchweek={true}
+                            showViewButton={true}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
               
               {/* Load More Button */}
               {hasMore && (

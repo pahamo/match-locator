@@ -1,27 +1,5 @@
 import type { Fixture, SimpleFixture } from '../types';
-import { generateCleanSlug } from './seo';
 import { mapCompetitionIdToSlug } from './competitionMapping';
-
-// UK-relevant competitions that should have H2H pages
-const UK_RELEVANT_COMPETITIONS = [
-  'premier-league',
-  'champions-league', // ✅ ACTIVATED: Full international team mapping support
-  // TODO: Add other competitions when team mapping is expanded
-  // 'europa-league',
-  // 'championship',
-  // 'fa-cup',
-  // 'carabao-cup',
-  // 'league-cup',
-  // 'europa-conference-league'
-];
-
-// Big teams that warrant pages even in other leagues
-const BIG_TEAMS = [
-  'manchester-united', 'liverpool', 'arsenal', 'chelsea',
-  'manchester-city', 'tottenham', 'barcelona', 'real-madrid',
-  'bayern-munich', 'paris-saint-germain', 'juventus', 'ac-milan',
-  'inter-milan', 'atletico-madrid', 'borussia-dortmund'
-];
 
 // Helper functions removed - simplified logic only checks competition
 
