@@ -21,6 +21,7 @@ import {
 } from '../utils/headToHead';
 import { normalizeTeamSlug, mapSeoSlugToDbSlugEnhanced } from '../utils/teamSlugs';
 import { isSupportedTeam } from '../utils/teamSlugs';
+import { generateMatchPreview, isPremierLeagueFixture } from '../utils/matchPreview';
 import type { Fixture, Team } from '../types';
 
 const HeadToHeadPage: React.FC = () => {
@@ -277,6 +278,35 @@ const HeadToHeadPage: React.FC = () => {
               team1Name={team1.name}
               team2Name={team2.name}
             />
+          )}
+
+          {/* Match Preview for Premier League fixtures */}
+          {nextFixture && isPremierLeagueFixture(team1.name, team2.name) && (
+            <div style={{
+              marginBottom: '32px',
+              background: '#f8fafc',
+              borderRadius: '12px',
+              padding: '24px',
+              border: '1px solid #e2e8f0'
+            }}>
+              <h2 style={{
+                fontSize: '1.5rem',
+                fontWeight: '700',
+                color: '#1e293b',
+                marginBottom: '16px',
+                paddingBottom: '8px',
+                borderBottom: '2px solid #e2e8f0'
+              }}>
+                Match Preview
+              </h2>
+              <div style={{
+                fontSize: '1rem',
+                lineHeight: '1.7',
+                color: '#374151'
+              }}>
+                {generateMatchPreview(team1.name, team2.name, nextFixture)}
+              </div>
+            </div>
           )}
 
           {/* H2H Statistics */}
