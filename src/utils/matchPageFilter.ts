@@ -2,16 +2,18 @@ import type { Fixture, SimpleFixture } from '../types';
 import { generateCleanSlug } from './seo';
 import { mapCompetitionIdToSlug } from './competitionMapping';
 
-// UK-relevant competitions that should have individual match pages
+// UK-relevant competitions that should have H2H pages
+// RESTRICTED TO PREMIER LEAGUE ONLY for H2H Architecture Phase 1
 const UK_RELEVANT_COMPETITIONS = [
-  'premier-league',
-  'champions-league',
-  'europa-league',
-  'championship',
-  'fa-cup',
-  'carabao-cup',
-  'league-cup',
-  'europa-conference-league'
+  'premier-league'
+  // TODO: Add other UK competitions in Phase 2 when international team mapping is implemented
+  // 'champions-league',
+  // 'europa-league',
+  // 'championship',
+  // 'fa-cup',
+  // 'carabao-cup',
+  // 'league-cup',
+  // 'europa-conference-league'
 ];
 
 // Big teams that warrant pages even in other leagues

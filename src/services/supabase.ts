@@ -720,3 +720,45 @@ export async function getTeamBySlug(slug: string): Promise<Team | null> {
     throw error;
   }
 }
+
+/**
+ * Intelligently resolve team slug by trying multiple patterns
+ * Handles both Premier League teams (with -fc suffix) and international teams (without suffix)
+ */
+export async function getTeamBySlugIntelligent(seoSlug: string): Promise<Team | null> {
+  // First try the SEO slug as-is (for international teams)
+  let team = await getTeamBySlug(seoSlug);
+  if (team) {
+    console.log(`Found team with original slug: ${seoSlug} -> ${team.name}`);
+    return team;
+  }
+
+  // Then try with -fc suffix (for Premier League teams)
+  const fcSlug = `${seoSlug}-fc`;
+  team = await getTeamBySlug(fcSlug);
+  if (team) {
+    console.log(`Found team with -fc suffix: ${fcSlug} -> ${team.name}`);
+    return team;
+  }
+
+  // Try some common variations for international teams
+  const variations = [
+    seoSlug.replace(/-/g, '-'), // Already normalized, but just in case
+    seoSlug.replace(/fc-/g, ''), // Remove fc- prefix
+    seoSlug.replace(/-fc/g, ''), // Remove -fc suffix if present
+    `fc-${seoSlug}`, // Add fc- prefix
+  ];
+
+  for (const variation of variations) {
+    if (variation === seoSlug || variation === fcSlug) continue; // Skip already tried
+
+    team = await getTeamBySlug(variation);
+    if (team) {
+      console.log(`Found team with variation: ${variation} -> ${team.name}`);
+      return team;
+    }
+  }
+
+  console.log(`No team found for slug: ${seoSlug} (tried: ${seoSlug}, ${fcSlug}, ${variations.join(', ')})`);
+  return null;
+}
