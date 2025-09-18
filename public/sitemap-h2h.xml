@@ -1,13 +1,121 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://matchlocator.com/h2h/arsenal-vs-aston-villa</loc>
+    <loc>https://matchlocator.com/h2h/afc-bournemouth-vs-arsenal</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/h2h/arsenal-vs-bournemouth</loc>
+    <loc>https://matchlocator.com/h2h/afc-bournemouth-vs-aston-villa</loc>
+    <lastmod>2024-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/h2h/afc-bournemouth-vs-brentford</loc>
+    <lastmod>2024-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/h2h/afc-bournemouth-vs-brighton-hove-albion</loc>
+    <lastmod>2024-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/h2h/afc-bournemouth-vs-chelsea</loc>
+    <lastmod>2024-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/h2h/afc-bournemouth-vs-crystal-palace</loc>
+    <lastmod>2024-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/h2h/afc-bournemouth-vs-everton</loc>
+    <lastmod>2024-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/h2h/afc-bournemouth-vs-fulham</loc>
+    <lastmod>2024-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/h2h/afc-bournemouth-vs-ipswich-town</loc>
+    <lastmod>2024-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/h2h/afc-bournemouth-vs-leicester-city</loc>
+    <lastmod>2024-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/h2h/afc-bournemouth-vs-liverpool</loc>
+    <lastmod>2024-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/h2h/afc-bournemouth-vs-manchester-city</loc>
+    <lastmod>2024-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/h2h/afc-bournemouth-vs-manchester-united</loc>
+    <lastmod>2024-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/h2h/afc-bournemouth-vs-newcastle-united</loc>
+    <lastmod>2024-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/h2h/afc-bournemouth-vs-nottingham-forest</loc>
+    <lastmod>2024-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/h2h/afc-bournemouth-vs-southampton</loc>
+    <lastmod>2024-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/h2h/afc-bournemouth-vs-tottenham-hotspur</loc>
+    <lastmod>2024-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/h2h/afc-bournemouth-vs-west-ham</loc>
+    <lastmod>2024-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/h2h/afc-bournemouth-vs-wolverhampton-wanderers</loc>
+    <lastmod>2024-09-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/h2h/arsenal-vs-aston-villa</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -28,7 +136,7 @@
     <loc>https://matchlocator.com/h2h/arsenal-vs-chelsea</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/arsenal-vs-crystal-palace</loc>
@@ -64,19 +172,19 @@
     <loc>https://matchlocator.com/h2h/arsenal-vs-liverpool</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/arsenal-vs-manchester-city</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/arsenal-vs-manchester-united</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/arsenal-vs-newcastle-united</loc>
@@ -100,10 +208,10 @@
     <loc>https://matchlocator.com/h2h/arsenal-vs-tottenham-hotspur</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/h2h/arsenal-vs-west-ham-united</loc>
+    <loc>https://matchlocator.com/h2h/arsenal-vs-west-ham</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -115,22 +223,16 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/h2h/aston-villa-vs-bournemouth</loc>
-    <lastmod>2024-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://matchlocator.com/h2h/aston-villa-vs-brentford</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/aston-villa-vs-brighton-hove-albion</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/aston-villa-vs-chelsea</loc>
@@ -142,31 +244,31 @@
     <loc>https://matchlocator.com/h2h/aston-villa-vs-crystal-palace</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/aston-villa-vs-everton</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/aston-villa-vs-fulham</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/aston-villa-vs-ipswich-town</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/aston-villa-vs-leicester-city</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/aston-villa-vs-liverpool</loc>
@@ -190,19 +292,19 @@
     <loc>https://matchlocator.com/h2h/aston-villa-vs-newcastle-united</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/aston-villa-vs-nottingham-forest</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/aston-villa-vs-southampton</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/aston-villa-vs-tottenham-hotspur</loc>
@@ -211,304 +313,202 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/h2h/aston-villa-vs-west-ham-united</loc>
+    <loc>https://matchlocator.com/h2h/aston-villa-vs-west-ham</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/aston-villa-vs-wolverhampton-wanderers</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/h2h/bournemouth-vs-brentford</loc>
-    <lastmod>2024-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/h2h/bournemouth-vs-brighton-hove-albion</loc>
-    <lastmod>2024-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/h2h/bournemouth-vs-chelsea</loc>
-    <lastmod>2024-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/h2h/bournemouth-vs-crystal-palace</loc>
-    <lastmod>2024-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/h2h/bournemouth-vs-everton</loc>
-    <lastmod>2024-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/h2h/bournemouth-vs-fulham</loc>
-    <lastmod>2024-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/h2h/bournemouth-vs-ipswich-town</loc>
-    <lastmod>2024-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/h2h/bournemouth-vs-leicester-city</loc>
-    <lastmod>2024-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/h2h/bournemouth-vs-liverpool</loc>
-    <lastmod>2024-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/h2h/bournemouth-vs-manchester-city</loc>
-    <lastmod>2024-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/h2h/bournemouth-vs-manchester-united</loc>
-    <lastmod>2024-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/h2h/bournemouth-vs-newcastle-united</loc>
-    <lastmod>2024-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/h2h/bournemouth-vs-nottingham-forest</loc>
-    <lastmod>2024-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/h2h/bournemouth-vs-southampton</loc>
-    <lastmod>2024-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/h2h/bournemouth-vs-tottenham-hotspur</loc>
-    <lastmod>2024-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/h2h/bournemouth-vs-west-ham-united</loc>
-    <lastmod>2024-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/h2h/bournemouth-vs-wolverhampton-wanderers</loc>
-    <lastmod>2024-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/brentford-vs-brighton-hove-albion</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/brentford-vs-chelsea</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/brentford-vs-crystal-palace</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/brentford-vs-everton</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/brentford-vs-fulham</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/brentford-vs-ipswich-town</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/brentford-vs-leicester-city</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/brentford-vs-liverpool</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/brentford-vs-manchester-city</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/brentford-vs-manchester-united</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/brentford-vs-newcastle-united</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/brentford-vs-nottingham-forest</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/brentford-vs-southampton</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/brentford-vs-tottenham-hotspur</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/h2h/brentford-vs-west-ham-united</loc>
+    <loc>https://matchlocator.com/h2h/brentford-vs-west-ham</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/brentford-vs-wolverhampton-wanderers</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/brighton-hove-albion-vs-chelsea</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/brighton-hove-albion-vs-crystal-palace</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/brighton-hove-albion-vs-everton</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/brighton-hove-albion-vs-fulham</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/brighton-hove-albion-vs-ipswich-town</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/brighton-hove-albion-vs-leicester-city</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/brighton-hove-albion-vs-liverpool</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/brighton-hove-albion-vs-manchester-city</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/brighton-hove-albion-vs-manchester-united</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/brighton-hove-albion-vs-newcastle-united</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/brighton-hove-albion-vs-nottingham-forest</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/brighton-hove-albion-vs-southampton</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/brighton-hove-albion-vs-tottenham-hotspur</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/h2h/brighton-hove-albion-vs-west-ham-united</loc>
+    <loc>https://matchlocator.com/h2h/brighton-hove-albion-vs-west-ham</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/brighton-hove-albion-vs-wolverhampton-wanderers</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/chelsea-vs-crystal-palace</loc>
@@ -544,19 +544,19 @@
     <loc>https://matchlocator.com/h2h/chelsea-vs-liverpool</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/chelsea-vs-manchester-city</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/chelsea-vs-manchester-united</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/chelsea-vs-newcastle-united</loc>
@@ -580,10 +580,10 @@
     <loc>https://matchlocator.com/h2h/chelsea-vs-tottenham-hotspur</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/h2h/chelsea-vs-west-ham-united</loc>
+    <loc>https://matchlocator.com/h2h/chelsea-vs-west-ham</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -598,97 +598,97 @@
     <loc>https://matchlocator.com/h2h/crystal-palace-vs-everton</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/crystal-palace-vs-fulham</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/crystal-palace-vs-ipswich-town</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/crystal-palace-vs-leicester-city</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/crystal-palace-vs-liverpool</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/crystal-palace-vs-manchester-city</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/crystal-palace-vs-manchester-united</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/crystal-palace-vs-newcastle-united</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/crystal-palace-vs-nottingham-forest</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/crystal-palace-vs-southampton</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/crystal-palace-vs-tottenham-hotspur</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/h2h/crystal-palace-vs-west-ham-united</loc>
+    <loc>https://matchlocator.com/h2h/crystal-palace-vs-west-ham</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/crystal-palace-vs-wolverhampton-wanderers</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/everton-vs-fulham</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/everton-vs-ipswich-town</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/everton-vs-leicester-city</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/everton-vs-liverpool</loc>
@@ -700,241 +700,241 @@
     <loc>https://matchlocator.com/h2h/everton-vs-manchester-city</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/everton-vs-manchester-united</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/everton-vs-newcastle-united</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/everton-vs-nottingham-forest</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/everton-vs-southampton</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/everton-vs-tottenham-hotspur</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/h2h/everton-vs-west-ham-united</loc>
+    <loc>https://matchlocator.com/h2h/everton-vs-west-ham</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/everton-vs-wolverhampton-wanderers</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/fulham-vs-ipswich-town</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/fulham-vs-leicester-city</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/fulham-vs-liverpool</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/fulham-vs-manchester-city</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/fulham-vs-manchester-united</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/fulham-vs-newcastle-united</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/fulham-vs-nottingham-forest</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/fulham-vs-southampton</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/fulham-vs-tottenham-hotspur</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/h2h/fulham-vs-west-ham-united</loc>
+    <loc>https://matchlocator.com/h2h/fulham-vs-west-ham</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/fulham-vs-wolverhampton-wanderers</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/ipswich-town-vs-leicester-city</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/ipswich-town-vs-liverpool</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/ipswich-town-vs-manchester-city</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/ipswich-town-vs-manchester-united</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/ipswich-town-vs-newcastle-united</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/ipswich-town-vs-nottingham-forest</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/ipswich-town-vs-southampton</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/ipswich-town-vs-tottenham-hotspur</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/h2h/ipswich-town-vs-west-ham-united</loc>
+    <loc>https://matchlocator.com/h2h/ipswich-town-vs-west-ham</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/ipswich-town-vs-wolverhampton-wanderers</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/leicester-city-vs-liverpool</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/leicester-city-vs-manchester-city</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/leicester-city-vs-manchester-united</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/leicester-city-vs-newcastle-united</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/leicester-city-vs-nottingham-forest</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/leicester-city-vs-southampton</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/leicester-city-vs-tottenham-hotspur</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/h2h/leicester-city-vs-west-ham-united</loc>
+    <loc>https://matchlocator.com/h2h/leicester-city-vs-west-ham</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/leicester-city-vs-wolverhampton-wanderers</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/liverpool-vs-manchester-city</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/liverpool-vs-manchester-united</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/liverpool-vs-newcastle-united</loc>
@@ -946,22 +946,22 @@
     <loc>https://matchlocator.com/h2h/liverpool-vs-nottingham-forest</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/liverpool-vs-southampton</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/liverpool-vs-tottenham-hotspur</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/h2h/liverpool-vs-west-ham-united</loc>
+    <loc>https://matchlocator.com/h2h/liverpool-vs-west-ham</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -970,13 +970,13 @@
     <loc>https://matchlocator.com/h2h/liverpool-vs-wolverhampton-wanderers</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/manchester-city-vs-manchester-united</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/manchester-city-vs-newcastle-united</loc>
@@ -988,22 +988,22 @@
     <loc>https://matchlocator.com/h2h/manchester-city-vs-nottingham-forest</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/manchester-city-vs-southampton</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/manchester-city-vs-tottenham-hotspur</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/h2h/manchester-city-vs-west-ham-united</loc>
+    <loc>https://matchlocator.com/h2h/manchester-city-vs-west-ham</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -1012,7 +1012,7 @@
     <loc>https://matchlocator.com/h2h/manchester-city-vs-wolverhampton-wanderers</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/manchester-united-vs-newcastle-united</loc>
@@ -1024,22 +1024,22 @@
     <loc>https://matchlocator.com/h2h/manchester-united-vs-nottingham-forest</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/manchester-united-vs-southampton</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/manchester-united-vs-tottenham-hotspur</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/h2h/manchester-united-vs-west-ham-united</loc>
+    <loc>https://matchlocator.com/h2h/manchester-united-vs-west-ham</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -1048,19 +1048,19 @@
     <loc>https://matchlocator.com/h2h/manchester-united-vs-wolverhampton-wanderers</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/newcastle-united-vs-nottingham-forest</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/newcastle-united-vs-southampton</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/newcastle-united-vs-tottenham-hotspur</loc>
@@ -1069,61 +1069,61 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/h2h/newcastle-united-vs-west-ham-united</loc>
+    <loc>https://matchlocator.com/h2h/newcastle-united-vs-west-ham</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/newcastle-united-vs-wolverhampton-wanderers</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/nottingham-forest-vs-southampton</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/nottingham-forest-vs-tottenham-hotspur</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/h2h/nottingham-forest-vs-west-ham-united</loc>
+    <loc>https://matchlocator.com/h2h/nottingham-forest-vs-west-ham</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/nottingham-forest-vs-wolverhampton-wanderers</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/southampton-vs-tottenham-hotspur</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/h2h/southampton-vs-west-ham-united</loc>
+    <loc>https://matchlocator.com/h2h/southampton-vs-west-ham</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/h2h/southampton-vs-wolverhampton-wanderers</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/h2h/tottenham-hotspur-vs-west-ham-united</loc>
+    <loc>https://matchlocator.com/h2h/tottenham-hotspur-vs-west-ham</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -1132,12 +1132,12 @@
     <loc>https://matchlocator.com/h2h/tottenham-hotspur-vs-wolverhampton-wanderers</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/h2h/west-ham-united-vs-wolverhampton-wanderers</loc>
+    <loc>https://matchlocator.com/h2h/west-ham-vs-wolverhampton-wanderers</loc>
     <lastmod>2024-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.8</priority>
   </url>
 </urlset>

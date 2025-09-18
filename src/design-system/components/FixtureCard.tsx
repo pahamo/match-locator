@@ -5,7 +5,7 @@ import { getMatchStatus, getMatchStatusStyles } from '../../utils/matchStatus';
 import { shouldCreateMatchPage } from '../../utils/matchPageFilter';
 import { generateH2HUrl } from '../../utils/headToHead';
 import { generateSeoTeamSlug } from '../../utils/teamSlugs';
-import { isValidPremierLeagueH2H } from '../../utils/generateH2HRoutes';
+import { isSupportedTeam } from '../../utils/teamSlugs';
 import { getDisplayTeamName } from '../../utils/teamNames';
 import { formatTime } from '../../utils/dateFormat';
 import OptimizedImage from '../../components/OptimizedImage';
@@ -38,8 +38,8 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
     const awaySlug = generateSeoTeamSlug(fixture.away_team);
     const h2hSlug = `${homeSlug}-vs-${awaySlug}`;
 
-    // Double-check: only create H2H URL for Premier League teams
-    const isValidH2H = isValidPremierLeagueH2H(h2hSlug);
+    // Check if both teams are supported (Premier League or Champions League)
+    const isValidH2H = isSupportedTeam(homeSlug) && isSupportedTeam(awaySlug);
     const h2hUrl = isValidH2H ? generateH2HUrl(homeSlug, awaySlug) : null;
 
     return {
@@ -63,8 +63,8 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
     const awaySlug = generateSeoTeamSlug(fixture.away.name);
     const h2hSlug = `${homeSlug}-vs-${awaySlug}`;
 
-    // Double-check: only create H2H URL for Premier League teams
-    const isValidH2H = isValidPremierLeagueH2H(h2hSlug);
+    // Check if both teams are supported (Premier League or Champions League)
+    const isValidH2H = isSupportedTeam(homeSlug) && isSupportedTeam(awaySlug);
     const h2hUrl = isValidH2H ? generateH2HUrl(homeSlug, awaySlug) : null;
 
     return {

@@ -19,8 +19,8 @@ import {
   cleanTeamNameForDisplay,
   calculateH2HStats
 } from '../utils/headToHead';
-import { normalizeTeamSlug, mapSeoSlugToDbSlug } from '../utils/teamSlugs';
-import { isValidPremierLeagueH2H } from '../utils/generateH2HRoutes';
+import { normalizeTeamSlug, mapSeoSlugToDbSlugEnhanced } from '../utils/teamSlugs';
+import { isSupportedTeam } from '../utils/teamSlugs';
 import type { Fixture, Team } from '../types';
 
 const HeadToHeadPage: React.FC = () => {
@@ -53,9 +53,16 @@ const HeadToHeadPage: React.FC = () => {
       return;
     }
 
-    // Validate this is a Premier League H2H matchup
-    if (!slug || !isValidPremierLeagueH2H(slug)) {
-      setError('H2H pages are currently available for Premier League teams only');
+    // Validate this is a supported H2H matchup (Premier League or Champions League)
+    if (!slug) {
+      setError('Invalid H2H URL format');
+      setLoading(false);
+      return;
+    }
+
+    const parts = slug.split('-vs-');
+    if (parts.length !== 2 || !isSupportedTeam(parts[0]) || !isSupportedTeam(parts[1])) {
+      setError('H2H pages are currently available for Premier League and Champions League teams only');
       setLoading(false);
       return;
     }
@@ -80,9 +87,9 @@ const HeadToHeadPage: React.FC = () => {
       const seoTeam1Slug = normalizeTeamSlug(parsedTeams.team1Slug);
       const seoTeam2Slug = normalizeTeamSlug(parsedTeams.team2Slug);
 
-      // Map SEO slugs to database slugs (which have -fc suffix)
-      const dbTeam1Slug = mapSeoSlugToDbSlug(seoTeam1Slug);
-      const dbTeam2Slug = mapSeoSlugToDbSlug(seoTeam2Slug);
+      // Map SEO slugs to database slugs (enhanced mapping for Premier League and Champions League)
+      const dbTeam1Slug = mapSeoSlugToDbSlugEnhanced(seoTeam1Slug);
+      const dbTeam2Slug = mapSeoSlugToDbSlugEnhanced(seoTeam2Slug);
 
       console.log(`Loading H2H data for ${seoTeam1Slug} vs ${seoTeam2Slug}`);
       console.log(`Database lookup: ${dbTeam1Slug} vs ${dbTeam2Slug}`);

@@ -5,7 +5,7 @@ import { mapCompetitionIdToSlug } from './competitionMapping';
 // UK-relevant competitions that should have H2H pages
 const UK_RELEVANT_COMPETITIONS = [
   'premier-league',
-  'champions-league', // Added back with international team mapping support
+  'champions-league', // ✅ ACTIVATED: Full international team mapping support
   // TODO: Add other competitions when team mapping is expanded
   // 'europa-league',
   // 'championship',
@@ -29,6 +29,13 @@ const BIG_TEAMS = [
 function getDaysUntil(kickoffUtc: string): number {
   const now = new Date();
   const kickoff = new Date(kickoffUtc);
+
+  // Check if the date is valid
+  if (isNaN(kickoff.getTime())) {
+    console.warn(`Invalid date format: ${kickoffUtc}`);
+    return 0; // Default to 0 days if date is invalid
+  }
+
   const diffTime = kickoff.getTime() - now.getTime();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   return diffDays;
