@@ -73,7 +73,7 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
       awayTeam: fixture.away.name,
       homeCrest: fixture.home.crest,
       awayCrest: fixture.away.crest,
-      broadcaster: isBlackout ? undefined : broadcasterName,
+      broadcaster: broadcasterName,
       isBlackout: isBlackout,
       matchweek: fixture.matchweek,
       url: h2hUrl,

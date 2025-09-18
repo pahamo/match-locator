@@ -333,59 +333,114 @@ const HomePage: React.FC = () => {
             </div>
           )}
 
-          {/* Navigation Links */}
-          <div style={{
-            marginTop: '32px',
-            padding: '24px',
-            background: '#f8fafc',
-            borderRadius: '12px',
-            border: '1px solid #e2e8f0',
-            textAlign: 'center'
-          }}>
-            <h2 style={{
-              fontSize: '1.125rem',
-              fontWeight: '600',
-              color: '#1e293b',
-              marginBottom: '12px'
+          {/* No more games message or navigation */}
+          {liveFixtures.length === 0 && upcomingFixtures.length === 0 ? (
+            <div style={{
+              marginTop: '32px',
+              padding: '24px',
+              background: '#f8fafc',
+              borderRadius: '12px',
+              border: '1px solid #e2e8f0',
+              textAlign: 'center'
             }}>
-              Looking for more?
-            </h2>
-            <p style={{ margin: '0 0 20px 0', color: '#64748b', fontSize: '14px' }}>
-              View all upcoming fixtures or browse by competition
-            </p>
-            <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <a
-                href="/fixtures"
-                style={{
-                  display: 'inline-block',
-                  background: '#3b82f6',
-                  color: 'white',
-                  padding: '12px 24px',
-                  borderRadius: '8px',
-                  textDecoration: 'none',
-                  fontSize: '1rem',
-                  fontWeight: '500'
-                }}
-              >
-                📺 All Fixtures
-              </a>
-              <a
-                href="/competitions"
-                style={{
-                  display: 'inline-block',
-                  background: '#6366f1',
-                  color: 'white',
-                  padding: '12px 24px',
-                  borderRadius: '8px',
-                  textDecoration: 'none',
-                  fontSize: '1rem',
-                  fontWeight: '500'
-                }}
-              >
-                🏆 Competitions
-              </a>
+              <h2 style={{
+                fontSize: '1.125rem',
+                fontWeight: '600',
+                color: '#1e293b',
+                marginBottom: '12px'
+              }}>
+                No more football today
+              </h2>
+              <p style={{ margin: '0 0 20px 0', color: '#64748b', fontSize: '14px' }}>
+                All Premier League and Champions League games for today are finished
+              </p>
+              <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                <a
+                  href="/fixtures"
+                  style={{
+                    display: 'inline-block',
+                    background: '#3b82f6',
+                    color: 'white',
+                    padding: '12px 24px',
+                    borderRadius: '8px',
+                    textDecoration: 'none',
+                    fontSize: '1rem',
+                    fontWeight: '500'
+                  }}
+                >
+                  📺 Tomorrow's Fixtures
+                </a>
+                <a
+                  href="/competitions"
+                  style={{
+                    display: 'inline-block',
+                    background: '#6366f1',
+                    color: 'white',
+                    padding: '12px 24px',
+                    borderRadius: '8px',
+                    textDecoration: 'none',
+                    fontSize: '1rem',
+                    fontWeight: '500'
+                  }}
+                >
+                  🏆 Competitions
+                </a>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div style={{
+              marginTop: '32px',
+              padding: '24px',
+              background: '#f8fafc',
+              borderRadius: '12px',
+              border: '1px solid #e2e8f0',
+              textAlign: 'center'
+            }}>
+              <h2 style={{
+                fontSize: '1.125rem',
+                fontWeight: '600',
+                color: '#1e293b',
+                marginBottom: '12px'
+              }}>
+                Looking for more?
+              </h2>
+              <p style={{ margin: '0 0 20px 0', color: '#64748b', fontSize: '14px' }}>
+                View all upcoming fixtures or browse by competition
+              </p>
+              <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                <a
+                  href="/fixtures"
+                  style={{
+                    display: 'inline-block',
+                    background: '#3b82f6',
+                    color: 'white',
+                    padding: '12px 24px',
+                    borderRadius: '8px',
+                    textDecoration: 'none',
+                    fontSize: '1rem',
+                    fontWeight: '500'
+                  }}
+                >
+                  📺 All Fixtures
+                </a>
+                <a
+                  href="/competitions"
+                  style={{
+                    display: 'inline-block',
+                    background: '#6366f1',
+                    color: 'white',
+                    padding: '12px 24px',
+                    borderRadius: '8px',
+                    textDecoration: 'none',
+                    fontSize: '1rem',
+                    fontWeight: '500'
+                  }}
+                >
+                  🏆 Competitions
+                </a>
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </div>

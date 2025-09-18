@@ -196,6 +196,10 @@ export const ALL_TEAM_MAPPINGS: Record<string, string> = {
   'brentford': 'brentford',
   'brentford-fc': 'brentford',
 
+  // Burnley (relegated but keeping for legacy H2H links)
+  'burnley': 'burnley',
+  'burnley-fc': 'burnley',
+
   // Fulham
   'fulham': 'fulham',
   'fulham-fc': 'fulham',
