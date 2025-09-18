@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import { parseH2HSlug } from '../utils/headToHead';
 import { FixtureCardSkeleton } from './SkeletonLoader';
 
@@ -65,28 +65,52 @@ const isH2HUrl = (slug: string): boolean => {
  * IMPROVED H2H ROUTING - NOW WITH BETTER PATTERN DETECTION
  */
 const SmartFixtureRouter: React.FC = () => {
-  const { matchSlug } = useParams<{ matchSlug: string }>();
+  const { matchSlug, contentSlug } = useParams<{ matchSlug?: string; contentSlug?: string }>();
+  const location = useLocation();
 
-  if (!matchSlug) {
+  // Determine which slug to use based on the route
+  const slug = contentSlug || matchSlug;
+  const isContentRoute = location.pathname.startsWith('/content/');
+
+  if (!slug) {
     return <div>Invalid URL</div>;
   }
 
   try {
-    // Check if this is a pure H2H pattern with improved logic
-    if (isH2HUrl(matchSlug)) {
-      // This is a Head-to-Head URL
-      return (
-        <Suspense fallback={<PageLoader />}>
-          <HeadToHeadPage />
-        </Suspense>
-      );
+    // If it's a /content/ route, check if it's H2H format
+    if (isContentRoute) {
+      if (isH2HUrl(slug)) {
+        // Content H2H URL like /content/arsenal-vs-chelsea
+        return (
+          <Suspense fallback={<PageLoader />}>
+            <HeadToHeadPage />
+          </Suspense>
+        );
+      } else {
+        // Future content types (guides, etc.) - for now fallback to MatchPage
+        return (
+          <Suspense fallback={<PageLoader />}>
+            <MatchPage />
+          </Suspense>
+        );
+      }
     } else {
-      // This is a regular match URL (includes competition/date)
-      return (
-        <Suspense fallback={<PageLoader />}>
-          <MatchPage />
-        </Suspense>
-      );
+      // Legacy /fixtures/ route - check if it's H2H format
+      if (isH2HUrl(slug)) {
+        // This is a Head-to-Head URL on /fixtures/ (legacy)
+        return (
+          <Suspense fallback={<PageLoader />}>
+            <HeadToHeadPage />
+          </Suspense>
+        );
+      } else {
+        // This is a regular match URL (includes competition/date)
+        return (
+          <Suspense fallback={<PageLoader />}>
+            <MatchPage />
+          </Suspense>
+        );
+      }
     }
   } catch (error) {
     // Fallback to MatchPage if there's any routing error

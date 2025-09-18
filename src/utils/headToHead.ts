@@ -57,7 +57,7 @@ export function needsCanonicalRedirect(currentSlug: string): string | null {
  */
 export function generateH2HUrl(team1Slug: string, team2Slug: string): string {
   const canonicalSlug = generateCanonicalH2HSlug(team1Slug, team2Slug);
-  return `/fixtures/${canonicalSlug}`;
+  return `/content/${canonicalSlug}`;
 }
 
 /**
@@ -76,7 +76,7 @@ export function generateH2HMeta(team1Name: string, team2Name: string, fixtureCou
   const description = `All ${team1Name} vs ${team2Name} fixtures with UK TV info. Find out when and where to watch the matches.${fixtureCount > 0 ? ` ${fixtureCount} fixtures this season.` : ''}`;
 
   const canonicalBase = process.env.REACT_APP_CANONICAL_BASE || 'https://matchlocator.com';
-  const canonical = `${canonicalBase}/fixtures/${canonicalSlug}`;
+  const canonical = `${canonicalBase}/content/${canonicalSlug}`;
 
   return {
     title,

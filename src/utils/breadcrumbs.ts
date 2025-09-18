@@ -116,6 +116,35 @@ export const generateBreadcrumbs = (
       }
       break;
 
+    case 'content':
+      if (pathParts.length === 1) {
+        // /content
+        breadcrumbs.push({ label: 'Content' });
+      } else {
+        // /content/content-slug (H2H pages, guides, etc.)
+        const contentSlug = pathParts[1];
+
+        breadcrumbs.push(
+          { label: 'Content', href: '/content' }
+        );
+
+        // Check if it's an H2H page format
+        if (contentSlug.includes('-vs-')) {
+          const parts = contentSlug.split('-vs-');
+          if (parts.length === 2) {
+            const team1 = parts[0].replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            const team2 = parts[1].replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            breadcrumbs.push({ label: `${team1} vs ${team2}` });
+          } else {
+            breadcrumbs.push({ label: contentSlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) });
+          }
+        } else {
+          // Future content types (guides, etc.)
+          breadcrumbs.push({ label: contentSlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) });
+        }
+      }
+      break;
+
     case 'matches':
       // Legacy /matches routes - redirect to fixtures pattern
       const matchSlug = pathParts[1];

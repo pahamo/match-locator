@@ -101,6 +101,8 @@ function App() {
               <Route path="/competitions" element={<CompetitionsOverviewPage />} />
               <Route path="/competitions/champions-league/group-stage" element={<ChampionsLeagueGroupStagePage />} />
               <Route path="/competitions/:slug" element={<CompetitionPage />} />
+              {/* Content pages - H2H, guides, etc. */}
+              <Route path="/content/:contentSlug" element={<SmartFixtureRouter />} />
               {/* SEO-friendly match URLs and H2H - new format */}
               <Route path="/fixtures/:matchSlug" element={<SmartFixtureRouter />} />
               {/* SEO-friendly match URLs - legacy format with IDs */}
