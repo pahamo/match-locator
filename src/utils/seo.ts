@@ -16,6 +16,16 @@ export const slugify = (text: string): string => {
     .trim();
 };
 
+// NEW: Clean slug generation that handles accents properly
+export const generateCleanSlug = (text: string): string => {
+  return text
+    .toLowerCase()
+    .normalize('NFD')  // Decompose accents
+    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+    .replace(/[^a-z0-9]+/g, '-')  // Only alphanumeric
+    .replace(/^-+|-+$/g, '');  // Trim hyphens
+};
+
 export const formatDateForUrl = (date: string): string => {
   return new Date(date).toISOString().split('T')[0]; // YYYY-MM-DD
 };
@@ -139,8 +149,8 @@ export const generateSimpleMatchUrl = (fixture: SimpleFixture): string => genera
 // NEW SEO-FRIENDLY URL FUNCTIONS
 
 export const generateSeoMatchSlug = (fixture: Fixture): string => {
-  const homeSlug = slugify(cleanTeamName(fixture.home.name));
-  const awaySlug = slugify(cleanTeamName(fixture.away.name));
+  const homeSlug = generateCleanSlug(cleanTeamName(fixture.home.name));
+  const awaySlug = generateCleanSlug(cleanTeamName(fixture.away.name));
   const competitionSlug = fixture.competition_id ? mapCompetitionIdToSlug(fixture.competition_id) : 'unknown';
   const dateSlug = formatDateForSeoUrl(fixture.kickoff_utc);
 
@@ -150,8 +160,8 @@ export const generateSeoMatchSlug = (fixture: Fixture): string => {
 export const generateSeoMatchUrl = (fixture: Fixture): string => `/fixtures/${generateSeoMatchSlug(fixture)}`;
 
 export const generateSeoSimpleMatchSlug = (fixture: SimpleFixture): string => {
-  const homeSlug = slugify(cleanTeamName(fixture.home_team));
-  const awaySlug = slugify(cleanTeamName(fixture.away_team));
+  const homeSlug = generateCleanSlug(cleanTeamName(fixture.home_team));
+  const awaySlug = generateCleanSlug(cleanTeamName(fixture.away_team));
   const competitionSlug = fixture.competition_id ? mapCompetitionIdToSlug(fixture.competition_id) : 'unknown';
   const dateSlug = formatDateForSeoUrl(fixture.kickoff_utc);
 
