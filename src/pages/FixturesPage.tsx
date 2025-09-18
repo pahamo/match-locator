@@ -513,7 +513,7 @@ const FixturesPage: React.FC = () => {
                   <FixtureCard
                     key={fixture.id}
                     fixture={fixture}
-                    variant="compact"
+                    variant="withTime"
                     showMatchweek={true}
                     showViewButton={true}
                     style={{ marginBottom: '8px' }}
