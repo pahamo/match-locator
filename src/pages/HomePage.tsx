@@ -39,9 +39,11 @@ const groupFixturesByStatus = (fixtures: SimpleFixture[]) => {
     const status = getMatchStatus(fixture.kickoff_utc);
     if (status.status === 'live') {
       liveFixtures.push(fixture);
-    } else {
+    } else if (status.status === 'upNext' || status.status === 'upcoming') {
+      // Only include genuinely upcoming games, not finished ones
       upcomingFixtures.push(fixture);
     }
+    // Exclude finished games from both sections
   });
 
   // Sort upcoming fixtures by kickoff time

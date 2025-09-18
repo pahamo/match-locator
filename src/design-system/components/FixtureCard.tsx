@@ -7,6 +7,7 @@ import { generateH2HUrl } from '../../utils/headToHead';
 import { getCanonicalTeamSlug } from '../../utils/teamSlugs';
 import { getDisplayTeamName } from '../../utils/teamNames';
 import { formatTime } from '../../utils/dateFormat';
+import { COMPETITION_CONFIGS } from '../../config/competitions';
 import OptimizedImage from '../../components/OptimizedImage';
 import { SkyAffiliateLink } from '../../components/affiliate/AffiliateLink';
 
@@ -25,6 +26,15 @@ export interface FixtureCardProps {
 // Helper functions to work with both fixture types
 const isSimpleFixture = (fixture: SimpleFixture | Fixture): fixture is SimpleFixture => {
   return 'home_team' in fixture;
+};
+
+// Helper to get competition info from fixture
+const getCompetitionInfo = (fixture: SimpleFixture | Fixture) => {
+  const competitionId = fixture.competition_id;
+  if (!competitionId) return null;
+
+  const competition = Object.values(COMPETITION_CONFIGS).find(c => c.id === competitionId);
+  return competition || null;
 };
 
 const getFixtureData = (fixture: SimpleFixture | Fixture) => {
@@ -118,6 +128,32 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
           <div className="kickoff-time">
             {formatTime(fixture.kickoff_utc)}
           </div>
+          {(() => {
+            const competition = getCompetitionInfo(fixture);
+            return (
+              <div className="time-column-metadata">
+                {/* League Pill */}
+                {competition && (
+                  <div
+                    className="league-pill"
+                    style={{
+                      background: competition.colors.primary,
+                      color: competition.colors.secondary,
+                    }}
+                  >
+                    {competition.shortName}
+                  </div>
+                )}
+
+                {/* Matchweek */}
+                {showMatchweek && fixtureData.matchweek && (
+                  <div className="matchweek-pill">
+                    {fixtureData.matchweek}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
         </div>
       )}
 
@@ -211,19 +247,9 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
         </span>
       )}
 
-      {/* Show "No UK Broadcast" only for blackout games that have H2H pages */}
-      {showViewButton && fixtureData.shouldCreatePage && fixtureData.isBlackout && (
-        <span className="view-button disabled" title="This match is subject to a UK broadcast blackout">
-          🚫 Blackout
-        </span>
-      )}
+      {/* Removed blackout badge - only show "No UK Broadcast" in broadcaster section */}
 
-      {/* Matchweek (if requested) */}
-      {showMatchweek && fixtureData.matchweek && (
-        <div className="matchweek-badge">
-          MW{fixtureData.matchweek}
-        </div>
-      )}
+      {/* Matchweek moved to time column for withTime variant */}
     </div>
   );
 });
@@ -249,12 +275,14 @@ const fixtureCardStyles = `
 
   .time-column {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-width: 60px;
+    min-width: 80px;
     flex-shrink: 0;
     padding-right: 8px;
     border-right: 1px solid #e5e7eb;
+    gap: 4px;
   }
 
   .kickoff-time {
@@ -263,6 +291,34 @@ const fixtureCardStyles = `
     color: #374151;
     text-align: center;
     line-height: 1.2;
+  }
+
+  .time-column-metadata {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .league-pill {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+    line-height: 1;
+  }
+
+  .matchweek-pill {
+    font-size: 8px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+    line-height: 1;
   }
 
   .broadcaster-info {

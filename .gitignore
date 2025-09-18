@@ -65,3 +65,6 @@ Icon?
 Screenshot*.png
 Screenshot*.jpg
 Screenshot*.jpeg
+
+# Local Netlify folder
+.netlify

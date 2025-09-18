@@ -10,11 +10,37 @@ import { FixtureCard } from '../design-system';
 import { generateFixturesMeta, updateDocumentMeta } from '../utils/seo';
 import { generateBreadcrumbs } from '../utils/breadcrumbs';
 import { getMatchStatus } from '../utils/matchStatus';
+import { formatDateOnly } from '../utils/dateFormat';
 
 type FilterTeam = '' | string;
 type FilterMatchweek = '' | string;
 type FilterCompetition = '' | number;
 type FilterLocation = '' | 'tv' | 'streaming' | 'blackout' | 'tbd';
+
+// Helper function to group fixtures by date
+const groupFixturesByDate = (fixtures: Fixture[]) => {
+  const dateGroups: Record<string, Fixture[]> = {};
+
+  fixtures.forEach(fixture => {
+    const dateKey = formatDateOnly(fixture.kickoff_utc);
+    if (!dateGroups[dateKey]) {
+      dateGroups[dateKey] = [];
+    }
+    dateGroups[dateKey].push(fixture);
+  });
+
+  // Convert to array and sort by date
+  return Object.entries(dateGroups)
+    .map(([date, fixtures]) => ({
+      date,
+      fixtures: fixtures.sort((a, b) =>
+        new Date(a.kickoff_utc).getTime() - new Date(b.kickoff_utc).getTime()
+      )
+    }))
+    .sort((a, b) =>
+      new Date(a.fixtures[0].kickoff_utc).getTime() - new Date(b.fixtures[0].kickoff_utc).getTime()
+    );
+};
 
 const FixturesPage: React.FC = () => {
   const [fixtures, setFixtures] = useState<Fixture[]>([]);
@@ -638,17 +664,36 @@ const FixturesPage: React.FC = () => {
                       </div>
                     )}
 
-                    {/* Other Fixtures */}
+                    {/* Other Fixtures grouped by day */}
                     {otherFixtures.length > 0 && (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        {otherFixtures.map((fixture) => (
-                          <FixtureCard
-                            key={fixture.id}
-                            fixture={fixture}
-                            variant="withTime"
-                            showMatchweek={true}
-                            showViewButton={true}
-                          />
+                      <div>
+                        {groupFixturesByDate(otherFixtures).map((dayGroup, dayIndex) => (
+                          <div key={dayIndex} style={{ marginBottom: '24px' }}>
+                            {/* Day Divider */}
+                            <div style={{
+                              fontSize: '14px',
+                              fontWeight: '600',
+                              color: '#374151',
+                              padding: '8px 0',
+                              borderBottom: '1px solid #e5e7eb',
+                              marginBottom: '12px'
+                            }}>
+                              {dayGroup.date}
+                            </div>
+
+                            {/* Fixtures for this day */}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                              {dayGroup.fixtures.map((fixture) => (
+                                <FixtureCard
+                                  key={fixture.id}
+                                  fixture={fixture}
+                                  variant="withTime"
+                                  showMatchweek={true}
+                                  showViewButton={true}
+                                />
+                              ))}
+                            </div>
+                          </div>
                         ))}
                       </div>
                     )}
