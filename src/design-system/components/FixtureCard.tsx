@@ -5,6 +5,7 @@ import { getMatchStatus, getMatchStatusStyles } from '../../utils/matchStatus';
 import { shouldCreateMatchPage } from '../../utils/matchPageFilter';
 import { generateH2HUrl } from '../../utils/headToHead';
 import { generateSeoTeamSlug } from '../../utils/teamSlugs';
+import { isValidPremierLeagueH2H } from '../../utils/generateH2HRoutes';
 import { getDisplayTeamName } from '../../utils/teamNames';
 import { formatTime } from '../../utils/dateFormat';
 import OptimizedImage from '../../components/OptimizedImage';
@@ -35,7 +36,11 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
     // Generate H2H URL from SimpleFixture
     const homeSlug = generateSeoTeamSlug(fixture.home_team);
     const awaySlug = generateSeoTeamSlug(fixture.away_team);
-    const h2hUrl = generateH2HUrl(homeSlug, awaySlug);
+    const h2hSlug = `${homeSlug}-vs-${awaySlug}`;
+
+    // Double-check: only create H2H URL for Premier League teams
+    const isValidH2H = isValidPremierLeagueH2H(h2hSlug);
+    const h2hUrl = isValidH2H ? generateH2HUrl(homeSlug, awaySlug) : null;
 
     return {
       homeTeam: fixture.home_team,
@@ -45,8 +50,8 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
       broadcaster: fixture.broadcaster,
       isBlackout: fixture.isBlackout || false,
       matchweek: fixture.matchweek,
-      url: shouldCreatePage ? h2hUrl : null,
-      shouldCreatePage
+      url: shouldCreatePage && isValidH2H ? h2hUrl : null,
+      shouldCreatePage: shouldCreatePage && isValidH2H
     };
   } else {
     const hasProviders = fixture.providers_uk && fixture.providers_uk.length > 0;
@@ -56,7 +61,11 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
     // Generate H2H URL from Fixture
     const homeSlug = generateSeoTeamSlug(fixture.home.name);
     const awaySlug = generateSeoTeamSlug(fixture.away.name);
-    const h2hUrl = generateH2HUrl(homeSlug, awaySlug);
+    const h2hSlug = `${homeSlug}-vs-${awaySlug}`;
+
+    // Double-check: only create H2H URL for Premier League teams
+    const isValidH2H = isValidPremierLeagueH2H(h2hSlug);
+    const h2hUrl = isValidH2H ? generateH2HUrl(homeSlug, awaySlug) : null;
 
     return {
       homeTeam: fixture.home.name,
@@ -66,8 +75,8 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
       broadcaster: isBlackout ? undefined : broadcasterName,
       isBlackout: isBlackout,
       matchweek: fixture.matchweek,
-      url: shouldCreatePage ? h2hUrl : null,
-      shouldCreatePage
+      url: shouldCreatePage && isValidH2H ? h2hUrl : null,
+      shouldCreatePage: shouldCreatePage && isValidH2H
     };
   }
 };
