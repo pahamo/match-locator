@@ -2,16 +2,7 @@ import React from 'react';
 import type { Fixture } from '../types';
 import { formatDetailedDate } from '../utils/dateFormat';
 import { FeatureFlag } from '../config/featureFlags';
-
-interface H2HStats {
-  totalMatches: number;
-  team1Wins: number;
-  team2Wins: number;
-  draws: number;
-  team1Goals: number;
-  team2Goals: number;
-  lastMeetings: Fixture[];
-}
+import type { H2HStats } from '../utils/headToHead';
 
 interface H2HStatsCardProps {
   team1Name: string;
@@ -84,7 +75,7 @@ const H2HStatsCard: React.FC<H2HStatsCardProps> = ({
           textAlign: 'center',
           margin: 0
         }}>
-          {stats.totalMatches} meetings this season
+          {stats.completedMatches} completed meetings • {stats.totalMatches} total fixtures
         </p>
       </div>
 
@@ -259,6 +250,125 @@ const H2HStatsCard: React.FC<H2HStatsCardProps> = ({
             </div>
           </div>
         </div>
+
+        {/* Additional Stats */}
+        {stats.completedMatches > 0 && (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+            gap: '16px',
+            marginBottom: '24px'
+          }}>
+            <div style={{
+              textAlign: 'center',
+              padding: '12px',
+              background: '#f8fafc',
+              borderRadius: '8px'
+            }}>
+              <div style={{
+                fontSize: '1.25rem',
+                fontWeight: '700',
+                color: '#1e293b',
+                marginBottom: '4px'
+              }}>
+                {stats.averageGoalsPerGame}
+              </div>
+              <div style={{
+                fontSize: '0.75rem',
+                color: '#64748b'
+              }}>
+                Goals/Game
+              </div>
+            </div>
+
+            <div style={{
+              textAlign: 'center',
+              padding: '12px',
+              background: '#f8fafc',
+              borderRadius: '8px'
+            }}>
+              <div style={{
+                fontSize: '1.25rem',
+                fontWeight: '700',
+                color: '#1e293b',
+                marginBottom: '4px'
+              }}>
+                {stats.mostGoalsInGame}
+              </div>
+              <div style={{
+                fontSize: '0.75rem',
+                color: '#64748b'
+              }}>
+                Highest Score
+              </div>
+            </div>
+
+            <div style={{
+              textAlign: 'center',
+              padding: '12px',
+              background: '#f8fafc',
+              borderRadius: '8px'
+            }}>
+              <div style={{
+                fontSize: '1.25rem',
+                fontWeight: '700',
+                color: '#1e293b',
+                marginBottom: '4px'
+              }}>
+                {stats.biggestWinMargin}
+              </div>
+              <div style={{
+                fontSize: '0.75rem',
+                color: '#64748b'
+              }}>
+                Biggest Win
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Recent Form */}
+        {stats.recentForm.length > 0 && (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '12px',
+            marginBottom: '24px',
+            padding: '16px',
+            background: '#f1f5f9',
+            borderRadius: '8px'
+          }}>
+            <div style={{
+              fontSize: '0.875rem',
+              fontWeight: '600',
+              color: '#1e293b'
+            }}>
+              {team1Name} Recent Form:
+            </div>
+            <div style={{ display: 'flex', gap: '4px' }}>
+              {stats.recentForm.map((result, index) => (
+                <div
+                  key={index}
+                  style={{
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '50%',
+                    backgroundColor: getResultColor(result as 'W' | 'L' | 'D'),
+                    color: 'white',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '0.75rem',
+                    fontWeight: '700'
+                  }}
+                >
+                  {result}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </FeatureFlag>
 
       {/* Last 5 Meetings */}

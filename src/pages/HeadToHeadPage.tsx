@@ -57,8 +57,8 @@ const HeadToHeadPage: React.FC = () => {
 
   // Handle redirect after hooks
   if (shouldRedirect) {
-    // Redirect to content path (since we're moving H2H pages there)
-    return <Navigate to={`/content/${shouldRedirect}`} replace />;
+    // Redirect to h2h path (new primary location for H2H pages)
+    return <Navigate to={`/h2h/${shouldRedirect}`} replace />;
   }
 
   const loadH2HData = async () => {
@@ -100,9 +100,21 @@ const HeadToHeadPage: React.FC = () => {
       setFixtures(fixturesData);
       setNextFixture(nextFixtureData);
 
-      // Update SEO meta tags
+      // Update SEO meta tags with enhanced information
+      const upcomingCount = fixturesData.filter(f => new Date(f.kickoff_utc) > new Date()).length;
+      const completedCount = fixturesData.filter(f => new Date(f.kickoff_utc) <= new Date()).length;
+
       const meta = generateH2HMeta(team1Data.name, team2Data.name, fixturesData.length);
-      updateDocumentMeta(meta);
+
+      // Enhanced meta description with more context
+      const enhancedDescription = nextFixtureData
+        ? `${meta.description} Next match: ${new Date(nextFixtureData.kickoff_utc).toLocaleDateString()}. ${upcomingCount} upcoming fixtures, ${completedCount} completed meetings.`
+        : `${meta.description} ${upcomingCount} upcoming fixtures, ${completedCount} completed meetings this season.`;
+
+      updateDocumentMeta({
+        ...meta,
+        description: enhancedDescription
+      });
 
       console.log(`Loaded ${fixturesData.length} fixtures between ${team1Data.name} and ${team2Data.name}`);
 

@@ -1,10 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { tokens } from '../tokens';
 import type { SimpleFixture, Fixture } from '../../types';
 import { getMatchStatus, getMatchStatusStyles } from '../../utils/matchStatus';
-import { generateSeoSimpleMatchUrl, generateSeoMatchUrl } from '../../utils/seo';
+import { generateCleanSlug } from '../../utils/seo';
 import { shouldCreateMatchPage } from '../../utils/matchPageFilter';
+import { generateH2HUrl } from '../../utils/headToHead';
 import { getDisplayTeamName } from '../../utils/teamNames';
 import { formatTime } from '../../utils/dateFormat';
 import OptimizedImage from '../../components/OptimizedImage';
@@ -28,9 +28,15 @@ const isSimpleFixture = (fixture: SimpleFixture | Fixture): fixture is SimpleFix
 };
 
 const getFixtureData = (fixture: SimpleFixture | Fixture) => {
+  // Always generate H2H URLs for relevant matches
   const shouldCreatePage = shouldCreateMatchPage(fixture);
 
   if (isSimpleFixture(fixture)) {
+    // Generate H2H URL from SimpleFixture
+    const homeSlug = generateCleanSlug(fixture.home_team);
+    const awaySlug = generateCleanSlug(fixture.away_team);
+    const h2hUrl = generateH2HUrl(homeSlug, awaySlug);
+
     return {
       homeTeam: fixture.home_team,
       awayTeam: fixture.away_team,
@@ -39,13 +45,18 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
       broadcaster: fixture.broadcaster,
       isBlackout: fixture.isBlackout || false,
       matchweek: fixture.matchweek,
-      url: shouldCreatePage ? generateSeoSimpleMatchUrl(fixture) : null,
+      url: shouldCreatePage ? h2hUrl : null,
       shouldCreatePage
     };
   } else {
     const hasProviders = fixture.providers_uk && fixture.providers_uk.length > 0;
     const broadcasterName = hasProviders ? fixture.providers_uk[0].name : undefined;
     const isBlackout = fixture.blackout?.is_blackout || false;
+
+    // Generate H2H URL from Fixture
+    const homeSlug = generateCleanSlug(fixture.home.name);
+    const awaySlug = generateCleanSlug(fixture.away.name);
+    const h2hUrl = generateH2HUrl(homeSlug, awaySlug);
 
     return {
       homeTeam: fixture.home.name,
@@ -55,7 +66,7 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
       broadcaster: isBlackout ? undefined : broadcasterName,
       isBlackout: isBlackout,
       matchweek: fixture.matchweek,
-      url: shouldCreatePage ? generateSeoMatchUrl(fixture) : null,
+      url: shouldCreatePage ? h2hUrl : null,
       shouldCreatePage
     };
   }

@@ -1,7 +1,8 @@
-import React, { Suspense } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
-import { parseH2HSlug } from '../utils/headToHead';
+import React, { Suspense, useEffect } from 'react';
+import { useParams, useLocation, Navigate } from 'react-router-dom';
 import { FixtureCardSkeleton } from './SkeletonLoader';
+import { generateCanonicalH2HSlug } from '../utils/headToHead';
+import { generateCleanSlug } from '../utils/seo';
 
 // Lazy load both components
 const MatchPage = React.lazy(() => import('../pages/MatchPage'));
@@ -59,18 +60,78 @@ const isH2HUrl = (slug: string): boolean => {
 };
 
 /**
+ * Extract team names from legacy match URL
+ * Pattern: /matches/123-arsenal-vs-liverpool-premier-league-2025-01-15
+ */
+const extractTeamsFromLegacyUrl = (slug: string): { team1: string; team2: string } | null => {
+  try {
+    // Split by '-vs-' to find the team boundary
+    const parts = slug.split('-vs-');
+    if (parts.length < 2) return null;
+
+    // Clean team1: remove leading ID numbers
+    const team1Raw = parts[0].replace(/^\d+-/, '');
+    const team1 = generateCleanSlug(team1Raw);
+
+    // Clean team2: remove competition and date suffix
+    const team2Raw = parts[1]
+      .replace(/-premier-league.*$/, '')
+      .replace(/-champions-league.*$/, '')
+      .replace(/-europa-league.*$/, '')
+      .replace(/-\d{4}-\d{2}-\d{2}.*$/, '') // Remove date
+      .replace(/-\d{1,2}-(jan|feb|mar|apr|may|jun|jul|aug|sept|oct|nov|dec)-\d{4}.*$/i, ''); // Remove formatted date
+
+    const team2 = generateCleanSlug(team2Raw);
+
+    if (!team1 || !team2) return null;
+
+    return { team1, team2 };
+  } catch (error) {
+    console.error('Error extracting teams from legacy URL:', error);
+    return null;
+  }
+};
+
+/**
  * Smart router that determines whether to show MatchPage or HeadToHeadPage
- * based on the URL pattern
+ * based on the URL pattern, with legacy URL redirects
  *
- * IMPROVED H2H ROUTING - NOW WITH BETTER PATTERN DETECTION
+ * PHASE 2: NOW WITH LEGACY MATCH URL REDIRECTS
  */
 const SmartFixtureRouter: React.FC = () => {
   const { matchSlug, contentSlug } = useParams<{ matchSlug?: string; contentSlug?: string }>();
   const location = useLocation();
+  const [redirectTo, setRedirectTo] = React.useState<string | null>(null);
 
   // Determine which slug to use based on the route
   const slug = contentSlug || matchSlug;
   const isContentRoute = location.pathname.startsWith('/content/');
+
+  // Handle legacy match URL redirects
+  useEffect(() => {
+    if (slug && (location.pathname.startsWith('/matches/') || location.pathname.startsWith('/match/'))) {
+      console.log('Legacy match URL detected:', location.pathname);
+
+      // Try to extract teams from the legacy URL
+      const teams = extractTeamsFromLegacyUrl(slug);
+
+      if (teams) {
+        // Generate canonical H2H URL and redirect
+        const h2hSlug = generateCanonicalH2HSlug(teams.team1, teams.team2);
+        const newUrl = `/h2h/${h2hSlug}`;
+
+        console.log(`Redirecting ${location.pathname} -> ${newUrl}`);
+        setRedirectTo(newUrl);
+      } else {
+        console.warn('Could not extract teams from legacy URL:', slug);
+      }
+    }
+  }, [slug, location.pathname]);
+
+  // Handle redirect
+  if (redirectTo) {
+    return <Navigate to={redirectTo} replace />;
+  }
 
   if (!slug) {
     return <div>Invalid URL</div>;

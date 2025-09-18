@@ -15,7 +15,6 @@
 import React, { Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage'; // Keep HomePage eager for LCP
-import MatchPage from './pages/MatchPage'; // Keep MatchPage for legacy routes
 import SmartFixtureRouter from './components/SmartFixtureRouter';
 
 import Footer from './components/Footer';
@@ -104,14 +103,16 @@ function App() {
               <Route path="/competitions" element={<CompetitionsOverviewPage />} />
               <Route path="/competitions/champions-league/group-stage" element={<ChampionsLeagueGroupStagePage />} />
               <Route path="/competitions/:slug" element={<CompetitionPage />} />
+              {/* H2H pages - primary route */}
+              <Route path="/h2h/:matchSlug" element={<SmartFixtureRouter />} />
               {/* Content pages - H2H, guides, etc. */}
               <Route path="/content/:contentSlug" element={<SmartFixtureRouter />} />
               {/* SEO-friendly match URLs and H2H - new format */}
               <Route path="/fixtures/:matchSlug" element={<SmartFixtureRouter />} />
-              {/* SEO-friendly match URLs - legacy format with IDs */}
-              <Route path="/matches/:matchSlug" element={<MatchPage />} />
-              {/* Legacy support for simple match IDs */}
-              <Route path="/match/:matchId" element={<MatchPage />} />
+              {/* DISABLED: Individual match pages - now redirect to H2H */}
+              <Route path="/matches/:matchSlug" element={<SmartFixtureRouter />} />
+              {/* Legacy support for simple match IDs - redirect to H2H */}
+              <Route path="/match/:matchId" element={<SmartFixtureRouter />} />
               {/* Legacy club routes */}
               <Route path="/club/:clubId" element={<ClubPage />} />
               <Route path="/clubs" element={<ClubsPage />} />
