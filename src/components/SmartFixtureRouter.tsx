@@ -2,7 +2,7 @@ import React, { Suspense, useEffect } from 'react';
 import { useParams, useLocation, Navigate } from 'react-router-dom';
 import { FixtureCardSkeleton } from './SkeletonLoader';
 import { generateCanonicalH2HSlug } from '../utils/headToHead';
-import { generateCleanSlug } from '../utils/seo';
+import { generateSeoTeamSlug } from '../utils/teamSlugs';
 
 // Lazy load both components
 const MatchPage = React.lazy(() => import('../pages/MatchPage'));
@@ -71,7 +71,7 @@ const extractTeamsFromLegacyUrl = (slug: string): { team1: string; team2: string
 
     // Clean team1: remove leading ID numbers
     const team1Raw = parts[0].replace(/^\d+-/, '');
-    const team1 = generateCleanSlug(team1Raw);
+    const team1 = generateSeoTeamSlug(team1Raw);
 
     // Clean team2: remove competition and date suffix
     const team2Raw = parts[1]
@@ -81,7 +81,7 @@ const extractTeamsFromLegacyUrl = (slug: string): { team1: string; team2: string
       .replace(/-\d{4}-\d{2}-\d{2}.*$/, '') // Remove date
       .replace(/-\d{1,2}-(jan|feb|mar|apr|may|jun|jul|aug|sept|oct|nov|dec)-\d{4}.*$/i, ''); // Remove formatted date
 
-    const team2 = generateCleanSlug(team2Raw);
+    const team2 = generateSeoTeamSlug(team2Raw);
 
     if (!team1 || !team2) return null;
 

@@ -5,7 +5,7 @@
 
 import { generateCanonicalH2HSlug } from './headToHead';
 
-// All 20 Premier League teams for 2024-25 season
+// All 20 Premier League teams for 2024-25 season (SEO-friendly slugs without -fc)
 export const PREMIER_LEAGUE_TEAMS = [
   'arsenal',
   'aston-villa',

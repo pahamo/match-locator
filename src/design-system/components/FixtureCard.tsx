@@ -2,9 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import type { SimpleFixture, Fixture } from '../../types';
 import { getMatchStatus, getMatchStatusStyles } from '../../utils/matchStatus';
-import { generateCleanSlug } from '../../utils/seo';
 import { shouldCreateMatchPage } from '../../utils/matchPageFilter';
 import { generateH2HUrl } from '../../utils/headToHead';
+import { generateSeoTeamSlug } from '../../utils/teamSlugs';
 import { getDisplayTeamName } from '../../utils/teamNames';
 import { formatTime } from '../../utils/dateFormat';
 import OptimizedImage from '../../components/OptimizedImage';
@@ -33,8 +33,8 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
 
   if (isSimpleFixture(fixture)) {
     // Generate H2H URL from SimpleFixture
-    const homeSlug = generateCleanSlug(fixture.home_team);
-    const awaySlug = generateCleanSlug(fixture.away_team);
+    const homeSlug = generateSeoTeamSlug(fixture.home_team);
+    const awaySlug = generateSeoTeamSlug(fixture.away_team);
     const h2hUrl = generateH2HUrl(homeSlug, awaySlug);
 
     return {
@@ -54,8 +54,8 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
     const isBlackout = fixture.blackout?.is_blackout || false;
 
     // Generate H2H URL from Fixture
-    const homeSlug = generateCleanSlug(fixture.home.name);
-    const awaySlug = generateCleanSlug(fixture.away.name);
+    const homeSlug = generateSeoTeamSlug(fixture.home.name);
+    const awaySlug = generateSeoTeamSlug(fixture.away.name);
     const h2hUrl = generateH2HUrl(homeSlug, awaySlug);
 
     return {
