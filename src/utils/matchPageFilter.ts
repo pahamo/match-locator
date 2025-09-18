@@ -49,6 +49,7 @@ function hasConfirmedBroadcaster(fixture: Fixture | SimpleFixture): boolean {
   }
 }
 
+
 /**
  * Get competition slug from fixture
  */
@@ -83,49 +84,52 @@ function hasBigTeam(fixture: Fixture | SimpleFixture): boolean {
 }
 
 /**
- * Determine if we should create an individual match page for this fixture
+ * Determine if we should create an H2H page for this fixture
  *
- * CRITICAL: This function determines which matches get individual pages.
- * Only create pages for matches that have real UK relevance and value.
+ * UPDATED FOR H2H ARCHITECTURE: Now creates H2H pages instead of individual match pages.
+ * H2H pages provide value even for blackout matches (historical stats, future fixtures).
  */
 export function shouldCreateMatchPage(fixture: Fixture | SimpleFixture): boolean {
   // 1. Check competition relevance
   const competitionSlug = getCompetitionSlug(fixture);
+  const isUKRelevant = UK_RELEVANT_COMPETITIONS.includes(competitionSlug);
+  const hasPopularTeams = hasBigTeam(fixture);
 
-  if (!UK_RELEVANT_COMPETITIONS.includes(competitionSlug)) {
-    // Exception: Allow big teams in other leagues
-    if (!hasBigTeam(fixture)) {
-      return false; // Don't create page for random foreign league matches
-    }
+  if (!isUKRelevant && !hasPopularTeams) {
+    return false; // Don't create H2H page for random foreign league matches
   }
 
-  // 2. Must have confirmed UK broadcaster (not TBC)
-  if (!hasConfirmedBroadcaster(fixture)) {
-    return false; // Don't create page if no confirmed broadcaster
-  }
-
-  // 3. Must be within reasonable timeframe
+  // 2. Must be within reasonable timeframe
   const daysUntilMatch = getDaysUntil(fixture.kickoff_utc);
   if (daysUntilMatch > 30 || daysUntilMatch < -7) {
     return false; // Don't create page for matches too far in future or past
   }
 
-  // 4. If all checks pass, create the page
-  return true;
+  // 3. H2H pages are valuable for UK-relevant competitions even without broadcaster
+  if (isUKRelevant) {
+    // Allow H2H pages for UK competitions (Premier League, etc.) regardless of broadcast status
+    // This includes blackout matches - users still want to see H2H stats and future fixtures
+    return true;
+  }
+
+  // 4. For non-UK competitions with big teams, require confirmed broadcaster
+  if (hasPopularTeams && hasConfirmedBroadcaster(fixture)) {
+    return true;
+  }
+
+  return false;
 }
 
 /**
- * Get the reason why a match page should not be created (for debugging)
+ * Get the reason why an H2H page should not be created (for debugging)
  */
 export function getMatchPageFilterReason(fixture: Fixture | SimpleFixture): string {
   const competitionSlug = getCompetitionSlug(fixture);
+  const isUKRelevant = UK_RELEVANT_COMPETITIONS.includes(competitionSlug);
+  const hasPopularTeams = hasBigTeam(fixture);
 
-  if (!UK_RELEVANT_COMPETITIONS.includes(competitionSlug) && !hasBigTeam(fixture)) {
+  if (!isUKRelevant && !hasPopularTeams) {
     return `Competition '${competitionSlug}' not UK-relevant and no big teams involved`;
-  }
-
-  if (!hasConfirmedBroadcaster(fixture)) {
-    return 'No confirmed UK broadcaster (TBC or empty)';
   }
 
   const daysUntilMatch = getDaysUntil(fixture.kickoff_utc);
@@ -137,5 +141,17 @@ export function getMatchPageFilterReason(fixture: Fixture | SimpleFixture): stri
     return `Match is too far in past (${Math.abs(daysUntilMatch)} days ago)`;
   }
 
-  return 'Match should have a page created';
+  if (isUKRelevant) {
+    return 'H2H page should be created (UK-relevant competition)';
+  }
+
+  if (hasPopularTeams && hasConfirmedBroadcaster(fixture)) {
+    return 'H2H page should be created (popular teams with broadcaster)';
+  }
+
+  if (hasPopularTeams && !hasConfirmedBroadcaster(fixture)) {
+    return 'No H2H page: Popular teams but no confirmed UK broadcaster';
+  }
+
+  return 'H2H page should be created';
 }
