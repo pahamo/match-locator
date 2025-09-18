@@ -125,6 +125,86 @@ export const TEAM_VARIATIONS: Record<string, string> = {
 };
 
 /**
+ * International team slug mappings for Champions League teams
+ * Maps generated slugs to their actual database slugs
+ */
+export const INTERNATIONAL_TEAM_MAPPINGS: Record<string, string> = {
+  // German teams
+  'bayer-04-leverkusen': 'bayer-04-leverkusen',
+  'bayern-munich': 'fc-bayern-munchen',
+  'borussia-dortmund': 'borussia-dortmund',
+  'rb-leipzig': 'rb-leipzig',
+
+  // Spanish teams
+  'real-madrid': 'real-madrid-cf',
+  'barcelona': 'fc-barcelona',
+  'atletico-madrid': 'club-atletico-de-madrid',
+  'athletic-bilbao': 'athletic-club',
+
+  // Italian teams
+  'juventus': 'juventus-fc',
+  'ac-milan': 'ac-milan',
+  'inter-milan': 'fc-internazionale-milano',
+  'napoli': 'ssc-napoli',
+  'atalanta': 'atalanta-bc',
+  'roma': 'as-roma',
+  'lazio': 'ss-lazio',
+
+  // French teams
+  'paris-saint-germain': 'paris-saint-germain-fc',
+  'psg': 'paris-saint-germain-fc',
+  'monaco': 'as-monaco-fc',
+  'lille': 'lille-osc',
+  'lyon': 'olympique-lyonnais',
+  'marseille': 'olympique-de-marseille',
+
+  // Dutch teams
+  'ajax': 'afc-ajax',
+  'psv-eindhoven': 'psv',
+  'feyenoord': 'feyenoord',
+
+  // Portuguese teams
+  'porto': 'fc-porto',
+  'benfica': 'sl-benfica',
+  'sporting-clube-de-portugal': 'sporting-cp',
+  'sporting-cp': 'sporting-cp',
+
+  // Other teams
+  'fc-kbenhavn': 'fc-kobenhavn', // Danish
+  'fk-kairat': 'fc-kairat-almaty', // Kazakhstani
+  'red-bull-salzburg': 'fc-red-bull-salzburg', // Austrian
+  'dinamo-zagreb': 'gnk-dinamo-zagreb', // Croatian
+  'shakhtar-donetsk': 'fc-shakhtar-donetsk', // Ukrainian
+  'celtic': 'celtic-fc', // Scottish
+  'rangers': 'rangers-fc', // Scottish
+};
+
+/**
+ * Enhanced slug mapping that handles both Premier League and international teams
+ */
+export function mapSeoSlugToDbSlugEnhanced(seoSlug: string): string {
+  // First check international mappings
+  if (INTERNATIONAL_TEAM_MAPPINGS[seoSlug]) {
+    return INTERNATIONAL_TEAM_MAPPINGS[seoSlug];
+  }
+
+  // Fall back to Premier League mapping
+  return mapSeoSlugToDbSlug(seoSlug);
+}
+
+/**
+ * Check if a team is supported (Premier League or mapped international team)
+ */
+export function isSupportedTeam(seoSlug: string): boolean {
+  // Check if it's a Premier League team
+  const plTeam = PREMIER_LEAGUE_TEAMS.find(team => team.seoSlug === seoSlug);
+  if (plTeam) return true;
+
+  // Check if it's a mapped international team
+  return !!INTERNATIONAL_TEAM_MAPPINGS[seoSlug];
+}
+
+/**
  * Normalize user input to canonical SEO slug
  */
 export function normalizeTeamSlug(userSlug: string): string {
