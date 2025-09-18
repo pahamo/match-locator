@@ -293,7 +293,7 @@ const TodayFixturesPage: React.FC = () => {
                 <FixtureCard
                   key={fixture.id}
                   fixture={fixture}
-                  variant="default"
+                  variant="withTime"
                   showViewButton={true}
                 />
               ))}
@@ -322,7 +322,7 @@ const TodayFixturesPage: React.FC = () => {
                 <FixtureCard
                   key={fixture.id}
                   fixture={fixture}
-                  variant="default"
+                  variant="withTime"
                   showViewButton={true}
                 />
               ))}

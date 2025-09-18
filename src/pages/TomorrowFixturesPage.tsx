@@ -344,7 +344,7 @@ const TomorrowFixturesPage: React.FC = () => {
                 <FixtureCard
                   key={fixture.id}
                   fixture={fixture}
-                  variant="default"
+                  variant="withTime"
                   showViewButton={true}
                 />
               ))}

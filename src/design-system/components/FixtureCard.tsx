@@ -5,13 +5,14 @@ import type { SimpleFixture, Fixture } from '../../types';
 import { getMatchStatus, getMatchStatusStyles } from '../../utils/matchStatus';
 import { generateSeoSimpleMatchUrl, generateSeoMatchUrl } from '../../utils/seo';
 import { getDisplayTeamName } from '../../utils/teamNames';
+import { formatTime } from '../../utils/dateFormat';
 import OptimizedImage from '../../components/OptimizedImage';
 import { SkyAffiliateLink } from '../../components/affiliate/AffiliateLink';
 
 
 export interface FixtureCardProps {
   fixture: SimpleFixture | Fixture;
-  variant?: 'default' | 'compact' | 'detailed' | 'minimized';
+  variant?: 'default' | 'compact' | 'detailed' | 'minimized' | 'withTime';
   showMatchweek?: boolean;
   showViewButton?: boolean;
   className?: string;
@@ -74,12 +75,14 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
     : statusStyles;
   const fixtureData = React.useMemo(() => getFixtureData(fixture), [fixture]);
   const isMinimized = variant === 'minimized';
+  const isWithTime = variant === 'withTime';
 
   // Generate CSS class names instead of inline styles
   const getCardClasses = () => {
     const classes = ['fixture-card'];
 
     if (isMinimized) classes.push('minimized');
+    if (isWithTime) classes.push('with-time');
     if (groupPosition !== 'single') classes.push(groupPosition);
 
     return classes.join(' ');
@@ -87,12 +90,21 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
 
   const cardClasses = getCardClasses();
 
-  
+
   return (
     <div
       className={`${cardClasses} ${className}`}
       style={{ ...actualStatusStyles.card, ...style }}
     >
+      {/* Time Column - only for withTime variant */}
+      {isWithTime && (
+        <div className="time-column">
+          <div className="kickoff-time">
+            {formatTime(fixture.kickoff_utc)}
+          </div>
+        </div>
+      )}
+
       {/* Teams Section */}
       <div className="teams-section">
         <div className="team-container">
@@ -188,6 +200,36 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
 
 // Add CSS for responsive styles
 const fixtureCardStyles = `
+  .fixture-card.with-time {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto auto;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .fixture-card.with-time .teams-section {
+    display: contents;
+  }
+
+  .time-column {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 60px;
+    flex-shrink: 0;
+    padding-right: 8px;
+    border-right: 1px solid #e5e7eb;
+  }
+
+  .kickoff-time {
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+    text-align: center;
+    line-height: 1.2;
+  }
+
   .broadcaster-info {
     display: flex;
     align-items: center;
