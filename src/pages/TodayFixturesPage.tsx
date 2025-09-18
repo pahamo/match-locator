@@ -285,24 +285,17 @@ const TodayFixturesPage: React.FC = () => {
               🔴 Live Now ({liveFixtures.length})
             </h2>
             <div style={{
-              display: 'grid',
-              gap: '16px'
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px'
             }}>
               {liveFixtures.map(fixture => (
-                <div key={fixture.id} style={{ position: 'relative' }}>
-                  <FixtureCard
-                    fixture={fixture}
-                    variant="detailed"
-                    showViewButton={true}
-                  />
-                  <div style={{
-                    position: 'absolute',
-                    top: '12px',
-                    right: '12px'
-                  }}>
-                    <LiveBadge kickoffTime={fixture.kickoff_utc} />
-                  </div>
-                </div>
+                <FixtureCard
+                  key={fixture.id}
+                  fixture={fixture}
+                  variant="default"
+                  showViewButton={true}
+                />
               ))}
             </div>
           </section>
@@ -321,30 +314,17 @@ const TodayFixturesPage: React.FC = () => {
               ⏰ Upcoming Today ({upcomingFixtures.length})
             </h2>
             <div style={{
-              display: 'grid',
-              gap: '16px'
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px'
             }}>
               {upcomingFixtures.map(fixture => (
-                <div key={fixture.id} style={{ position: 'relative' }}>
-                  <FixtureCard
-                    fixture={fixture}
-                    variant="detailed"
-                    showViewButton={true}
-                  />
-                  <div style={{
-                    position: 'absolute',
-                    top: '12px',
-                    right: '12px'
-                  }}>
-                    <CountdownTimer
-                      targetDate={fixture.kickoff_utc}
-                      onExpired={() => {
-                        // Refresh data when a match starts
-                        setTimeout(fetchTodayFixtures, 1000);
-                      }}
-                    />
-                  </div>
-                </div>
+                <FixtureCard
+                  key={fixture.id}
+                  fixture={fixture}
+                  variant="default"
+                  showViewButton={true}
+                />
               ))}
             </div>
           </section>
@@ -363,8 +343,9 @@ const TodayFixturesPage: React.FC = () => {
               ✅ Finished Today ({finishedFixtures.length})
             </h2>
             <div style={{
-              display: 'grid',
-              gap: '16px'
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px'
             }}>
               {finishedFixtures.map(fixture => (
                 <FixtureCard

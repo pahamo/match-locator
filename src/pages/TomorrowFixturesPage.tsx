@@ -336,24 +336,17 @@ const TomorrowFixturesPage: React.FC = () => {
               {name} ({competitionFixtures.length})
             </h2>
             <div style={{
-              display: 'grid',
-              gap: '16px'
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px'
             }}>
               {competitionFixtures.map(fixture => (
-                <div key={fixture.id} style={{ position: 'relative' }}>
-                  <FixtureCard
-                    fixture={fixture}
-                    variant="detailed"
-                    showViewButton={true}
-                  />
-                  <div style={{
-                    position: 'absolute',
-                    top: '12px',
-                    right: '12px'
-                  }}>
-                    <CountdownTimer targetDate={fixture.kickoff_utc} />
-                  </div>
-                </div>
+                <FixtureCard
+                  key={fixture.id}
+                  fixture={fixture}
+                  variant="default"
+                  showViewButton={true}
+                />
               ))}
             </div>
           </section>
