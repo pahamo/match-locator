@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import { ContentCard, TextContainer } from '../../design-system';
 import Header from '../../components/Header';
+import Breadcrumbs from '../../components/Breadcrumbs';
+import { useBreadcrumbs } from '../../utils/breadcrumbs';
 
 interface TocItem { id: string; label: string }
 
@@ -20,6 +22,7 @@ const LegalLayout: React.FC<LegalLayoutProps> = ({
   children,
 }) => {
   const mainRef = useRef<HTMLElement>(null);
+  const breadcrumbs = useBreadcrumbs();
   const today = useMemo(() => {
     const d = new Date();
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -43,7 +46,8 @@ const LegalLayout: React.FC<LegalLayoutProps> = ({
   return (
     <div className="legal-layout">
       <Header />
-      <main ref={mainRef} tabIndex={-1} className="wrap" aria-labelledby="legal-title" style={{ paddingTop: 'var(--layout-page-top-margin)' }}>
+      <main ref={mainRef} tabIndex={-1} className="wrap" aria-labelledby="legal-title" style={{ paddingTop: 'var(--layout-page-top-margin)', outline: 'none' }}>
+        <Breadcrumbs items={breadcrumbs} style={{ paddingLeft: '24px', paddingRight: '24px' }} />
         <ContentCard>
           <TextContainer>
             <header>

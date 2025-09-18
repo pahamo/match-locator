@@ -17,7 +17,7 @@ const PrivacyPolicy: React.FC = () => {
   ];
 
   return (
-    <LegalLayout title="Privacy Policy" toc={toc} robotsNoIndex lastUpdated="2025-01-01">
+    <LegalLayout title="Privacy Policy" toc={toc} robotsNoIndex lastUpdated="2025-09-17">
       <section id="who-we-are">
         <h2>Who we are</h2>
         <p>MatchLocator (the "Site") is accessible at matchlocator.com.</p>

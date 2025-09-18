@@ -16,7 +16,7 @@ const Terms: React.FC = () => {
   ];
 
   return (
-    <LegalLayout title="Terms & Conditions" toc={toc} robotsNoIndex lastUpdated="2025-01-01">
+    <LegalLayout title="Terms & Conditions" toc={toc} robotsNoIndex lastUpdated="2025-09-17">
       <section id="acceptable-use">
         <h2>Acceptable use</h2>
         <ul>
