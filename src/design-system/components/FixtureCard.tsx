@@ -4,6 +4,7 @@ import { tokens } from '../tokens';
 import type { SimpleFixture, Fixture } from '../../types';
 import { getMatchStatus, getMatchStatusStyles } from '../../utils/matchStatus';
 import { generateSeoSimpleMatchUrl, generateSeoMatchUrl } from '../../utils/seo';
+import { shouldCreateMatchPage } from '../../utils/matchPageFilter';
 import { getDisplayTeamName } from '../../utils/teamNames';
 import { formatTime } from '../../utils/dateFormat';
 import OptimizedImage from '../../components/OptimizedImage';
@@ -27,6 +28,8 @@ const isSimpleFixture = (fixture: SimpleFixture | Fixture): fixture is SimpleFix
 };
 
 const getFixtureData = (fixture: SimpleFixture | Fixture) => {
+  const shouldCreatePage = shouldCreateMatchPage(fixture);
+
   if (isSimpleFixture(fixture)) {
     return {
       homeTeam: fixture.home_team,
@@ -36,7 +39,8 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
       broadcaster: fixture.broadcaster,
       isBlackout: fixture.isBlackout || false,
       matchweek: fixture.matchweek,
-      url: generateSeoSimpleMatchUrl(fixture)
+      url: shouldCreatePage ? generateSeoSimpleMatchUrl(fixture) : null,
+      shouldCreatePage
     };
   } else {
     const hasProviders = fixture.providers_uk && fixture.providers_uk.length > 0;
@@ -51,7 +55,8 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
       broadcaster: isBlackout ? undefined : broadcasterName,
       isBlackout: isBlackout,
       matchweek: fixture.matchweek,
-      url: generateSeoMatchUrl(fixture)
+      url: shouldCreatePage ? generateSeoMatchUrl(fixture) : null,
+      shouldCreatePage
     };
   }
 };
@@ -181,11 +186,18 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
         </div>
       )}
 
-      {/* View Button - Always Visible */}
-      {showViewButton && (
+      {/* View Button - Only show if we should create a page */}
+      {showViewButton && fixtureData.shouldCreatePage && fixtureData.url && (
         <Link to={fixtureData.url} className="view-button">
           View
         </Link>
+      )}
+
+      {/* Alternative message for matches without individual pages */}
+      {showViewButton && !fixtureData.shouldCreatePage && (
+        <span className="view-button disabled" title="See team pages for more details">
+          No UK Broadcast
+        </span>
       )}
 
       {/* Matchweek (if requested) */}
@@ -260,6 +272,13 @@ const fixtureCardStyles = `
   .view-button:hover {
     background: #6366f1;
     color: white;
+  }
+
+  .view-button.disabled {
+    color: #9ca3af;
+    border-color: #9ca3af;
+    cursor: not-allowed;
+    pointer-events: none;
   }
 
   .team-name-short {

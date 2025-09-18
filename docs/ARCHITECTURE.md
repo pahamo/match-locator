@@ -543,6 +543,179 @@ export async function getSimpleFixtures(): Promise<SimpleFixture[]> {
 
 ---
 
+## Match Page Filtering & SEO Strategy
+
+### Overview
+
+The application implements intelligent match page creation filtering to prevent SEO pollution and improve search rankings. This system ensures only valuable, UK-relevant matches get individual pages.
+
+### Core Problem Solved
+
+**Before filtering:** 523+ low-value match pages created monthly that Google refused to index, damaging crawl budget and site quality.
+
+**After filtering:** Only UK-relevant matches with confirmed broadcasters get individual pages, dramatically improving SEO performance.
+
+### Implementation Architecture
+
+#### Filter Function Location
+```
+src/utils/matchPageFilter.ts
+```
+
+#### Core Filter Logic
+```typescript
+export function shouldCreateMatchPage(fixture: Fixture | SimpleFixture): boolean {
+  // 1. Check competition relevance
+  const competitionSlug = getCompetitionSlug(fixture);
+
+  if (!UK_RELEVANT_COMPETITIONS.includes(competitionSlug)) {
+    // Exception: Allow big teams in other leagues
+    if (!hasBigTeam(fixture)) {
+      return false; // Skip random foreign league matches
+    }
+  }
+
+  // 2. Must have confirmed UK broadcaster (not TBC)
+  if (!hasConfirmedBroadcaster(fixture)) {
+    return false; // Skip if no confirmed broadcaster
+  }
+
+  // 3. Must be within reasonable timeframe
+  const daysUntilMatch = getDaysUntil(fixture.kickoff_utc);
+  if (daysUntilMatch > 30 || daysUntilMatch < -7) {
+    return false; // Skip matches too far future/past
+  }
+
+  return true; // Create page
+}
+```
+
+#### UK-Relevant Competitions
+```typescript
+const UK_RELEVANT_COMPETITIONS = [
+  'premier-league',
+  'champions-league',
+  'europa-league',
+  'championship',
+  'fa-cup',
+  'carabao-cup',
+  'europa-conference-league'
+];
+```
+
+#### Big Teams Exception
+```typescript
+const BIG_TEAMS = [
+  'manchester-united', 'liverpool', 'arsenal', 'chelsea',
+  'manchester-city', 'tottenham', 'barcelona', 'real-madrid',
+  'bayern-munich', 'paris-saint-germain', 'juventus', 'ac-milan',
+  // ... additional major European clubs
+];
+```
+
+### URL Generation Improvements
+
+#### Clean Slug Generation
+```typescript
+export const generateCleanSlug = (text: string): string => {
+  return text
+    .toLowerCase()
+    .normalize('NFD')  // Decompose accents
+    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+    .replace(/[^a-z0-9]+/g, '-')  // Only alphanumeric
+    .replace(/^-+|-+$/g, '');  // Trim hyphens
+};
+```
+
+**Examples:**
+- `'Real Sociedad de Fútbol'` → `'real-sociedad-de-futbol'`
+- `'Atlético Madrid'` → `'atletico-madrid'`
+- `'Borussia Mönchengladbach'` → `'borussia-monchengladbach'`
+
+### Component Integration
+
+#### FixtureCard Updates
+```typescript
+// src/design-system/components/FixtureCard.tsx
+const getFixtureData = (fixture: SimpleFixture | Fixture) => {
+  const shouldCreatePage = shouldCreateMatchPage(fixture);
+
+  return {
+    // ... other properties
+    url: shouldCreatePage ? generateSeoMatchUrl(fixture) : null,
+    shouldCreatePage
+  };
+};
+
+// Conditional rendering
+{showViewButton && fixtureData.shouldCreatePage && fixtureData.url && (
+  <Link to={fixtureData.url} className="view-button">
+    View
+  </Link>
+)}
+
+{showViewButton && !fixtureData.shouldCreatePage && (
+  <span className="view-button disabled" title="See team pages for more details">
+    No UK Broadcast
+  </span>
+)}
+```
+
+### SEO Impact
+
+#### Pages No Longer Created
+- `torino-fc-vs-ac-pisa-1909-fc-serie-b-2025-11-02` (Serie B, no UK broadcast)
+- `nec-fc-vs-fc-twente-65-fc-eredivisie-2025-10-18` (Dutch league, no UK interest)
+- `paris-fc-vs-olympique-lyonnais-fc-2025-10-29` (French second tier)
+
+#### Pages Still Created
+- All Premier League matches with confirmed broadcasters
+- Champions League matches with UK teams
+- Big team matches (Barcelona vs Real Madrid, etc.)
+- Any match with confirmed UK broadcaster
+
+#### Expected Results
+- **"Crawled - not indexed" count drops from 523 to <50**
+- **Better crawl budget efficiency**
+- **Improved quality signals to Google**
+- **Higher rankings for valuable content**
+
+### Debugging & Monitoring
+
+#### Debug Filter Decisions
+```typescript
+import { getMatchPageFilterReason } from '../utils/matchPageFilter';
+
+// Get detailed reason why page wasn't created
+const reason = getMatchPageFilterReason(fixture);
+console.log(`Page not created: ${reason}`);
+```
+
+#### Common Filter Reasons
+- `Competition 'serie-a' not UK-relevant and no big teams involved`
+- `No confirmed UK broadcaster (TBC or empty)`
+- `Match is too far in future (45 days)`
+- `Match is too far in past (14 days ago)`
+
+### Monitoring & Verification
+
+#### Check Implementation
+```bash
+# Verify filter is working
+grep -r "shouldCreateMatchPage" src/
+grep -r "No UK Broadcast" src/
+
+# Check URL generation
+grep -r "generateCleanSlug" src/
+```
+
+#### Production Monitoring
+- Google Search Console: Monitor "Crawled - not indexed" count
+- Sitemap analysis: Verify only valuable matches included
+- User feedback: Check "No UK Broadcast" message usage
+
+---
+
 ## Troubleshooting & Common Issues
 
 ### TypeScript Issues
@@ -734,5 +907,5 @@ env | grep SUPABASE
 
 ---
 
-**Last Updated:** September 17, 2025
+**Last Updated:** September 18, 2025
 **Related Documentation:** [DEPLOYMENT.md](DEPLOYMENT.md), [DATA_MANAGEMENT.md](DATA_MANAGEMENT.md)
