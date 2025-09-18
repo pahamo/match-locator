@@ -156,6 +156,7 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
                 trackingLabel="fixture-card"
                 pageType="fixtures"
                 className="broadcaster-badge available"
+                showDisclosure={false}
               >
                 {fixtureData.broadcaster}
               </SkyAffiliateLink>
