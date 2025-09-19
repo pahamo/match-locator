@@ -281,18 +281,7 @@ const HeadToHeadPage: React.FC = () => {
           )}
 
           {/* Match Preview for Premier League fixtures */}
-          {(() => {
-            const hasNextFixture = !!nextFixture;
-            const isPLFixture = isPremierLeagueFixture(team1.name, team2.name);
-            console.log('Match Preview Debug:', {
-              team1: team1.name,
-              team2: team2.name,
-              hasNextFixture,
-              isPLFixture,
-              shouldShow: hasNextFixture && isPLFixture
-            });
-            return hasNextFixture && isPLFixture;
-          })() && (
+          {nextFixture && isPremierLeagueFixture(team1.name, team2.name) && (
             <div style={{
               marginBottom: '32px',
               background: '#f8fafc',
