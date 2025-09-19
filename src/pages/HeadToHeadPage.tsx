@@ -315,7 +315,7 @@ const HeadToHeadPage: React.FC = () => {
                 lineHeight: '1.7',
                 color: '#374151'
               }}>
-                {generateMatchPreview(team1.name, team2.name, nextFixture)}
+                {generateMatchPreview(team1.name, team2.name, nextFixture || undefined)}
               </div>
             </div>
           )}
