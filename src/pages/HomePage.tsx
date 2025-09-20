@@ -287,7 +287,7 @@ const HomePage: React.FC = () => {
                     <FixtureCard
                       key={fixture.id}
                       fixture={fixture}
-                      variant="compact"
+                      variant="withTime"
                       showViewButton={true}
                       isInLiveGroup={true}
                     />
@@ -325,7 +325,7 @@ const HomePage: React.FC = () => {
                   <FixtureCard
                     key={fixture.id}
                     fixture={fixture}
-                    variant="compact"
+                    variant="withTime"
                     showViewButton={true}
                   />
                 ))}
