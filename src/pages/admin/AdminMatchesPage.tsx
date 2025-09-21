@@ -474,16 +474,12 @@ const AdminMatchesPage: React.FC = () => {
         background: 'white',
         border: '1px solid #e2e8f0',
         borderRadius: '8px',
-        overflow: 'auto',
-        width: '100%',
-        maxHeight: '70vh'
+        overflow: 'visible',
+        width: '100%'
       }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '1000px' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead style={{
-            position: 'sticky',
-            top: 0,
-            background: '#f8fafc',
-            zIndex: 10
+            background: '#f8fafc'
           }}>
             <tr>
               <th style={{
@@ -511,7 +507,7 @@ const AdminMatchesPage: React.FC = () => {
                 fontSize: '14px',
                 color: '#374151',
                 borderBottom: '1px solid #e2e8f0',
-                width: 'auto'
+                minWidth: '150px'
               }}>Home Team</th>
               <th style={{
                 padding: '16px 12px',
@@ -520,7 +516,7 @@ const AdminMatchesPage: React.FC = () => {
                 fontSize: '14px',
                 color: '#374151',
                 borderBottom: '1px solid #e2e8f0',
-                width: 'auto'
+                minWidth: '150px'
               }}>Away Team</th>
               <th style={{
                 padding: '16px 12px',
