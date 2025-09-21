@@ -640,8 +640,10 @@ const AdminMatchesPage: React.FC = () => {
                       }}>
                         {fixture.broadcast.provider_display_name || `Provider ${fixture.broadcast.provider_id}`}
                       </span>
-                    ) : (
+                    ) : fixture.broadcast && fixture.broadcast.provider_id === 999 ? (
                       <span style={{ color: '#9ca3af' }}>Blackout</span>
+                    ) : (
+                      <span style={{ color: '#6b7280' }}>TBD</span>
                     )}
                   </td>
                   <td style={{ padding: '16px 12px' }}>

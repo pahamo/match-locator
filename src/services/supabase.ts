@@ -588,8 +588,8 @@ export async function getHeadToHeadFixtures(teamSlug1: string, teamSlug2: string
 
     // Get broadcast data for these fixtures
     const { data: broadcastRows, error: broadcastError } = await supabase
-      .from('broadcasts_with_providers')
-      .select('fixture_id, provider_id, provider_name, provider_type, provider_slug, provider_url')
+      .from('broadcasts_with_provider_v')
+      .select('fixture_id, provider_id, provider_display_name')
       .in('fixture_id', fixtureIds);
 
     if (broadcastError) {
@@ -654,8 +654,8 @@ export async function getNextHeadToHeadFixture(teamSlug1: string, teamSlug2: str
 
     // Get broadcast data for this fixture
     const { data: broadcastRows, error: broadcastError } = await supabase
-      .from('broadcasts_with_providers')
-      .select('fixture_id, provider_id, provider_name, provider_type, provider_slug, provider_url')
+      .from('broadcasts_with_provider_v')
+      .select('fixture_id, provider_id, provider_display_name')
       .eq('fixture_id', row.id);
 
     if (broadcastError) {
