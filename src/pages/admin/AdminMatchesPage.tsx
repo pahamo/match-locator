@@ -8,6 +8,9 @@ import AdminAuth from '../../components/AdminAuth';
 type CompetitionFilter = '' | number | 'all'; // Use competition IDs instead of hardcoded strings
 type MatchStatusFilter = '' | 'scheduled' | 'live' | 'finished';
 type BroadcastStatusFilter = '' | 'with_broadcast' | 'no_broadcast';
+type MonthFilter = '' | string; // Format: 'YYYY-MM'
+type DayOfWeekFilter = '' | 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+type TeamFilter = '' | string; // Team name or partial name
 
 const AdminMatchesPage: React.FC = () => {
   const [fixtures, setFixtures] = useState<AdminFixture[]>([]);
@@ -23,10 +26,11 @@ const AdminMatchesPage: React.FC = () => {
   const [competitionFilter, setCompetitionFilter] = useState<CompetitionFilter>(1); // Default to Premier League (ID: 1)
   const [matchStatusFilter, setMatchStatusFilter] = useState<MatchStatusFilter>('scheduled'); // Default to scheduled (future games)
   const [broadcastStatusFilter, setBroadcastStatusFilter] = useState<BroadcastStatusFilter>(''); // Default to all
+  const [monthFilter, setMonthFilter] = useState<MonthFilter>(''); // Default to all months
+  const [dayOfWeekFilter, setDayOfWeekFilter] = useState<DayOfWeekFilter>(''); // Default to all days
+  const [teamFilter, setTeamFilter] = useState<TeamFilter>(''); // Default to all teams
   const [searchTerm, setSearchTerm] = useState('');
-  const [pendingEdits, setPendingEdits] = useState<Record<number, string>>({});
   const [savingFixtures, setSavingFixtures] = useState<Set<number>>(new Set());
-  const [bulkSaving, setBulkSaving] = useState(false);
 
   useEffect(() => {
     const checkAuth = () => {
@@ -47,7 +51,7 @@ const AdminMatchesPage: React.FC = () => {
 
   useEffect(() => {
     filterFixtures();
-  }, [fixtures, competitionFilter, matchStatusFilter, broadcastStatusFilter, searchTerm]);
+  }, [fixtures, competitionFilter, matchStatusFilter, broadcastStatusFilter, monthFilter, dayOfWeekFilter, teamFilter, searchTerm]);
 
   const loadData = async () => {
     try {
@@ -110,6 +114,33 @@ const AdminMatchesPage: React.FC = () => {
       filtered = filtered.filter(fixture => getActualStatus(fixture) === 'finished');
     }
 
+    // Month filter (YYYY-MM format)
+    if (monthFilter) {
+      filtered = filtered.filter(fixture => {
+        const fixtureMonth = new Date(fixture.kickoff_utc).toISOString().substring(0, 7); // Extract YYYY-MM
+        return fixtureMonth === monthFilter;
+      });
+    }
+
+    // Day of week filter
+    if (dayOfWeekFilter) {
+      filtered = filtered.filter(fixture => {
+        const fixtureDate = new Date(fixture.kickoff_utc);
+        const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+        const dayOfWeek = dayNames[fixtureDate.getDay()];
+        return dayOfWeek === dayOfWeekFilter;
+      });
+    }
+
+    // Team filter (matches where specified team plays either home or away)
+    if (teamFilter) {
+      filtered = filtered.filter(fixture => {
+        const homeTeamMatch = fixture.home.name.toLowerCase().includes(teamFilter.toLowerCase());
+        const awayTeamMatch = fixture.away.name.toLowerCase().includes(teamFilter.toLowerCase());
+        return homeTeamMatch || awayTeamMatch;
+      });
+    }
+
     // Broadcast status filter (with/without broadcast)
     if (broadcastStatusFilter === 'with_broadcast') {
       filtered = filtered.filter(fixture => fixture.broadcast && fixture.broadcast.provider_id !== 999);
@@ -153,30 +184,11 @@ const AdminMatchesPage: React.FC = () => {
     window.location.href = '/admin';
   };
 
-  const handleEditBroadcast = (fixtureId: number, currentProviderId?: number) => {
-    setPendingEdits(prev => ({
-      ...prev,
-      [fixtureId]: currentProviderId ? currentProviderId.toString() : ''
-    }));
-  };
 
-  const handleCancelEdit = (fixtureId: number) => {
-    setPendingEdits(prev => {
-      const updated = { ...prev };
-      delete updated[fixtureId];
-      return updated;
-    });
-  };
 
-  const handleCancelAllEdits = () => {
-    setPendingEdits({});
-  };
 
-  const handleSaveBroadcast = async (fixtureId: number) => {
+  const handleBroadcastChange = async (fixtureId: number, broadcastValue: string) => {
     try {
-      const broadcastValue = pendingEdits[fixtureId];
-      if (broadcastValue === undefined) return;
-
       // Add to saving state
       setSavingFixtures(prev => new Set([...Array.from(prev), fixtureId]));
 
@@ -203,12 +215,7 @@ const AdminMatchesPage: React.FC = () => {
       // Save to database
       await saveBroadcaster(fixtureId, providerId);
 
-      // Remove from pending edits and saving state
-      setPendingEdits(prev => {
-        const updated = { ...prev };
-        delete updated[fixtureId];
-        return updated;
-      });
+      // Remove from saving state
       setSavingFixtures(prev => {
         const updated = new Set(prev);
         updated.delete(fixtureId);
@@ -227,51 +234,6 @@ const AdminMatchesPage: React.FC = () => {
     }
   };
 
-  const handleSaveAll = async () => {
-    if (Object.keys(pendingEdits).length === 0) return;
-
-    try {
-      setBulkSaving(true);
-
-      // Save all pending edits in parallel
-      const savePromises = Object.entries(pendingEdits).map(async ([fixtureIdStr, broadcastValue]) => {
-        const fixtureId = parseInt(fixtureIdStr);
-        const providerId = broadcastValue === '' ? null : parseInt(broadcastValue);
-
-        // Update local state optimistically
-        setFixtures(prev => prev.map(fixture => {
-          if (fixture.id === fixtureId) {
-            const updatedFixture = { ...fixture };
-            if (providerId === null) {
-              updatedFixture.broadcast = null;
-            } else {
-              const broadcasterName = BROADCASTERS.find(b => b.id === providerId)?.name || 'Unknown';
-              updatedFixture.broadcast = {
-                provider_id: providerId,
-                provider_display_name: broadcasterName
-              };
-            }
-            return updatedFixture;
-          }
-          return fixture;
-        }));
-
-        // Save to database
-        return saveBroadcaster(fixtureId, providerId);
-      });
-
-      await Promise.all(savePromises);
-
-      // Clear all pending edits
-      setPendingEdits({});
-
-    } catch (err) {
-      console.error('Failed to save all broadcasts:', err);
-      alert('Failed to save some broadcasters. Please try again.');
-    } finally {
-      setBulkSaving(false);
-    }
-  };
 
   if (!isAuthenticated) {
     return <AdminAuth onAuthenticated={handleAuthenticated} />;
@@ -439,60 +401,73 @@ const AdminMatchesPage: React.FC = () => {
           <option value="no_broadcast">No Broadcast</option>
         </select>
 
+        <select
+          value={monthFilter}
+          onChange={(e) => setMonthFilter(e.target.value)}
+          style={{
+            padding: '8px 12px',
+            border: '1px solid #d1d5db',
+            borderRadius: '6px',
+            fontSize: '14px'
+          }}
+        >
+          <option value="">All Months</option>
+          <option value="2025-01">January 2025</option>
+          <option value="2025-02">February 2025</option>
+          <option value="2025-03">March 2025</option>
+          <option value="2025-04">April 2025</option>
+          <option value="2025-05">May 2025</option>
+          <option value="2025-06">June 2025</option>
+          <option value="2025-07">July 2025</option>
+          <option value="2025-08">August 2025</option>
+          <option value="2025-09">September 2025</option>
+          <option value="2025-10">October 2025</option>
+          <option value="2025-11">November 2025</option>
+          <option value="2025-12">December 2025</option>
+          <option value="2024-12">December 2024</option>
+          <option value="2024-11">November 2024</option>
+          <option value="2024-10">October 2024</option>
+        </select>
+
+        <select
+          value={dayOfWeekFilter}
+          onChange={(e) => setDayOfWeekFilter(e.target.value as DayOfWeekFilter)}
+          style={{
+            padding: '8px 12px',
+            border: '1px solid #d1d5db',
+            borderRadius: '6px',
+            fontSize: '14px'
+          }}
+        >
+          <option value="">All Days</option>
+          <option value="monday">Monday</option>
+          <option value="tuesday">Tuesday</option>
+          <option value="wednesday">Wednesday</option>
+          <option value="thursday">Thursday</option>
+          <option value="friday">Friday</option>
+          <option value="saturday">Saturday</option>
+          <option value="sunday">Sunday</option>
+        </select>
+
+        <input
+          type="text"
+          placeholder="Filter by team..."
+          value={teamFilter}
+          onChange={(e) => setTeamFilter(e.target.value)}
+          style={{
+            padding: '8px 12px',
+            border: '1px solid #d1d5db',
+            borderRadius: '6px',
+            fontSize: '14px',
+            minWidth: '150px'
+          }}
+        />
+
         <div style={{ fontSize: '14px', color: '#6b7280' }}>
           Showing {filteredFixtures.length} of {fixtures.length} fixtures
         </div>
       </div>
 
-      {/* Bulk Actions */}
-      {Object.keys(pendingEdits).length > 0 && (
-        <div style={{
-          background: '#fefce8',
-          border: '1px solid #facc15',
-          borderRadius: '8px',
-          padding: '16px',
-          marginBottom: '16px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
-        }}>
-          <div>
-            <strong>Pending changes: {Object.keys(pendingEdits).length} fixture{Object.keys(pendingEdits).length > 1 ? 's' : ''}</strong>
-          </div>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <button
-              onClick={handleSaveAll}
-              disabled={bulkSaving}
-              style={{
-                padding: '8px 16px',
-                fontSize: '14px',
-                border: '1px solid #16a34a',
-                borderRadius: '6px',
-                background: bulkSaving ? '#9ca3af' : '#16a34a',
-                color: 'white',
-                cursor: bulkSaving ? 'not-allowed' : 'pointer',
-                fontWeight: '600'
-              }}
-            >
-              {bulkSaving ? 'Saving All...' : 'Save All Changes'}
-            </button>
-            <button
-              onClick={handleCancelAllEdits}
-              style={{
-                padding: '8px 16px',
-                fontSize: '14px',
-                border: '1px solid #dc2626',
-                borderRadius: '6px',
-                background: '#dc2626',
-                color: 'white',
-                cursor: 'pointer'
-              }}
-            >
-              Cancel All
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Fixtures Table - Full Width */}
       <div style={{
@@ -511,6 +486,15 @@ const AdminMatchesPage: React.FC = () => {
             zIndex: 10
           }}>
             <tr>
+              <th style={{
+                padding: '16px 12px',
+                textAlign: 'left',
+                fontWeight: '600',
+                fontSize: '14px',
+                color: '#374151',
+                borderBottom: '1px solid #e2e8f0',
+                width: '80px'
+              }}>ID</th>
               <th style={{
                 padding: '16px 12px',
                 textAlign: 'left',
@@ -592,6 +576,9 @@ const AdminMatchesPage: React.FC = () => {
                 <tr key={fixture.id} style={{
                   borderBottom: '1px solid #e2e8f0'
                 }}>
+                  <td style={{ padding: '16px 12px', fontSize: '12px', color: '#6b7280', fontFamily: 'monospace' }}>
+                    {fixture.id}
+                  </td>
                   <td style={{ padding: '16px 12px', fontSize: '12px', color: '#6b7280' }}>
                     {new Date(fixture.kickoff_utc).toLocaleDateString()}
                   </td>
@@ -658,71 +645,32 @@ const AdminMatchesPage: React.FC = () => {
                     )}
                   </td>
                   <td style={{ padding: '16px 12px' }}>
-                    {pendingEdits[fixture.id] !== undefined ? (
-                      <div style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
-                        <select
-                          value={pendingEdits[fixture.id] || ''}
-                          onChange={(e) => setPendingEdits(prev => ({ ...prev, [fixture.id]: e.target.value }))}
-                          style={{
-                            padding: '2px 4px',
-                            fontSize: '11px',
-                            border: '1px solid #d1d5db',
-                            borderRadius: '4px',
-                            maxWidth: '80px'
-                          }}
-                        >
-                          <option value="">None</option>
-                          {BROADCASTERS.map(broadcaster => (
-                            <option key={broadcaster.id} value={broadcaster.id}>
-                              {broadcaster.name}
-                            </option>
-                          ))}
-                        </select>
-                        <button
-                          onClick={() => handleSaveBroadcast(fixture.id)}
-                          disabled={savingFixtures.has(fixture.id)}
-                          style={{
-                            padding: '2px 6px',
-                            fontSize: '11px',
-                            border: '1px solid #16a34a',
-                            borderRadius: '4px',
-                            background: savingFixtures.has(fixture.id) ? '#9ca3af' : '#16a34a',
-                            color: 'white',
-                            cursor: savingFixtures.has(fixture.id) ? 'not-allowed' : 'pointer'
-                          }}
-                        >
-                          {savingFixtures.has(fixture.id) ? 'Saving...' : 'Save'}
-                        </button>
-                        <button
-                          onClick={() => handleCancelEdit(fixture.id)}
-                          style={{
-                            padding: '2px 6px',
-                            fontSize: '11px',
-                            border: '1px solid #dc2626',
-                            borderRadius: '4px',
-                            background: '#dc2626',
-                            color: 'white',
-                            cursor: 'pointer'
-                          }}
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => handleEditBroadcast(fixture.id, fixture.broadcast?.provider_id)}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <select
+                        value={fixture.broadcast?.provider_id || ''}
+                        onChange={(e) => handleBroadcastChange(fixture.id, e.target.value)}
+                        disabled={savingFixtures.has(fixture.id)}
                         style={{
-                          padding: '4px 8px',
-                          fontSize: '12px',
+                          padding: '6px 8px',
                           border: '1px solid #d1d5db',
                           borderRadius: '4px',
-                          background: 'white',
-                          cursor: 'pointer'
+                          fontSize: '12px',
+                          minWidth: '120px',
+                          cursor: savingFixtures.has(fixture.id) ? 'not-allowed' : 'pointer',
+                          opacity: savingFixtures.has(fixture.id) ? 0.6 : 1
                         }}
                       >
-                        Edit
-                      </button>
-                    )}
+                        <option value="">TBD</option>
+                        {BROADCASTERS.map(broadcaster => (
+                          <option key={broadcaster.id} value={broadcaster.id}>
+                            {broadcaster.name}
+                          </option>
+                        ))}
+                      </select>
+                      {savingFixtures.has(fixture.id) && (
+                        <span style={{ fontSize: '11px', color: '#6b7280' }}>Saving...</span>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))
@@ -743,7 +691,7 @@ const AdminMatchesPage: React.FC = () => {
             📺 Broadcast Management
           </h3>
           <p style={{ fontSize: '14px', color: '#0f172a', margin: '0 0 8px 0' }}>
-            Use the Edit button to assign UK TV broadcasters to fixtures. Common broadcasters include Sky Sports, BT Sport, BBC, and Amazon Prime Video.
+            Use the dropdown menus to assign UK TV broadcasters to fixtures. Changes are saved automatically. Common broadcasters include Sky Sports, TNT Sports, BBC, and Amazon Prime Video.
           </p>
         </div>
       </div>

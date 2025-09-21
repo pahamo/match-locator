@@ -30,7 +30,7 @@ exports.handler = async (event, context) => {
     // Handle null providerId (clear broadcaster assignment)
     if (providerId === null) {
       const { error } = await supabase
-        .from('broadcasts')
+        .from('broadcasts_uk')
         .delete()
         .eq('fixture_id', fixtureId);
 
@@ -52,7 +52,7 @@ exports.handler = async (event, context) => {
 
       // Upsert broadcaster assignment
       const { error } = await supabase
-        .from('broadcasts')
+        .from('broadcasts_uk')
         .upsert({
           fixture_id: fixtureId,
           provider_id: parseInt(String(providerId))

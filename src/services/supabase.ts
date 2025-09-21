@@ -90,7 +90,7 @@ async function getBroadcastsForFixtures(ids: number[]): Promise<BroadcastRow[]> 
     if (!ids || !ids.length) return [];
     
     const { data, error } = await supabase
-      .from('broadcasts')
+      .from('broadcasts_uk')
       .select('fixture_id,provider_id')
       .in('fixture_id', ids);
       
@@ -421,7 +421,7 @@ export async function getAdminFixtures(competitionId: number = 1): Promise<Admin
     // Get all broadcasts for these fixtures
     const fixtureIds = validRows.map(r => r.id);
     const { data: broadcasts, error: broadcastError } = await supabase
-      .from('broadcasts')
+      .from('broadcasts_uk')
       .select('fixture_id,provider_id')
       .in('fixture_id', fixtureIds);
       
@@ -461,7 +461,7 @@ export async function saveBroadcast(fixtureId: number, providerId: number | stri
     if (providerId === '' || providerId === '0' || providerId === '-1' || providerId === null) {
       // Delete existing broadcast record
       const { error } = await supabase
-        .from('broadcasts')
+        .from('broadcasts_uk')
         .delete()
         .eq('fixture_id', fixtureId);
         
@@ -472,7 +472,7 @@ export async function saveBroadcast(fixtureId: number, providerId: number | stri
       // Handle blackout by setting blackout provider
       if (providerId === '-1') {
         const { error: insertError } = await supabase
-          .from('broadcasts')
+          .from('broadcasts_uk')
           .insert({
             fixture_id: fixtureId,
             provider_id: 999 // Blackout provider
@@ -488,7 +488,7 @@ export async function saveBroadcast(fixtureId: number, providerId: number | stri
       
       // Upsert the broadcast record
       const { error } = await supabase
-        .from('broadcasts')
+        .from('broadcasts_uk')
         .upsert(broadcastData);
         
       if (error) {
