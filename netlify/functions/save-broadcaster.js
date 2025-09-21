@@ -50,12 +50,16 @@ exports.handler = async (event, context) => {
         };
       }
 
-      // Upsert broadcaster assignment
-      const { error } = await supabase
+      // Try to upsert broadcaster assignment
+      console.log('Attempting upsert with:', { fixture_id: fixtureId, provider_id: parseInt(String(providerId)) });
+
+      const { data, error } = await supabase
         .from('broadcasts_uk')
         .upsert({
           fixture_id: fixtureId,
           provider_id: parseInt(String(providerId))
+        }, {
+          onConflict: 'fixture_id'
         });
 
       if (error) {

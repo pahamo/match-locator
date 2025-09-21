@@ -119,6 +119,7 @@ export async function saveBroadcaster(fixtureId: number, providerId: number | nu
     
     
   } catch (error) {
+    console.error('saveBroadcaster error:', error);
     throw error;
   }
 }

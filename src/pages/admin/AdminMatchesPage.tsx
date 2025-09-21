@@ -194,6 +194,9 @@ const AdminMatchesPage: React.FC = () => {
 
       const providerId = broadcastValue === '' ? null : parseInt(broadcastValue);
 
+      // Debug logging
+      console.log('Saving broadcaster:', { fixtureId, broadcastValue, providerId });
+
       // Update local state optimistically
       setFixtures(prev => prev.map(fixture => {
         if (fixture.id === fixtureId) {
