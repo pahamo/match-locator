@@ -90,7 +90,7 @@ async function getBroadcastsForFixtures(ids: number[]): Promise<BroadcastRow[]> 
     if (!ids || !ids.length) return [];
     
     const { data, error } = await supabase
-      .from('broadcasts_uk')
+      .from('broadcasts')
       .select('fixture_id,provider_id')
       .in('fixture_id', ids);
       
@@ -421,7 +421,7 @@ export async function getAdminFixtures(competitionId: number = 1): Promise<Admin
     // Get all broadcasts for these fixtures
     const fixtureIds = validRows.map(r => r.id);
     const { data: broadcasts, error: broadcastError } = await supabase
-      .from('broadcasts_uk')
+      .from('broadcasts')
       .select('fixture_id,provider_id')
       .in('fixture_id', fixtureIds);
       
@@ -461,7 +461,7 @@ export async function saveBroadcast(fixtureId: number, providerId: number | stri
     if (providerId === '' || providerId === '0' || providerId === '-1' || providerId === null) {
       // Delete existing broadcast record
       const { error } = await supabase
-        .from('broadcasts_uk')
+        .from('broadcasts')
         .delete()
         .eq('fixture_id', fixtureId);
         
@@ -472,7 +472,7 @@ export async function saveBroadcast(fixtureId: number, providerId: number | stri
       // Handle blackout by setting blackout provider
       if (providerId === '-1') {
         const { error: insertError } = await supabase
-          .from('broadcasts_uk')
+          .from('broadcasts')
           .insert({
             fixture_id: fixtureId,
             provider_id: 999 // Blackout provider
@@ -488,7 +488,7 @@ export async function saveBroadcast(fixtureId: number, providerId: number | stri
       
       // Upsert the broadcast record
       const { error } = await supabase
-        .from('broadcasts_uk')
+        .from('broadcasts')
         .upsert(broadcastData);
         
       if (error) {
@@ -588,8 +588,8 @@ export async function getHeadToHeadFixtures(teamSlug1: string, teamSlug2: string
 
     // Get broadcast data for these fixtures
     const { data: broadcastRows, error: broadcastError } = await supabase
-      .from('broadcasts_with_provider_v')
-      .select('fixture_id, provider_id, provider_display_name')
+      .from('broadcasts')
+      .select('fixture_id, provider_id')
       .in('fixture_id', fixtureIds);
 
     if (broadcastError) {
@@ -606,7 +606,7 @@ export async function getHeadToHeadFixtures(teamSlug1: string, teamSlug2: string
         }
         providersByFixture[row.fixture_id].push({
           id: row.provider_id,
-          name: row.provider_display_name || 'Unknown',
+          name: `Provider ${row.provider_id}`,
           type: 'tv', // Default since not available in view
           slug: '', // Default since not available in view
           url: '' // Default since not available in view
@@ -654,8 +654,8 @@ export async function getNextHeadToHeadFixture(teamSlug1: string, teamSlug2: str
 
     // Get broadcast data for this fixture
     const { data: broadcastRows, error: broadcastError } = await supabase
-      .from('broadcasts_with_provider_v')
-      .select('fixture_id, provider_id, provider_display_name')
+      .from('broadcasts')
+      .select('fixture_id, provider_id')
       .eq('fixture_id', row.id);
 
     if (broadcastError) {
@@ -668,7 +668,7 @@ export async function getNextHeadToHeadFixture(teamSlug1: string, teamSlug2: str
       broadcastRows.forEach(broadcastRow => {
         providers.push({
           id: broadcastRow.provider_id,
-          name: broadcastRow.provider_display_name || 'Unknown',
+          name: `Provider ${broadcastRow.provider_id}`,
           type: 'tv', // Default since not available in view
           slug: '', // Default since not available in view
           url: '' // Default since not available in view

@@ -51,7 +51,7 @@ export async function getSimpleFixtures(competitionId?: number): Promise<SimpleF
     // Step 3: Load broadcasts for these fixtures
     const fixtureIds = validFixtures.map((f: any) => f.id);
     const { data: broadcasts } = await supabase
-      .from('broadcasts_uk')
+      .from('broadcasts')
       .select('fixture_id, provider_id')
       .in('fixture_id', fixtureIds);
 
