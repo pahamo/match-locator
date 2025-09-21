@@ -519,17 +519,29 @@ export async function getTeams(): Promise<Team[]> {
   try {
     // DEBUG: Force cache busting - fetch ALL teams without is_active filtering
     console.log('[DEBUG] getTeams called - fetching all teams');
-    const { data, error } = await supabase
+    console.log('[DEBUG] Supabase client initialized and ready');
+
+    const { data, error, count } = await supabase
       .from('teams')
-      .select('id,name,slug,crest_url,competition_id,short_name,club_colors,website,venue,home_venue,city')
+      .select('id,name,slug,crest_url,competition_id,short_name,club_colors,website,venue,home_venue,city', { count: 'exact' })
       .order('name', { ascending: true });
 
+    console.log(`[DEBUG] getTeams query result - count: ${count}, error: ${error ? JSON.stringify(error) : 'none'}`);
+
     if (error) {
-      console.warn('[Supabase] getTeams error', error);
+      console.error('[Supabase] getTeams error details:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      });
       return [];
     }
 
     console.log(`[DEBUG] getTeams returned ${(data || []).length} teams from database`);
+    if (data && data.length > 0) {
+      console.log('[DEBUG] First few teams:', data.slice(0, 3).map(t => ({ id: t.id, name: t.name, competition_id: t.competition_id })));
+    }
     return (data || []).map((t: any) => ({
       id: t.id,
       name: t.name,

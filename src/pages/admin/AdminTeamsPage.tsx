@@ -76,10 +76,12 @@ const AdminTeamsPage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
+      console.log('[AdminTeamsPage] Starting to load teams...');
       const teamsData = await getTeams();
+      console.log('[AdminTeamsPage] Teams loaded from service:', teamsData.length, 'teams');
       setTeams(teamsData);
     } catch (err) {
-      console.error('Failed to load teams:', err);
+      console.error('[AdminTeamsPage] Failed to load teams:', err);
       setError('Failed to load teams. Please try again later.');
     } finally {
       setLoading(false);
