@@ -606,10 +606,10 @@ export async function getHeadToHeadFixtures(teamSlug1: string, teamSlug2: string
         }
         providersByFixture[row.fixture_id].push({
           id: row.provider_id,
-          name: row.provider_name || 'Unknown',
-          type: row.provider_type || 'tv',
-          slug: row.provider_slug || '',
-          url: row.provider_url || ''
+          name: row.provider_display_name || 'Unknown',
+          type: 'tv', // Default since not available in view
+          slug: '', // Default since not available in view
+          url: '' // Default since not available in view
         });
       });
     }
@@ -668,10 +668,10 @@ export async function getNextHeadToHeadFixture(teamSlug1: string, teamSlug2: str
       broadcastRows.forEach(broadcastRow => {
         providers.push({
           id: broadcastRow.provider_id,
-          name: broadcastRow.provider_name || 'Unknown',
-          type: broadcastRow.provider_type || 'tv',
-          slug: broadcastRow.provider_slug || '',
-          url: broadcastRow.provider_url || ''
+          name: broadcastRow.provider_display_name || 'Unknown',
+          type: 'tv', // Default since not available in view
+          slug: '', // Default since not available in view
+          url: '' // Default since not available in view
         });
       });
     }
