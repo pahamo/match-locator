@@ -92,11 +92,33 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) => {
     const venue = !isSimpleFixture && fixture.venue ? fixture.venue : undefined;
 
     const kickoffDate = new Date(fixture.kickoff_utc).toISOString();
+    // Calculate endDate as kickoff + 2 hours (typical match duration)
+    const endDate = new Date(new Date(fixture.kickoff_utc).getTime() + 2 * 60 * 60 * 1000).toISOString();
 
     // Generate SEO-friendly URL for the match
     const matchUrl = isSimpleFixture ?
       `https://matchlocator.com/matches/${fixture.id}-${homeTeam.toLowerCase().replace(/\s+/g, '-')}-vs-${awayTeam.toLowerCase().replace(/\s+/g, '-')}-${kickoffDate.split('T')[0]}` :
       `https://matchlocator.com/matches/${fixture.id}-${fixture.home.name.toLowerCase().replace(/\s+/g, '-')}-vs-${fixture.away.name.toLowerCase().replace(/\s+/g, '-')}-${kickoffDate.split('T')[0]}`;
+
+    // Get image - use home team crest, fallback to competition logo, then default
+    const getEventImage = () => {
+      if (isSimpleFixture) {
+        return fixture.home_crest || 'https://matchlocator.com/images/football-default.jpg';
+      } else {
+        return fixture.home.crest || 'https://matchlocator.com/images/football-default.jpg';
+      }
+    };
+
+    // Get broadcaster info
+    const getBroadcaster = () => {
+      if (isSimpleFixture) {
+        return fixture.broadcaster || 'Match Locator';
+      } else {
+        return (fixture.providers_uk && fixture.providers_uk.length > 0)
+          ? fixture.providers_uk[0].name
+          : 'Match Locator';
+      }
+    };
 
     // Get proper location data - always include location for Google rich results
     const getLocationData = () => {
@@ -133,6 +155,20 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) => {
       "name": `${homeTeam} vs ${awayTeam}`,
       "description": `Football match between ${homeTeam} and ${awayTeam} in ${getCompetitionName(fixture)}`,
       "startDate": kickoffDate,
+      "endDate": endDate,
+      "image": getEventImage(),
+      "performer": [
+        {
+          "@type": "SportsTeam",
+          "name": homeTeam,
+          "sport": "Football"
+        },
+        {
+          "@type": "SportsTeam",
+          "name": awayTeam,
+          "sport": "Football"
+        }
+      ],
       "sport": {
         "@type": "Sport",
         "name": "Football"
@@ -166,14 +202,22 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) => {
       },
       "location": getLocationData(),
       "url": matchUrl,
-      "isAccessibleForFree": false,
+      "isAccessibleForFree": true,
       "eventStatus": "https://schema.org/EventScheduled",
       "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
       "offers": {
         "@type": "Offer",
+        "url": matchUrl,
+        "price": "0",
+        "priceCurrency": "GBP",
+        "validFrom": new Date(new Date(fixture.kickoff_utc).getTime() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+        "availability": "https://schema.org/InStock",
         "name": "TV Broadcasting",
         "description": "Watch this football match on UK television",
-        "availability": "https://schema.org/InStock"
+        "seller": {
+          "@type": "Organization",
+          "name": getBroadcaster()
+        }
       }
     };
   };
