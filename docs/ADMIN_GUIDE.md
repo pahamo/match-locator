@@ -199,19 +199,27 @@ const handleCompetitionVisibilityChange = async (
 **Location:** `/admin/fixtures`
 **Purpose:** Manage fixture broadcaster assignments and details
 
-#### Broadcaster Assignment
+#### Broadcaster Assignment (Updated 2025)
 
-**Bulk Operations:**
-- **Select Multiple Fixtures**: Checkbox selection for batch operations
-- **Assign Broadcaster**: Apply broadcaster to multiple fixtures
-- **Save All Changes**: Single save operation for multiple assignments
-- **Progress Tracking**: Real-time feedback during bulk operations
+**Streamlined Workflow:**
+- **Always-Visible Dropdowns**: No edit button required - broadcaster dropdowns are always accessible
+- **Auto-Save on Change**: Changes save immediately when dropdown selection is made
+- **Real-Time Feedback**: "Saving..." indicators show during database updates
+- **No Page Refresh**: All changes apply instantly without page reload
 
-**Single Fixture Operations:**
-- **Quick Edit**: Inline broadcaster assignment
-- **Detailed View**: Full fixture information with edit capabilities
-- **Status Updates**: Mark fixtures as confirmed/pending
-- **Notes Management**: Add internal notes for editorial workflow
+**Enhanced Filtering:**
+- **Competition Filter**: Filter by Premier League, Champions League, etc.
+- **Match Status**: Filter by Scheduled, Live, or Finished matches
+- **Broadcast Status**: Filter by matches with/without broadcaster assignments
+- **Month Filter**: Filter by specific months (January 2025, December 2024, etc.)
+- **Day of Week**: Filter by Monday through Sunday
+- **Team Filter**: Search by team name (matches home or away teams)
+- **Text Search**: Search fixtures by team names
+
+**Table Features:**
+- **Match ID Column**: Unique identifier for each fixture (first column)
+- **Visual Status**: Clear indicators for live matches, upcoming games
+- **TBD Default**: Professional "TBD" default instead of "No broadcaster"
 
 #### Broadcaster Editor Modal
 
@@ -492,6 +500,17 @@ console.log('Has service key:', !!process.env.SUPABASE_SERVICE_ROLE_KEY);
 - Using anonymous key for admin operations
 - Missing service role permissions
 - Incorrect RLS policy configuration
+- **Fixed 2025**: Wrong table name in database queries
+
+**Recent Fix (January 2025):**
+The "Failed to save broadcaster" error was caused by incorrect table references:
+```typescript
+// ❌ Wrong: Using incorrect table name
+.from('broadcasts')
+
+// ✅ Fixed: Using correct table name
+.from('broadcasts_uk')
+```
 
 **Solutions:**
 ```typescript
@@ -600,5 +619,17 @@ npm run teams:backfill:dry                          # Preview team updates
 
 ---
 
-**Last Updated:** September 17, 2025
+---
+
+## Recent Updates (January 2025)
+
+### Admin Area Improvements
+- **Fixed**: Broadcaster saving error (table name correction)
+- **Streamlined**: Removed edit button requirement - dropdowns always visible
+- **Enhanced**: Added comprehensive filtering system (month, day, team)
+- **Improved**: Auto-save functionality with real-time feedback
+- **Added**: Match ID column for better fixture identification
+- **Updated**: Professional "TBD" default for broadcaster assignments
+
+**Last Updated:** January 21, 2025
 **Related Documentation:** [ARCHITECTURE.md](ARCHITECTURE.md), [DATA_MANAGEMENT.md](DATA_MANAGEMENT.md), [DEPLOYMENT.md](DEPLOYMENT.md)
