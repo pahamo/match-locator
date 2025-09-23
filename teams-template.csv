@@ -1,0 +1,5 @@
+id,name,current_slug,new_slug,competition_id
+# Please fill in the actual team data from the browser console
+# The browser shows: "[DEBUG] First few teams: (3) [{…}, {…}, {…}]"
+# You can expand those objects in the browser console to see the full data
+# Alternatively, we can use a different approach...
