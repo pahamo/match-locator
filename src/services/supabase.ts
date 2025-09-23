@@ -523,7 +523,7 @@ export async function getTeams(): Promise<Team[]> {
 
     const { data, error, count } = await supabase
       .from('teams')
-      .select('id,name,slug,crest_url,competition_id,short_name,club_colors,website,venue,home_venue,city', { count: 'exact' })
+      .select('id,name,slug,crest_url,competition_id,short_name,club_colors,website,venue,city', { count: 'exact' })
       .order('name', { ascending: true });
 
     console.log(`[DEBUG] getTeams query result - count: ${count}, error: ${error ? JSON.stringify(error) : 'none'}`);
@@ -552,7 +552,6 @@ export async function getTeams(): Promise<Team[]> {
       club_colors: t.club_colors ?? null,
       website: t.website ?? null,
       venue: t.venue ?? null,
-      home_venue: t.home_venue ?? null,
       city: t.city ?? null,
     }));
   } catch (e) {
