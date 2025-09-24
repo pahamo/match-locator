@@ -19,6 +19,11 @@ const AdminTeamsPage: React.FC = () => {
   const [countryFilter, setCountryFilter] = useState<CountryFilter>('');
   const [searchTerm, setSearchTerm] = useState('');
 
+  // Editing state
+  const [editingSlug, setEditingSlug] = useState<number | null>(null);
+  const [slugChanges, setSlugChanges] = useState<Record<number, string>>({});
+  const [pendingChanges, setPendingChanges] = useState<Record<number, string>>({});
+
   // Helper function - must be defined before useMemo
   const getTeamStats = () => {
     const total = teams.length;
@@ -160,6 +165,94 @@ const AdminTeamsPage: React.FC = () => {
     localStorage.removeItem('adminTokenExpiry');
     setIsAuthenticated(false);
     window.location.href = '/admin';
+  };
+
+  // Slug editing functions
+  const handleSlugEdit = (teamId: number, currentSlug: string) => {
+    setEditingSlug(teamId);
+    setPendingChanges(prev => ({ ...prev, [teamId]: currentSlug }));
+  };
+
+  const handleSlugChange = (teamId: number, newSlug: string) => {
+    setPendingChanges(prev => ({ ...prev, [teamId]: newSlug }));
+  };
+
+  const handleSlugSave = async (teamId: number) => {
+    const newSlug = pendingChanges[teamId];
+    if (!newSlug || newSlug.trim() === '') return;
+
+    const currentTeam = teams.find(t => t.id === teamId);
+    if (!currentTeam) return;
+
+    const oldSlug = currentTeam.slug;
+    const trimmedNewSlug = newSlug.trim();
+
+    if (oldSlug === trimmedNewSlug) {
+      // No change, just exit edit mode
+      setEditingSlug(null);
+      setPendingChanges(prev => {
+        const updated = { ...prev };
+        delete updated[teamId];
+        return updated;
+      });
+      return;
+    }
+
+    try {
+      console.log(`Saving slug for team ${teamId}: ${oldSlug} → ${trimmedNewSlug}`);
+
+      const response = await fetch('/.netlify/functions/update-team-slug', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          teamId,
+          oldSlug,
+          newSlug: trimmedNewSlug
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update slug');
+      }
+
+      const result = await response.json();
+      console.log('Slug update result:', result);
+
+      // Update local state
+      setSlugChanges(prev => ({ ...prev, [teamId]: trimmedNewSlug }));
+      setTeams(prevTeams =>
+        prevTeams.map(team =>
+          team.id === teamId ? { ...team, slug: trimmedNewSlug } : team
+        )
+      );
+
+      setEditingSlug(null);
+      setPendingChanges(prev => {
+        const updated = { ...prev };
+        delete updated[teamId];
+        return updated;
+      });
+
+      // Show success message
+      const successMsg = `✅ Updated: ${currentTeam.name} slug changed from '${oldSlug}' to '${trimmedNewSlug}'`;
+      console.log(successMsg);
+
+    } catch (error) {
+      console.error('Failed to save slug:', error);
+      alert(`Failed to save slug: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  };
+
+  const handleSlugCancel = (teamId: number) => {
+    setEditingSlug(null);
+    setPendingChanges(prev => {
+      const updated = { ...prev };
+      delete updated[teamId];
+      return updated;
+    });
   };
 
   if (!isAuthenticated) {
@@ -480,8 +573,77 @@ const AdminTeamsPage: React.FC = () => {
                     <td style={{ padding: '16px 12px', fontSize: '13px', color: team.short_name ? '#1f2937' : '#9ca3af' }}>
                       {team.short_name || 'None'}
                     </td>
-                    <td style={{ padding: '16px 12px', fontSize: '12px', color: '#6b7280', fontFamily: 'monospace' }}>
-                      {team.slug}
+                    <td style={{ padding: '16px 12px', fontSize: '12px', fontFamily: 'monospace' }}>
+                      {editingSlug === team.id ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <input
+                            type="text"
+                            value={pendingChanges[team.id] || ''}
+                            onChange={(e) => handleSlugChange(team.id, e.target.value)}
+                            style={{
+                              padding: '4px 8px',
+                              border: '1px solid #d1d5db',
+                              borderRadius: '4px',
+                              fontSize: '12px',
+                              fontFamily: 'monospace',
+                              width: '200px'
+                            }}
+                            autoFocus
+                          />
+                          <button
+                            onClick={() => handleSlugSave(team.id)}
+                            style={{
+                              padding: '4px 8px',
+                              background: '#10b981',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '4px',
+                              fontSize: '11px',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            ✓
+                          </button>
+                          <button
+                            onClick={() => handleSlugCancel(team.id)}
+                            style={{
+                              padding: '4px 8px',
+                              background: '#ef4444',
+                              color: 'white',
+                              border: 'none',
+                              borderRadius: '4px',
+                              fontSize: '11px',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            ✗
+                          </button>
+                        </div>
+                      ) : (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{
+                            color: slugChanges[team.id] ? '#059669' : '#6b7280',
+                            fontWeight: slugChanges[team.id] ? '600' : 'normal'
+                          }}>
+                            {team.slug}
+                          </span>
+                          <button
+                            onClick={() => handleSlugEdit(team.id, team.slug)}
+                            style={{
+                              padding: '2px 6px',
+                              background: '#f3f4f6',
+                              color: '#374151',
+                              border: '1px solid #d1d5db',
+                              borderRadius: '4px',
+                              fontSize: '10px',
+                              cursor: 'pointer'
+                            }}
+                            title="Edit slug"
+                          >
+                            ✏️
+                          </button>
+                        </div>
+                      )}
                     </td>
                     <td style={{ padding: '16px 12px' }}>
                       <div style={{
