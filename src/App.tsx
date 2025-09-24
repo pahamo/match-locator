@@ -41,6 +41,7 @@ const AdminDashboardPage = React.lazy(() => import('./pages/admin/AdminDashboard
 const AdminTeamsPage = React.lazy(() => import('./pages/admin/AdminTeamsPage'));
 const AdminMatchesPage = React.lazy(() => import('./pages/admin/AdminMatchesPage'));
 const AdminCompetitionsPage = React.lazy(() => import('./pages/admin/AdminCompetitionsPage'));
+const AdminTeamsExportPage = React.lazy(() => import('./pages/admin/AdminTeamsExportPage'));
 const ClubsPage = React.lazy(() => import('./pages/ClubsPage'));
 const FixturesPage = React.lazy(() => import('./pages/FixturesPage'));
 const CompetitionsOverviewPage = React.lazy(() => import('./pages/CompetitionsOverviewPage'));
@@ -121,6 +122,7 @@ function App() {
               {/* Admin routes */}
               <Route path="/admin" element={<AdminDashboardPage />} />
               <Route path="/admin/teams" element={<AdminTeamsPage />} />
+              <Route path="/admin/teams/export" element={<AdminTeamsExportPage />} />
               <Route path="/admin/matches" element={<AdminMatchesPage />} />
               <Route path="/admin/competitions" element={<AdminCompetitionsPage />} />
               <Route path="/about" element={<AboutPage />} />
