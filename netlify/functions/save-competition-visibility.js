@@ -24,7 +24,7 @@ exports.handler = async (event, context) => {
     // Initialize Supabase client with service role key
     const supabase = createClient(
       process.env.REACT_APP_SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY
+      process.env.SUPABASE_SERVICE_KEY
     );
 
     // Update competition visibility
