@@ -1,4 +1,4 @@
-const { createClient } = require('@supabase/supabase-js');
+const { getSupabaseClient } = require('./_shared/supabase');
 
 exports.handler = async (event, context) => {
   // Only allow POST requests
@@ -21,11 +21,8 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // Initialize Supabase client with service role key
-    const supabase = createClient(
-      process.env.REACT_APP_SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_KEY
-    );
+    // Initialize Supabase client with standardized environment variables
+    const supabase = getSupabaseClient();
 
     // Handle null providerId (clear broadcaster assignment)
     if (providerId === null) {

@@ -1,11 +1,8 @@
 
-const { createClient } = require('@supabase/supabase-js');
+const { getSupabaseClient } = require('./_shared/supabase');
 
 exports.handler = async (event, context) => {
-  const supabase = createClient(
-    process.env.REACT_APP_SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_KEY
-  );
+  const supabase = getSupabaseClient();
 
   try {
     const { data, error } = await supabase

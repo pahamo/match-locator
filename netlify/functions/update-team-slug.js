@@ -1,4 +1,4 @@
-const { createClient } = require('@supabase/supabase-js');
+const { getSupabaseClient } = require('./_shared/supabase');
 
 exports.handler = async (event, context) => {
   if (event.httpMethod !== 'POST') {
@@ -19,10 +19,7 @@ exports.handler = async (event, context) => {
     }
 
     // Initialize Supabase with service role key for admin operations
-    const supabase = createClient(
-      process.env.REACT_APP_SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_KEY
-    );
+    const supabase = getSupabaseClient();
 
     // Update the team slug
     const { data, error } = await supabase
