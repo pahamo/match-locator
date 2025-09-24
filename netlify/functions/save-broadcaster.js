@@ -1,4 +1,4 @@
-const { getSupabaseClient } = require('./_shared/supabase');
+const { createClient } = require('@supabase/supabase-js');
 
 exports.handler = async (event, context) => {
   // Only allow POST requests
@@ -21,8 +21,22 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // Initialize Supabase client with standardized environment variables
-    const supabase = getSupabaseClient();
+    // Initialize Supabase client - using direct approach for critical function
+    const supabase = createClient(
+      process.env.REACT_APP_SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_KEY
+    );
+
+    if (!process.env.REACT_APP_SUPABASE_URL || !process.env.SUPABASE_SERVICE_KEY) {
+      console.error('Missing environment variables:', {
+        hasUrl: !!process.env.REACT_APP_SUPABASE_URL,
+        hasKey: !!process.env.SUPABASE_SERVICE_KEY
+      });
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: 'Configuration error: Missing environment variables' })
+      };
+    }
 
     // Handle null providerId (clear broadcaster assignment)
     if (providerId === null) {
