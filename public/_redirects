@@ -2,6 +2,12 @@
 # Redirect old /clubs/ paths to new /club/ paths
 /clubs/:slug /club/:slug 301!
 
+# H2H redirects from old verbose slugs to smart slugs
+/h2h/afc-bournemouth-vs-aston-villa /h2h/bournemouth-vs-aston-villa 301!
+/h2h/aston-villa-vs-afc-bournemouth /h2h/aston-villa-vs-bournemouth 301!
+
+# More H2H redirects will be added as needed
+
 # Specific team redirects will be added after running slug generation
 # Format: /club/old-slug /club/new-slug 301!
 # Generated redirects will be appended here dynamically
