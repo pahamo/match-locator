@@ -24,13 +24,14 @@ interface FixtureRow {
   home_team_id: number;
   home_team: string;
   home_slug: string;
-  home_url_slug?: string | null;
   home_crest?: string | null;
   away_team_id: number;
   away_team: string;
   away_slug: string;
-  away_url_slug?: string | null;
   away_crest?: string | null;
+  // Optional fields that may not exist yet
+  home_url_slug?: string | null;
+  away_url_slug?: string | null;
 }
 
 interface BroadcastRow {
@@ -53,14 +54,14 @@ function mapFixtureRow(row: FixtureRow, providersByFixture: Record<number, Provi
     id: row.home_team_id,
     name: row.home_team,
     slug: row.home_slug,
-    url_slug: row.home_url_slug || null,
+    url_slug: null, // Will be populated after migration
     crest: row.home_crest || null,
   };
   const away: Team = {
     id: row.away_team_id,
     name: row.away_team,
     slug: row.away_slug,
-    url_slug: row.away_url_slug || null,
+    url_slug: null, // Will be populated after migration
     crest: row.away_crest || null,
   };
   const providers = providersByFixture[row.id] || [];
@@ -531,24 +532,10 @@ export async function getTeams(): Promise<Team[]> {
     console.log('[DEBUG] getTeams called - fetching all teams');
     console.log('[DEBUG] Supabase client initialized and ready');
 
-    // Try to select url_slug, but handle gracefully if column doesn't exist yet
-    let { data, error, count } = await supabase
+    const { data, error, count } = await supabase
       .from('teams')
-      .select('id,name,slug,url_slug,crest_url,competition_id,short_name,club_colors,website,venue,city', { count: 'exact' })
+      .select('id,name,slug,crest_url,competition_id,short_name,club_colors,website,venue,city', { count: 'exact' })
       .order('name', { ascending: true });
-
-    // If url_slug column doesn't exist yet, fall back to query without it
-    if (error && error.message?.includes('column "url_slug" does not exist')) {
-      console.log('[DEBUG] url_slug column not found, falling back to basic query');
-      const fallbackResult = await supabase
-        .from('teams')
-        .select('id,name,slug,crest_url,competition_id,short_name,club_colors,website,venue,city', { count: 'exact' })
-        .order('name', { ascending: true });
-
-      data = fallbackResult.data;
-      error = fallbackResult.error;
-      count = fallbackResult.count;
-    }
 
     console.log(`[DEBUG] getTeams query result - count: ${count}, error: ${error ? JSON.stringify(error) : 'none'}`);
 
@@ -570,7 +557,7 @@ export async function getTeams(): Promise<Team[]> {
       id: t.id,
       name: t.name,
       slug: t.slug,
-      url_slug: t.url_slug ?? null,
+      url_slug: null, // Will be populated after migration
       crest: t.crest_url ?? null,
       competition_id: t.competition_id,
       short_name: t.short_name ?? null,
