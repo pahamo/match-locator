@@ -22,6 +22,7 @@ import {
 import { normalizeTeamSlug, mapSeoSlugToDbSlugEnhanced } from '../utils/teamSlugs';
 import { isSupportedTeam } from '../utils/teamSlugs';
 import { generateMatchPreview, isPremierLeagueFixture } from '../utils/matchPreview';
+import { getTeamUrlSlug } from '../utils/slugUtils';
 import type { Fixture, Team } from '../types';
 
 const HeadToHeadPage: React.FC = () => {
@@ -239,7 +240,7 @@ const HeadToHeadPage: React.FC = () => {
               marginBottom: '8px'
             }}>
               <a
-                href={`/clubs/${team1.slug}`}
+                href={`/club/${getTeamUrlSlug(team1)}`}
                 style={{
                   color: 'inherit',
                   textDecoration: 'none'
@@ -251,7 +252,7 @@ const HeadToHeadPage: React.FC = () => {
               </a>
               {' vs '}
               <a
-                href={`/clubs/${team2.slug}`}
+                href={`/club/${getTeamUrlSlug(team2)}`}
                 style={{
                   color: 'inherit',
                   textDecoration: 'none'
@@ -399,7 +400,7 @@ const HeadToHeadPage: React.FC = () => {
               </p>
               <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
                 <a
-                  href={`/clubs/${team1.slug}`}
+                  href={`/club/${getTeamUrlSlug(team1)}`}
                   style={{
                     display: 'inline-block',
                     background: '#3b82f6',
@@ -414,7 +415,7 @@ const HeadToHeadPage: React.FC = () => {
                   View {team1.name} Fixtures
                 </a>
                 <a
-                  href={`/clubs/${team2.slug}`}
+                  href={`/club/${getTeamUrlSlug(team2)}`}
                   style={{
                     display: 'inline-block',
                     background: '#3b82f6',

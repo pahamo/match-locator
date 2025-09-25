@@ -711,12 +711,26 @@ export async function getNextHeadToHeadFixture(teamSlug1: string, teamSlug2: str
  */
 export async function getTeamBySlug(slug: string): Promise<Team | null> {
   try {
-    const { data, error } = await supabase
+    // First try matching the slug field
+    let { data, error } = await supabase
       .from('teams')
       .select('*')
       .eq('slug', slug)
       .limit(1)
       .single();
+
+    // If no match on slug field, try url_slug field (for smart slugs)
+    if (error && error.code === 'PGRST116') {
+      const { data: urlSlugData, error: urlSlugError } = await supabase
+        .from('teams')
+        .select('*')
+        .eq('url_slug', slug)
+        .limit(1)
+        .single();
+
+      data = urlSlugData;
+      error = urlSlugError;
+    }
 
     if (error) {
       if (error.code === 'PGRST116') {
@@ -731,6 +745,7 @@ export async function getTeamBySlug(slug: string): Promise<Team | null> {
       id: data.id,
       name: data.name,
       slug: data.slug,
+      url_slug: data.url_slug,
       crest: data.crest,
       short_name: data.short_name,
       competition_id: data.competition_id

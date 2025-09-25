@@ -1,0 +1,517 @@
+redirect_rule
+/club/1-fc-heidenheim-1846 /club/heidenheim 301!
+/club/1-fc-k-ln /club/koln 301!
+/club/1-fc-union-berlin /club/union-berlin 301!
+/club/1-fsv-mainz-05 /club/mainz 301!
+/club/ac-milan /club/milan 301!
+/club/ac-monza-ser /club/monza 301!
+/club/ac-pisa-1909 /club/pisa 301!
+/club/acf-fiorentina /club/fiorentina 301!
+/club/afc-ajax /club/ajax 301!
+/club/afc-bournemouth /club/bournemouth 301!
+/club/aj-auxerre /club/auxerre 301!
+/club/arsenal-fc /club/arsenal 301!
+/club/as-monaco-fc /club/monaco 301!
+/club/as-roma /club/roma 301!
+/club/as-saint-tienne-l1 /club/saint-tienne 301!
+/club/aston-villa-fc /club/aston-villa 301!
+/club/atalanta-bc /club/atalanta 301!
+/club/athletic-club /club/athletic 301!
+/club/avs-por /club/avs 301!
+/club/az-ere /club/az-alkmaar 301!
+/club/bayer-04-leverkusen /club/leverkusen 301!
+/club/birmingham-city-fc-cha /club/birmingham 301!
+/club/blackburn-rovers-fc-cha /club/blackburn 301!
+/club/bologna-fc-1909 /club/bologna 301!
+/club/borussia-dortmund /club/dortmund 301!
+/club/borussia-m-nchengladbach /club/monchengladbach 301!
+/club/brentford-fc /club/brentford 301!
+/club/brighton-hove-albion-fc /club/brighton 301!
+/club/bristol-city-fc-cha /club/bristol-city 301!
+/club/burnley-fc /club/burnley 301!
+/club/ca-osasuna /club/osasuna 301!
+/club/cagliari-calcio /club/cagliari 301!
+/club/casa-pia-ac-por /club/casa-pia 301!
+/club/cd-legan-s-lag /club/leganes 301!
+/club/cd-nacional-por /club/cd-nacional 301!
+/club/cd-santa-clara-por /club/santa-clara 301!
+/club/cd-tondela-por /club/tondela 301!
+/club/cf-estrela-da-amadora-por /club/amadora 301!
+/club/charlton-athletic-fc-cha /club/charlton 301!
+/club/chelsea-fc /club/chelsea 301!
+/club/club-atl-tico-de-madrid /club/atleti 301!
+/club/club-brugge-kv /club/club-brugge 301!
+/club/como-1907 /club/como 301!
+/club/coventry-city-fc-cha /club/coventry-city 301!
+/club/crystal-palace-fc /club/crystal-palace 301!
+/club/deportivo-alav-s /club/alaves 301!
+/club/derby-county-fc-cha /club/derby-county 301!
+/club/eintracht-frankfurt /club/frankfurt 301!
+/club/elche-cf /club/elche 301!
+/club/empoli-fc-ser /club/empoli 301!
+/club/everton-fc /club/everton 301!
+/club/fc-alverca-por /club/alverca 301!
+/club/fc-arouca-por /club/arouca 301!
+/club/fc-augsburg /club/augsburg 301!
+/club/fc-barcelona /club/barcelona 301!
+/club/fc-bayern-m-nchen /club/bayern 301!
+/club/fc-famalic-o-por /club/famalico 301!
+/club/fc-groningen-ere /club/groningen 301!
+/club/fc-internazionale-milano /club/inter 301!
+/club/fc-kbenhavn /club/kobenhavn 301!
+/club/fc-lorient /club/lorient 301!
+/club/fc-metz /club/metz 301!
+/club/fc-nantes /club/nantes 301!
+/club/fc-porto-por /club/porto 301!
+/club/fc-st-pauli-1910 /club/st-pauli 301!
+/club/fc-twente-65-ere /club/twente 301!
+/club/fc-utrecht-ere /club/utrecht 301!
+/club/fc-volendam-ere /club/volendam 301!
+/club/feyenoord-rotterdam-ere /club/feyenoord 301!
+/club/fk-bodglimt /club/bodglimt 301!
+/club/fortuna-sittard-ere /club/sittard 301!
+/club/fulham-fc /club/fulham 301!
+/club/galatasaray-sk /club/galatasaray 301!
+/club/gd-estoril-praia-por /club/estoril-praia 301!
+/club/genoa-cfc /club/genoa 301!
+/club/getafe-cf /club/getafe 301!
+/club/gil-vicente-fc-por /club/gil-vicente 301!
+/club/girona-fc /club/girona 301!
+/club/go-ahead-eagles-ere /club/go-ahead 301!
+/club/hamburger-sv /club/hsv 301!
+/club/hellas-verona-fc /club/verona 301!
+/club/heracles-almelo-ere /club/heracles 301!
+/club/holstein-kiel-bun /club/holstein-kiel 301!
+/club/hull-city-afc-cha /club/hull-city 301!
+/club/ipswich-town-fc-cha /club/ipswich-town 301!
+/club/juventus-fc /club/juventus 301!
+/club/le-havre-ac /club/le-havre 301!
+/club/leeds-united-fc /club/leeds-united 301!
+/club/leicester-city-fc-cha /club/leicester-city 301!
+/club/levante-ud /club/levante 301!
+/club/lille-osc /club/lille 301!
+/club/liverpool-fc /club/liverpool 301!
+/club/manchester-city-fc /club/man-city 301!
+/club/manchester-united-fc /club/man-united 301!
+/club/middlesbrough-fc-cha /club/middlesbrough 301!
+/club/millwall-fc-cha /club/millwall 301!
+/club/montpellier-hsc-l1 /club/montpellier 301!
+/club/moreirense-fc-por /club/moreirense 301!
+/club/nac-breda-ere /club/nac 301!
+/club/nec-ere /club/nec 301!
+/club/newcastle-united-fc /club/newcastle-united 301!
+/club/norwich-city-fc-cha /club/norwich 301!
+/club/nottingham-forest-fc /club/forest 301!
+/club/ogc-nice /club/nice 301!
+/club/olympique-de-marseille /club/marseille 301!
+/club/olympique-lyonnais /club/olympique-lyon 301!
+/club/oxford-united-fc-cha /club/oxford-united 301!
+/club/pae-olympiakos-sfp /club/olympiakos 301!
+/club/paphos-fc /club/paphos 301!
+/club/paris-fc /club/paris 301!
+/club/paris-saint-germain-fc /club/psg 301!
+/club/parma-calcio-1913 /club/parma 301!
+/club/pec-zwolle-ere /club/zwolle 301!
+/club/portsmouth-fc-cha /club/portsmouth 301!
+/club/preston-north-end-fc-cha /club/preston-ne 301!
+/club/qaraba-adam-fk /club/qaraba-adam 301!
+/club/queens-park-rangers-fc-cha /club/qpr 301!
+/club/racing-club-de-lens /club/rc-lens 301!
+/club/rayo-vallecano-de-madrid /club/rayo-vallecano 301!
+/club/rc-celta-de-vigo /club/celta 301!
+/club/rc-strasbourg-alsace /club/strasbourg 301!
+/club/rcd-espanyol-de-barcelona /club/espanyol 301!
+/club/rcd-mallorca /club/mallorca 301!
+/club/real-betis-balompi /club/real-betis 301!
+/club/real-madrid-cf /club/real-madrid 301!
+/club/real-sociedad-de-f-tbol /club/real-sociedad 301!
+/club/real-valladolid-cf-lag /club/valladolid 301!
+/club/rio-ave-fc-por /club/rio-ave 301!
+/club/royale-union-saintgilloise /club/union-sg 301!
+/club/sbv-excelsior-ere /club/excelsior 301!
+/club/sc-freiburg /club/freiburg 301!
+/club/sc-heerenveen-ere /club/heerenveen 301!
+/club/sevilla-fc /club/sevilla 301!
+/club/sheffield-united-fc-cha /club/sheffield-united 301!
+/club/sheffield-wednesday-fc-cha /club/sheffield-wed 301!
+/club/sk-slavia-praha /club/slavia-praha 301!
+/club/southampton-fc-cha /club/southampton 301!
+/club/sparta-rotterdam-ere /club/sparta 301!
+/club/sport-lisboa-e-benfica /club/sl-benfica 301!
+/club/sporting-clube-de-braga-por /club/braga 301!
+/club/sporting-clube-de-portugal /club/sporting-cp 301!
+/club/ss-lazio /club/lazio 301!
+/club/ssc-napoli /club/napoli 301!
+/club/stade-brestois-29 /club/brest 301!
+/club/stade-de-reims-l1 /club/reims 301!
+/club/stade-rennais-fc-1901 /club/stade-rennais 301!
+/club/stoke-city-fc-cha /club/stoke 301!
+/club/sunderland-afc /club/sunderland 301!
+/club/sv-werder-bremen /club/bremen 301!
+/club/swansea-city-afc-cha /club/swansea 301!
+/club/telstar-1963-ere /club/telstar 301!
+/club/torino-fc /club/torino 301!
+/club/tottenham-hotspur-fc /club/tottenham 301!
+/club/toulouse-fc /club/toulouse 301!
+/club/tsg-1899-hoffenheim /club/hoffenheim 301!
+/club/ud-las-palmas-lag /club/las-palmas 301!
+/club/udinese-calcio /club/udinese 301!
+/club/us-cremonese /club/cremonese 301!
+/club/us-lecce /club/lecce 301!
+/club/us-sassuolo-calcio /club/sassuolo 301!
+/club/valencia-cf /club/valencia 301!
+/club/venezia-fc-ser /club/venezia 301!
+/club/vfb-stuttgart /club/stuttgart 301!
+/club/vfl-bochum-1848-bun /club/bochum 301!
+/club/vfl-wolfsburg /club/wolfsburg 301!
+/club/villarreal-cf /club/villarreal 301!
+/club/vit-ria-sc-por /club/vitria 301!
+/club/watford-fc-cha /club/watford 301!
+/club/west-bromwich-albion-fc-cha /club/west-brom 301!
+/club/west-ham-united-fc /club/west-ham-united 301!
+/club/wolverhampton-wanderers-fc /club/wolves 301!
+/club/wrexham-afc-cha /club/wrexham 301!
+/clubs/1-fc-heidenheim-1846 /club/heidenheim 301!
+/clubs/1-fc-k-ln /club/koln 301!
+/clubs/1-fc-union-berlin /club/union-berlin 301!
+/clubs/1-fsv-mainz-05 /club/mainz 301!
+/clubs/ac-milan /club/milan 301!
+/clubs/ac-monza-ser /club/monza 301!
+/clubs/ac-pisa-1909 /club/pisa 301!
+/clubs/acf-fiorentina /club/fiorentina 301!
+/clubs/afc-ajax /club/ajax 301!
+/clubs/afc-bournemouth /club/bournemouth 301!
+/clubs/aj-auxerre /club/auxerre 301!
+/clubs/arsenal-fc /club/arsenal 301!
+/clubs/as-monaco-fc /club/monaco 301!
+/clubs/as-roma /club/roma 301!
+/clubs/as-saint-tienne-l1 /club/saint-tienne 301!
+/clubs/aston-villa-fc /club/aston-villa 301!
+/clubs/atalanta-bc /club/atalanta 301!
+/clubs/athletic-club /club/athletic 301!
+/clubs/avs-por /club/avs 301!
+/clubs/az-ere /club/az-alkmaar 301!
+/clubs/bayer-04-leverkusen /club/leverkusen 301!
+/clubs/birmingham-city-fc-cha /club/birmingham 301!
+/clubs/blackburn-rovers-fc-cha /club/blackburn 301!
+/clubs/bologna-fc-1909 /club/bologna 301!
+/clubs/borussia-dortmund /club/dortmund 301!
+/clubs/borussia-m-nchengladbach /club/monchengladbach 301!
+/clubs/brentford-fc /club/brentford 301!
+/clubs/brighton-hove-albion-fc /club/brighton 301!
+/clubs/bristol-city-fc-cha /club/bristol-city 301!
+/clubs/burnley-fc /club/burnley 301!
+/clubs/ca-osasuna /club/osasuna 301!
+/clubs/cagliari-calcio /club/cagliari 301!
+/clubs/casa-pia-ac-por /club/casa-pia 301!
+/clubs/cd-legan-s-lag /club/leganes 301!
+/clubs/cd-nacional-por /club/cd-nacional 301!
+/clubs/cd-santa-clara-por /club/santa-clara 301!
+/clubs/cd-tondela-por /club/tondela 301!
+/clubs/cf-estrela-da-amadora-por /club/amadora 301!
+/clubs/charlton-athletic-fc-cha /club/charlton 301!
+/clubs/chelsea-fc /club/chelsea 301!
+/clubs/club-atl-tico-de-madrid /club/atleti 301!
+/clubs/club-brugge-kv /club/club-brugge 301!
+/clubs/como-1907 /club/como 301!
+/clubs/coventry-city-fc-cha /club/coventry-city 301!
+/clubs/crystal-palace-fc /club/crystal-palace 301!
+/clubs/deportivo-alav-s /club/alaves 301!
+/clubs/derby-county-fc-cha /club/derby-county 301!
+/clubs/eintracht-frankfurt /club/frankfurt 301!
+/clubs/elche-cf /club/elche 301!
+/clubs/empoli-fc-ser /club/empoli 301!
+/clubs/everton-fc /club/everton 301!
+/clubs/fc-alverca-por /club/alverca 301!
+/clubs/fc-arouca-por /club/arouca 301!
+/clubs/fc-augsburg /club/augsburg 301!
+/clubs/fc-barcelona /club/barcelona 301!
+/clubs/fc-bayern-m-nchen /club/bayern 301!
+/clubs/fc-famalic-o-por /club/famalico 301!
+/clubs/fc-groningen-ere /club/groningen 301!
+/clubs/fc-internazionale-milano /club/inter 301!
+/clubs/fc-kbenhavn /club/kobenhavn 301!
+/clubs/fc-lorient /club/lorient 301!
+/clubs/fc-metz /club/metz 301!
+/clubs/fc-nantes /club/nantes 301!
+/clubs/fc-porto-por /club/porto 301!
+/clubs/fc-st-pauli-1910 /club/st-pauli 301!
+/clubs/fc-twente-65-ere /club/twente 301!
+/clubs/fc-utrecht-ere /club/utrecht 301!
+/clubs/fc-volendam-ere /club/volendam 301!
+/clubs/feyenoord-rotterdam-ere /club/feyenoord 301!
+/clubs/fk-bodglimt /club/bodglimt 301!
+/clubs/fortuna-sittard-ere /club/sittard 301!
+/clubs/fulham-fc /club/fulham 301!
+/clubs/galatasaray-sk /club/galatasaray 301!
+/clubs/gd-estoril-praia-por /club/estoril-praia 301!
+/clubs/genoa-cfc /club/genoa 301!
+/clubs/getafe-cf /club/getafe 301!
+/clubs/gil-vicente-fc-por /club/gil-vicente 301!
+/clubs/girona-fc /club/girona 301!
+/clubs/go-ahead-eagles-ere /club/go-ahead 301!
+/clubs/hamburger-sv /club/hsv 301!
+/clubs/hellas-verona-fc /club/verona 301!
+/clubs/heracles-almelo-ere /club/heracles 301!
+/clubs/holstein-kiel-bun /club/holstein-kiel 301!
+/clubs/hull-city-afc-cha /club/hull-city 301!
+/clubs/ipswich-town-fc-cha /club/ipswich-town 301!
+/clubs/juventus-fc /club/juventus 301!
+/clubs/le-havre-ac /club/le-havre 301!
+/clubs/leeds-united-fc /club/leeds-united 301!
+/clubs/leicester-city-fc-cha /club/leicester-city 301!
+/clubs/levante-ud /club/levante 301!
+/clubs/lille-osc /club/lille 301!
+/clubs/liverpool-fc /club/liverpool 301!
+/clubs/manchester-city-fc /club/man-city 301!
+/clubs/manchester-united-fc /club/man-united 301!
+/clubs/middlesbrough-fc-cha /club/middlesbrough 301!
+/clubs/millwall-fc-cha /club/millwall 301!
+/clubs/montpellier-hsc-l1 /club/montpellier 301!
+/clubs/moreirense-fc-por /club/moreirense 301!
+/clubs/nac-breda-ere /club/nac 301!
+/clubs/nec-ere /club/nec 301!
+/clubs/newcastle-united-fc /club/newcastle-united 301!
+/clubs/norwich-city-fc-cha /club/norwich 301!
+/clubs/nottingham-forest-fc /club/forest 301!
+/clubs/ogc-nice /club/nice 301!
+/clubs/olympique-de-marseille /club/marseille 301!
+/clubs/olympique-lyonnais /club/olympique-lyon 301!
+/clubs/oxford-united-fc-cha /club/oxford-united 301!
+/clubs/pae-olympiakos-sfp /club/olympiakos 301!
+/clubs/paphos-fc /club/paphos 301!
+/clubs/paris-fc /club/paris 301!
+/clubs/paris-saint-germain-fc /club/psg 301!
+/clubs/parma-calcio-1913 /club/parma 301!
+/clubs/pec-zwolle-ere /club/zwolle 301!
+/clubs/portsmouth-fc-cha /club/portsmouth 301!
+/clubs/preston-north-end-fc-cha /club/preston-ne 301!
+/clubs/qaraba-adam-fk /club/qaraba-adam 301!
+/clubs/queens-park-rangers-fc-cha /club/qpr 301!
+/clubs/racing-club-de-lens /club/rc-lens 301!
+/clubs/rayo-vallecano-de-madrid /club/rayo-vallecano 301!
+/clubs/rc-celta-de-vigo /club/celta 301!
+/clubs/rc-strasbourg-alsace /club/strasbourg 301!
+/clubs/rcd-espanyol-de-barcelona /club/espanyol 301!
+/clubs/rcd-mallorca /club/mallorca 301!
+/clubs/real-betis-balompi /club/real-betis 301!
+/clubs/real-madrid-cf /club/real-madrid 301!
+/clubs/real-sociedad-de-f-tbol /club/real-sociedad 301!
+/clubs/real-valladolid-cf-lag /club/valladolid 301!
+/clubs/rio-ave-fc-por /club/rio-ave 301!
+/clubs/royale-union-saintgilloise /club/union-sg 301!
+/clubs/sbv-excelsior-ere /club/excelsior 301!
+/clubs/sc-freiburg /club/freiburg 301!
+/clubs/sc-heerenveen-ere /club/heerenveen 301!
+/clubs/sevilla-fc /club/sevilla 301!
+/clubs/sheffield-united-fc-cha /club/sheffield-united 301!
+/clubs/sheffield-wednesday-fc-cha /club/sheffield-wed 301!
+/clubs/sk-slavia-praha /club/slavia-praha 301!
+/clubs/southampton-fc-cha /club/southampton 301!
+/clubs/sparta-rotterdam-ere /club/sparta 301!
+/clubs/sport-lisboa-e-benfica /club/sl-benfica 301!
+/clubs/sporting-clube-de-braga-por /club/braga 301!
+/clubs/sporting-clube-de-portugal /club/sporting-cp 301!
+/clubs/ss-lazio /club/lazio 301!
+/clubs/ssc-napoli /club/napoli 301!
+/clubs/stade-brestois-29 /club/brest 301!
+/clubs/stade-de-reims-l1 /club/reims 301!
+/clubs/stade-rennais-fc-1901 /club/stade-rennais 301!
+/clubs/stoke-city-fc-cha /club/stoke 301!
+/clubs/sunderland-afc /club/sunderland 301!
+/clubs/sv-werder-bremen /club/bremen 301!
+/clubs/swansea-city-afc-cha /club/swansea 301!
+/clubs/telstar-1963-ere /club/telstar 301!
+/clubs/torino-fc /club/torino 301!
+/clubs/tottenham-hotspur-fc /club/tottenham 301!
+/clubs/toulouse-fc /club/toulouse 301!
+/clubs/tsg-1899-hoffenheim /club/hoffenheim 301!
+/clubs/ud-las-palmas-lag /club/las-palmas 301!
+/clubs/udinese-calcio /club/udinese 301!
+/clubs/us-cremonese /club/cremonese 301!
+/clubs/us-lecce /club/lecce 301!
+/clubs/us-sassuolo-calcio /club/sassuolo 301!
+/clubs/valencia-cf /club/valencia 301!
+/clubs/venezia-fc-ser /club/venezia 301!
+/clubs/vfb-stuttgart /club/stuttgart 301!
+/clubs/vfl-bochum-1848-bun /club/bochum 301!
+/clubs/vfl-wolfsburg /club/wolfsburg 301!
+/clubs/villarreal-cf /club/villarreal 301!
+/clubs/vit-ria-sc-por /club/vitria 301!
+/clubs/watford-fc-cha /club/watford 301!
+/clubs/west-bromwich-albion-fc-cha /club/west-brom 301!
+/clubs/west-ham-united-fc /club/west-ham-united 301!
+/clubs/wolverhampton-wanderers-fc /club/wolves 301!
+/clubs/wrexham-afc-cha /club/wrexham 301!
+# Redirect from old slug to new smart slug for: 1. FC Heidenheim 1846 FC
+# Redirect from old slug to new smart slug for: 1. FC Köln FC
+# Redirect from old slug to new smart slug for: 1. FC Union Berlin FC
+# Redirect from old slug to new smart slug for: 1. FSV Mainz 05 FC
+# Redirect from old slug to new smart slug for: AC Milan FC
+# Redirect from old slug to new smart slug for: AC Monza FC
+# Redirect from old slug to new smart slug for: AC Pisa 1909 FC
+# Redirect from old slug to new smart slug for: ACF Fiorentina FC
+# Redirect from old slug to new smart slug for: AFC Ajax FC
+# Redirect from old slug to new smart slug for: AFC Bournemouth FC
+# Redirect from old slug to new smart slug for: AJ Auxerre FC
+# Redirect from old slug to new smart slug for: Arsenal FC
+# Redirect from old slug to new smart slug for: AS Monaco FC
+# Redirect from old slug to new smart slug for: AS Roma FC
+# Redirect from old slug to new smart slug for: AS Saint-Étienne FC
+# Redirect from old slug to new smart slug for: Aston Villa FC
+# Redirect from old slug to new smart slug for: Atalanta BC FC
+# Redirect from old slug to new smart slug for: Athletic Club FC
+# Redirect from old slug to new smart slug for: AVS FC
+# Redirect from old slug to new smart slug for: AZ FC
+# Redirect from old slug to new smart slug for: Bayer 04 Leverkusen FC
+# Redirect from old slug to new smart slug for: Birmingham City FC
+# Redirect from old slug to new smart slug for: Blackburn Rovers FC
+# Redirect from old slug to new smart slug for: Bologna FC 1909 FC
+# Redirect from old slug to new smart slug for: Borussia Dortmund FC
+# Redirect from old slug to new smart slug for: Borussia Mönchengladbach FC
+# Redirect from old slug to new smart slug for: Brentford FC
+# Redirect from old slug to new smart slug for: Brighton & Hove Albion FC
+# Redirect from old slug to new smart slug for: Bristol City FC
+# Redirect from old slug to new smart slug for: Burnley FC
+# Redirect from old slug to new smart slug for: CA Osasuna FC
+# Redirect from old slug to new smart slug for: Cagliari Calcio FC
+# Redirect from old slug to new smart slug for: Casa Pia AC FC
+# Redirect from old slug to new smart slug for: CD Leganés FC
+# Redirect from old slug to new smart slug for: CD Nacional FC
+# Redirect from old slug to new smart slug for: CD Santa Clara FC
+# Redirect from old slug to new smart slug for: CD Tondela FC
+# Redirect from old slug to new smart slug for: CF Estrela da Amadora FC
+# Redirect from old slug to new smart slug for: Charlton Athletic FC
+# Redirect from old slug to new smart slug for: Chelsea FC
+# Redirect from old slug to new smart slug for: Club Atlético de Madrid FC
+# Redirect from old slug to new smart slug for: Club Brugge KV
+# Redirect from old slug to new smart slug for: Como 1907 FC
+# Redirect from old slug to new smart slug for: Coventry City FC
+# Redirect from old slug to new smart slug for: Crystal Palace FC
+# Redirect from old slug to new smart slug for: Deportivo Alavés FC
+# Redirect from old slug to new smart slug for: Derby County FC
+# Redirect from old slug to new smart slug for: Eintracht Frankfurt FC
+# Redirect from old slug to new smart slug for: Elche CF FC
+# Redirect from old slug to new smart slug for: Empoli FC
+# Redirect from old slug to new smart slug for: Everton FC
+# Redirect from old slug to new smart slug for: FC Alverca FC
+# Redirect from old slug to new smart slug for: FC Arouca FC
+# Redirect from old slug to new smart slug for: FC Augsburg FC
+# Redirect from old slug to new smart slug for: FC Barcelona FC
+# Redirect from old slug to new smart slug for: FC Bayern München FC
+# Redirect from old slug to new smart slug for: FC Famalicão FC
+# Redirect from old slug to new smart slug for: FC Groningen FC
+# Redirect from old slug to new smart slug for: FC Internazionale Milano FC
+# Redirect from old slug to new smart slug for: FC København
+# Redirect from old slug to new smart slug for: FC Lorient FC
+# Redirect from old slug to new smart slug for: FC Metz FC
+# Redirect from old slug to new smart slug for: FC Nantes FC
+# Redirect from old slug to new smart slug for: FC Porto FC
+# Redirect from old slug to new smart slug for: FC St. Pauli 1910 FC
+# Redirect from old slug to new smart slug for: FC Twente '65 FC
+# Redirect from old slug to new smart slug for: FC Utrecht FC
+# Redirect from old slug to new smart slug for: FC Volendam FC
+# Redirect from old slug to new smart slug for: Feyenoord Rotterdam FC
+# Redirect from old slug to new smart slug for: FK Bodø/Glimt
+# Redirect from old slug to new smart slug for: Fortuna Sittard FC
+# Redirect from old slug to new smart slug for: Fulham FC
+# Redirect from old slug to new smart slug for: Galatasaray SK
+# Redirect from old slug to new smart slug for: GD Estoril Praia FC
+# Redirect from old slug to new smart slug for: Genoa CFC
+# Redirect from old slug to new smart slug for: Getafe CF FC
+# Redirect from old slug to new smart slug for: Gil Vicente FC
+# Redirect from old slug to new smart slug for: Girona FC
+# Redirect from old slug to new smart slug for: Go Ahead Eagles FC
+# Redirect from old slug to new smart slug for: Hamburger SV FC
+# Redirect from old slug to new smart slug for: Hellas Verona FC
+# Redirect from old slug to new smart slug for: Heracles Almelo FC
+# Redirect from old slug to new smart slug for: Holstein Kiel FC
+# Redirect from old slug to new smart slug for: Hull City AFC
+# Redirect from old slug to new smart slug for: Ipswich Town FC
+# Redirect from old slug to new smart slug for: Juventus FC
+# Redirect from old slug to new smart slug for: Le Havre AC FC
+# Redirect from old slug to new smart slug for: Leeds United FC
+# Redirect from old slug to new smart slug for: Leicester City FC
+# Redirect from old slug to new smart slug for: Levante UD FC
+# Redirect from old slug to new smart slug for: Lille OSC FC
+# Redirect from old slug to new smart slug for: Liverpool FC
+# Redirect from old slug to new smart slug for: Manchester City FC
+# Redirect from old slug to new smart slug for: Manchester United FC
+# Redirect from old slug to new smart slug for: Middlesbrough FC
+# Redirect from old slug to new smart slug for: Millwall FC
+# Redirect from old slug to new smart slug for: Montpellier HSC FC
+# Redirect from old slug to new smart slug for: Moreirense FC
+# Redirect from old slug to new smart slug for: NAC Breda FC
+# Redirect from old slug to new smart slug for: NEC FC
+# Redirect from old slug to new smart slug for: Newcastle United FC
+# Redirect from old slug to new smart slug for: Norwich City FC
+# Redirect from old slug to new smart slug for: Nottingham Forest FC
+# Redirect from old slug to new smart slug for: OGC Nice FC
+# Redirect from old slug to new smart slug for: Olympique de Marseille FC
+# Redirect from old slug to new smart slug for: Olympique Lyonnais FC
+# Redirect from old slug to new smart slug for: Oxford United FC
+# Redirect from old slug to new smart slug for: PAE Olympiakos SFP
+# Redirect from old slug to new smart slug for: Paphos FC
+# Redirect from old slug to new smart slug for: Paris FC
+# Redirect from old slug to new smart slug for: Paris Saint-Germain FC
+# Redirect from old slug to new smart slug for: Parma Calcio 1913 FC
+# Redirect from old slug to new smart slug for: PEC Zwolle FC
+# Redirect from old slug to new smart slug for: Portsmouth FC
+# Redirect from old slug to new smart slug for: Preston North End FC
+# Redirect from old slug to new smart slug for: Qarabağ Ağdam FK
+# Redirect from old slug to new smart slug for: Queens Park Rangers FC
+# Redirect from old slug to new smart slug for: Racing Club de Lens FC
+# Redirect from old slug to new smart slug for: Rayo Vallecano de Madrid FC
+# Redirect from old slug to new smart slug for: RC Celta de Vigo FC
+# Redirect from old slug to new smart slug for: RC Strasbourg Alsace FC
+# Redirect from old slug to new smart slug for: RCD Espanyol de Barcelona FC
+# Redirect from old slug to new smart slug for: RCD Mallorca FC
+# Redirect from old slug to new smart slug for: Real Betis Balompié FC
+# Redirect from old slug to new smart slug for: Real Madrid CF FC
+# Redirect from old slug to new smart slug for: Real Sociedad de Fútbol FC
+# Redirect from old slug to new smart slug for: Real Valladolid CF FC
+# Redirect from old slug to new smart slug for: Rio Ave FC
+# Redirect from old slug to new smart slug for: Royale Union Saint-Gilloise
+# Redirect from old slug to new smart slug for: SBV Excelsior FC
+# Redirect from old slug to new smart slug for: SC Freiburg FC
+# Redirect from old slug to new smart slug for: SC Heerenveen FC
+# Redirect from old slug to new smart slug for: Sevilla FC
+# Redirect from old slug to new smart slug for: Sheffield United FC
+# Redirect from old slug to new smart slug for: Sheffield Wednesday FC
+# Redirect from old slug to new smart slug for: SK Slavia Praha
+# Redirect from old slug to new smart slug for: Southampton FC
+# Redirect from old slug to new smart slug for: Sparta Rotterdam FC
+# Redirect from old slug to new smart slug for: Sport Lisboa e Benfica FC
+# Redirect from old slug to new smart slug for: Sporting Clube de Braga FC
+# Redirect from old slug to new smart slug for: Sporting Clube de Portugal FC
+# Redirect from old slug to new smart slug for: SS Lazio FC
+# Redirect from old slug to new smart slug for: SSC Napoli FC
+# Redirect from old slug to new smart slug for: Stade Brestois 29 FC
+# Redirect from old slug to new smart slug for: Stade de Reims FC
+# Redirect from old slug to new smart slug for: Stade Rennais FC 1901 FC
+# Redirect from old slug to new smart slug for: Stoke City FC
+# Redirect from old slug to new smart slug for: Sunderland AFC
+# Redirect from old slug to new smart slug for: SV Werder Bremen FC
+# Redirect from old slug to new smart slug for: Swansea City AFC
+# Redirect from old slug to new smart slug for: Telstar 1963 FC
+# Redirect from old slug to new smart slug for: Torino FC
+# Redirect from old slug to new smart slug for: Tottenham Hotspur FC
+# Redirect from old slug to new smart slug for: Toulouse FC
+# Redirect from old slug to new smart slug for: TSG 1899 Hoffenheim FC
+# Redirect from old slug to new smart slug for: UD Las Palmas FC
+# Redirect from old slug to new smart slug for: Udinese Calcio FC
+# Redirect from old slug to new smart slug for: US Cremonese FC
+# Redirect from old slug to new smart slug for: US Lecce FC
+# Redirect from old slug to new smart slug for: US Sassuolo Calcio FC
+# Redirect from old slug to new smart slug for: Valencia CF FC
+# Redirect from old slug to new smart slug for: Venezia FC
+# Redirect from old slug to new smart slug for: VfB Stuttgart FC
+# Redirect from old slug to new smart slug for: VfL Bochum 1848 FC
+# Redirect from old slug to new smart slug for: VfL Wolfsburg FC
+# Redirect from old slug to new smart slug for: Villarreal CF FC
+# Redirect from old slug to new smart slug for: Vitória SC FC
+# Redirect from old slug to new smart slug for: Watford FC
+# Redirect from old slug to new smart slug for: West Bromwich Albion FC
+# Redirect from old slug to new smart slug for: West Ham United FC
+# Redirect from old slug to new smart slug for: Wolverhampton Wanderers FC
+# Redirect from old slug to new smart slug for: Wrexham AFC

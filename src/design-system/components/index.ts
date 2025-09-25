@@ -1,4 +1,6 @@
 // Design System Components Export
+
+// Legacy components (keep for backward compatibility)
 export { default as FixtureCard } from './FixtureCard';
 export { default as ClubCard } from './ClubCard';
 export { default as Badge } from './Badge';
@@ -10,3 +12,10 @@ export type { ClubCardProps } from './ClubCard';
 export type { BadgeProps } from './Badge';
 export type { ContentCardProps } from './ContentCard';
 export type { TextContainerProps } from './TextContainer';
+
+// New design system components
+export * from './Button';
+export * from './Input';
+export * from './Layout';
+export * from './Typography';
+export * from './Modal';
