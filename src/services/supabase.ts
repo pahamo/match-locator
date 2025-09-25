@@ -54,14 +54,14 @@ function mapFixtureRow(row: FixtureRow, providersByFixture: Record<number, Provi
     id: row.home_team_id,
     name: row.home_team,
     slug: row.home_slug,
-    url_slug: null, // Will be populated after migration
+    url_slug: row.home_url_slug || null,
     crest: row.home_crest || null,
   };
   const away: Team = {
     id: row.away_team_id,
     name: row.away_team,
     slug: row.away_slug,
-    url_slug: null, // Will be populated after migration
+    url_slug: row.away_url_slug || null,
     crest: row.away_crest || null,
   };
   const providers = providersByFixture[row.id] || [];
@@ -191,7 +191,7 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
       }
     }
 
-    // For now, query without url_slug fields until database migration is complete
+    // Try to include url_slug fields, but they might not be in the view yet
     let query = supabase
       .from('fixtures_with_teams')
       .select(`
@@ -534,7 +534,7 @@ export async function getTeams(): Promise<Team[]> {
 
     const { data, error, count } = await supabase
       .from('teams')
-      .select('id,name,slug,crest_url,competition_id,short_name,club_colors,website,venue,city', { count: 'exact' })
+      .select('id,name,slug,url_slug,crest_url,competition_id,short_name,club_colors,website,venue,city', { count: 'exact' })
       .order('name', { ascending: true });
 
     console.log(`[DEBUG] getTeams query result - count: ${count}, error: ${error ? JSON.stringify(error) : 'none'}`);
@@ -557,7 +557,7 @@ export async function getTeams(): Promise<Team[]> {
       id: t.id,
       name: t.name,
       slug: t.slug,
-      url_slug: null, // Will be populated after migration
+      url_slug: t.url_slug ?? null,
       crest: t.crest_url ?? null,
       competition_id: t.competition_id,
       short_name: t.short_name ?? null,

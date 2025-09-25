@@ -55,7 +55,10 @@ async function fetchTeams() {
   if (!supabase) return [];
   const { data, error } = await supabase.from('teams').select('slug, url_slug').order('name', { ascending: true });
   if (error) { console.warn('[sitemap] teams error', error); return []; }
-  return (data || []).map(team => ({ ...team, preferredSlug: team.url_slug || team.slug }));
+  return (data || []).map(team => ({
+    ...team,
+    preferredSlug: (team.url_slug && team.url_slug.trim()) ? team.url_slug : team.slug
+  }));
 }
 
 
