@@ -82,24 +82,43 @@ exports.handler = async (event, context) => {
 
       console.log('UPSERT operation with:', { fixture_id: fixtureId, provider_id: parseInt(String(providerId)) });
 
-      const { data, error } = await supabase
+      // First try to update existing record
+      const { data: updateData, error: updateError } = await supabase
         .from('broadcasts')
-        .upsert({
-          fixture_id: fixtureId,
-          provider_id: parseInt(String(providerId))
-        }, {
-          onConflict: 'fixture_id'
-        });
+        .update({ provider_id: parseInt(String(providerId)) })
+        .eq('fixture_id', fixtureId)
+        .select();
 
-      if (error) {
-        console.error('UPSERT failed:', error);
-        console.error('Full error object:', JSON.stringify(error, null, 2));
+      if (updateError) {
+        console.error('UPDATE failed:', updateError);
         return {
           statusCode: 500,
-          body: JSON.stringify({ error: 'Database upsert failed', details: error.message })
+          body: JSON.stringify({ error: 'Database update failed', details: updateError.message })
         };
       }
-      console.log('UPSERT successful, data:', data);
+
+      // If no rows were updated, insert a new record
+      if (!updateData || updateData.length === 0) {
+        console.log('No existing record, inserting new one');
+        const { data, error } = await supabase
+          .from('broadcasts')
+          .insert({
+            fixture_id: fixtureId,
+            provider_id: parseInt(String(providerId))
+          })
+          .select();
+
+        if (error) {
+          console.error('INSERT failed:', error);
+          return {
+            statusCode: 500,
+            body: JSON.stringify({ error: 'Database insert failed', details: error.message })
+          };
+        }
+        console.log('INSERT successful, data:', data);
+      } else {
+        console.log('UPDATE successful, data:', updateData);
+      }
     }
 
     console.log('=== SUCCESS ===');
