@@ -33,11 +33,11 @@ exports.handler = async (event, context) => {
 
     console.log('=== ENV CHECK ===');
     console.log('URL exists:', !!process.env.REACT_APP_SUPABASE_URL);
-    console.log('Key exists:', !!process.env.SUPABASE_SERVICE_KEY);
+    console.log('Key exists:', !!process.env.SUPABASE_SERVICE_ROLE_KEY);
     console.log('URL value:', process.env.REACT_APP_SUPABASE_URL);
-    console.log('Key preview:', process.env.SUPABASE_SERVICE_KEY ? process.env.SUPABASE_SERVICE_KEY.substring(0, 20) + '...' : 'MISSING');
+    console.log('Key preview:', process.env.SUPABASE_SERVICE_ROLE_KEY ? process.env.SUPABASE_SERVICE_ROLE_KEY.substring(0, 20) + '...' : 'MISSING');
 
-    if (!process.env.REACT_APP_SUPABASE_URL || !process.env.SUPABASE_SERVICE_KEY) {
+    if (!process.env.REACT_APP_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
       console.error('CRITICAL: Missing environment variables');
       return {
         statusCode: 500,
@@ -49,7 +49,7 @@ exports.handler = async (event, context) => {
     // Initialize Supabase client - using direct approach for critical function
     const supabase = createClient(
       process.env.REACT_APP_SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_KEY
+      process.env.SUPABASE_SERVICE_ROLE_KEY
     );
     console.log('Supabase client created');
 
