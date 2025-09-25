@@ -190,12 +190,13 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
       }
     }
 
+    // For now, query without url_slug fields until database migration is complete
     let query = supabase
       .from('fixtures_with_teams')
       .select(`
         id,matchday,utc_kickoff,venue,status,competition_id,stage,round,
-        home_team_id,home_team,home_slug,home_url_slug,home_crest,
-        away_team_id,away_team,away_slug,away_url_slug,away_crest
+        home_team_id,home_team,home_slug,home_crest,
+        away_team_id,away_team,away_slug,away_crest
       `)
       .order('utc_kickoff', { ascending: order === 'asc' })
       .limit(limit);
@@ -530,10 +531,24 @@ export async function getTeams(): Promise<Team[]> {
     console.log('[DEBUG] getTeams called - fetching all teams');
     console.log('[DEBUG] Supabase client initialized and ready');
 
-    const { data, error, count } = await supabase
+    // Try to select url_slug, but handle gracefully if column doesn't exist yet
+    let { data, error, count } = await supabase
       .from('teams')
       .select('id,name,slug,url_slug,crest_url,competition_id,short_name,club_colors,website,venue,city', { count: 'exact' })
       .order('name', { ascending: true });
+
+    // If url_slug column doesn't exist yet, fall back to query without it
+    if (error && error.message?.includes('column "url_slug" does not exist')) {
+      console.log('[DEBUG] url_slug column not found, falling back to basic query');
+      const fallbackResult = await supabase
+        .from('teams')
+        .select('id,name,slug,crest_url,competition_id,short_name,club_colors,website,venue,city', { count: 'exact' })
+        .order('name', { ascending: true });
+
+      data = fallbackResult.data;
+      error = fallbackResult.error;
+      count = fallbackResult.count;
+    }
 
     console.log(`[DEBUG] getTeams query result - count: ${count}, error: ${error ? JSON.stringify(error) : 'none'}`);
 
