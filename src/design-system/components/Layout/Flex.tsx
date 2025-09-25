@@ -1,5 +1,5 @@
 import React from 'react';
-import { getCSSVariable } from '../../tokens';
+import { getCSSVariable } from '../../styles';
 
 export interface FlexProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Flex direction */

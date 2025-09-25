@@ -1,5 +1,6 @@
 import React from 'react';
-import { getCSSVariable, tokens } from '../../tokens';
+import { getCSSVariable } from '../../styles';
+import { tokens } from '../../tokens';
 
 export interface GridProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Number of columns */

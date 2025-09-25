@@ -69,6 +69,10 @@ const PageLoader = () => (
 );
 
 function App() {
+  // Initialize design tokens
+  React.useEffect(() => {
+    injectDesignTokens();
+  }, []);
   const [cookieOpen, setCookieOpen] = React.useState(false);
   // Blackout state for fixtures (ensures setBlackoutIds exists)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

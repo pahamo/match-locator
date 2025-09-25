@@ -1,5 +1,5 @@
 import React from 'react';
-import { getCSSVariable } from '../../tokens';
+import { getCSSVariable } from '../../styles';
 
 export interface HeadingProps extends React.HTMLAttributes<HTMLHeadingElement> {
   /** Heading level - affects both semantic HTML and visual styling */

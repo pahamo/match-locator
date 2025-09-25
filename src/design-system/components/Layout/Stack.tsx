@@ -1,5 +1,5 @@
 import React from 'react';
-import { getCSSVariable } from '../../tokens';
+import { getCSSVariable } from '../../styles';
 
 export interface StackProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Space between items */

@@ -1,5 +1,6 @@
 import React from 'react';
-import { getCSSVariable, tokens } from '../../tokens';
+import { getCSSVariable } from '../../styles';
+import { tokens } from '../../tokens';
 
 export interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Container size */

@@ -53,58 +53,25 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
     const variantStyles: Record<string, React.CSSProperties> = {
       primary: {
         backgroundColor: getCSSVariable('--color-primary-500'),
-        color: 'white',
-        ':hover': !disabled && !loading ? {
-          backgroundColor: getCSSVariable('--color-primary-600')
-        } : {},
-        ':active': !disabled && !loading ? {
-          backgroundColor: getCSSVariable('--color-primary-700')
-        } : {}
+        color: 'white'
       },
       secondary: {
         backgroundColor: 'transparent',
         color: getCSSVariable('--color-primary-500'),
-        border: `1px solid ${getCSSVariable('--color-primary-500')}`,
-        ':hover': !disabled && !loading ? {
-          backgroundColor: getCSSVariable('--color-primary-50'),
-          borderColor: getCSSVariable('--color-primary-600'),
-          color: getCSSVariable('--color-primary-600')
-        } : {},
-        ':active': !disabled && !loading ? {
-          backgroundColor: getCSSVariable('--color-primary-100')
-        } : {}
+        border: `1px solid ${getCSSVariable('--color-primary-500')}`
       },
       ghost: {
         backgroundColor: 'transparent',
         color: getCSSVariable('--color-gray-700'),
-        border: 'none',
-        ':hover': !disabled && !loading ? {
-          backgroundColor: getCSSVariable('--color-gray-100'),
-          color: getCSSVariable('--color-gray-900')
-        } : {},
-        ':active': !disabled && !loading ? {
-          backgroundColor: getCSSVariable('--color-gray-200')
-        } : {}
+        border: 'none'
       },
       danger: {
         backgroundColor: getCSSVariable('--color-error-500'),
-        color: 'white',
-        ':hover': !disabled && !loading ? {
-          backgroundColor: '#dc2626' // Slightly darker red
-        } : {},
-        ':active': !disabled && !loading ? {
-          backgroundColor: '#b91c1c' // Even darker red
-        } : {}
+        color: 'white'
       },
       success: {
         backgroundColor: getCSSVariable('--color-success-500'),
-        color: 'white',
-        ':hover': !disabled && !loading ? {
-          backgroundColor: '#15803d' // Slightly darker green
-        } : {},
-        ':active': !disabled && !loading ? {
-          backgroundColor: '#166534' // Even darker green
-        } : {}
+        color: 'white'
       }
     };
 
@@ -148,12 +115,38 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
     ...style
   };
 
+  const getHoverStyles = () => {
+    const hoverMap: Record<string, React.CSSProperties> = {
+      primary: { backgroundColor: getCSSVariable('--color-primary-600') },
+      secondary: {
+        backgroundColor: getCSSVariable('--color-primary-50'),
+        borderColor: getCSSVariable('--color-primary-600'),
+        color: getCSSVariable('--color-primary-600')
+      },
+      ghost: {
+        backgroundColor: getCSSVariable('--color-gray-100'),
+        color: getCSSVariable('--color-gray-900')
+      },
+      danger: { backgroundColor: '#dc2626' },
+      success: { backgroundColor: '#15803d' }
+    };
+    return hoverMap[variant] || {};
+  };
+
+  const getActiveStyles = () => {
+    const activeMap: Record<string, React.CSSProperties> = {
+      primary: { backgroundColor: getCSSVariable('--color-primary-700') },
+      secondary: { backgroundColor: getCSSVariable('--color-primary-100') },
+      ghost: { backgroundColor: getCSSVariable('--color-gray-200') },
+      danger: { backgroundColor: '#b91c1c' },
+      success: { backgroundColor: '#166534' }
+    };
+    return activeMap[variant] || {};
+  };
+
   const handleMouseEnter = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!disabled && !loading) {
-      const hoverStyles = getVariantStyles()[':hover' as keyof React.CSSProperties];
-      if (hoverStyles) {
-        Object.assign(e.currentTarget.style, hoverStyles);
-      }
+      Object.assign(e.currentTarget.style, getHoverStyles());
     }
     props.onMouseEnter?.(e);
   };
@@ -161,25 +154,22 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
   const handleMouseLeave = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!disabled && !loading) {
       // Reset to base styles
-      Object.assign(e.currentTarget.style, getVariantStyles());
+      Object.assign(e.currentTarget.style, buttonStyles);
     }
     props.onMouseLeave?.(e);
   };
 
   const handleMouseDown = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!disabled && !loading) {
-      const activeStyles = getVariantStyles()[':active' as keyof React.CSSProperties];
-      if (activeStyles) {
-        Object.assign(e.currentTarget.style, activeStyles);
-      }
+      Object.assign(e.currentTarget.style, getActiveStyles());
     }
     props.onMouseDown?.(e);
   };
 
   const handleMouseUp = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (!disabled && !loading) {
-      // Reset to base styles
-      Object.assign(e.currentTarget.style, getVariantStyles());
+      // Reset to hover styles if still hovering
+      Object.assign(e.currentTarget.style, getHoverStyles());
     }
     props.onMouseUp?.(e);
   };

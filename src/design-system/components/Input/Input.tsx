@@ -53,28 +53,13 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(({
 
     const variantStyles: Record<string, React.CSSProperties> = {
       default: {
-        border: `1px solid ${getCSSVariable('--color-border')}`,
-        ':focus': {
-          borderColor: getCSSVariable('--color-primary-500'),
-          boxShadow: `0 0 0 3px ${getCSSVariable('--color-primary-100')}`
-        },
-        ':hover': !disabled ? {
-          borderColor: getCSSVariable('--color-gray-300')
-        } : {}
+        border: `1px solid ${getCSSVariable('--color-border')}`
       },
       error: {
-        border: `1px solid ${getCSSVariable('--color-error-500')}`,
-        ':focus': {
-          borderColor: getCSSVariable('--color-error-500'),
-          boxShadow: `0 0 0 3px ${getCSSVariable('--color-error-50')}`
-        }
+        border: `1px solid ${getCSSVariable('--color-error-500')}`
       },
       success: {
-        border: `1px solid ${getCSSVariable('--color-success-500')}`,
-        ':focus': {
-          borderColor: getCSSVariable('--color-success-500'),
-          boxShadow: `0 0 0 3px ${getCSSVariable('--color-success-50')}`
-        }
+        border: `1px solid ${getCSSVariable('--color-success-500')}`
       }
     };
 
@@ -159,26 +144,43 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(({
           : getCSSVariable('--color-muted')
   };
 
+  const getFocusStyles = () => {
+    const focusMap: Record<string, React.CSSProperties> = {
+      default: {
+        borderColor: getCSSVariable('--color-primary-500'),
+        boxShadow: `0 0 0 3px ${getCSSVariable('--color-primary-100')}`
+      },
+      error: {
+        borderColor: getCSSVariable('--color-error-500'),
+        boxShadow: `0 0 0 3px ${getCSSVariable('--color-error-50')}`
+      },
+      success: {
+        borderColor: getCSSVariable('--color-success-500'),
+        boxShadow: `0 0 0 3px ${getCSSVariable('--color-success-50')}`
+      }
+    };
+    return focusMap[variant] || {};
+  };
+
+  const getHoverStyles = () => {
+    if (disabled) return {};
+    return { borderColor: getCSSVariable('--color-gray-300') };
+  };
+
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    const focusStyles = getInputStyles()[':focus' as keyof React.CSSProperties];
-    if (focusStyles) {
-      Object.assign(e.currentTarget.style, focusStyles);
-    }
+    Object.assign(e.currentTarget.style, getFocusStyles());
     props.onFocus?.(e);
   };
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     // Reset to base styles
-    Object.assign(e.currentTarget.style, getInputStyles());
+    Object.assign(e.currentTarget.style, inputStyles);
     props.onBlur?.(e);
   };
 
   const handleMouseEnter = (e: React.MouseEvent<HTMLInputElement>) => {
     if (!disabled) {
-      const hoverStyles = getInputStyles()[':hover' as keyof React.CSSProperties];
-      if (hoverStyles) {
-        Object.assign(e.currentTarget.style, hoverStyles);
-      }
+      Object.assign(e.currentTarget.style, getHoverStyles());
     }
     props.onMouseEnter?.(e);
   };
@@ -186,7 +188,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(({
   const handleMouseLeave = (e: React.MouseEvent<HTMLInputElement>) => {
     if (!disabled) {
       // Reset to base styles
-      Object.assign(e.currentTarget.style, getInputStyles());
+      Object.assign(e.currentTarget.style, inputStyles);
     }
     props.onMouseLeave?.(e);
   };
