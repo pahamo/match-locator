@@ -24,14 +24,13 @@ interface FixtureRow {
   home_team_id: number;
   home_team: string;
   home_slug: string;
+  home_url_slug?: string | null;
   home_crest?: string | null;
   away_team_id: number;
   away_team: string;
   away_slug: string;
-  away_crest?: string | null;
-  // Optional fields that may not exist yet
-  home_url_slug?: string | null;
   away_url_slug?: string | null;
+  away_crest?: string | null;
 }
 
 interface BroadcastRow {
@@ -54,14 +53,14 @@ function mapFixtureRow(row: FixtureRow, providersByFixture: Record<number, Provi
     id: row.home_team_id,
     name: row.home_team,
     slug: row.home_slug,
-    url_slug: null, // Will be populated by lookup
+    url_slug: row.home_url_slug || null,
     crest: row.home_crest || null,
   };
   const away: Team = {
     id: row.away_team_id,
     name: row.away_team,
     slug: row.away_slug,
-    url_slug: null, // Will be populated by lookup
+    url_slug: row.away_url_slug || null,
     crest: row.away_crest || null,
   };
   const providers = providersByFixture[row.id] || [];
@@ -191,13 +190,12 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
       }
     }
 
-    // Try to include url_slug fields, but they might not be in the view yet
     let query = supabase
       .from('fixtures_with_teams')
       .select(`
         id,matchday,utc_kickoff,venue,status,competition_id,stage,round,
-        home_team_id,home_team,home_slug,home_crest,
-        away_team_id,away_team,away_slug,away_crest
+        home_team_id,home_team,home_slug,home_url_slug,home_crest,
+        away_team_id,away_team,away_slug,away_url_slug,away_crest
       `)
       .order('utc_kickoff', { ascending: order === 'asc' })
       .limit(limit);
@@ -250,39 +248,6 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
     }
     
     let mapped = rows.map(r => mapFixtureRow(r, providersByFixture));
-
-    // Populate url_slug fields by looking up teams
-    if (mapped.length > 0) {
-      try {
-        const teamIds = Array.from(new Set([
-          ...mapped.map(f => f.home.id),
-          ...mapped.map(f => f.away.id)
-        ]));
-
-        const { data: teamsData } = await supabase
-          .from('teams')
-          .select('id, url_slug')
-          .in('id', teamIds);
-
-        if (teamsData) {
-          const teamUrlSlugs = new Map(teamsData.map(t => [t.id, t.url_slug]));
-          mapped = mapped.map(fixture => ({
-            ...fixture,
-            home: {
-              ...fixture.home,
-              url_slug: teamUrlSlugs.get(fixture.home.id) || null
-            },
-            away: {
-              ...fixture.away,
-              url_slug: teamUrlSlugs.get(fixture.away.id) || null
-            }
-          }));
-        }
-      } catch (e) {
-        console.warn('[Supabase] Failed to populate url_slug fields:', e);
-        // Continue without url_slug fields
-      }
-    }
 
     // Apply team filter if specified - check both old slug and new url_slug
     if (teamSlug) {
