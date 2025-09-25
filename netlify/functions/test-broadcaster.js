@@ -13,7 +13,7 @@ exports.handler = async (event, context) => {
     // Test environment variables
     log('Environment check:');
     log(`URL: ${process.env.REACT_APP_SUPABASE_URL ? 'SET' : 'NOT SET'}`);
-    log(`KEY: ${process.env.SUPABASE_SERVICE_KEY ? 'SET' : 'NOT SET'}`);
+    log(`KEY: ${process.env.SUPABASE_SERVICE_ROLE_KEY ? 'SET' : 'NOT SET'}`);
 
     if (!process.env.REACT_APP_SUPABASE_URL) {
       log('ERROR: REACT_APP_SUPABASE_URL is missing');
@@ -23,11 +23,11 @@ exports.handler = async (event, context) => {
       };
     }
 
-    if (!process.env.SUPABASE_SERVICE_KEY) {
-      log('ERROR: SUPABASE_SERVICE_KEY is missing');
+    if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      log('ERROR: SUPABASE_SERVICE_ROLE_KEY is missing');
       return {
         statusCode: 500,
-        body: JSON.stringify({ logs, error: 'Missing SERVICE_KEY' })
+        body: JSON.stringify({ logs, error: 'Missing SERVICE_ROLE_KEY' })
       };
     }
 
@@ -35,7 +35,7 @@ exports.handler = async (event, context) => {
     log('Creating Supabase client...');
     const supabase = createClient(
       process.env.REACT_APP_SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_KEY
+      process.env.SUPABASE_SERVICE_ROLE_KEY
     );
     log('Supabase client created');
 
