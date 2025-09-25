@@ -96,7 +96,7 @@ export async function saveBroadcaster(fixtureId: number, providerId: number | nu
     // Use -1 for blackout consistently
     const normalizedProviderId = providerId;
     
-    const response = await fetch('/.netlify/functions/debug-save-broadcaster', {
+    const response = await fetch('/.netlify/functions/save-broadcaster', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
