@@ -56,40 +56,69 @@ exports.handler = async (event, context) => {
 
     log(`Database test successful. Found ${data?.length || 0} records`);
 
-    // Test the upsert operation that's failing
-    log('Testing upsert operation...');
-    const { data: upsertData, error: upsertError } = await supabase
-      .from('broadcasts')
-      .upsert({
-        fixture_id: 438,
-        provider_id: 1
-      }, {
-        onConflict: 'fixture_id'
-      });
+    // Test the update/insert operation
+    log('Testing update/insert operation...');
 
-    if (upsertError) {
-      log(`UPSERT FAILED: ${JSON.stringify(upsertError, null, 2)}`);
+    // First try to update existing record
+    const { data: updateData, error: updateError } = await supabase
+      .from('broadcasts')
+      .update({ provider_id: 1 })
+      .eq('fixture_id', 438)
+      .select();
+
+    if (updateError) {
+      log(`UPDATE FAILED: ${JSON.stringify(updateError, null, 2)}`);
       return {
         statusCode: 500,
         body: JSON.stringify({
           logs,
           success: false,
-          upsertError: upsertError,
-          message: 'Upsert operation failed'
+          updateError: updateError,
+          message: 'Update operation failed'
         })
       };
     }
 
-    log('UPSERT SUCCESS!');
+    let finalData = updateData;
+
+    // If no rows were updated, insert a new record
+    if (!updateData || updateData.length === 0) {
+      log('No existing record found, attempting insert...');
+      const { data: insertData, error: insertError } = await supabase
+        .from('broadcasts')
+        .insert({
+          fixture_id: 438,
+          provider_id: 1
+        })
+        .select();
+
+      if (insertError) {
+        log(`INSERT FAILED: ${JSON.stringify(insertError, null, 2)}`);
+        return {
+          statusCode: 500,
+          body: JSON.stringify({
+            logs,
+            success: false,
+            insertError: insertError,
+            message: 'Insert operation failed'
+          })
+        };
+      }
+
+      log('INSERT SUCCESS!');
+      finalData = insertData;
+    } else {
+      log('UPDATE SUCCESS!');
+    }
 
     return {
       statusCode: 200,
       body: JSON.stringify({
         logs,
         success: true,
-        message: 'All tests passed including upsert',
+        message: 'All tests passed including update/insert',
         sampleData: data?.length,
-        upsertData
+        finalData
       })
     };
 
