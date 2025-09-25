@@ -46,51 +46,20 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(({
 
     const variantStyles: Record<string, React.CSSProperties> = {
       default: {
-        color: getCSSVariable('--color-primary-500'),
-        ':hover': !disabled ? {
-          color: getCSSVariable('--color-primary-600'),
-          textDecoration: underline === 'hover' ? 'underline' : undefined
-        } : {},
-        ':active': !disabled ? {
-          color: getCSSVariable('--color-primary-700')
-        } : {}
+        color: getCSSVariable('--color-primary-500')
       },
       subtle: {
-        color: getCSSVariable('--color-text'),
-        ':hover': !disabled ? {
-          color: getCSSVariable('--color-primary-500'),
-          textDecoration: underline === 'hover' ? 'underline' : undefined
-        } : {},
-        ':active': !disabled ? {
-          color: getCSSVariable('--color-primary-600')
-        } : {}
+        color: getCSSVariable('--color-text')
       },
       primary: {
         color: getCSSVariable('--color-primary-500'),
-        fontWeight: getCSSVariable('--font-weight-medium'),
-        ':hover': !disabled ? {
-          color: getCSSVariable('--color-primary-600'),
-          textDecoration: underline === 'hover' ? 'underline' : undefined
-        } : {},
-        ':active': !disabled ? {
-          color: getCSSVariable('--color-primary-700')
-        } : {}
+        fontWeight: getCSSVariable('--font-weight-medium')
       },
       danger: {
-        color: getCSSVariable('--color-error-500'),
-        ':hover': !disabled ? {
-          color: '#dc2626',
-          textDecoration: underline === 'hover' ? 'underline' : undefined
-        } : {},
-        ':active': !disabled ? {
-          color: '#b91c1c'
-        } : {}
+        color: getCSSVariable('--color-error-500')
       },
       unstyled: {
-        color: 'inherit',
-        ':hover': !disabled && underline === 'hover' ? {
-          textDecoration: 'underline'
-        } : {}
+        color: 'inherit'
       }
     };
 
@@ -112,12 +81,49 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(({
     onClick?.(e);
   };
 
+  const getHoverStyles = (): React.CSSProperties => {
+    if (disabled) return {};
+
+    const hoverMap: Record<string, React.CSSProperties> = {
+      default: {
+        color: getCSSVariable('--color-primary-600'),
+        textDecoration: underline === 'hover' ? 'underline' : undefined
+      },
+      subtle: {
+        color: getCSSVariable('--color-primary-500'),
+        textDecoration: underline === 'hover' ? 'underline' : undefined
+      },
+      primary: {
+        color: getCSSVariable('--color-primary-600'),
+        textDecoration: underline === 'hover' ? 'underline' : undefined
+      },
+      danger: {
+        color: '#dc2626',
+        textDecoration: underline === 'hover' ? 'underline' : undefined
+      },
+      unstyled: underline === 'hover' ? {
+        textDecoration: 'underline'
+      } : {}
+    };
+    return hoverMap[variant] || {};
+  };
+
+  const getActiveStyles = (): React.CSSProperties => {
+    if (disabled) return {};
+
+    const activeMap: Record<string, React.CSSProperties> = {
+      default: { color: getCSSVariable('--color-primary-700') },
+      subtle: { color: getCSSVariable('--color-primary-600') },
+      primary: { color: getCSSVariable('--color-primary-700') },
+      danger: { color: '#b91c1c' },
+      unstyled: {}
+    };
+    return activeMap[variant] || {};
+  };
+
   const handleMouseEnter = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (!disabled) {
-      const hoverStyles = getVariantStyles()[':hover' as keyof React.CSSProperties];
-      if (hoverStyles) {
-        Object.assign(e.currentTarget.style, hoverStyles);
-      }
+      Object.assign(e.currentTarget.style, getHoverStyles());
     }
     props.onMouseEnter?.(e);
   };
@@ -125,25 +131,22 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(({
   const handleMouseLeave = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (!disabled) {
       // Reset to base styles
-      Object.assign(e.currentTarget.style, getVariantStyles());
+      Object.assign(e.currentTarget.style, linkStyles);
     }
     props.onMouseLeave?.(e);
   };
 
   const handleMouseDown = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (!disabled) {
-      const activeStyles = getVariantStyles()[':active' as keyof React.CSSProperties];
-      if (activeStyles) {
-        Object.assign(e.currentTarget.style, activeStyles);
-      }
+      Object.assign(e.currentTarget.style, getActiveStyles());
     }
     props.onMouseDown?.(e);
   };
 
   const handleMouseUp = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (!disabled) {
-      // Reset to base styles
-      Object.assign(e.currentTarget.style, getVariantStyles());
+      // Reset to hover styles if still hovering
+      Object.assign(e.currentTarget.style, getHoverStyles());
     }
     props.onMouseUp?.(e);
   };

@@ -62,30 +62,15 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(({
 
     const variantStyles: Record<string, React.CSSProperties> = {
       default: {
-        border: `1px solid ${(checked || indeterminate) ? getCSSVariable('--color-primary-500') : getCSSVariable('--color-border')}`,
-        ':focus': {
-          outline: `2px solid ${getCSSVariable('--color-primary-500')}`,
-          outlineOffset: '2px'
-        },
-        ':hover': !disabled ? {
-          borderColor: getCSSVariable('--color-primary-400')
-        } : {}
+        border: `1px solid ${(checked || indeterminate) ? getCSSVariable('--color-primary-500') : getCSSVariable('--color-border')}`
       },
       error: {
         border: `1px solid ${getCSSVariable('--color-error-500')}`,
-        backgroundColor: (checked || indeterminate) ? getCSSVariable('--color-error-500') : getCSSVariable('--color-card'),
-        ':focus': {
-          outline: `2px solid ${getCSSVariable('--color-error-500')}`,
-          outlineOffset: '2px'
-        }
+        backgroundColor: (checked || indeterminate) ? getCSSVariable('--color-error-500') : getCSSVariable('--color-card')
       },
       success: {
         border: `1px solid ${getCSSVariable('--color-success-500')}`,
-        backgroundColor: (checked || indeterminate) ? getCSSVariable('--color-success-500') : getCSSVariable('--color-card'),
-        ':focus': {
-          outline: `2px solid ${getCSSVariable('--color-success-500')}`,
-          outlineOffset: '2px'
-        }
+        backgroundColor: (checked || indeterminate) ? getCSSVariable('--color-success-500') : getCSSVariable('--color-card')
       }
     };
 
@@ -146,26 +131,45 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(({
     paddingLeft: `calc(${getSizeStyles().width} + ${getCSSVariable('--spacing-sm')})`
   };
 
+  const getFocusStyles = (): React.CSSProperties => {
+    const focusMap: Record<string, React.CSSProperties> = {
+      default: {
+        outline: `2px solid ${getCSSVariable('--color-primary-500')}`,
+        outlineOffset: '2px'
+      },
+      error: {
+        outline: `2px solid ${getCSSVariable('--color-error-500')}`,
+        outlineOffset: '2px'
+      },
+      success: {
+        outline: `2px solid ${getCSSVariable('--color-success-500')}`,
+        outlineOffset: '2px'
+      }
+    };
+    return focusMap[variant] || {};
+  };
+
+  const getHoverStyles = (): React.CSSProperties => {
+    if (disabled) return {};
+    return {
+      borderColor: getCSSVariable('--color-primary-400')
+    };
+  };
+
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    const focusStyles = getCheckboxStyles()[':focus' as keyof React.CSSProperties];
-    if (focusStyles) {
-      Object.assign(e.currentTarget.style, focusStyles);
-    }
+    Object.assign(e.currentTarget.style, getFocusStyles());
     props.onFocus?.(e);
   };
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     // Reset to base styles
-    Object.assign(e.currentTarget.style, getCheckboxStyles());
+    Object.assign(e.currentTarget.style, checkboxStyles);
     props.onBlur?.(e);
   };
 
   const handleMouseEnter = (e: React.MouseEvent<HTMLInputElement>) => {
     if (!disabled) {
-      const hoverStyles = getCheckboxStyles()[':hover' as keyof React.CSSProperties];
-      if (hoverStyles) {
-        Object.assign(e.currentTarget.style, hoverStyles);
-      }
+      Object.assign(e.currentTarget.style, getHoverStyles());
     }
     props.onMouseEnter?.(e);
   };
@@ -173,7 +177,7 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(({
   const handleMouseLeave = (e: React.MouseEvent<HTMLInputElement>) => {
     if (!disabled) {
       // Reset to base styles
-      Object.assign(e.currentTarget.style, getCheckboxStyles());
+      Object.assign(e.currentTarget.style, checkboxStyles);
     }
     props.onMouseLeave?.(e);
   };

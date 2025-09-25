@@ -68,7 +68,7 @@ const Text = React.forwardRef<HTMLElement, TextProps>(({
       overline: {
         fontSize: getCSSVariable('--font-size-xs'),
         fontWeight: getCSSVariable('--font-weight-semibold'),
-        textTransform: 'uppercase',
+        textTransform: 'uppercase' as const,
         letterSpacing: '0.1em',
         lineHeight: '1.2'
       },

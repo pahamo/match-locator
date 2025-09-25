@@ -93,7 +93,7 @@ const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(({
   };
 
   // Use custom element or default to semantic heading
-  const Component = as || (`h${level}` as keyof JSX.IntrinsicElements);
+  const Component = as || (`h${level}` as keyof React.JSX.IntrinsicElements);
 
   return React.createElement(
     Component,
