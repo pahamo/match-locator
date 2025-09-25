@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getFixtures } from '../services/supabase';
 import type { Fixture } from '../types';
 import Header from '../components/Header';
 import { generateTeamMeta, updateDocumentMeta } from '../utils/seo';
 import { FixtureCard } from '../design-system';
+import { teamMatchesSlug, getTeamUrlSlug } from '../utils/slugUtils';
 
 const ClubPage: React.FC = () => {
   const { slug, clubId } = useParams<{ slug?: string; clubId?: string }>();
@@ -47,14 +48,27 @@ const ClubPage: React.FC = () => {
     return () => { ignore = true; };
   }, [teamSlug]);
 
+  const navigate = useNavigate();
+
   const team = useMemo(() => {
     if (!fixtures.length) return undefined;
     const first = fixtures[0];
     if (!first) return undefined;
-    if (first.home.slug === teamSlug) return first.home;
-    if (first.away.slug === teamSlug) return first.away;
+
+    // Check if either team matches the current slug
+    if (teamMatchesSlug(first.home, teamSlug)) return first.home;
+    if (teamMatchesSlug(first.away, teamSlug)) return first.away;
     return undefined;
   }, [fixtures, teamSlug]);
+
+  // Handle redirect if team is found but using old slug
+  useEffect(() => {
+    if (team && team.url_slug && team.slug !== team.url_slug && teamSlug === team.slug) {
+      // Redirect from old slug to new url_slug
+      console.log(`Redirecting from old slug "${team.slug}" to new slug "${team.url_slug}"`);
+      navigate(`/club/${team.url_slug}`, { replace: true });
+    }
+  }, [team, teamSlug, navigate]);
 
   return (
     <div className="club-page">

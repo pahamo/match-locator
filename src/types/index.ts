@@ -2,6 +2,7 @@ export interface Team {
   id: number;
   name: string;
   slug: string;
+  url_slug?: string | null; // New smart URL slug field
   crest: string | null;
   competition_id?: number;
   short_name?: string | null;

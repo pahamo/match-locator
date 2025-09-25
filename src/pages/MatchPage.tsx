@@ -9,6 +9,7 @@ import { parseMatchSlug, parseSeoMatchSlug, generateMatchMeta, generateSeoMatchU
 import { formatDetailedDate } from '../utils/dateFormat';
 import { generateBreadcrumbs } from '../utils/breadcrumbs';
 import AffiliateDisclosure, { withAffiliateAriaLabel } from '../components/legal/AffiliateDisclosure';
+import { getTeamUrlSlug } from '../utils/slugUtils';
 
 const MatchPage: React.FC = () => {
   const { matchSlug, matchId, id } = useParams<{ matchSlug?: string; matchId?: string; id?: string }>();
@@ -331,7 +332,7 @@ const MatchPage: React.FC = () => {
             }}>
               {/* Home Team Button */}
               <Link
-                to={`/clubs/${fixture.home.slug || fixture.home.name.toLowerCase().replace(/\s+/g, '-')}`}
+                to={`/club/${getTeamUrlSlug(fixture.home)}`}
                 style={{
                   padding: '8px 16px',
                   backgroundColor: '#6366f1',
@@ -350,7 +351,7 @@ const MatchPage: React.FC = () => {
 
               {/* Away Team Button */}
               <Link
-                to={`/clubs/${fixture.away.slug || fixture.away.name.toLowerCase().replace(/\s+/g, '-')}`}
+                to={`/club/${getTeamUrlSlug(fixture.away)}`}
                 style={{
                   padding: '8px 16px',
                   backgroundColor: '#6366f1',

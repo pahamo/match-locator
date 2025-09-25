@@ -53,9 +53,9 @@ function formatDateForSeoUrl(date) {
 
 async function fetchTeams() {
   if (!supabase) return [];
-  const { data, error } = await supabase.from('teams').select('slug').order('name', { ascending: true });
+  const { data, error } = await supabase.from('teams').select('slug, url_slug').order('name', { ascending: true });
   if (error) { console.warn('[sitemap] teams error', error); return []; }
-  return data || [];
+  return (data || []).map(team => ({ ...team, preferredSlug: team.url_slug || team.slug }));
 }
 
 
@@ -100,7 +100,7 @@ async function build() {
 
   // Teams
   const teams = await fetchTeams();
-  const teamUrls = teams.map(t => `${CANONICAL_BASE}/clubs/${t.slug}`);
+  const teamUrls = teams.map(t => `${CANONICAL_BASE}/club/${t.preferredSlug}`);
   const teamsXml = [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',

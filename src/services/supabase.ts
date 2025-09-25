@@ -24,10 +24,12 @@ interface FixtureRow {
   home_team_id: number;
   home_team: string;
   home_slug: string;
+  home_url_slug?: string | null;
   home_crest?: string | null;
   away_team_id: number;
   away_team: string;
   away_slug: string;
+  away_url_slug?: string | null;
   away_crest?: string | null;
 }
 
@@ -51,12 +53,14 @@ function mapFixtureRow(row: FixtureRow, providersByFixture: Record<number, Provi
     id: row.home_team_id,
     name: row.home_team,
     slug: row.home_slug,
+    url_slug: row.home_url_slug || null,
     crest: row.home_crest || null,
   };
   const away: Team = {
     id: row.away_team_id,
     name: row.away_team,
     slug: row.away_slug,
+    url_slug: row.away_url_slug || null,
     crest: row.away_crest || null,
   };
   const providers = providersByFixture[row.id] || [];
@@ -190,8 +194,8 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
       .from('fixtures_with_teams')
       .select(`
         id,matchday,utc_kickoff,venue,status,competition_id,stage,round,
-        home_team_id,home_team,home_slug,home_crest,
-        away_team_id,away_team,away_slug,away_crest
+        home_team_id,home_team,home_slug,home_url_slug,home_crest,
+        away_team_id,away_team,away_slug,away_url_slug,away_crest
       `)
       .order('utc_kickoff', { ascending: order === 'asc' })
       .limit(limit);
@@ -245,9 +249,14 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
     
     let mapped = rows.map(r => mapFixtureRow(r, providersByFixture));
 
-    // Apply team filter if specified
+    // Apply team filter if specified - check both old slug and new url_slug
     if (teamSlug) {
-      mapped = mapped.filter(fx => fx.home.slug === teamSlug || fx.away.slug === teamSlug);
+      mapped = mapped.filter(fx =>
+        fx.home.slug === teamSlug ||
+        fx.away.slug === teamSlug ||
+        fx.home.url_slug === teamSlug ||
+        fx.away.url_slug === teamSlug
+      );
     }
     
     // Apply filtering logic to exclude test fixtures (IDs <= 30)
@@ -523,7 +532,7 @@ export async function getTeams(): Promise<Team[]> {
 
     const { data, error, count } = await supabase
       .from('teams')
-      .select('id,name,slug,crest_url,competition_id,short_name,club_colors,website,venue,city', { count: 'exact' })
+      .select('id,name,slug,url_slug,crest_url,competition_id,short_name,club_colors,website,venue,city', { count: 'exact' })
       .order('name', { ascending: true });
 
     console.log(`[DEBUG] getTeams query result - count: ${count}, error: ${error ? JSON.stringify(error) : 'none'}`);
@@ -546,6 +555,7 @@ export async function getTeams(): Promise<Team[]> {
       id: t.id,
       name: t.name,
       slug: t.slug,
+      url_slug: t.url_slug ?? null,
       crest: t.crest_url ?? null,
       competition_id: t.competition_id,
       short_name: t.short_name ?? null,

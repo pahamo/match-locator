@@ -1,0 +1,7 @@
+# Team URL Redirects
+# Redirect old /clubs/ paths to new /club/ paths
+/clubs/:slug /club/:slug 301!
+
+# Specific team redirects will be added after running slug generation
+# Format: /club/old-slug /club/new-slug 301!
+# Generated redirects will be appended here dynamically
