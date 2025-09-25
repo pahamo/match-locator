@@ -56,13 +56,40 @@ exports.handler = async (event, context) => {
 
     log(`Database test successful. Found ${data?.length || 0} records`);
 
+    // Test the upsert operation that's failing
+    log('Testing upsert operation...');
+    const { data: upsertData, error: upsertError } = await supabase
+      .from('broadcasts')
+      .upsert({
+        fixture_id: 438,
+        provider_id: 1
+      }, {
+        onConflict: 'fixture_id'
+      });
+
+    if (upsertError) {
+      log(`UPSERT FAILED: ${JSON.stringify(upsertError, null, 2)}`);
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          logs,
+          success: false,
+          upsertError: upsertError,
+          message: 'Upsert operation failed'
+        })
+      };
+    }
+
+    log('UPSERT SUCCESS!');
+
     return {
       statusCode: 200,
       body: JSON.stringify({
         logs,
         success: true,
-        message: 'All tests passed',
-        sampleData: data?.length
+        message: 'All tests passed including upsert',
+        sampleData: data?.length,
+        upsertData
       })
     };
 
