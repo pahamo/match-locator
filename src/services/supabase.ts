@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Fixture, FixturesApiParams, Provider, Team } from '../types';
 import { mapCompetitionIdToSlug } from '../utils/competitionMapping';
+import { ProviderService } from './ProviderService';
 
 // Require credentials from environment variables
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
@@ -110,57 +111,9 @@ async function getBroadcastsForFixtures(ids: number[]): Promise<BroadcastRow[]> 
   }
 }
 
+// Use centralized ProviderService instead of local implementation
 async function getProvidersByIds(ids: number[] = []): Promise<Provider[]> {
-  let rows: ProviderRow[] | null = null;
-  try {
-    let query = supabase
-      .from('providers')
-      .select('id,display_name,name,type')
-      .order('display_name', { ascending: true });
-
-    if (ids.length > 0) {
-      query = query.in('id', ids);
-    }
-
-    const resp = await query;
-    if (resp.error) {
-      console.warn('[Supabase] getProvidersByIds error', resp.error);
-    } else {
-      rows = resp.data as any;
-    }
-  } catch (e) {
-    console.warn('[Supabase] getProvidersByIds exception', e);
-  }
-
-  const mapped = (rows || []).map((p: ProviderRow) => ({
-    id: String(p.id),
-    name: p.display_name || p.name || 'Unknown',
-    type: p.type || 'unknown',
-    href: undefined,
-    status: 'confirmed',
-  }));
-
-  // Fallbacks for common UK providers in case providers table is incomplete
-  const byId = new Map<string, Provider>(mapped.map(p => [p.id, p]));
-  const ensure = (numId: number, name: string, href: string) => {
-    const key = String(numId);
-    if (!byId.has(key) && ids.includes(numId)) {
-      byId.set(key, { id: key, name, type: 'tv', href, status: 'confirmed' });
-    }
-  };
-  ensure(1, 'Sky Sports', 'https://www.skysports.com/football/fixtures-results');
-  ensure(2, 'TNT Sports', 'https://tntsports.co.uk/football');
-  ensure(999, 'Sky Sports', 'https://www.skysports.com/football/fixtures-results');
-
-  // Add fallback for any remaining unknown providers
-  for (const id of ids) {
-    const key = String(id);
-    if (!byId.has(key)) {
-      byId.set(key, { id: key, name: 'Unknown Provider', type: 'tv', href: '', status: 'confirmed' });
-    }
-  }
-
-  return Array.from(byId.values());
+  return ProviderService.getProviders(ids);
 }
 
 export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixture[]> {

@@ -5,22 +5,13 @@ import Breadcrumbs from '../components/Breadcrumbs';
 import H2HStatsCard from '../components/H2HStatsCard';
 import NextFixtureHero from '../components/NextFixtureHero';
 import { FixtureCard } from '../design-system';
-import {
-  getHeadToHeadFixtures,
-  getNextHeadToHeadFixture,
-  getTeamBySlug
-} from '../services/supabase';
+import { getHeadToHeadFixtures, getNextHeadToHeadFixture } from '../services/supabase';
 import { updateDocumentMeta } from '../utils/seo';
 import { generateBreadcrumbs } from '../utils/breadcrumbs';
-import {
-  parseH2HSlug,
-  needsCanonicalRedirect,
-  generateH2HMeta,
-  cleanTeamNameForDisplay,
-  calculateH2HStats
-} from '../utils/headToHead';
+import { generateH2HMeta, calculateH2HStats } from '../utils/headToHead';
 import { generateMatchPreview, isPremierLeagueFixture } from '../utils/matchPreview';
-import { getTeamUrlSlug } from '../utils/slugUtils';
+import { TeamResolver } from '../services/TeamResolver';
+import { URLBuilder } from '../services/URLBuilder';
 import type { Fixture, Team } from '../types';
 
 const HeadToHeadPage: React.FC = () => {
@@ -36,9 +27,9 @@ const HeadToHeadPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [shouldRedirect, setShouldRedirect] = useState<string | null>(null);
 
-  // Parse team slugs from URL - memoize to prevent infinite loops
+  // Parse teams using new service - memoize to prevent infinite loops
   const parsedTeams = useMemo(() => {
-    return slug ? parseH2HSlug(slug) : null;
+    return slug ? URLBuilder.parseH2HSlug(slug) : null;
   }, [slug]);
 
   const loadH2HData = useCallback(async () => {
@@ -48,22 +39,23 @@ const HeadToHeadPage: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      // Use smart slugs directly - getTeamBySlug now handles both slug and url_slug
-      const team1Slug = parsedTeams.team1Slug;
-      const team2Slug = parsedTeams.team2Slug;
-
+      const { team1Slug, team2Slug } = parsedTeams;
       console.log(`Loading H2H data for ${team1Slug} vs ${team2Slug}`);
 
-      // First load teams using smart slugs
+      // Use new TeamResolver service
       const [team1Data, team2Data] = await Promise.all([
-        getTeamBySlug(team1Slug),
-        getTeamBySlug(team2Slug)
+        TeamResolver.resolve(team1Slug),
+        TeamResolver.resolve(team2Slug)
       ]);
 
       // Validate teams exist
       if (!team1Data || !team2Data) {
         const missingTeam = !team1Data ? team1Slug : team2Slug;
-        setError(`Team not found: ${cleanTeamNameForDisplay(missingTeam)}`);
+        const displayName = missingTeam
+          .split('-')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(' ');
+        setError(`Team not found: ${displayName}`);
         setLoading(false);
         return;
       }
@@ -107,7 +99,7 @@ const HeadToHeadPage: React.FC = () => {
 
   useEffect(() => {
     // Check if we need to redirect to canonical URL
-    const canonicalSlug = slug ? needsCanonicalRedirect(slug) : null;
+    const canonicalSlug = slug ? URLBuilder.needsH2HRedirect(slug) : null;
     if (canonicalSlug) {
       setShouldRedirect(canonicalSlug);
       return;
@@ -239,7 +231,7 @@ const HeadToHeadPage: React.FC = () => {
               marginBottom: '8px'
             }}>
               <a
-                href={`/club/${getTeamUrlSlug(team1)}`}
+                href={URLBuilder.team(team1)}
                 style={{
                   color: 'inherit',
                   textDecoration: 'none'
@@ -251,7 +243,7 @@ const HeadToHeadPage: React.FC = () => {
               </a>
               {' vs '}
               <a
-                href={`/club/${getTeamUrlSlug(team2)}`}
+                href={URLBuilder.team(team2)}
                 style={{
                   color: 'inherit',
                   textDecoration: 'none'
@@ -399,7 +391,7 @@ const HeadToHeadPage: React.FC = () => {
               </p>
               <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
                 <a
-                  href={`/club/${getTeamUrlSlug(team1)}`}
+                  href={URLBuilder.team(team1)}
                   style={{
                     display: 'inline-block',
                     background: '#3b82f6',
@@ -414,7 +406,7 @@ const HeadToHeadPage: React.FC = () => {
                   View {team1.name} Fixtures
                 </a>
                 <a
-                  href={`/club/${getTeamUrlSlug(team2)}`}
+                  href={URLBuilder.team(team2)}
                   style={{
                     display: 'inline-block',
                     background: '#3b82f6',
