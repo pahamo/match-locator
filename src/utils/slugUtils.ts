@@ -1,22 +1,22 @@
 import type { Team } from '../types';
 
 /**
- * Get the current URL slug for a team, preferring url_slug over legacy slug
+ * Get the slug for a team (consolidated single slug system after Phase 3)
  */
 export function getTeamUrlSlug(team: Team): string {
-  return team.url_slug || team.slug;
+  return team.slug;
 }
 
 /**
- * Check if a team matches a given slug (checking both url_slug and legacy slug)
+ * Check if a team matches a given slug (single slug system after Phase 3)
  */
 export function teamMatchesSlug(team: Team, slug: string): boolean {
-  return team.url_slug === slug || team.slug === slug;
+  return team.slug === slug;
 }
 
 /**
- * Get the preferred slug for routing (url_slug if available, otherwise slug)
+ * Get the slug for routing (consolidated single slug system after Phase 3)
  */
 export function getPreferredSlug(team: Team): string {
-  return team.url_slug || team.slug;
+  return team.slug;
 }

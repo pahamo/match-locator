@@ -73,14 +73,11 @@ class TeamResolverClass {
 
   /**
    * Generate canonical H2H slug from team data
-   * Always uses the team's preferred URL slug
+   * Uses the team's consolidated slug
    */
   generateH2HSlug(team1: Team, team2: Team): string {
-    const slug1 = team1.url_slug || team1.slug;
-    const slug2 = team2.url_slug || team2.slug;
-
     // Alphabetical order for consistency
-    const [first, second] = [slug1, slug2].sort();
+    const [first, second] = [team1.slug, team2.slug].sort();
     return `${first}-vs-${second}`;
   }
 
@@ -93,25 +90,13 @@ class TeamResolverClass {
   }
 
   private async tryExactMatch(slug: string): Promise<Team | null> {
-    // Try url_slug first (smart slugs)
-    let { data, error } = await supabase
-      .from('teams')
-      .select('*')
-      .eq('url_slug', slug)
-      .limit(1)
-      .single();
-
-    if (data && !error) {
-      return this.mapTeamData(data);
-    }
-
-    // Try old slug field
-    ({ data, error } = await supabase
+    // Single slug field lookup after Phase 3 migration
+    const { data, error } = await supabase
       .from('teams')
       .select('*')
       .eq('slug', slug)
       .limit(1)
-      .single());
+      .single();
 
     if (data && !error) {
       return this.mapTeamData(data);
@@ -174,8 +159,7 @@ class TeamResolverClass {
     return {
       id: data.id,
       name: data.name,
-      slug: data.slug,
-      url_slug: data.url_slug,
+      slug: data.slug, // Consolidated slug field
       crest: data.crest_url,
       short_name: data.short_name,
       competition_id: data.competition_id

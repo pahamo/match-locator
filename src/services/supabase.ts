@@ -24,13 +24,11 @@ interface FixtureRow {
   round?: string | null;
   home_team_id: number;
   home_team: string;
-  home_slug: string;
-  home_url_slug?: string | null;
+  home_slug: string; // Consolidated slug field
   home_crest?: string | null;
   away_team_id: number;
   away_team: string;
-  away_slug: string;
-  away_url_slug?: string | null;
+  away_slug: string; // Consolidated slug field
   away_crest?: string | null;
 }
 
@@ -53,15 +51,13 @@ function mapFixtureRow(row: FixtureRow, providersByFixture: Record<number, Provi
   const home: Team = {
     id: row.home_team_id,
     name: row.home_team,
-    slug: row.home_slug,
-    url_slug: row.home_url_slug || null,
+    slug: row.home_slug, // Consolidated slug field
     crest: row.home_crest || null,
   };
   const away: Team = {
     id: row.away_team_id,
     name: row.away_team,
-    slug: row.away_slug,
-    url_slug: row.away_url_slug || null,
+    slug: row.away_slug, // Consolidated slug field
     crest: row.away_crest || null,
   };
   const providers = providersByFixture[row.id] || [];
@@ -156,8 +152,8 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
       .from('fixtures_with_teams')
       .select(`
         id,matchday,utc_kickoff,venue,status,competition_id,stage,round,
-        home_team_id,home_team,home_slug,home_url_slug,home_crest,
-        away_team_id,away_team,away_slug,away_url_slug,away_crest
+        home_team_id,home_team,home_slug,home_crest,
+        away_team_id,away_team,away_slug,away_crest
       `)
       .order('utc_kickoff', { ascending: order === 'asc' })
       .limit(limit);
@@ -211,13 +207,11 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
     
     let mapped = rows.map(r => mapFixtureRow(r, providersByFixture));
 
-    // Apply team filter if specified - check both old slug and new url_slug
+    // Apply team filter if specified - consolidated slug field
     if (teamSlug) {
       mapped = mapped.filter(fx =>
         fx.home.slug === teamSlug ||
-        fx.away.slug === teamSlug ||
-        fx.home.url_slug === teamSlug ||
-        fx.away.url_slug === teamSlug
+        fx.away.slug === teamSlug
       );
     }
     
@@ -494,7 +488,7 @@ export async function getTeams(): Promise<Team[]> {
 
     const { data, error, count } = await supabase
       .from('teams')
-      .select('id,name,slug,url_slug,crest_url,competition_id,short_name,club_colors,website,venue,city', { count: 'exact' })
+      .select('id,name,slug,crest_url,competition_id,short_name,club_colors,website,venue,city', { count: 'exact' })
       .order('name', { ascending: true });
 
     console.log(`[DEBUG] getTeams query result - count: ${count}, error: ${error ? JSON.stringify(error) : 'none'}`);
@@ -516,8 +510,7 @@ export async function getTeams(): Promise<Team[]> {
     return (data || []).map((t: any) => ({
       id: t.id,
       name: t.name,
-      slug: t.slug,
-      url_slug: t.url_slug ?? null,
+      slug: t.slug, // Consolidated slug field
       crest: t.crest_url ?? null,
       competition_id: t.competition_id,
       short_name: t.short_name ?? null,
@@ -669,26 +662,13 @@ export async function getNextHeadToHeadFixture(teamSlug1: string, teamSlug2: str
  */
 export async function getTeamBySlug(slug: string): Promise<Team | null> {
   try {
-    // First try matching the slug field
-    let { data, error } = await supabase
+    // Single slug field lookup after Phase 3 migration
+    const { data, error } = await supabase
       .from('teams')
       .select('*')
       .eq('slug', slug)
       .limit(1)
       .single();
-
-    // If no match on slug field, try url_slug field (for smart slugs)
-    if (error && error.code === 'PGRST116') {
-      const { data: urlSlugData, error: urlSlugError } = await supabase
-        .from('teams')
-        .select('*')
-        .eq('url_slug', slug)
-        .limit(1)
-        .single();
-
-      data = urlSlugData;
-      error = urlSlugError;
-    }
 
     if (error) {
       if (error.code === 'PGRST116') {
@@ -702,8 +682,7 @@ export async function getTeamBySlug(slug: string): Promise<Team | null> {
     return {
       id: data.id,
       name: data.name,
-      slug: data.slug,
-      url_slug: data.url_slug,
+      slug: data.slug, // Consolidated slug field
       crest: data.crest,
       short_name: data.short_name,
       competition_id: data.competition_id

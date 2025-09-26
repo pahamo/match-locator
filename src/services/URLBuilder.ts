@@ -7,11 +7,10 @@ import { Team, Fixture } from '../types';
 
 class URLBuilderClass {
   /**
-   * Generate team page URL using smart slug
+   * Generate team page URL using consolidated slug
    */
   team(team: Team): string {
-    const slug = team.url_slug || team.slug;
-    return `/club/${slug}`;
+    return `/club/${team.slug}`;
   }
 
   /**
@@ -19,11 +18,8 @@ class URLBuilderClass {
    * Always generates correct URL format
    */
   h2h(team1: Team, team2: Team): string {
-    const slug1 = team1.url_slug || team1.slug;
-    const slug2 = team2.url_slug || team2.slug;
-
     // Canonical order (alphabetical)
-    const [first, second] = [slug1, slug2].sort();
+    const [first, second] = [team1.slug, team2.slug].sort();
     return `/h2h/${first}-vs-${second}`;
   }
 
@@ -39,11 +35,8 @@ class URLBuilderClass {
    * Generate fixture detail URL
    */
   fixture(fixture: Fixture): string {
-    const homeSlug = fixture.home.url_slug || fixture.home.slug;
-    const awaySlug = fixture.away.url_slug || fixture.away.slug;
     const date = new Date(fixture.kickoff_utc).toISOString().split('T')[0];
-
-    return `/fixtures/${homeSlug}-vs-${awaySlug}-${date}`;
+    return `/fixtures/${fixture.home.slug}-vs-${fixture.away.slug}-${date}`;
   }
 
   /**
