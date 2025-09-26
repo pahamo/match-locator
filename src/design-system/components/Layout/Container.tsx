@@ -1,6 +1,5 @@
 import React from 'react';
-import { getCSSVariable } from '../../styles';
-import { tokens } from '../../tokens';
+import { cn } from '../../../lib/utils';
 
 export interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Container size */
@@ -20,28 +19,36 @@ const Container = React.forwardRef<HTMLDivElement, ContainerProps>(({
   paddingSize = 'lg',
   children,
   className = '',
-  style = {},
   ...props
 }, ref) => {
-  const getMaxWidth = () => {
-    if (size === 'full') return '100%';
-    return getCSSVariable(`--container-${size}`);
+  const sizeClasses = {
+    sm: 'max-w-sm',      // ~384px
+    md: 'max-w-md',      // ~448px
+    lg: 'max-w-4xl',     // ~896px
+    xl: 'max-w-6xl',     // ~1152px
+    '2xl': 'max-w-7xl',  // ~1280px
+    full: 'max-w-none'
   };
 
-  const containerStyles: React.CSSProperties = {
-    width: '100%',
-    maxWidth: getMaxWidth(),
-    margin: center ? '0 auto' : undefined,
-    paddingLeft: padding ? getCSSVariable(`--spacing-${paddingSize}`) : undefined,
-    paddingRight: padding ? getCSSVariable(`--spacing-${paddingSize}`) : undefined,
-    ...style
+  const paddingClasses = {
+    xs: 'px-1',    // 4px
+    sm: 'px-2',    // 8px
+    md: 'px-3',    // 12px
+    lg: 'px-4',    // 16px
+    xl: 'px-5',    // 20px
+    '2xl': 'px-6'  // 24px
   };
 
   return (
     <div
       ref={ref}
-      style={containerStyles}
-      className={`design-system-container ${className}`}
+      className={cn(
+        'w-full',
+        sizeClasses[size],
+        center && 'mx-auto',
+        padding && paddingClasses[paddingSize],
+        className
+      )}
       {...props}
     >
       {children}

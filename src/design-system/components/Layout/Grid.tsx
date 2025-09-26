@@ -1,113 +1,75 @@
 import React from 'react';
-import { getCSSVariable } from '../../styles';
-import { tokens } from '../../tokens';
+import { cn } from '../../../lib/utils';
 
 export interface GridProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Number of columns */
-  cols?: number | 'auto' | 'fit';
-  /** Gap between grid items */
-  gap?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl';
-  /** Responsive columns */
-  smCols?: number | 'auto' | 'fit';
-  mdCols?: number | 'auto' | 'fit';
-  lgCols?: number | 'auto' | 'fit';
-  xlCols?: number | 'auto' | 'fit';
-  /** Grid template areas for named grid layouts */
-  areas?: string[];
-  /** Align items */
-  alignItems?: 'start' | 'end' | 'center' | 'stretch';
-  /** Justify items */
-  justifyItems?: 'start' | 'end' | 'center' | 'stretch';
+  cols?: 1 | 2 | 3 | 4 | 5 | 6 | 12;
+  /** Responsive columns - small screens */
+  smCols?: 1 | 2 | 3 | 4 | 5 | 6 | 12;
+  /** Responsive columns - medium screens */
+  mdCols?: 1 | 2 | 3 | 4 | 5 | 6 | 12;
+  /** Responsive columns - large screens */
+  lgCols?: 1 | 2 | 3 | 4 | 5 | 6 | 12;
+  /** Responsive columns - extra large screens */
+  xlCols?: 1 | 2 | 3 | 4 | 5 | 6 | 12;
+  /** Gap between items */
+  gap?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
   /** Full width */
   fullWidth?: boolean;
 }
 
 const Grid = React.forwardRef<HTMLDivElement, GridProps>(({
-  cols = 12,
-  gap = 'md',
+  cols = 1,
   smCols,
   mdCols,
   lgCols,
   xlCols,
-  areas,
-  alignItems = 'stretch',
-  justifyItems = 'stretch',
-  fullWidth = false,
+  gap = 'md',
+  fullWidth = true,
   children,
   className = '',
-  style = {},
   ...props
 }, ref) => {
-  const getColumnsValue = (colValue: number | 'auto' | 'fit') => {
-    if (colValue === 'auto') return 'auto';
-    if (colValue === 'fit') return 'max-content';
-    return `repeat(${colValue}, 1fr)`;
+  const gapClasses = {
+    'xs': 'gap-1',
+    'sm': 'gap-2',
+    'md': 'gap-4',
+    'lg': 'gap-6',
+    'xl': 'gap-8',
+    '2xl': 'gap-10'
   };
 
-  const gridStyles: React.CSSProperties = {
-    display: 'grid',
-    gridTemplateColumns: getColumnsValue(cols),
-    gap: getCSSVariable(`--spacing-${gap}`),
-    alignItems,
-    justifyItems,
-    width: fullWidth ? '100%' : undefined,
-    gridTemplateAreas: areas ? areas.map(area => `"${area}"`).join(' ') : undefined,
-    ...style
+  const getColsClass = (colsNum: number, prefix = '') => {
+    const colMap: Record<number, string> = {
+      1: `${prefix}grid-cols-1`,
+      2: `${prefix}grid-cols-2`,
+      3: `${prefix}grid-cols-3`,
+      4: `${prefix}grid-cols-4`,
+      5: `${prefix}grid-cols-5`,
+      6: `${prefix}grid-cols-6`,
+      12: `${prefix}grid-cols-12`
+    };
+    return colMap[colsNum];
   };
-
-  // Add responsive breakpoint styles
-  const responsiveStyles: string[] = [];
-
-  if (smCols !== undefined) {
-    responsiveStyles.push(`
-      ${tokens.mediaQueries.sm} {
-        grid-template-columns: ${getColumnsValue(smCols)};
-      }
-    `);
-  }
-
-  if (mdCols !== undefined) {
-    responsiveStyles.push(`
-      ${tokens.mediaQueries.md} {
-        grid-template-columns: ${getColumnsValue(mdCols)};
-      }
-    `);
-  }
-
-  if (lgCols !== undefined) {
-    responsiveStyles.push(`
-      ${tokens.mediaQueries.lg} {
-        grid-template-columns: ${getColumnsValue(lgCols)};
-      }
-    `);
-  }
-
-  if (xlCols !== undefined) {
-    responsiveStyles.push(`
-      ${tokens.mediaQueries.xl} {
-        grid-template-columns: ${getColumnsValue(xlCols)};
-      }
-    `);
-  }
 
   return (
-    <>
-      {responsiveStyles.length > 0 && (
-        <style>
-          {`.design-system-grid-${Math.random().toString(36).substr(2, 9)} {
-            ${responsiveStyles.join('')}
-          }`}
-        </style>
+    <div
+      ref={ref}
+      className={cn(
+        'grid',
+        getColsClass(cols),
+        smCols && getColsClass(smCols, 'sm:'),
+        mdCols && getColsClass(mdCols, 'md:'),
+        lgCols && getColsClass(lgCols, 'lg:'),
+        xlCols && getColsClass(xlCols, 'xl:'),
+        gapClasses[gap],
+        fullWidth && 'w-full',
+        className
       )}
-      <div
-        ref={ref}
-        style={gridStyles}
-        className={`design-system-grid ${className}`}
-        {...props}
-      >
-        {children}
-      </div>
-    </>
+      {...props}
+    >
+      {children}
+    </div>
   );
 });
 

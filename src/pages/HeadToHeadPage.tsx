@@ -27,40 +27,35 @@ const HeadToHeadPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [shouldRedirect, setShouldRedirect] = useState<string | null>(null);
 
-  // Parse teams using new service - memoize to prevent infinite loops
-  const parsedTeams = useMemo(() => {
-    return slug ? URLBuilder.parseH2HSlug(slug) : null;
-  }, [slug]);
-
   const loadH2HData = useCallback(async () => {
-    if (!parsedTeams) return;
+    if (!slug) return;
 
     try {
       setLoading(true);
       setError(null);
 
-      const { team1Slug, team2Slug } = parsedTeams;
-      console.log(`Loading H2H data for ${team1Slug} vs ${team2Slug}`);
+      console.log(`Loading H2H data for slug: ${slug}`);
 
-      // Use new TeamResolver service
-      const [team1Data, team2Data] = await Promise.all([
-        TeamResolver.resolve(team1Slug),
-        TeamResolver.resolve(team2Slug)
-      ]);
+      // Use TeamResolver's parseH2HSlug which handles all slug variations
+      const result = await TeamResolver.parseH2HSlug(slug);
 
-      // Validate teams exist
-      if (!team1Data || !team2Data) {
-        const missingTeam = !team1Data ? team1Slug : team2Slug;
-        const displayName = missingTeam
-          .split('-')
-          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-          .join(' ');
-        setError(`Team not found: ${displayName}`);
+      if (!result) {
+        setError('Invalid team matchup URL format');
         setLoading(false);
         return;
       }
 
-      // Then load fixtures using the database slugs from the team data
+      const { team1: team1Data, team2: team2Data } = result;
+
+      // Check if we need to redirect to canonical URL
+      const canonicalSlug = TeamResolver.generateH2HSlug(team1Data, team2Data);
+      if (slug !== canonicalSlug) {
+        // Redirect to canonical URL format
+        setShouldRedirect(canonicalSlug);
+        return;
+      }
+
+      // Load fixtures using the database slugs from the team data
       const [fixturesData, nextFixtureData] = await Promise.all([
         getHeadToHeadFixtures(team1Data.slug, team2Data.slug),
         getNextHeadToHeadFixture(team1Data.slug, team2Data.slug)
@@ -95,38 +90,17 @@ const HeadToHeadPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [parsedTeams]);
+  }, [slug]);
 
   useEffect(() => {
-    // Check if we need to redirect to canonical URL
-    const canonicalSlug = slug ? URLBuilder.needsH2HRedirect(slug) : null;
-    if (canonicalSlug) {
-      setShouldRedirect(canonicalSlug);
-      return;
-    }
-
-    if (!parsedTeams) {
-      setError('Invalid team matchup URL');
-      setLoading(false);
-      return;
-    }
-
-    // Validate this is a supported H2H matchup (Premier League or Champions League)
     if (!slug) {
       setError('Invalid H2H URL format');
       setLoading(false);
       return;
     }
 
-    const parts = slug.split('-vs-');
-    if (parts.length !== 2) {
-      setError('Invalid H2H URL format');
-      setLoading(false);
-      return;
-    }
-
     loadH2HData();
-  }, [slug, parsedTeams, loadH2HData]);
+  }, [slug, loadH2HData]);
 
   // Handle redirect after hooks
   if (shouldRedirect) {

@@ -13,9 +13,13 @@ export type { BadgeProps } from './Badge';
 export type { ContentCardProps } from './ContentCard';
 export type { TextContainerProps } from './TextContainer';
 
-// New design system components
+// New shadcn/ui components (replacing old design system)
 export * from './Button';
 export * from './Input';
+export * from './Dialog';
+
+// Layout utilities (converted to Tailwind)
 export * from './Layout';
+
+// Typography components (converted to Tailwind)
 export * from './Typography';
-export * from './Modal';

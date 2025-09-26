@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Button,
   Input,
-  Select,
   Checkbox,
   Grid,
   Container,
@@ -11,12 +10,16 @@ import {
   Heading,
   Text,
   Link,
-  Modal
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
 } from './components';
+import { Label } from '../components/ui/label';
 
 // Demo page to test all new components
 const DesignSystemDemo: React.FC = () => {
-  const [modalOpen, setModalOpen] = React.useState(false);
 
   return (
     <Container size="xl" padding>
@@ -44,15 +47,14 @@ const DesignSystemDemo: React.FC = () => {
 
             <Flex gap="md" wrap="wrap">
               <Button variant="primary" size="sm">Small</Button>
-              <Button variant="primary" size="md">Medium</Button>
+              <Button variant="primary" size="default">Medium</Button>
               <Button variant="primary" size="lg">Large</Button>
-              <Button variant="primary" size="xl">Extra Large</Button>
+              <Button variant="primary" size="lg">Extra Large</Button>
             </Flex>
 
             <Flex gap="md" wrap="wrap">
-              <Button variant="primary" loading>Loading</Button>
               <Button variant="secondary" disabled>Disabled</Button>
-              <Button variant="primary" fullWidth>Full Width</Button>
+              <Button variant="primary" style={{ width: '100%' }}>Full Width</Button>
             </Flex>
           </Stack>
         </div>
@@ -63,45 +65,30 @@ const DesignSystemDemo: React.FC = () => {
           <Grid cols={1} mdCols={2} gap="lg">
             <Stack space="md">
               <Input
-                label="Email Address"
                 placeholder="Enter your email"
-                helperText="We'll never share your email"
               />
 
               <Input
-                label="Password"
                 type="password"
-                variant="error"
-                errorText="Password is required"
+                placeholder="Enter your password"
               />
 
-              <Select
-                label="Country"
-                placeholder="Select your country"
-                options={[
-                  { value: 'uk', label: 'United Kingdom' },
-                  { value: 'us', label: 'United States' },
-                  { value: 'ca', label: 'Canada' }
-                ]}
-              />
+              {/* TODO: Implement enhanced Select wrapper */}
+              <p className="text-sm text-muted-foreground">
+                Select component - TODO: Needs proper shadcn wrapper
+              </p>
             </Stack>
 
             <Stack space="md">
-              <Checkbox
-                label="I agree to the terms and conditions"
-                helperText="Please read our privacy policy"
-              />
+              <div className="flex items-center space-x-2">
+                <Checkbox id="terms" />
+                <Label htmlFor="terms">I agree to the terms and conditions</Label>
+              </div>
 
-              <Checkbox
-                label="Subscribe to newsletter"
-                checked
-              />
-
-              <Checkbox
-                label="Marketing emails"
-                variant="error"
-                errorText="This field is required"
-              />
+              <div className="flex items-center space-x-2">
+                <Checkbox id="newsletter" defaultChecked />
+                <Label htmlFor="newsletter">Subscribe to newsletter</Label>
+              </div>
             </Stack>
           </Grid>
         </div>
@@ -167,43 +154,35 @@ const DesignSystemDemo: React.FC = () => {
           </Stack>
         </div>
 
-        {/* Modal Demo */}
+        {/* Dialog Demo */}
         <div>
-          <Heading level={2}>Modal</Heading>
-          <Button variant="primary" onClick={() => setModalOpen(true)}>
-            Open Modal
-          </Button>
+          <Heading level={2}>Dialog</Heading>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="primary">Open Dialog</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Demo Dialog</DialogTitle>
+              </DialogHeader>
+              <Stack space="md">
+                <Text>
+                  This is a demonstration of the dialog component with focus trapping,
+                  keyboard navigation, and accessible markup.
+                </Text>
 
-          <Modal
-            open={modalOpen}
-            onClose={() => setModalOpen(false)}
-            title="Demo Modal"
-            size="md"
-            footer={
+                <Input
+                  placeholder="Try tabbing through the dialog"
+                />
+
+                <Checkbox />
+              </Stack>
               <Flex justify="end" gap="md">
-                <Button variant="ghost" onClick={() => setModalOpen(false)}>
-                  Cancel
-                </Button>
-                <Button variant="primary" onClick={() => setModalOpen(false)}>
-                  Confirm
-                </Button>
+                <Button variant="ghost">Cancel</Button>
+                <Button variant="primary">Confirm</Button>
               </Flex>
-            }
-          >
-            <Stack space="md">
-              <Text>
-                This is a demonstration of the modal component with focus trapping,
-                keyboard navigation, and accessible markup.
-              </Text>
-
-              <Input
-                label="Test Input"
-                placeholder="Try tabbing through the modal"
-              />
-
-              <Checkbox label="Test checkbox in modal" />
-            </Stack>
-          </Modal>
+            </DialogContent>
+          </Dialog>
         </div>
 
         {/* Dark Mode Toggle */}

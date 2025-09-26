@@ -125,10 +125,11 @@ class URLBuilderClass {
 
       // Don't add href for the current page
       const isLast = segments.indexOf(segment) === segments.length - 1;
-      breadcrumbs.push({
-        name,
-        href: isLast ? undefined : currentPath
-      });
+      const breadcrumbItem: { name: string; href?: string } = { name };
+      if (!isLast) {
+        breadcrumbItem.href = currentPath;
+      }
+      breadcrumbs.push(breadcrumbItem);
     }
 
     return breadcrumbs;
