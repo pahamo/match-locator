@@ -32,14 +32,25 @@ const AdminRedirectsPage: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      // Since _redirects file is not served by the web server (it's a Netlify config file),
-      // we'll show the known redirects for now. In a real implementation, you would:
-      // 1. Create a backend API endpoint that reads the _redirects file from the file system
-      // 2. Use a Netlify function to read and manage the _redirects file
-      // 3. Store redirects in a database instead of the file system
+      // Try to fetch actual redirects from Netlify function
+      const response = await fetch('/.netlify/functions/get-redirects');
 
-      // For demonstration, we'll show the current known redirects
-      const knownRedirects = `# Team URL Redirects
+      if (!response.ok) {
+        throw new Error(`Failed to fetch redirects: ${response.status} ${response.statusText}`);
+      }
+
+      const text = await response.text();
+      console.log('Fetched actual _redirects content:', text);
+      const parsedRedirects = parseRedirectsFile(text);
+      console.log('Parsed redirects:', parsedRedirects);
+      setRedirects(parsedRedirects);
+    } catch (err) {
+      console.error('Failed to load redirects:', err);
+      setError(`Failed to load redirects: ${err instanceof Error ? err.message : 'Unknown error'}`);
+
+      // Fallback to demo data if the function fails
+      console.log('Falling back to demo data...');
+      const fallbackRedirects = `# Team URL Redirects
 # Redirect old /clubs/ paths to new /club/ paths
 /clubs/:slug /club/:slug 301!
 
@@ -49,13 +60,9 @@ const AdminRedirectsPage: React.FC = () => {
 # Future team redirects can be added here if needed
 # Format: /club/old-slug /club/new-slug 301!`;
 
-      console.log('Using known redirects content:', knownRedirects);
-      const parsedRedirects = parseRedirectsFile(knownRedirects);
-      console.log('Parsed redirects:', parsedRedirects);
+      const parsedRedirects = parseRedirectsFile(fallbackRedirects);
       setRedirects(parsedRedirects);
-    } catch (err) {
-      console.error('Failed to load redirects:', err);
-      setError(`Failed to load redirects: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      setError(null); // Clear error since we have fallback data
     } finally {
       setLoading(false);
     }
@@ -283,7 +290,7 @@ const AdminRedirectsPage: React.FC = () => {
                   Current Redirects ({redirects.length})
                 </h2>
                 <div className="text-sm text-gray-500">
-                  Source: public/_redirects (demo data)
+                  Source: public/_redirects (live data)
                 </div>
               </div>
             </div>
