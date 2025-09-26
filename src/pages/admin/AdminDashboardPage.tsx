@@ -349,6 +349,66 @@ const AdminDashboardPage: React.FC = () => {
                 Configure competition visibility and settings.
               </p>
             </Link>
+
+            <Link
+              to="/admin/fix-data"
+              style={{
+                background: 'white',
+                border: '1px solid #e2e8f0',
+                borderRadius: '8px',
+                padding: '20px',
+                textDecoration: 'none',
+                color: 'inherit',
+                transition: 'all 0.2s ease',
+                display: 'block'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = '#dc2626';
+                e.currentTarget.style.boxShadow = '0 2px 8px rgba(220, 38, 38, 0.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = '#e2e8f0';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ fontSize: '20px', marginRight: '8px' }}>🔧</span>
+                <h3 style={{ fontSize: '16px', fontWeight: '600', margin: '0' }}>Fix Data Issues</h3>
+              </div>
+              <p style={{ fontSize: '14px', color: '#6b7280', margin: '0' }}>
+                Fix team competition_id assignments and data inconsistencies.
+              </p>
+            </Link>
+
+            <Link
+              to="/database-analysis"
+              style={{
+                background: 'white',
+                border: '1px solid #e2e8f0',
+                borderRadius: '8px',
+                padding: '20px',
+                textDecoration: 'none',
+                color: 'inherit',
+                transition: 'all 0.2s ease',
+                display: 'block'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = '#059669';
+                e.currentTarget.style.boxShadow = '0 2px 8px rgba(5, 150, 105, 0.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = '#e2e8f0';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ fontSize: '20px', marginRight: '8px' }}>📊</span>
+                <h3 style={{ fontSize: '16px', fontWeight: '600', margin: '0' }}>Database Analysis</h3>
+              </div>
+              <p style={{ fontSize: '14px', color: '#6b7280', margin: '0' }}>
+                Analyze database structure and identify data issues.
+              </p>
+            </Link>
           </div>
         </div>
 

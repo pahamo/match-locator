@@ -43,6 +43,7 @@ const AdminMatchesPage = React.lazy(() => import('./pages/admin/AdminMatchesPage
 const AdminCompetitionsPage = React.lazy(() => import('./pages/admin/AdminCompetitionsPage'));
 const AdminTeamsExportPage = React.lazy(() => import('./pages/admin/AdminTeamsExportPage'));
 const AdminRedirectsPage = React.lazy(() => import('./pages/admin/AdminRedirectsPage'));
+const AdminFixDataPage = React.lazy(() => import('./pages/admin/AdminFixDataPage'));
 const ClubsPage = React.lazy(() => import('./pages/ClubsPage'));
 const FixturesPage = React.lazy(() => import('./pages/FixturesPage'));
 const CompetitionsOverviewPage = React.lazy(() => import('./pages/CompetitionsOverviewPage'));
@@ -61,6 +62,7 @@ const ThisWeekendFixturesPage = React.lazy(() => import('./pages/ThisWeekendFixt
 const HowToWatchPage = React.lazy(() => import('./pages/HowToWatchPage'));
 const CookieSettingsModal = React.lazy(() => import('./components/cookies/CookieSettingsModal'));
 const DesignSystemDemo = React.lazy(() => import('./design-system/demo-page'));
+const DatabaseAnalysisPage = React.lazy(() => import('./pages/DatabaseAnalysisPage'));
 
 // Loading fallback component
 const PageLoader = () => (
@@ -132,6 +134,7 @@ function App() {
               <Route path="/admin/matches" element={<AdminMatchesPage />} />
               <Route path="/admin/competitions" element={<AdminCompetitionsPage />} />
               <Route path="/admin/redirects" element={<AdminRedirectsPage />} />
+              <Route path="/admin/fix-data" element={<AdminFixDataPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/legal/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/legal/cookie-policy" element={<CookiePolicy />} />
@@ -141,6 +144,7 @@ function App() {
               <Route path="/how-to-watch/:slug" element={<HowToWatchPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/design-demo" element={<DesignSystemDemo />} />
+              <Route path="/database-analysis" element={<DatabaseAnalysisPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Suspense>
