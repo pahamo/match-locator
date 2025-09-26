@@ -208,7 +208,7 @@ const DesignSystemDemo: React.FC = () => {
           <Stack space="lg">
             <div>
               <Text weight="medium">Basic Badges</Text>
-              <Flex gap="sm" wrap>
+              <Flex gap="sm" wrap="wrap">
                 <Badge>Default</Badge>
                 <Badge variant="secondary">Secondary</Badge>
                 <Badge variant="outline">Outline</Badge>
@@ -218,7 +218,7 @@ const DesignSystemDemo: React.FC = () => {
 
             <div>
               <Text weight="medium">Status Badges</Text>
-              <Flex gap="sm" wrap>
+              <Flex gap="sm" wrap="wrap">
                 <Badge variant="success">Success</Badge>
                 <Badge variant="warning">Warning</Badge>
                 <Badge variant="live">Live</Badge>
@@ -227,7 +227,7 @@ const DesignSystemDemo: React.FC = () => {
 
             <div>
               <Text weight="medium">Competition Badges</Text>
-              <Flex gap="sm" wrap>
+              <Flex gap="sm" wrap="wrap">
                 <Badge variant="epl">Premier League</Badge>
                 <Badge variant="ucl">Champions League</Badge>
               </Flex>
