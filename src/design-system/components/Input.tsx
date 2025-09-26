@@ -11,7 +11,7 @@ interface EnhancedInputProps extends React.ComponentProps<"input"> {
   variant?: 'default' | 'error';
 }
 
-export const Input = React.forwardRef<HTMLInputElement, EnhancedInputProps>(({
+const Input = React.forwardRef<HTMLInputElement, EnhancedInputProps>(({
   label,
   helperText,
   errorText,
@@ -58,6 +58,9 @@ export const Input = React.forwardRef<HTMLInputElement, EnhancedInputProps>(({
 });
 
 Input.displayName = 'Input';
+
+// Export the Input component
+export { Input };
 
 // Re-export Label for convenience
 export { Label } from '../../components/ui/label';

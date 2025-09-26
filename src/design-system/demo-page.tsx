@@ -11,6 +11,7 @@ import {
   Text,
   Link,
   Select,
+  Badge,
   Dialog,
   DialogContent,
   DialogHeader,
@@ -199,6 +200,52 @@ const DesignSystemDemo: React.FC = () => {
               </Flex>
             </DialogContent>
           </Dialog>
+        </div>
+
+        {/* Badges */}
+        <div>
+          <Heading level={2}>Badges</Heading>
+          <Stack space="lg">
+            <div>
+              <Text weight="medium">Basic Badges</Text>
+              <Flex gap="sm" wrap>
+                <Badge>Default</Badge>
+                <Badge variant="secondary">Secondary</Badge>
+                <Badge variant="outline">Outline</Badge>
+                <Badge variant="destructive">Destructive</Badge>
+              </Flex>
+            </div>
+
+            <div>
+              <Text weight="medium">Status Badges</Text>
+              <Flex gap="sm" wrap>
+                <Badge variant="success">Success</Badge>
+                <Badge variant="warning">Warning</Badge>
+                <Badge variant="live">Live</Badge>
+              </Flex>
+            </div>
+
+            <div>
+              <Text weight="medium">Competition Badges</Text>
+              <Flex gap="sm" wrap>
+                <Badge variant="epl">Premier League</Badge>
+                <Badge variant="ucl">Champions League</Badge>
+              </Flex>
+            </div>
+
+            <div>
+              <Text weight="medium">Sizes & Features</Text>
+              <Flex gap="sm" wrap align="center">
+                <Badge size="sm">Small</Badge>
+                <Badge size="default">Default</Badge>
+                <Badge size="lg">Large</Badge>
+                <Badge dot variant="success">With Dot</Badge>
+                <Badge removable onRemove={() => alert('Badge removed!')}>
+                  Removable
+                </Badge>
+              </Flex>
+            </div>
+          </Stack>
         </div>
 
         {/* Dark Mode Toggle */}
