@@ -74,7 +74,7 @@ const ChampionsLeagueGroupStagePage: React.FC = () => {
         // Update SEO meta tags
         updateDocumentMeta({
           title: 'UEFA Champions League - Teams & Fixtures Matrix | Match Locator',
-          description: `UEFA Champions League teams and fixtures matrix. View all ${sortedTeams.length} teams and their matchups in an easy grid view.`
+          description: `UEFA Champions League teams and fixtures matrix. View all ${teamsFromFixtures.length} teams and their matchups in an easy grid view.`
         });
 
       } catch (err) {
