@@ -59,18 +59,8 @@ export const Input = React.forwardRef<HTMLInputElement, EnhancedInputProps>(({
 
 Input.displayName = 'Input';
 
-// Re-export Label
+// Re-export Label for convenience
 export { Label } from '../../components/ui/label';
 
-// For compatibility with old Select/Checkbox components
-export {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '../../components/ui/select';
-
-export {
-  Checkbox
-} from '../../components/ui/checkbox';
+// Re-export Checkbox for form components
+export { Checkbox } from '../../components/ui/checkbox';
