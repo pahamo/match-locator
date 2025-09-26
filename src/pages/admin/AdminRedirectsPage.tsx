@@ -31,17 +31,26 @@ const AdminRedirectsPage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      // For now, load from the static _redirects file
-      // Later we can implement an API endpoint to fetch/manage redirects
-      const response = await fetch('/_redirects');
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch _redirects file: ${response.status} ${response.statusText}`);
-      }
+      // Since _redirects file is not served by the web server (it's a Netlify config file),
+      // we'll show the known redirects for now. In a real implementation, you would:
+      // 1. Create a backend API endpoint that reads the _redirects file from the file system
+      // 2. Use a Netlify function to read and manage the _redirects file
+      // 3. Store redirects in a database instead of the file system
 
-      const text = await response.text();
-      console.log('Fetched _redirects content:', text);
-      const parsedRedirects = parseRedirectsFile(text);
+      // For demonstration, we'll show the current known redirects
+      const knownRedirects = `# Team URL Redirects
+# Redirect old /clubs/ paths to new /club/ paths
+/clubs/:slug /club/:slug 301!
+
+# Note: H2H redirects removed - now handled dynamically by JavaScript in HeadToHeadPage
+# This eliminates the need for static redirect maintenance and provides better error handling
+
+# Future team redirects can be added here if needed
+# Format: /club/old-slug /club/new-slug 301!`;
+
+      console.log('Using known redirects content:', knownRedirects);
+      const parsedRedirects = parseRedirectsFile(knownRedirects);
       console.log('Parsed redirects:', parsedRedirects);
       setRedirects(parsedRedirects);
     } catch (err) {
@@ -274,7 +283,7 @@ const AdminRedirectsPage: React.FC = () => {
                   Current Redirects ({redirects.length})
                 </h2>
                 <div className="text-sm text-gray-500">
-                  Source: public/_redirects
+                  Source: public/_redirects (demo data)
                 </div>
               </div>
             </div>
@@ -388,15 +397,19 @@ const AdminRedirectsPage: React.FC = () => {
           <div className="flex items-start">
             <div className="text-yellow-600 text-lg mr-3">⚠️</div>
             <div>
-              <h3 className="text-sm font-semibold text-yellow-900 mb-2">Implementation Note</h3>
+              <h3 className="text-sm font-semibold text-yellow-900 mb-2">Implementation Status</h3>
               <p className="text-sm text-yellow-800">
-                The redirect management UI is complete, but saving changes requires a backend endpoint.
-                Currently, changes are not persisted to the _redirects file. To complete the implementation, add:
+                <strong>Current:</strong> Displays known redirects from your _redirects file (hardcoded for demo).<br/>
+                <strong>Limitation:</strong> The _redirects file is not served by the web server - it's a Netlify configuration file.
               </p>
-              <ul className="text-sm text-yellow-800 space-y-1 mt-2">
-                <li>• A Netlify function or API endpoint to write to public/_redirects</li>
-                <li>• Integration with your deployment pipeline</li>
-                <li>• File system write permissions on the server</li>
+              <p className="text-sm text-yellow-800 mt-2">
+                <strong>To make this fully functional, implement one of:</strong>
+              </p>
+              <ul className="text-sm text-yellow-800 space-y-1 mt-1">
+                <li>• <strong>Netlify Function:</strong> Read/write _redirects file from server-side function</li>
+                <li>• <strong>Database Storage:</strong> Store redirects in Supabase instead of flat file</li>
+                <li>• <strong>GitHub API:</strong> Directly edit _redirects file via GitHub API</li>
+                <li>• <strong>Build Integration:</strong> Generate _redirects file during build process</li>
               </ul>
             </div>
           </div>
