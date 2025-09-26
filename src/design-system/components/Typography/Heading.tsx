@@ -76,9 +76,9 @@ const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(({
     {
       'text-foreground': color === 'primary',
       'text-muted-foreground': color === 'secondary' || color === 'muted',
-      'text-green-600': color === 'success',
-      'text-yellow-600': color === 'warning',
-      'text-red-600': color === 'error',
+      'text-green-600 dark:text-green-400': color === 'success',
+      'text-yellow-600 dark:text-yellow-400': color === 'warning',
+      'text-red-600 dark:text-red-400': color === 'error',
     },
 
     // Text alignment

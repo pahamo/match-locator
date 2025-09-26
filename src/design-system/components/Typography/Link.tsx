@@ -1,5 +1,5 @@
 import React from 'react';
-import { getCSSVariable } from '../../styles';
+import { cn } from '../../../lib/utils';
 
 export interface LinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   /** Link variant */
@@ -28,51 +28,10 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(({
   showExternalIcon = true,
   children,
   className = '',
-  style = {},
   href,
   onClick,
   ...props
 }, ref) => {
-  const getVariantStyles = (): React.CSSProperties => {
-    const baseStyles = {
-      textDecoration: underline === 'always' ? 'underline' : 'none',
-      cursor: disabled ? 'not-allowed' : 'pointer',
-      opacity: disabled ? 0.6 : 1,
-      transition: getCSSVariable('--transition-base'),
-      display: 'inline-flex',
-      alignItems: 'center',
-      gap: getCSSVariable('--spacing-xs')
-    };
-
-    const variantStyles: Record<string, React.CSSProperties> = {
-      default: {
-        color: getCSSVariable('--color-primary-500')
-      },
-      subtle: {
-        color: getCSSVariable('--color-text')
-      },
-      primary: {
-        color: getCSSVariable('--color-primary-500'),
-        fontWeight: getCSSVariable('--font-weight-medium')
-      },
-      danger: {
-        color: getCSSVariable('--color-error-500')
-      },
-      unstyled: {
-        color: 'inherit'
-      }
-    };
-
-    return { ...baseStyles, ...variantStyles[variant] };
-  };
-
-  const linkStyles: React.CSSProperties = {
-    fontSize: getCSSVariable(`--font-size-${size}`),
-    fontWeight: getCSSVariable(`--font-weight-${weight}`),
-    ...getVariantStyles(),
-    ...style
-  };
-
   const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (disabled) {
       e.preventDefault();
@@ -81,75 +40,57 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(({
     onClick?.(e);
   };
 
-  const getHoverStyles = (): React.CSSProperties => {
-    if (disabled) return {};
+  const classes = cn(
+    // Base styles
+    'inline-flex items-center gap-1 transition-colors cursor-pointer',
 
-    const hoverMap: Record<string, React.CSSProperties> = {
-      default: {
-        color: getCSSVariable('--color-primary-600'),
-        textDecoration: underline === 'hover' ? 'underline' : undefined
-      },
-      subtle: {
-        color: getCSSVariable('--color-primary-500'),
-        textDecoration: underline === 'hover' ? 'underline' : undefined
-      },
-      primary: {
-        color: getCSSVariable('--color-primary-600'),
-        textDecoration: underline === 'hover' ? 'underline' : undefined
-      },
-      danger: {
-        color: '#dc2626',
-        textDecoration: underline === 'hover' ? 'underline' : undefined
-      },
-      unstyled: underline === 'hover' ? {
-        textDecoration: 'underline'
-      } : {}
-    };
-    return hoverMap[variant] || {};
-  };
+    // Disabled state
+    disabled && 'cursor-not-allowed opacity-60 pointer-events-none',
 
-  const getActiveStyles = (): React.CSSProperties => {
-    if (disabled) return {};
+    // Font sizes
+    {
+      'text-xs': size === 'xs',
+      'text-sm': size === 'sm',
+      'text-base': size === 'base',
+      'text-lg': size === 'lg',
+      'text-xl': size === 'xl',
+    },
 
-    const activeMap: Record<string, React.CSSProperties> = {
-      default: { color: getCSSVariable('--color-primary-700') },
-      subtle: { color: getCSSVariable('--color-primary-600') },
-      primary: { color: getCSSVariable('--color-primary-700') },
-      danger: { color: '#b91c1c' },
-      unstyled: {}
-    };
-    return activeMap[variant] || {};
-  };
+    // Font weights
+    {
+      'font-normal': weight === 'normal',
+      'font-medium': weight === 'medium',
+      'font-semibold': weight === 'semibold',
+      'font-bold': weight === 'bold',
+    },
 
-  const handleMouseEnter = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (!disabled) {
-      Object.assign(e.currentTarget.style, getHoverStyles());
-    }
-    props.onMouseEnter?.(e);
-  };
+    // Underline styles
+    {
+      'underline': underline === 'always',
+      'hover:underline': underline === 'hover',
+      'no-underline': underline === 'none',
+    },
 
-  const handleMouseLeave = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (!disabled) {
-      // Reset to base styles
-      Object.assign(e.currentTarget.style, linkStyles);
-    }
-    props.onMouseLeave?.(e);
-  };
+    // Variant colors with proper dark mode support
+    {
+      // Default: primary blue, darker on hover/dark mode
+      'text-primary hover:text-primary/80 dark:text-primary-400 dark:hover:text-primary-300': variant === 'default',
 
-  const handleMouseDown = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (!disabled) {
-      Object.assign(e.currentTarget.style, getActiveStyles());
-    }
-    props.onMouseDown?.(e);
-  };
+      // Subtle: text color, primary on hover
+      'text-foreground hover:text-primary dark:hover:text-primary-400': variant === 'subtle',
 
-  const handleMouseUp = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (!disabled) {
-      // Reset to hover styles if still hovering
-      Object.assign(e.currentTarget.style, getHoverStyles());
-    }
-    props.onMouseUp?.(e);
-  };
+      // Primary: bold primary, medium weight
+      'text-primary hover:text-primary/80 dark:text-primary-400 dark:hover:text-primary-300 font-medium': variant === 'primary',
+
+      // Danger: red with proper dark mode colors
+      'text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300': variant === 'danger',
+
+      // Unstyled: inherit colors
+      'text-inherit': variant === 'unstyled',
+    },
+
+    className
+  );
 
   // Determine if link is external
   const isExternal = external || (href && (href.startsWith('http') || href.startsWith('mailto:')));
@@ -161,7 +102,7 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(({
       height="12"
       viewBox="0 0 12 12"
       fill="currentColor"
-      style={{ flexShrink: 0 }}
+      className="flex-shrink-0"
     >
       <path d="M6 1H11V6M11 1L1 11" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
@@ -171,13 +112,8 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(({
     <a
       ref={ref}
       href={disabled ? undefined : href}
-      style={linkStyles}
-      className={`design-system-link design-system-link-${variant} ${className}`}
+      className={classes}
       onClick={handleClick}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
       // Add security attributes for external links
       {...(isExternal && !disabled ? {
         target: '_blank',

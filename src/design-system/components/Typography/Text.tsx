@@ -71,9 +71,9 @@ const Text = React.forwardRef<HTMLElement, TextProps>(({
     {
       'text-foreground': finalColor === 'primary',
       'text-muted-foreground': finalColor === 'secondary' || finalColor === 'muted',
-      'text-green-600': finalColor === 'success',
-      'text-yellow-600': finalColor === 'warning',
-      'text-red-600': finalColor === 'error',
+      'text-green-600 dark:text-green-400': finalColor === 'success',
+      'text-yellow-600 dark:text-yellow-400': finalColor === 'warning',
+      'text-red-600 dark:text-red-400': finalColor === 'error',
     },
 
     // Text alignment
