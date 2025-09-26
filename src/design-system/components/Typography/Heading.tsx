@@ -1,5 +1,5 @@
 import React from 'react';
-import { getCSSVariable } from '../../styles';
+import { cn } from '../../../lib/utils';
 
 export interface HeadingProps extends React.HTMLAttributes<HTMLHeadingElement> {
   /** Heading level - affects both semantic HTML and visual styling */
@@ -31,7 +31,6 @@ const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(({
   as,
   children,
   className = '',
-  style = {},
   ...props
 }, ref) => {
   // Default size based on level if not specified
@@ -47,50 +46,60 @@ const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(({
     return size || sizeMap[level];
   };
 
-  const getColorValue = () => {
-    const colorMap = {
-      primary: getCSSVariable('--color-heading'),
-      secondary: getCSSVariable('--color-text'),
-      muted: getCSSVariable('--color-muted'),
-      success: getCSSVariable('--color-success-500'),
-      warning: getCSSVariable('--color-warning-500'),
-      error: getCSSVariable('--color-error-500'),
-      inherit: 'inherit'
-    };
-    return colorMap[color];
-  };
+  const sizeValue = getDefaultSize();
 
-  const getFontSize = (sizeValue: string): string => {
-    if (responsive) {
-      // Responsive font sizes that scale down on mobile
-      const responsiveMap: Record<string, string> = {
-        xs: 'clamp(0.75rem, 2vw, 0.75rem)',
-        sm: 'clamp(0.875rem, 2.5vw, 0.875rem)',
-        base: 'clamp(1rem, 3vw, 1rem)',
-        lg: 'clamp(1.125rem, 3.5vw, 1.125rem)',
-        xl: 'clamp(1.25rem, 4vw, 1.25rem)',
-        '2xl': 'clamp(1.5rem, 5vw, 1.5rem)',
-        '3xl': 'clamp(1.875rem, 6vw, 1.875rem)'
-      };
-      return responsiveMap[sizeValue] || getCSSVariable(`--font-size-${sizeValue}`);
-    }
-    return getCSSVariable(`--font-size-${sizeValue}`);
-  };
+  // Build Tailwind classes
+  const classes = cn(
+    // Base heading styles
+    'm-0', // Reset margins
 
-  const headingStyles: React.CSSProperties = {
-    fontSize: getFontSize(getDefaultSize()),
-    fontWeight: getCSSVariable(`--font-weight-${weight}`),
-    color: getColorValue(),
-    textAlign: align,
-    lineHeight: level <= 2 ? '1.2' : level <= 4 ? '1.3' : '1.4',
-    margin: 0, // Reset default margins
-    ...(truncate && {
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      whiteSpace: 'nowrap'
-    }),
-    ...style
-  };
+    // Font sizes
+    {
+      'text-xs': sizeValue === 'xs',
+      'text-sm': sizeValue === 'sm',
+      'text-base': sizeValue === 'base',
+      'text-lg': sizeValue === 'lg',
+      'text-xl': sizeValue === 'xl',
+      'text-2xl': sizeValue === '2xl',
+      'text-3xl': sizeValue === '3xl',
+    },
+
+    // Font weights
+    {
+      'font-normal': weight === 'normal',
+      'font-medium': weight === 'medium',
+      'font-semibold': weight === 'semibold',
+      'font-bold': weight === 'bold',
+    },
+
+    // Colors
+    {
+      'text-foreground': color === 'primary',
+      'text-muted-foreground': color === 'secondary' || color === 'muted',
+      'text-green-600': color === 'success',
+      'text-yellow-600': color === 'warning',
+      'text-red-600': color === 'error',
+    },
+
+    // Text alignment
+    {
+      'text-left': align === 'left',
+      'text-center': align === 'center',
+      'text-right': align === 'right',
+    },
+
+    // Line heights
+    {
+      'leading-tight': level <= 2,
+      'leading-snug': level > 2 && level <= 4,
+      'leading-normal': level > 4,
+    },
+
+    // Truncation
+    truncate && 'truncate',
+
+    className
+  );
 
   // Use custom element or default to semantic heading
   const Component = as || (`h${level}` as keyof React.JSX.IntrinsicElements);
@@ -99,8 +108,7 @@ const Heading = React.forwardRef<HTMLHeadingElement, HeadingProps>(({
     Component,
     {
       ref,
-      style: headingStyles,
-      className: `design-system-heading design-system-heading-${level} ${className}`,
+      className: classes,
       // Add aria-level if using custom element to maintain semantic meaning
       ...(as && as !== `h${level}` ? { 'aria-level': level } : {}),
       ...props
