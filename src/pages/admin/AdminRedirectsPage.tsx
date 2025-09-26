@@ -38,16 +38,31 @@ const AdminRedirectsPage: React.FC = () => {
       // 2. Use a Netlify function to read and manage the _redirects file
       // 3. Store redirects in a database instead of the file system
 
-      // Current _redirects file content (hardcoded for now)
-      const redirectsContent = `# Team URL Redirects
+      // Complete redirect configuration (from all sources)
+      const redirectsContent = `# STATIC REDIRECTS (_redirects file)
 # Redirect old /clubs/ paths to new /club/ paths
 /clubs/:slug /club/:slug 301!
 
-# Note: H2H redirects removed - now handled dynamically by JavaScript in HeadToHeadPage
-# This eliminates the need for static redirect maintenance and provides better error handling
+# INFRASTRUCTURE REDIRECTS (netlify.toml)
+# Force HTTPS
+http://* https://:splat 301!
 
-# Future team redirects can be added here if needed
-# Format: /club/old-slug /club/new-slug 301!`;
+# Remove www subdomain
+https://www.matchlocator.com/* https://matchlocator.com/:splat 301!
+
+# SPA fallback (serves index.html for client-side routing)
+/* /index.html 200
+
+# DYNAMIC REDIRECTS (JavaScript)
+# H2H canonical URL redirects - handled in HeadToHeadPage.tsx
+# When H2H URLs don't match canonical format, redirects to /h2h/{canonical-slug}
+
+# DATABASE-GENERATED REDIRECTS
+# Team-specific redirects (when teams have different slug vs url_slug)
+# Currently none exist - all teams use consistent slugs
+
+# Note: H2H static redirects removed - now handled dynamically by JavaScript
+# This eliminates the need for static redirect maintenance and provides better error handling`;
 
       console.log('Using redirects content:', redirectsContent);
       const parsedRedirects = parseRedirectsFile(redirectsContent);
