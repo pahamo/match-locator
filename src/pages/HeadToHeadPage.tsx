@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Breadcrumbs from '../components/Breadcrumbs';
@@ -41,44 +41,7 @@ const HeadToHeadPage: React.FC = () => {
   // Parse team slugs from URL
   const parsedTeams = slug ? parseH2HSlug(slug) : null;
 
-  useEffect(() => {
-    // Check if we need to redirect to canonical URL
-    const canonicalSlug = slug ? needsCanonicalRedirect(slug) : null;
-    if (canonicalSlug) {
-      setShouldRedirect(canonicalSlug);
-      return;
-    }
-
-    if (!parsedTeams) {
-      setError('Invalid team matchup URL');
-      setLoading(false);
-      return;
-    }
-
-    // Validate this is a supported H2H matchup (Premier League or Champions League)
-    if (!slug) {
-      setError('Invalid H2H URL format');
-      setLoading(false);
-      return;
-    }
-
-    const parts = slug.split('-vs-');
-    if (parts.length !== 2 || !isSupportedTeam(parts[0]) || !isSupportedTeam(parts[1])) {
-      setError('H2H pages are currently available for Premier League and Champions League teams only');
-      setLoading(false);
-      return;
-    }
-
-    loadH2HData();
-  }, [slug]);
-
-  // Handle redirect after hooks
-  if (shouldRedirect) {
-    // Redirect to h2h path (new primary location for H2H pages)
-    return <Navigate to={`/h2h/${shouldRedirect}`} replace />;
-  }
-
-  const loadH2HData = async () => {
+  const loadH2HData = useCallback(async () => {
     if (!parsedTeams) return;
 
     try {
@@ -141,7 +104,44 @@ const HeadToHeadPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [parsedTeams]);
+
+  useEffect(() => {
+    // Check if we need to redirect to canonical URL
+    const canonicalSlug = slug ? needsCanonicalRedirect(slug) : null;
+    if (canonicalSlug) {
+      setShouldRedirect(canonicalSlug);
+      return;
+    }
+
+    if (!parsedTeams) {
+      setError('Invalid team matchup URL');
+      setLoading(false);
+      return;
+    }
+
+    // Validate this is a supported H2H matchup (Premier League or Champions League)
+    if (!slug) {
+      setError('Invalid H2H URL format');
+      setLoading(false);
+      return;
+    }
+
+    const parts = slug.split('-vs-');
+    if (parts.length !== 2 || !isSupportedTeam(parts[0]) || !isSupportedTeam(parts[1])) {
+      setError('H2H pages are currently available for Premier League and Champions League teams only');
+      setLoading(false);
+      return;
+    }
+
+    loadH2HData();
+  }, [slug, parsedTeams, loadH2HData]);
+
+  // Handle redirect after hooks
+  if (shouldRedirect) {
+    // Redirect to h2h path (new primary location for H2H pages)
+    return <Navigate to={`/h2h/${shouldRedirect}`} replace />;
+  }
 
   if (loading) {
     return (
