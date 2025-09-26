@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Breadcrumbs from '../components/Breadcrumbs';
@@ -19,7 +19,6 @@ import {
   cleanTeamNameForDisplay,
   calculateH2HStats
 } from '../utils/headToHead';
-import { normalizeTeamSlug, mapSeoSlugToDbSlugEnhanced } from '../utils/teamSlugs';
 import { isSupportedTeam } from '../utils/teamSlugs';
 import { generateMatchPreview, isPremierLeagueFixture } from '../utils/matchPreview';
 import { getTeamUrlSlug } from '../utils/slugUtils';
@@ -38,8 +37,10 @@ const HeadToHeadPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [shouldRedirect, setShouldRedirect] = useState<string | null>(null);
 
-  // Parse team slugs from URL
-  const parsedTeams = slug ? parseH2HSlug(slug) : null;
+  // Parse team slugs from URL - memoize to prevent infinite loops
+  const parsedTeams = useMemo(() => {
+    return slug ? parseH2HSlug(slug) : null;
+  }, [slug]);
 
   const loadH2HData = useCallback(async () => {
     if (!parsedTeams) return;
@@ -48,32 +49,31 @@ const HeadToHeadPage: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      // Normalize team slugs to handle variations (SEO-friendly)
-      const seoTeam1Slug = normalizeTeamSlug(parsedTeams.team1Slug);
-      const seoTeam2Slug = normalizeTeamSlug(parsedTeams.team2Slug);
+      // Use smart slugs directly - getTeamBySlug now handles both slug and url_slug
+      const team1Slug = parsedTeams.team1Slug;
+      const team2Slug = parsedTeams.team2Slug;
 
-      // Map SEO slugs to database slugs (enhanced mapping for Premier League and Champions League)
-      const dbTeam1Slug = mapSeoSlugToDbSlugEnhanced(seoTeam1Slug);
-      const dbTeam2Slug = mapSeoSlugToDbSlugEnhanced(seoTeam2Slug);
+      console.log(`Loading H2H data for ${team1Slug} vs ${team2Slug}`);
 
-      console.log(`Loading H2H data for ${seoTeam1Slug} vs ${seoTeam2Slug}`);
-      console.log(`Database lookup: ${dbTeam1Slug} vs ${dbTeam2Slug}`);
-
-      // Load teams and fixtures in parallel using database slugs
-      const [team1Data, team2Data, fixturesData, nextFixtureData] = await Promise.all([
-        getTeamBySlug(dbTeam1Slug),
-        getTeamBySlug(dbTeam2Slug),
-        getHeadToHeadFixtures(dbTeam1Slug, dbTeam2Slug),
-        getNextHeadToHeadFixture(dbTeam1Slug, dbTeam2Slug)
+      // First load teams using smart slugs
+      const [team1Data, team2Data] = await Promise.all([
+        getTeamBySlug(team1Slug),
+        getTeamBySlug(team2Slug)
       ]);
 
       // Validate teams exist
       if (!team1Data || !team2Data) {
-        const missingTeam = !team1Data ? seoTeam1Slug : seoTeam2Slug;
+        const missingTeam = !team1Data ? team1Slug : team2Slug;
         setError(`Team not found: ${cleanTeamNameForDisplay(missingTeam)}`);
         setLoading(false);
         return;
       }
+
+      // Then load fixtures using the database slugs from the team data
+      const [fixturesData, nextFixtureData] = await Promise.all([
+        getHeadToHeadFixtures(team1Data.slug, team2Data.slug),
+        getNextHeadToHeadFixture(team1Data.slug, team2Data.slug)
+      ]);
 
       setTeam1(team1Data);
       setTeam2(team2Data);
