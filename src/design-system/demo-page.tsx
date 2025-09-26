@@ -22,16 +22,17 @@ import { Label } from '../components/ui/label';
 const DesignSystemDemo: React.FC = () => {
 
   return (
-    <Container size="xl" padding>
-      <Stack space="2xl">
-        <div>
-          <Heading level={1} size="3xl" responsive>
-            Design System v2.0 Demo
-          </Heading>
-          <Text variant="subtitle" color="secondary">
-            Interactive demonstration of all new components
-          </Text>
-        </div>
+    <div className="min-h-screen bg-background">
+      <Container size="xl" padding>
+        <Stack space="2xl">
+          <div>
+            <Heading level={1} size="3xl" responsive>
+              Design System v2.0 Demo
+            </Heading>
+            <Text variant="subtitle" color="secondary">
+              Interactive demonstration of all new components
+            </Text>
+          </div>
 
         {/* Button Variants */}
         <div>
@@ -128,12 +129,7 @@ const DesignSystemDemo: React.FC = () => {
               <Text weight="medium">Responsive Grid</Text>
               <Grid cols={1} smCols={2} mdCols={3} lgCols={4} gap="md">
                 {Array.from({ length: 8 }, (_, i) => (
-                  <div key={i} style={{
-                    padding: '1rem',
-                    backgroundColor: '#f3f4f6',
-                    borderRadius: '0.5rem',
-                    textAlign: 'center'
-                  }}>
+                  <div key={i} className="p-4 bg-muted rounded-lg text-center">
                     Item {i + 1}
                   </div>
                 ))}
@@ -142,11 +138,7 @@ const DesignSystemDemo: React.FC = () => {
 
             <div>
               <Text weight="medium">Flex Layout</Text>
-              <Flex justify="between" align="center" gap="md" style={{
-                padding: '1rem',
-                backgroundColor: '#f9fafb',
-                borderRadius: '0.5rem'
-              }}>
+              <Flex justify="between" align="center" gap="md" className="p-4 bg-muted/50 rounded-lg">
                 <Text>Left Content</Text>
                 <Button variant="primary">Action</Button>
               </Flex>
@@ -197,6 +189,7 @@ const DesignSystemDemo: React.FC = () => {
         </div>
       </Stack>
     </Container>
+    </div>
   );
 };
 
