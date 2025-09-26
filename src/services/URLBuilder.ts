@@ -109,56 +109,7 @@ class URLBuilderClass {
     return currentSlug !== canonical ? canonical : null;
   }
 
-  /**
-   * Generate breadcrumb items from URL path
-   */
-  getBreadcrumbs(pathname: string): Array<{ name: string; href?: string }> {
-    const segments = pathname.split('/').filter(Boolean);
-    const breadcrumbs = [{ name: 'Home', href: '/' }];
 
-    let currentPath = '';
-    for (const segment of segments) {
-      currentPath += `/${segment}`;
-
-      // Convert segment to readable name
-      const name = this.segmentToName(segment);
-
-      // Don't add href for the current page
-      const isLast = segments.indexOf(segment) === segments.length - 1;
-      const breadcrumbItem: { name: string; href?: string } = { name };
-      if (!isLast) {
-        breadcrumbItem.href = currentPath;
-      }
-      breadcrumbs.push(breadcrumbItem);
-    }
-
-    return breadcrumbs;
-  }
-
-  private segmentToName(segment: string): string {
-    // Convert URL segments to readable names
-    const nameMap: Record<string, string> = {
-      'club': 'Teams',
-      'clubs': 'Teams',
-      'h2h': 'Head to Head',
-      'fixtures': 'Fixtures',
-      'competitions': 'Competitions',
-      'admin': 'Admin',
-      'how-to-watch': 'How to Watch',
-      'premier-league': 'Premier League',
-      'champions-league': 'Champions League'
-    };
-
-    if (nameMap[segment]) {
-      return nameMap[segment];
-    }
-
-    // Convert kebab-case to Title Case
-    return segment
-      .split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
-  }
 }
 
 // Export singleton instance
