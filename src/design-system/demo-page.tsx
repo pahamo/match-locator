@@ -12,6 +12,20 @@ import {
   Link,
   Select,
   Badge,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+  Avatar,
+  AvatarGroup,
+  Progress,
+  CircularProgress,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
   Dialog,
   DialogContent,
   DialogHeader,
@@ -244,6 +258,220 @@ const DesignSystemDemo: React.FC = () => {
                   Removable
                 </Badge>
               </Flex>
+            </div>
+          </Stack>
+        </div>
+
+        {/* Cards */}
+        <div>
+          <Heading level={2}>Cards</Heading>
+          <Grid cols={1} mdCols={2} lgCols={3} gap="lg">
+            <Card>
+              <CardHeader>
+                <CardTitle>Default Card</CardTitle>
+                <CardDescription>
+                  A simple card with default styling and responsive layout.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Text>This is the card content area where you can put any information.</Text>
+              </CardContent>
+              <CardFooter>
+                <Button>Learn More</Button>
+              </CardFooter>
+            </Card>
+
+            <Card variant="elevated" hoverable>
+              <CardHeader>
+                <CardTitle>Elevated & Hoverable</CardTitle>
+                <CardDescription>
+                  This card has elevation and hover effects.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Badge variant="success">Active</Badge>
+              </CardContent>
+            </Card>
+
+            <Card variant="live">
+              <CardHeader>
+                <CardTitle>Live Card</CardTitle>
+                <CardDescription>
+                  Live content with pulsing animation.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Badge variant="live">LIVE</Badge>
+              </CardContent>
+            </Card>
+
+            <Card loading />
+
+            <Card variant="success" clickable>
+              <CardHeader size="sm">
+                <CardTitle size="sm">Success Card</CardTitle>
+                <CardDescription>Clickable success variant.</CardDescription>
+              </CardHeader>
+            </Card>
+          </Grid>
+        </div>
+
+        {/* Avatars */}
+        <div>
+          <Heading level={2}>Avatars</Heading>
+          <Stack space="lg">
+            <div>
+              <Text weight="medium">Sizes & Shapes</Text>
+              <Flex gap="md" align="center" wrap="wrap">
+                <Avatar size="xs" fallback="XS" />
+                <Avatar size="sm" fallback="SM" />
+                <Avatar size="default" fallback="M" />
+                <Avatar size="lg" fallback="LG" />
+                <Avatar size="xl" fallback="XL" />
+                <Avatar size="2xl" fallback="2XL" />
+              </Flex>
+            </div>
+
+            <div>
+              <Text weight="medium">Shapes</Text>
+              <Flex gap="md" align="center" wrap="wrap">
+                <Avatar shape="circle" fallback="C" />
+                <Avatar shape="rounded" fallback="R" />
+                <Avatar shape="square" fallback="S" />
+              </Flex>
+            </div>
+
+            <div>
+              <Text weight="medium">Status Indicators</Text>
+              <Flex gap="md" align="center" wrap="wrap">
+                <Avatar fallback="ON" status="online" />
+                <Avatar fallback="OF" status="offline" />
+                <Avatar fallback="AW" status="away" />
+                <Avatar fallback="BY" status="busy" />
+              </Flex>
+            </div>
+
+            <div>
+              <Text weight="medium">Avatar Group</Text>
+              <AvatarGroup
+                max={3}
+                avatars={[
+                  { fallback: "JD" },
+                  { fallback: "AS" },
+                  { fallback: "MK" },
+                  { fallback: "LP" },
+                  { fallback: "RW" },
+                ]}
+              />
+            </div>
+          </Stack>
+        </div>
+
+        {/* Progress */}
+        <div>
+          <Heading level={2}>Progress</Heading>
+          <Stack space="lg">
+            <div>
+              <Text weight="medium">Basic Progress</Text>
+              <Stack space="md">
+                <Progress value={25} showPercentage label="Basic Progress" />
+                <Progress value={60} variant="success" showValue label="Success" />
+                <Progress value={80} variant="warning" showPercentage />
+                <Progress value={95} variant="error" size="lg" showPercentage />
+              </Stack>
+            </div>
+
+            <div>
+              <Text weight="medium">Indeterminate Progress</Text>
+              <Progress indeterminate label="Loading..." />
+            </div>
+
+            <div>
+              <Text weight="medium">Circular Progress</Text>
+              <Flex gap="lg" align="center" wrap="wrap">
+                <CircularProgress value={25} showPercentage />
+                <CircularProgress value={60} variant="success" showPercentage size={80} />
+                <CircularProgress value={80} variant="warning" showValue />
+                <CircularProgress indeterminate variant="info" />
+              </Flex>
+            </div>
+          </Stack>
+        </div>
+
+        {/* Tabs */}
+        <div>
+          <Heading level={2}>Tabs</Heading>
+          <Stack space="lg">
+            <div>
+              <Text weight="medium">Default Tabs</Text>
+              <Tabs defaultValue="tab1">
+                <TabsList>
+                  <TabsTrigger value="tab1">Overview</TabsTrigger>
+                  <TabsTrigger value="tab2" badge={3}>Comments</TabsTrigger>
+                  <TabsTrigger value="tab3">Settings</TabsTrigger>
+                </TabsList>
+                <TabsContent value="tab1">
+                  <Text>Overview content goes here.</Text>
+                </TabsContent>
+                <TabsContent value="tab2">
+                  <Text>Comments content with 3 new comments.</Text>
+                </TabsContent>
+                <TabsContent value="tab3">
+                  <Text>Settings content goes here.</Text>
+                </TabsContent>
+              </Tabs>
+            </div>
+
+            <div>
+              <Text weight="medium">Pills Variant</Text>
+              <Tabs defaultValue="tab1">
+                <TabsList variant="pills">
+                  <TabsTrigger variant="pills" value="tab1">Design</TabsTrigger>
+                  <TabsTrigger variant="pills" value="tab2">Development</TabsTrigger>
+                  <TabsTrigger variant="pills" value="tab3">Testing</TabsTrigger>
+                </TabsList>
+                <TabsContent value="tab1">
+                  <Card>
+                    <CardContent>
+                      <Text>Design phase content</Text>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+                <TabsContent value="tab2">
+                  <Card>
+                    <CardContent>
+                      <Text>Development phase content</Text>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+                <TabsContent value="tab3">
+                  <Card>
+                    <CardContent>
+                      <Text>Testing phase content</Text>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              </Tabs>
+            </div>
+
+            <div>
+              <Text weight="medium">Underline Variant</Text>
+              <Tabs defaultValue="tab1">
+                <TabsList variant="underline">
+                  <TabsTrigger variant="underline" value="tab1">Home</TabsTrigger>
+                  <TabsTrigger variant="underline" value="tab2" badge={12}>Messages</TabsTrigger>
+                  <TabsTrigger variant="underline" value="tab3">Profile</TabsTrigger>
+                </TabsList>
+                <TabsContent value="tab1">
+                  <Text>Home content</Text>
+                </TabsContent>
+                <TabsContent value="tab2">
+                  <Text>You have 12 new messages</Text>
+                </TabsContent>
+                <TabsContent value="tab3">
+                  <Text>Profile settings and information</Text>
+                </TabsContent>
+              </Tabs>
             </div>
           </Stack>
         </div>

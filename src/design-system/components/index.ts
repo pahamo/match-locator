@@ -16,6 +16,10 @@ export * from './Button';
 export * from './Input';
 export * from './Select';
 export * from './Badge';
+export * from './Card';
+export * from './Avatar';
+export * from './Progress';
+export * from './Tabs';
 export * from './Dialog';
 
 // Layout utilities (converted to Tailwind)
