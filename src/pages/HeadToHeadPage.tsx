@@ -19,7 +19,6 @@ import {
   cleanTeamNameForDisplay,
   calculateH2HStats
 } from '../utils/headToHead';
-import { isSupportedTeam } from '../utils/teamSlugs';
 import { generateMatchPreview, isPremierLeagueFixture } from '../utils/matchPreview';
 import { getTeamUrlSlug } from '../utils/slugUtils';
 import type { Fixture, Team } from '../types';
@@ -128,8 +127,8 @@ const HeadToHeadPage: React.FC = () => {
     }
 
     const parts = slug.split('-vs-');
-    if (parts.length !== 2 || !isSupportedTeam(parts[0]) || !isSupportedTeam(parts[1])) {
-      setError('H2H pages are currently available for Premier League and Champions League teams only');
+    if (parts.length !== 2) {
+      setError('Invalid H2H URL format');
       setLoading(false);
       return;
     }
