@@ -37,13 +37,7 @@ interface BroadcastRow {
   provider_id: number;
 }
 
-interface ProviderRow {
-  id: number;
-  display_name?: string;
-  name?: string;
-  type?: string;
-  url?: string;
-}
+// ProviderRow interface removed - no longer used after ProviderService implementation
 
 function mapFixtureRow(row: FixtureRow, providersByFixture: Record<number, Provider[]> = {}): Fixture {
   const kickoffIso = row.utc_kickoff;

@@ -17,7 +17,7 @@ export interface BadgeProps extends Omit<ShadcnBadgeProps, 'variant'> {
   onRemove?: () => void;
 }
 
-export const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(({
+export const Badge: React.FC<BadgeProps> = ({
   variant = 'default',
   size = 'default',
   dot = false,
@@ -26,7 +26,7 @@ export const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(({
   children,
   className,
   ...props
-}, ref) => {
+}) => {
   // Map our custom variants to shadcn or handle with custom classes
   const getShadcnVariant = (): ShadcnBadgeProps['variant'] => {
     switch (variant) {
@@ -66,7 +66,6 @@ export const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(({
 
   return (
     <ShadcnBadge
-      ref={ref}
       variant={getShadcnVariant()}
       className={customVariantClasses}
       {...props}
@@ -102,8 +101,6 @@ export const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(({
       )}
     </ShadcnBadge>
   );
-});
-
-Badge.displayName = 'Badge';
+};
 
 export default Badge;
