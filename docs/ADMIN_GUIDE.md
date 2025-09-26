@@ -38,6 +38,7 @@ The admin interface provides comprehensive management tools for:
 /admin/competitions      # Competition management
 /admin/fixtures         # Fixture management and broadcaster assignment
 /admin/teams            # Team information management
+/admin/redirects        # Redirect overview and management
 /admin/stats            # Internal statistics and metrics
 ```
 
@@ -259,7 +260,33 @@ interface BroadcastEditorProps {
 - **Competition Migration**: Move teams between competitions
 - **Data Enrichment**: Fill missing team information
 
-### 4. Statistics Dashboard
+### 4. Redirect Management
+
+**Location:** `/admin/redirects`
+**Purpose:** Comprehensive redirect overview and management
+
+#### Redirect Overview Dashboard
+
+**Complete System Visibility:**
+- **Static Redirects**: Rules from `_redirects` file (e.g., `/clubs/:slug` → `/club/:slug`)
+- **Infrastructure Redirects**: Netlify configuration (HTTPS enforcement, www removal, SPA fallback)
+- **Dynamic Redirects**: JavaScript-handled redirects (H2H canonical URLs)
+- **Database-Generated Redirects**: Team-specific slug mappings (when applicable)
+
+**Management Guidelines:**
+- **Keep Current**: Update this page whenever new redirect rules are added
+- **Document Changes**: All redirect modifications should be reflected in the admin interface
+- **Monitor Sources**: Watch for redirects added in `_redirects`, `netlify.toml`, or application code
+- **Regular Review**: Periodically audit all redirect sources for completeness
+
+**Redirect Sources to Monitor:**
+1. **`/public/_redirects`** - Static redirect rules file
+2. **`/netlify.toml`** - Infrastructure and hosting configuration redirects
+3. **JavaScript Components** - Dynamic redirects in React components (e.g., HeadToHeadPage.tsx)
+4. **Database Scripts** - Generated redirects from team slug changes
+5. **Netlify Functions** - API-generated redirect rules
+
+### 5. Statistics Dashboard
 
 **Location:** `/admin/stats`
 **Purpose:** Monitor platform performance and data quality
@@ -589,6 +616,7 @@ https://matchlocator.com/admin                 # Main admin dashboard
 https://matchlocator.com/admin/competitions   # Competition management
 https://matchlocator.com/admin/fixtures       # Fixture management
 https://matchlocator.com/admin/teams          # Team management
+https://matchlocator.com/admin/redirects      # Redirect overview and management
 ```
 
 ### Key Admin Commands
