@@ -51,7 +51,7 @@ const ChampionsLeagueGroupStagePage: React.FC = () => {
         });
 
         console.log('Loaded fixtures count:', fixturesData.length);
-        console.log('Available stages/rounds:', [...new Set(fixturesData.map(f => f.stage || f.round).filter(Boolean))]);
+        console.log('Available stages/rounds:', Array.from(new Set(fixturesData.map(f => f.stage || f.round).filter(Boolean))));
 
         // Show all fixtures for now - don't filter by stage since we need to see what's available
         // TODO: Re-enable stage filtering once we know the correct stage names in the data
