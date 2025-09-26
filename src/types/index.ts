@@ -1,8 +1,7 @@
 export interface Team {
   id: number;
   name: string;
-  slug: string;
-  url_slug?: string | null; // New smart URL slug field
+  slug: string; // Consolidated slug field (previously url_slug values)
   crest: string | null;
   competition_id?: number;
   short_name?: string | null;

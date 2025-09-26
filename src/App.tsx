@@ -60,6 +60,7 @@ const TomorrowFixturesPage = React.lazy(() => import('./pages/TomorrowFixturesPa
 const ThisWeekendFixturesPage = React.lazy(() => import('./pages/ThisWeekendFixturesPage'));
 const HowToWatchPage = React.lazy(() => import('./pages/HowToWatchPage'));
 const CookieSettingsModal = React.lazy(() => import('./components/cookies/CookieSettingsModal'));
+const DesignSystemDemo = React.lazy(() => import('./design-system/demo-page'));
 
 // Loading fallback component
 const PageLoader = () => (
@@ -70,6 +71,10 @@ const PageLoader = () => (
 );
 
 function App() {
+  // Initialize design tokens
+  React.useEffect(() => {
+    injectDesignTokens();
+  }, []);
   const [cookieOpen, setCookieOpen] = React.useState(false);
   // Blackout state for fixtures (ensures setBlackoutIds exists)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -135,6 +140,7 @@ function App() {
               <Route path="/how-we-make-money" element={<HowWeSupportThisSitePage />} />
               <Route path="/how-to-watch/:slug" element={<HowToWatchPage />} />
               <Route path="/contact" element={<ContactPage />} />
+              <Route path="/design-demo" element={<DesignSystemDemo />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Suspense>

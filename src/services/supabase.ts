@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Fixture, FixturesApiParams, Provider, Team } from '../types';
 import { mapCompetitionIdToSlug } from '../utils/competitionMapping';
+import { ProviderService } from './ProviderService';
 
 // Require credentials from environment variables
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
@@ -23,13 +24,11 @@ interface FixtureRow {
   round?: string | null;
   home_team_id: number;
   home_team: string;
-  home_slug: string;
-  home_url_slug?: string | null;
+  home_slug: string; // Consolidated slug field
   home_crest?: string | null;
   away_team_id: number;
   away_team: string;
-  away_slug: string;
-  away_url_slug?: string | null;
+  away_slug: string; // Consolidated slug field
   away_crest?: string | null;
 }
 
@@ -38,13 +37,7 @@ interface BroadcastRow {
   provider_id: number;
 }
 
-interface ProviderRow {
-  id: number;
-  display_name?: string;
-  name?: string;
-  type?: string;
-  url?: string;
-}
+// ProviderRow interface removed - no longer used after ProviderService implementation
 
 function mapFixtureRow(row: FixtureRow, providersByFixture: Record<number, Provider[]> = {}): Fixture {
   const kickoffIso = row.utc_kickoff;
@@ -52,15 +45,13 @@ function mapFixtureRow(row: FixtureRow, providersByFixture: Record<number, Provi
   const home: Team = {
     id: row.home_team_id,
     name: row.home_team,
-    slug: row.home_slug,
-    url_slug: row.home_url_slug || null,
+    slug: row.home_slug, // Consolidated slug field
     crest: row.home_crest || null,
   };
   const away: Team = {
     id: row.away_team_id,
     name: row.away_team,
-    slug: row.away_slug,
-    url_slug: row.away_url_slug || null,
+    slug: row.away_slug, // Consolidated slug field
     crest: row.away_crest || null,
   };
   const providers = providersByFixture[row.id] || [];
@@ -110,48 +101,9 @@ async function getBroadcastsForFixtures(ids: number[]): Promise<BroadcastRow[]> 
   }
 }
 
+// Use centralized ProviderService instead of local implementation
 async function getProvidersByIds(ids: number[] = []): Promise<Provider[]> {
-  let rows: ProviderRow[] | null = null;
-  try {
-    let query = supabase
-      .from('providers')
-      .select('id,display_name,name,type')
-      .order('display_name', { ascending: true });
-
-    if (ids.length > 0) {
-      query = query.in('id', ids);
-    }
-
-    const resp = await query;
-    if (resp.error) {
-      console.warn('[Supabase] getProvidersByIds error', resp.error);
-    } else {
-      rows = resp.data as any;
-    }
-  } catch (e) {
-    console.warn('[Supabase] getProvidersByIds exception', e);
-  }
-
-  const mapped = (rows || []).map((p: ProviderRow) => ({
-    id: String(p.id),
-    name: p.display_name || p.name || 'Unknown',
-    type: p.type || 'unknown',
-    href: undefined,
-    status: 'confirmed',
-  }));
-
-  // Fallbacks for common UK providers in case providers table is incomplete
-  const byId = new Map<string, Provider>(mapped.map(p => [p.id, p]));
-  const ensure = (numId: number, name: string, href: string) => {
-    const key = String(numId);
-    if (!byId.has(key) && ids.includes(numId)) {
-      byId.set(key, { id: key, name, type: 'tv', href, status: 'confirmed' });
-    }
-  };
-  ensure(1, 'Sky Sports', 'https://www.skysports.com/football/fixtures-results');
-  ensure(2, 'TNT Sports', 'https://tntsports.co.uk/football');
-
-  return Array.from(byId.values());
+  return ProviderService.getProviders(ids);
 }
 
 export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixture[]> {
@@ -194,8 +146,8 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
       .from('fixtures_with_teams')
       .select(`
         id,matchday,utc_kickoff,venue,status,competition_id,stage,round,
-        home_team_id,home_team,home_slug,home_url_slug,home_crest,
-        away_team_id,away_team,away_slug,away_url_slug,away_crest
+        home_team_id,home_team,home_slug,home_crest,
+        away_team_id,away_team,away_slug,away_crest
       `)
       .order('utc_kickoff', { ascending: order === 'asc' })
       .limit(limit);
@@ -249,13 +201,11 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
     
     let mapped = rows.map(r => mapFixtureRow(r, providersByFixture));
 
-    // Apply team filter if specified - check both old slug and new url_slug
+    // Apply team filter if specified - consolidated slug field
     if (teamSlug) {
       mapped = mapped.filter(fx =>
         fx.home.slug === teamSlug ||
-        fx.away.slug === teamSlug ||
-        fx.home.url_slug === teamSlug ||
-        fx.away.url_slug === teamSlug
+        fx.away.slug === teamSlug
       );
     }
     
@@ -532,7 +482,7 @@ export async function getTeams(): Promise<Team[]> {
 
     const { data, error, count } = await supabase
       .from('teams')
-      .select('id,name,slug,url_slug,crest_url,competition_id,short_name,club_colors,website,venue,city', { count: 'exact' })
+      .select('id,name,slug,crest_url,competition_id,short_name,club_colors,website,venue,city', { count: 'exact' })
       .order('name', { ascending: true });
 
     console.log(`[DEBUG] getTeams query result - count: ${count}, error: ${error ? JSON.stringify(error) : 'none'}`);
@@ -554,8 +504,7 @@ export async function getTeams(): Promise<Team[]> {
     return (data || []).map((t: any) => ({
       id: t.id,
       name: t.name,
-      slug: t.slug,
-      url_slug: t.url_slug ?? null,
+      slug: t.slug, // Consolidated slug field
       crest: t.crest_url ?? null,
       competition_id: t.competition_id,
       short_name: t.short_name ?? null,
@@ -618,20 +567,23 @@ export async function getHeadToHeadFixtures(teamSlug1: string, teamSlug2: string
       // Continue without broadcast data rather than fail completely
     }
 
-    // Group providers by fixture
+    // Group providers by fixture using proper provider lookup
     const providersByFixture: Record<number, Provider[]> = {};
     if (broadcastRows) {
+      // Get all unique provider IDs
+      const allProviderIds = Array.from(new Set(broadcastRows.map(row => row.provider_id).filter(Boolean)));
+      const allProviders = allProviderIds.length ? await getProvidersByIds(allProviderIds) : [];
+      const providerMap = Object.fromEntries(allProviders.map(p => [p.id, p]));
+
+      // Group providers by fixture
       broadcastRows.forEach(row => {
         if (!providersByFixture[row.fixture_id]) {
           providersByFixture[row.fixture_id] = [];
         }
-        providersByFixture[row.fixture_id].push({
-          id: row.provider_id,
-          name: `Provider ${row.provider_id}`,
-          type: 'tv', // Default since not available in view
-          slug: '', // Default since not available in view
-          url: '' // Default since not available in view
-        });
+        const provider = providerMap[String(row.provider_id)];
+        if (provider) {
+          providersByFixture[row.fixture_id].push(provider);
+        }
       });
     }
 
@@ -683,18 +635,11 @@ export async function getNextHeadToHeadFixture(teamSlug1: string, teamSlug2: str
       console.error('Error fetching broadcast data for next fixture:', broadcastError);
     }
 
-    // Map providers
-    const providers: Provider[] = [];
-    if (broadcastRows) {
-      broadcastRows.forEach(broadcastRow => {
-        providers.push({
-          id: broadcastRow.provider_id,
-          name: `Provider ${broadcastRow.provider_id}`,
-          type: 'tv', // Default since not available in view
-          slug: '', // Default since not available in view
-          url: '' // Default since not available in view
-        });
-      });
+    // Map providers using proper provider lookup
+    let providers: Provider[] = [];
+    if (broadcastRows && broadcastRows.length > 0) {
+      const providerIds = Array.from(new Set(broadcastRows.map(b => b.provider_id).filter(Boolean)));
+      providers = providerIds.length ? await getProvidersByIds(providerIds) : [];
     }
 
     const providersByFixture = { [row.id]: providers };
@@ -711,6 +656,7 @@ export async function getNextHeadToHeadFixture(teamSlug1: string, teamSlug2: str
  */
 export async function getTeamBySlug(slug: string): Promise<Team | null> {
   try {
+    // Single slug field lookup after Phase 3 migration
     const { data, error } = await supabase
       .from('teams')
       .select('*')
@@ -730,7 +676,7 @@ export async function getTeamBySlug(slug: string): Promise<Team | null> {
     return {
       id: data.id,
       name: data.name,
-      slug: data.slug,
+      slug: data.slug, // Consolidated slug field
       crest: data.crest,
       short_name: data.short_name,
       competition_id: data.competition_id

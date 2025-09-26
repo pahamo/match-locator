@@ -1,5 +1,12 @@
+import { breakpoints, mediaQueries, containerSizes } from './breakpoints';
+import { darkModeColors, darkModeCSSVariables } from './dark-mode';
+
 // Design Tokens - Central source of truth for design values
 export const tokens = {
+  // Responsive breakpoints
+  breakpoints,
+  mediaQueries,
+  containerSizes,
   // Color Palette
   colors: {
     // Primary brand colors
@@ -126,11 +133,23 @@ export const tokens = {
     ucl: '0 4px 12px rgba(14, 165, 233, 0.2)'
   },
   
-  // Transitions
+  // Transitions and animations
   transition: {
     fast: '0.15s ease',
     base: '0.2s ease',
     slow: '0.3s ease'
+  },
+
+  // Animation tokens
+  animation: {
+    spin: 'spin 1s linear infinite',
+    ping: 'ping 1s cubic-bezier(0, 0, 0.2, 1) infinite',
+    pulse: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+    bounce: 'bounce 1s infinite',
+    fadeIn: 'fadeIn 0.2s ease-in',
+    fadeOut: 'fadeOut 0.2s ease-out',
+    slideInUp: 'slideInUp 0.3s ease-out',
+    slideInDown: 'slideInDown 0.3s ease-out'
   },
   
   // Z-index scale
@@ -151,6 +170,9 @@ export const tokens = {
     headerClearance: '80px' // Header height + margin
   }
 } as const;
+
+// Dark mode support
+export { darkModeColors, darkModeCSSVariables };
 
 // CSS Custom Properties string for injection
 export const cssVariables = `
@@ -266,27 +288,133 @@ export const cssVariables = `
   --transition-fast: ${tokens.transition.fast};
   --transition-base: ${tokens.transition.base};
   --transition-slow: ${tokens.transition.slow};
+
+  /* Breakpoints */
+  --breakpoint-sm: ${tokens.breakpoints.sm};
+  --breakpoint-md: ${tokens.breakpoints.md};
+  --breakpoint-lg: ${tokens.breakpoints.lg};
+  --breakpoint-xl: ${tokens.breakpoints.xl};
+  --breakpoint-2xl: ${tokens.breakpoints['2xl']};
+
+  /* Container sizes */
+  --container-sm: ${tokens.containerSizes.sm};
+  --container-md: ${tokens.containerSizes.md};
+  --container-lg: ${tokens.containerSizes.lg};
+  --container-xl: ${tokens.containerSizes.xl};
+  --container-2xl: ${tokens.containerSizes['2xl']};
 }
 
-/* CSS animations for live indicators */
+/* CSS animations */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
 @keyframes pulse {
-  0% {
-    opacity: 1;
-    transform: scale(1);
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
   }
   50% {
-    opacity: 0.7;
-    transform: scale(1.1);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
+    transform: none;
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
   }
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Live pulse animation for match cards */
 .live-pulse {
   animation: pulse 2s ease-in-out infinite;
 }
+
+/* Utility animation classes */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.animate-ping {
+  animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s ease-in;
+}
+
+.animate-fade-out {
+  animation: fadeOut 0.2s ease-out;
+}
+
+.animate-slide-in-up {
+  animation: slideInUp 0.3s ease-out;
+}
+
+.animate-slide-in-down {
+  animation: slideInDown 0.3s ease-out;
+}
+
+/* Include dark mode CSS */
+${darkModeCSSVariables}
 `;
 
 export type Tokens = typeof tokens;

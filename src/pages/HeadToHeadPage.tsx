@@ -1,27 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Breadcrumbs from '../components/Breadcrumbs';
 import H2HStatsCard from '../components/H2HStatsCard';
 import NextFixtureHero from '../components/NextFixtureHero';
 import { FixtureCard } from '../design-system';
-import {
-  getHeadToHeadFixtures,
-  getNextHeadToHeadFixture,
-  getTeamBySlugIntelligent
-} from '../services/supabase';
+import { getHeadToHeadFixtures, getNextHeadToHeadFixture } from '../services/supabase';
 import { updateDocumentMeta } from '../utils/seo';
 import { generateBreadcrumbs } from '../utils/breadcrumbs';
-import {
-  parseH2HSlug,
-  needsCanonicalRedirect,
-  generateH2HMeta,
-  cleanTeamNameForDisplay,
-  calculateH2HStats
-} from '../utils/headToHead';
-import { normalizeTeamSlug, mapSeoSlugToDbSlugEnhanced } from '../utils/teamSlugs';
-import { isSupportedTeam } from '../utils/teamSlugs';
+import { generateH2HMeta, calculateH2HStats } from '../utils/headToHead';
 import { generateMatchPreview, isPremierLeagueFixture } from '../utils/matchPreview';
+import { TeamResolver } from '../services/TeamResolver';
+import { URLBuilder } from '../services/URLBuilder';
 import type { Fixture, Team } from '../types';
 
 const HeadToHeadPage: React.FC = () => {
@@ -37,79 +27,35 @@ const HeadToHeadPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [shouldRedirect, setShouldRedirect] = useState<string | null>(null);
 
-  // Parse team slugs from URL
-  const parsedTeams = slug ? parseH2HSlug(slug) : null;
-
-  useEffect(() => {
-    // Check if we need to redirect to canonical URL
-    const canonicalSlug = slug ? needsCanonicalRedirect(slug) : null;
-    if (canonicalSlug) {
-      setShouldRedirect(canonicalSlug);
-      return;
-    }
-
-    if (!parsedTeams) {
-      setError('Invalid team matchup URL');
-      setLoading(false);
-      return;
-    }
-
-    // Validate this is a supported H2H matchup (Premier League or Champions League)
-    if (!slug) {
-      setError('Invalid H2H URL format');
-      setLoading(false);
-      return;
-    }
-
-    const parts = slug.split('-vs-');
-    if (parts.length !== 2 || !isSupportedTeam(parts[0]) || !isSupportedTeam(parts[1])) {
-      setError('H2H pages are currently available for Premier League and Champions League teams only');
-      setLoading(false);
-      return;
-    }
-
-    loadH2HData();
-  }, [slug]);
-
-  // Handle redirect after hooks
-  if (shouldRedirect) {
-    // Redirect to h2h path (new primary location for H2H pages)
-    return <Navigate to={`/h2h/${shouldRedirect}`} replace />;
-  }
-
-  const loadH2HData = async () => {
-    if (!parsedTeams) return;
+  const loadH2HData = useCallback(async () => {
+    if (!slug) return;
 
     try {
       setLoading(true);
       setError(null);
 
-      // Normalize team slugs to handle variations (SEO-friendly)
-      const seoTeam1Slug = normalizeTeamSlug(parsedTeams.team1Slug);
-      const seoTeam2Slug = normalizeTeamSlug(parsedTeams.team2Slug);
+      console.log(`Loading H2H data for slug: ${slug}`);
 
-      // Map SEO slugs to database slugs (enhanced mapping for Premier League and Champions League)
-      const dbTeam1Slug = mapSeoSlugToDbSlugEnhanced(seoTeam1Slug);
-      const dbTeam2Slug = mapSeoSlugToDbSlugEnhanced(seoTeam2Slug);
+      // Use TeamResolver's parseH2HSlug which handles all slug variations
+      const result = await TeamResolver.parseH2HSlug(slug);
 
-      console.log(`Loading H2H data for ${seoTeam1Slug} vs ${seoTeam2Slug}`);
-      console.log(`Database lookup: ${dbTeam1Slug} vs ${dbTeam2Slug}`);
-
-      // Load teams first to get their actual slugs
-      const [team1Data, team2Data] = await Promise.all([
-        getTeamBySlugIntelligent(dbTeam1Slug),
-        getTeamBySlugIntelligent(dbTeam2Slug)
-      ]);
-
-      // Validate teams exist before proceeding
-      if (!team1Data || !team2Data) {
-        const missingTeam = !team1Data ? seoTeam1Slug : seoTeam2Slug;
-        setError(`Team not found: ${cleanTeamNameForDisplay(missingTeam)}`);
+      if (!result) {
+        setError('Invalid team matchup URL format');
         setLoading(false);
         return;
       }
 
-      // Now load fixtures using the actual team slugs found in the database
+      const { team1: team1Data, team2: team2Data } = result;
+
+      // Check if we need to redirect to canonical URL
+      const canonicalSlug = TeamResolver.generateH2HSlug(team1Data, team2Data);
+      if (slug !== canonicalSlug) {
+        // Redirect to canonical URL format
+        setShouldRedirect(canonicalSlug);
+        return;
+      }
+
+      // Load fixtures using the database slugs from the team data
       const [fixturesData, nextFixtureData] = await Promise.all([
         getHeadToHeadFixtures(team1Data.slug, team2Data.slug),
         getNextHeadToHeadFixture(team1Data.slug, team2Data.slug)
@@ -144,7 +90,23 @@ const HeadToHeadPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [slug]);
+
+  useEffect(() => {
+    if (!slug) {
+      setError('Invalid H2H URL format');
+      setLoading(false);
+      return;
+    }
+
+    loadH2HData();
+  }, [slug, loadH2HData]);
+
+  // Handle redirect after hooks
+  if (shouldRedirect) {
+    // Redirect to h2h path (new primary location for H2H pages)
+    return <Navigate to={`/h2h/${shouldRedirect}`} replace />;
+  }
 
   if (loading) {
     return (
@@ -243,7 +205,7 @@ const HeadToHeadPage: React.FC = () => {
               marginBottom: '8px'
             }}>
               <a
-                href={`/clubs/${team1.slug}`}
+                href={URLBuilder.team(team1)}
                 style={{
                   color: 'inherit',
                   textDecoration: 'none'
@@ -255,7 +217,7 @@ const HeadToHeadPage: React.FC = () => {
               </a>
               {' vs '}
               <a
-                href={`/clubs/${team2.slug}`}
+                href={URLBuilder.team(team2)}
                 style={{
                   color: 'inherit',
                   textDecoration: 'none'
@@ -403,7 +365,7 @@ const HeadToHeadPage: React.FC = () => {
               </p>
               <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
                 <a
-                  href={`/clubs/${team1.slug}`}
+                  href={URLBuilder.team(team1)}
                   style={{
                     display: 'inline-block',
                     background: '#3b82f6',
@@ -418,7 +380,7 @@ const HeadToHeadPage: React.FC = () => {
                   View {team1.name} Fixtures
                 </a>
                 <a
-                  href={`/clubs/${team2.slug}`}
+                  href={URLBuilder.team(team2)}
                   style={{
                     display: 'inline-block',
                     background: '#3b82f6',
