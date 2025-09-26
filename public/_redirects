@@ -6,6 +6,16 @@
 /h2h/afc-bournemouth-vs-aston-villa /h2h/bournemouth-vs-aston-villa 301!
 /h2h/aston-villa-vs-afc-bournemouth /h2h/aston-villa-vs-bournemouth 301!
 
+# H2H redirects for common wrong slug formats to correct smart slugs
+/h2h/manchester-united-vs-* /h2h/man-united-vs-:splat 301!
+/h2h/*-vs-manchester-united /h2h/:splat-vs-man-united 301!
+/h2h/manchester-city-vs-* /h2h/man-city-vs-:splat 301!
+/h2h/*-vs-manchester-city /h2h/:splat-vs-man-city 301!
+/h2h/brighton-hove-albion-vs-* /h2h/brighton-vs-:splat 301!
+/h2h/*-vs-brighton-hove-albion /h2h/:splat-vs-brighton 301!
+/h2h/brentford-vs-manchester-united /h2h/brentford-vs-man-united 301!
+/h2h/burnley-vs-manchester-city /h2h/burnley-vs-man-city 301!
+
 # More H2H redirects will be added as needed
 
 # Specific team redirects will be added after running slug generation
