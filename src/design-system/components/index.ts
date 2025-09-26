@@ -16,6 +16,7 @@ export type { TextContainerProps } from './TextContainer';
 // New shadcn/ui components (replacing old design system)
 export * from './Button';
 export * from './Input';
+export * from './Select';
 export * from './Dialog';
 
 // Layout utilities (converted to Tailwind)

@@ -10,6 +10,7 @@ import {
   Heading,
   Text,
   Link,
+  Select,
   Dialog,
   DialogContent,
   DialogHeader,
@@ -74,10 +75,33 @@ const DesignSystemDemo: React.FC = () => {
                 placeholder="Enter your password"
               />
 
-              {/* TODO: Implement enhanced Select wrapper */}
-              <p className="text-sm text-muted-foreground">
-                Select component - TODO: Needs proper shadcn wrapper
-              </p>
+              <Select
+                label="Country"
+                placeholder="Select your country"
+                helperText="Choose your country of residence"
+                options={[
+                  { value: 'us', label: 'United States' },
+                  { value: 'uk', label: 'United Kingdom' },
+                  { value: 'ca', label: 'Canada' },
+                  { value: 'au', label: 'Australia' },
+                  { value: 'de', label: 'Germany' },
+                  { value: 'fr', label: 'France', disabled: true },
+                ]}
+              />
+
+              <Select
+                label="Priority Level"
+                placeholder="Select priority"
+                errorText="This field is required"
+                variant="error"
+                required
+                options={[
+                  { value: 'low', label: 'Low Priority' },
+                  { value: 'medium', label: 'Medium Priority' },
+                  { value: 'high', label: 'High Priority' },
+                  { value: 'urgent', label: 'Urgent' },
+                ]}
+              />
             </Stack>
 
             <Stack space="md">
