@@ -26,12 +26,8 @@ const ChampionsLeagueGroupStagePage: React.FC = () => {
 
         console.log('Loading Champions League teams and fixtures...');
 
-        // Load all teams from Champions League (competition_id = 2)
-        const allTeams = await getTeams();
-        const championsLeagueTeams = allTeams.filter(team => team.competition_id === 2);
-
-        console.log(`Found ${championsLeagueTeams.length} Champions League teams in database`);
-        console.log('Champions League teams:', championsLeagueTeams.map(t => t.name));
+        // Get all Champions League fixtures first to determine which teams are participating
+        // Note: Teams table might not have competition_id = 2 set correctly
 
         // Set date range to cover entire current season
         const now = new Date();
@@ -61,12 +57,19 @@ const ChampionsLeagueGroupStagePage: React.FC = () => {
 
         setFixtures(relevantFixtures);
 
-        // Use teams from database, not just from fixtures
-        // This ensures we show all teams even if they don't have fixtures yet
-        const sortedTeams = championsLeagueTeams.sort((a, b) => a.name.localeCompare(b.name));
-        setTeams(sortedTeams);
+        // Extract teams from Champions League fixtures since competition_id might not be set correctly
+        // This approach ensures we show teams that actually have Champions League fixtures
+        const uniqueTeams = new Map<number, Team>();
+        relevantFixtures.forEach(fixture => {
+          uniqueTeams.set(fixture.home.id, fixture.home);
+          uniqueTeams.set(fixture.away.id, fixture.away);
+        });
 
-        console.log(`Final teams to display: ${sortedTeams.length}`);
+        const teamsFromFixtures = Array.from(uniqueTeams.values()).sort((a, b) => a.name.localeCompare(b.name));
+        setTeams(teamsFromFixtures);
+
+        console.log(`Final teams to display: ${teamsFromFixtures.length}`);
+        console.log('Teams found in fixtures:', teamsFromFixtures.map(t => t.name));
 
         // Update SEO meta tags
         updateDocumentMeta({
