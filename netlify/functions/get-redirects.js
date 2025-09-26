@@ -12,13 +12,40 @@ exports.handler = async (event, context) => {
 
   try {
     // Read the _redirects file from the build directory
-    const redirectsPath = path.join(process.cwd(), '_redirects');
+    // Try multiple possible locations for the _redirects file
+    const possiblePaths = [
+      path.join(process.cwd(), '_redirects'),
+      path.join(process.cwd(), 'build/_redirects'),
+      path.join(process.cwd(), 'public/_redirects'),
+      path.join(__dirname, '../../_redirects'),
+      path.join(__dirname, '../../build/_redirects'),
+      path.join(__dirname, '../../public/_redirects')
+    ];
+
+    let redirectsPath = null;
+    const debugInfo = {
+      cwd: process.cwd(),
+      dirname: __dirname,
+      checkedPaths: []
+    };
+
+    for (const testPath of possiblePaths) {
+      const exists = fs.existsSync(testPath);
+      debugInfo.checkedPaths.push({ path: testPath, exists });
+      if (exists) {
+        redirectsPath = testPath;
+        break;
+      }
+    }
 
     // Check if file exists
-    if (!fs.existsSync(redirectsPath)) {
+    if (!redirectsPath) {
       return {
         statusCode: 404,
-        body: JSON.stringify({ error: '_redirects file not found' })
+        body: JSON.stringify({
+          error: '_redirects file not found',
+          debug: debugInfo
+        })
       };
     }
 
