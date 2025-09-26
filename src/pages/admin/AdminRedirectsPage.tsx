@@ -38,19 +38,8 @@ const AdminRedirectsPage: React.FC = () => {
       // 2. Use a Netlify function to read and manage the _redirects file
       // 3. Store redirects in a database instead of the file system
 
-      // Try to fetch from Netlify function first, then fallback to known content
-      let redirectsContent = '';
-
-      try {
-        const response = await fetch('/.netlify/functions/get-redirects');
-        if (response.ok) {
-          redirectsContent = await response.text();
-        } else {
-          throw new Error('Function failed');
-        }
-      } catch (err) {
-        // Fallback to current known content from _redirects file
-        redirectsContent = `# Team URL Redirects
+      // Current _redirects file content (hardcoded for now)
+      const redirectsContent = `# Team URL Redirects
 # Redirect old /clubs/ paths to new /club/ paths
 /clubs/:slug /club/:slug 301!
 
@@ -59,7 +48,6 @@ const AdminRedirectsPage: React.FC = () => {
 
 # Future team redirects can be added here if needed
 # Format: /club/old-slug /club/new-slug 301!`;
-      }
 
       console.log('Using redirects content:', redirectsContent);
       const parsedRedirects = parseRedirectsFile(redirectsContent);
