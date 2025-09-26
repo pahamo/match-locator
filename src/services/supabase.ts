@@ -151,6 +151,14 @@ async function getProvidersByIds(ids: number[] = []): Promise<Provider[]> {
   ensure(1, 'Sky Sports', 'https://www.skysports.com/football/fixtures-results');
   ensure(2, 'TNT Sports', 'https://tntsports.co.uk/football');
 
+  // Add fallback for any remaining unknown providers
+  for (const id of ids) {
+    const key = String(id);
+    if (!byId.has(key)) {
+      byId.set(key, { id: key, name: 'Unknown Provider', type: 'tv', href: '', status: 'confirmed' });
+    }
+  }
+
   return Array.from(byId.values());
 }
 
