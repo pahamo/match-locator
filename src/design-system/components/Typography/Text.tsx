@@ -87,8 +87,7 @@ const Text = React.forwardRef<HTMLElement, TextProps>(({
     // Line heights by variant
     {
       'leading-relaxed': variant === 'body', // 1.6
-      'leading-normal': variant === 'caption', // 1.4
-      'leading-normal': variant === 'subtitle', // 1.5
+      'leading-normal': variant === 'caption' || variant === 'subtitle', // 1.4 / 1.5
       'leading-tight': variant === 'overline', // 1.2
     },
 
