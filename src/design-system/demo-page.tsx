@@ -235,7 +235,7 @@ const DesignSystemDemo: React.FC = () => {
 
             <div>
               <Text weight="medium">Sizes & Features</Text>
-              <Flex gap="sm" wrap align="center">
+              <Flex gap="sm" wrap="wrap" align="center">
                 <Badge size="sm">Small</Badge>
                 <Badge size="default">Default</Badge>
                 <Badge size="lg">Large</Badge>
