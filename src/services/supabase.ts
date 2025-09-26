@@ -627,20 +627,23 @@ export async function getHeadToHeadFixtures(teamSlug1: string, teamSlug2: string
       // Continue without broadcast data rather than fail completely
     }
 
-    // Group providers by fixture
+    // Group providers by fixture using proper provider lookup
     const providersByFixture: Record<number, Provider[]> = {};
     if (broadcastRows) {
+      // Get all unique provider IDs
+      const allProviderIds = Array.from(new Set(broadcastRows.map(row => row.provider_id).filter(Boolean)));
+      const allProviders = allProviderIds.length ? await getProvidersByIds(allProviderIds) : [];
+      const providerMap = Object.fromEntries(allProviders.map(p => [p.id, p]));
+
+      // Group providers by fixture
       broadcastRows.forEach(row => {
         if (!providersByFixture[row.fixture_id]) {
           providersByFixture[row.fixture_id] = [];
         }
-        providersByFixture[row.fixture_id].push({
-          id: row.provider_id,
-          name: `Provider ${row.provider_id}`,
-          type: 'tv', // Default since not available in view
-          slug: '', // Default since not available in view
-          url: '' // Default since not available in view
-        });
+        const provider = providerMap[String(row.provider_id)];
+        if (provider) {
+          providersByFixture[row.fixture_id].push(provider);
+        }
       });
     }
 
@@ -692,18 +695,11 @@ export async function getNextHeadToHeadFixture(teamSlug1: string, teamSlug2: str
       console.error('Error fetching broadcast data for next fixture:', broadcastError);
     }
 
-    // Map providers
-    const providers: Provider[] = [];
-    if (broadcastRows) {
-      broadcastRows.forEach(broadcastRow => {
-        providers.push({
-          id: broadcastRow.provider_id,
-          name: `Provider ${broadcastRow.provider_id}`,
-          type: 'tv', // Default since not available in view
-          slug: '', // Default since not available in view
-          url: '' // Default since not available in view
-        });
-      });
+    // Map providers using proper provider lookup
+    let providers: Provider[] = [];
+    if (broadcastRows && broadcastRows.length > 0) {
+      const providerIds = Array.from(new Set(broadcastRows.map(b => b.provider_id).filter(Boolean)));
+      providers = providerIds.length ? await getProvidersByIds(providerIds) : [];
     }
 
     const providersByFixture = { [row.id]: providers };
