@@ -8,7 +8,7 @@ import { FixtureCard } from '../design-system';
 import {
   getHeadToHeadFixtures,
   getNextHeadToHeadFixture,
-  getTeamBySlug
+  getTeamBySlugIntelligent
 } from '../services/supabase';
 import { updateDocumentMeta } from '../utils/seo';
 import { generateBreadcrumbs } from '../utils/breadcrumbs';
@@ -95,21 +95,25 @@ const HeadToHeadPage: React.FC = () => {
       console.log(`Loading H2H data for ${seoTeam1Slug} vs ${seoTeam2Slug}`);
       console.log(`Database lookup: ${dbTeam1Slug} vs ${dbTeam2Slug}`);
 
-      // Load teams and fixtures in parallel using database slugs
-      const [team1Data, team2Data, fixturesData, nextFixtureData] = await Promise.all([
-        getTeamBySlug(dbTeam1Slug),
-        getTeamBySlug(dbTeam2Slug),
-        getHeadToHeadFixtures(dbTeam1Slug, dbTeam2Slug),
-        getNextHeadToHeadFixture(dbTeam1Slug, dbTeam2Slug)
+      // Load teams first to get their actual slugs
+      const [team1Data, team2Data] = await Promise.all([
+        getTeamBySlugIntelligent(dbTeam1Slug),
+        getTeamBySlugIntelligent(dbTeam2Slug)
       ]);
 
-      // Validate teams exist
+      // Validate teams exist before proceeding
       if (!team1Data || !team2Data) {
         const missingTeam = !team1Data ? seoTeam1Slug : seoTeam2Slug;
         setError(`Team not found: ${cleanTeamNameForDisplay(missingTeam)}`);
         setLoading(false);
         return;
       }
+
+      // Now load fixtures using the actual team slugs found in the database
+      const [fixturesData, nextFixtureData] = await Promise.all([
+        getHeadToHeadFixtures(team1Data.slug, team2Data.slug),
+        getNextHeadToHeadFixture(team1Data.slug, team2Data.slug)
+      ]);
 
       setTeam1(team1Data);
       setTeam2(team2Data);
