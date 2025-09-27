@@ -6,6 +6,7 @@ import { getMatchStatus } from '../../utils/matchStatus';
 import AdminLayout from '../../components/AdminLayout';
 import AdminAuth from '../../components/AdminAuth';
 import { SoccersApiStatus } from '../../components/admin/SoccersApiStatus';
+import FeatureFlagControls from '../../components/admin/FeatureFlagControls';
 
 interface DashboardStats {
   teams: {
@@ -462,6 +463,11 @@ const AdminDashboardPage: React.FC = () => {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Feature Flag Controls */}
+        <div style={{ marginTop: '32px' }}>
+          <FeatureFlagControls />
         </div>
 
         {/* SoccersAPI Integration */}

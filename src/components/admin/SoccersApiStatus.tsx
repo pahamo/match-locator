@@ -5,7 +5,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '../ui/button';
-import ApiSourceIndicator from '../debug/ApiSourceIndicator';
 
 interface ApiStatus {
   connected: boolean;
@@ -117,10 +116,7 @@ export const SoccersApiStatus: React.FC = () => {
 
   return (
     <div className="bg-white rounded-lg shadow p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">SoccersAPI Integration</h2>
-        <ApiSourceIndicator />
-      </div>
+      <h2 className="text-xl font-semibold mb-4">SoccersAPI Integration</h2>
 
       {/* API Connection Status */}
       <div className="mb-6">
