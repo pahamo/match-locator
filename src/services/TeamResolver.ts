@@ -152,6 +152,14 @@ class TeamResolverClass {
       variations.add('brighton-hove-albion');
     }
 
+    // Sunderland variations
+    if (slug.includes('sunderland-afc')) {
+      variations.add(slug.replace('sunderland-afc', 'sunderland'));
+    }
+    if (slug === 'sunderland') {
+      variations.add('sunderland-afc');
+    }
+
     return Array.from(variations);
   }
 
