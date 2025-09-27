@@ -122,43 +122,80 @@ class TeamResolverClass {
   private generateSlugVariations(slug: string): string[] {
     const variations = new Set([slug]);
 
-    // Common transformations
+    // Common suffix transformations
     variations.add(slug + '-fc');
+    variations.add(slug + '-afc');
     variations.add(slug.replace(/-fc$/, ''));
+    variations.add(slug.replace(/-afc$/, ''));
     variations.add(slug.replace(/^afc-/, ''));
     variations.add('afc-' + slug);
 
-    // Manchester United variations
-    if (slug.includes('manchester-united')) {
-      variations.add(slug.replace('manchester-united', 'man-united'));
-    }
-    if (slug.includes('man-united')) {
-      variations.add(slug.replace('man-united', 'manchester-united'));
-    }
+    // Premier League team-specific transformations (old → new slug mappings)
+    const teamMappings = [
+      // Manchester teams
+      ['manchester-united-fc', 'man-united'],
+      ['manchester-united', 'man-united'],
+      ['manchester-city-fc', 'man-city'],
+      ['manchester-city', 'man-city'],
 
-    // Manchester City variations
-    if (slug.includes('manchester-city')) {
-      variations.add(slug.replace('manchester-city', 'man-city'));
-    }
-    if (slug.includes('man-city')) {
-      variations.add(slug.replace('man-city', 'manchester-city'));
-    }
+      // London teams
+      ['tottenham-hotspur-fc', 'tottenham'],
+      ['tottenham-hotspur', 'tottenham'],
+      ['arsenal-fc', 'arsenal'],
+      ['chelsea-fc', 'chelsea'],
+      ['west-ham-united-fc', 'west-ham'],
+      ['west-ham-united', 'west-ham'],
+      ['crystal-palace-fc', 'crystal-palace'],
+      ['fulham-fc', 'fulham'],
+      ['brentford-fc', 'brentford'],
 
-    // Brighton variations
-    if (slug.includes('brighton-hove-albion')) {
-      variations.add(slug.replace('brighton-hove-albion', 'brighton'));
-    }
-    if (slug === 'brighton') {
-      variations.add('brighton-hove-albion');
-    }
+      // Midlands teams
+      ['aston-villa-fc', 'aston-villa'],
+      ['nottingham-forest-fc', 'forest'],
+      ['nottingham-forest', 'forest'],
+      ['wolverhampton-wanderers-fc', 'wolves'],
+      ['wolverhampton-wanderers', 'wolves'],
 
-    // Sunderland variations
-    if (slug.includes('sunderland-afc')) {
-      variations.add(slug.replace('sunderland-afc', 'sunderland'));
-    }
-    if (slug === 'sunderland') {
-      variations.add('sunderland-afc');
-    }
+      // Northern teams
+      ['liverpool-fc', 'liverpool'],
+      ['everton-fc', 'everton'],
+      ['leeds-united-fc', 'leeds-united'],
+      ['leeds-united', 'leeds-united'],
+      ['newcastle-united-fc', 'newcastle'],
+      ['newcastle-united', 'newcastle'],
+      ['burnley-fc', 'burnley'],
+
+      // Southern teams
+      ['brighton-hove-albion-fc', 'brighton'],
+      ['brighton-hove-albion', 'brighton'],
+      ['southampton-fc', 'southampton'],
+      ['afc-bournemouth', 'bournemouth'],
+
+      // Other teams
+      ['leicester-city-fc', 'leicester'],
+      ['leicester-city', 'leicester'],
+      ['sunderland-afc', 'sunderland'],
+      ['norwich-city-fc', 'norwich'],
+      ['norwich-city', 'norwich'],
+      ['watford-fc', 'watford']
+    ];
+
+    // Apply all team mappings in both directions
+    teamMappings.forEach(([oldSlug, newSlug]) => {
+      if (slug === oldSlug) {
+        variations.add(newSlug);
+      }
+      if (slug === newSlug) {
+        variations.add(oldSlug);
+      }
+      // Also handle when slug contains these patterns
+      if (slug.includes(oldSlug)) {
+        variations.add(slug.replace(oldSlug, newSlug));
+      }
+      if (slug.includes(newSlug)) {
+        variations.add(slug.replace(newSlug, oldSlug));
+      }
+    });
 
     return Array.from(variations);
   }
