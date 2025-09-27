@@ -174,7 +174,7 @@ async function main() {
     console.log('4. 🔐 There might be a different API key in your account');
     console.log('');
     console.log('📞 CONTACT SUPPORT: support@soccersapi.com');
-    console.log('Tell them: "My API key BfGUXaJOHb returns \'User or token incorrect!\' - please verify my account setup"');
+    console.log('Tell them: "My API key returns \'User or token incorrect!\' - please verify my account setup"');
   }
 }
 

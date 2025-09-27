@@ -9,7 +9,7 @@
 The entire SoccersAPI integration is **100% built and ready to deploy**. The only blocker is that SoccersAPI is rejecting our API credentials with "User or token incorrect!" error.
 
 **Support contacted:** support@soccersapi.com
-**API Key:** `BfGUXaJOHb`
+**API Key:** `[REDACTED]`
 **Account:** `p@kinotto.co`
 
 ## ✅ What's Complete
@@ -61,7 +61,7 @@ The entire SoccersAPI integration is **100% built and ready to deploy**. The onl
 // Format that will work once API is fixed:
 const url = new URL('https://api.soccersapi.com/v2.2/leagues');
 url.searchParams.append('username', 'p@kinotto.co');
-url.searchParams.append('token', 'BfGUXaJOHb');
+url.searchParams.append('token', '[REDACTED]');
 ```
 
 ### Error Pattern Observed
@@ -174,7 +174,7 @@ scripts/soccersapi-analysis.mjs # Problem analysis
 ## 📞 Support Contact
 
 **SoccersAPI Support:** support@soccersapi.com
-**Issue:** API key `BfGUXaJOHb` being rejected
+**Issue:** API key being rejected
 **Account:** `p@kinotto.co`
 
 **Integration Ready For Immediate Activation** ✅
