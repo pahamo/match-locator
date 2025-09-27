@@ -642,6 +642,65 @@ export async function getNextHeadToHeadFixture(teamSlug1: string, teamSlug2: str
 }
 
 /**
+ * Get the live fixture OR next upcoming fixture between two teams
+ * Prioritizes live games over future fixtures
+ */
+export async function getLiveOrNextHeadToHeadFixture(teamSlug1: string, teamSlug2: string): Promise<Fixture | null> {
+  try {
+    const now = new Date();
+    const nowIso = now.toISOString();
+
+    // First, check for live games (started within last 3 hours and not finished)
+    const threeHoursAgo = new Date(now.getTime() - 3 * 60 * 60 * 1000).toISOString();
+
+    const { data: liveFixtures, error: liveError } = await supabase
+      .from('fixtures_with_teams')
+      .select('*')
+      .or(`and(home_slug.eq.${teamSlug1},away_slug.eq.${teamSlug2}),and(home_slug.eq.${teamSlug2},away_slug.eq.${teamSlug1})`)
+      .gte('utc_kickoff', threeHoursAgo)
+      .lte('utc_kickoff', nowIso)
+      .order('utc_kickoff', { ascending: false })
+      .limit(1);
+
+    if (liveError) {
+      console.error('Error fetching live H2H fixture:', liveError);
+    }
+
+    // If we found a live game, return it
+    if (liveFixtures && liveFixtures.length > 0) {
+      const liveFixture = liveFixtures[0];
+
+      // Get broadcast data for the live fixture
+      const { data: broadcastRows, error: broadcastError } = await supabase
+        .from('broadcasts')
+        .select('fixture_id, provider_id')
+        .eq('fixture_id', liveFixture.id);
+
+      if (broadcastError) {
+        console.error('Error fetching broadcast data for live fixture:', broadcastError);
+      }
+
+      // Map providers
+      let providers: Provider[] = [];
+      if (broadcastRows && broadcastRows.length > 0) {
+        const providerIds = Array.from(new Set(broadcastRows.map(b => b.provider_id).filter(Boolean)));
+        providers = providerIds.length ? await getProvidersByIds(providerIds) : [];
+      }
+
+      const providersByFixture = { [liveFixture.id]: providers };
+      return mapFixtureRow(liveFixture, providersByFixture);
+    }
+
+    // No live game found, fall back to next upcoming fixture
+    return getNextHeadToHeadFixture(teamSlug1, teamSlug2);
+
+  } catch (error) {
+    console.error('Failed to fetch live or next H2H fixture:', error);
+    throw error;
+  }
+}
+
+/**
  * Get team by slug
  */
 export async function getTeamBySlug(slug: string): Promise<Team | null> {

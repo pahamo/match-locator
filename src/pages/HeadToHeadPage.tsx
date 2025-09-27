@@ -5,7 +5,7 @@ import Breadcrumbs from '../components/Breadcrumbs';
 import H2HStatsCard from '../components/H2HStatsCard';
 import NextFixtureHero from '../components/NextFixtureHero';
 import { FixtureCard } from '../design-system';
-import { getHeadToHeadFixtures, getNextHeadToHeadFixture } from '../services/supabase';
+import { getHeadToHeadFixtures, getLiveOrNextHeadToHeadFixture } from '../services/supabase';
 import { updateDocumentMeta } from '../utils/seo';
 import { generateBreadcrumbs } from '../utils/breadcrumbs';
 import { generateH2HMeta, calculateH2HStats } from '../utils/headToHead';
@@ -57,7 +57,7 @@ const HeadToHeadPage: React.FC = () => {
       // Load fixtures using the database slugs from the team data
       const [fixturesData, nextFixtureData] = await Promise.all([
         getHeadToHeadFixtures(team1Data.slug, team2Data.slug),
-        getNextHeadToHeadFixture(team1Data.slug, team2Data.slug)
+        getLiveOrNextHeadToHeadFixture(team1Data.slug, team2Data.slug)
       ]);
 
       setTeam1(team1Data);
