@@ -9,8 +9,8 @@ const fetch = require('node-fetch');
 class SoccersApiTester {
   constructor() {
     this.baseUrl = 'https://api.soccersapi.com/v2.2';
-    this.apiKey = process.env.SOCCERSAPI_KEY;
-    this.email = process.env.SOCCERSAPI_USERNAME;
+    this.apiKey = process.env.SOCCERSAPI_KEY || process.env.SOCCERSAPI_TOKEN || process.env.REACT_APP_SOCCERSAPI_TOKEN;
+    this.email = process.env.SOCCERSAPI_USERNAME || process.env.REACT_APP_SOCCERSAPI_USERNAME;
   }
 
   async testConnection() {
@@ -24,8 +24,9 @@ class SoccersApiTester {
 
     // Try a simple endpoint with proper authentication
     const url = new URL(`${this.baseUrl}/leagues`);
-    url.searchParams.append('username', this.email);
+    url.searchParams.append('user', this.email);
     url.searchParams.append('token', this.apiKey);
+    url.searchParams.append('t', 'list');
 
     const response = await fetch(url.toString(), {
       method: 'GET',
