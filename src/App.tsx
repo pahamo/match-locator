@@ -63,6 +63,7 @@ const HowToWatchPage = React.lazy(() => import('./pages/HowToWatchPage'));
 const CookieSettingsModal = React.lazy(() => import('./components/cookies/CookieSettingsModal'));
 const DesignSystemDemo = React.lazy(() => import('./design-system/demo-page'));
 const DatabaseAnalysisPage = React.lazy(() => import('./pages/DatabaseAnalysisPage'));
+const TestSoccersAPIPage = React.lazy(() => import('./pages/TestSoccersAPIPage'));
 
 // Loading fallback component
 const PageLoader = () => (
@@ -135,6 +136,7 @@ function App() {
               <Route path="/admin/competitions" element={<AdminCompetitionsPage />} />
               <Route path="/admin/redirects" element={<AdminRedirectsPage />} />
               <Route path="/admin/fix-data" element={<AdminFixDataPage />} />
+              <Route path="/test-soccersapi" element={<TestSoccersAPIPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/legal/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/legal/cookie-policy" element={<CookiePolicy />} />

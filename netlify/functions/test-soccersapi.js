@@ -46,6 +46,45 @@ class SoccersApiTester {
     return data;
   }
 
+  async testFixtures(leagueId, dateFrom, dateTo) {
+    if (!this.apiKey || !this.email) {
+      throw new Error('API credentials not configured');
+    }
+
+    // Test fixtures endpoint for specific league
+    const url = new URL(`${this.baseUrl}/fixtures`);
+    url.searchParams.append('user', this.email);
+    url.searchParams.append('token', this.apiKey);
+    url.searchParams.append('t', 'list');
+
+    if (leagueId) {
+      url.searchParams.append('league_id', leagueId);
+    }
+    if (dateFrom) {
+      url.searchParams.append('date_from', dateFrom);
+    }
+    if (dateTo) {
+      url.searchParams.append('date_to', dateTo);
+    }
+
+    const response = await fetch(url.toString(), {
+      method: 'GET',
+      headers: {
+        'User-Agent': 'FixturesApp-Test/1.0',
+        'Accept': 'application/json',
+      },
+      timeout: 15000,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Fixtures API Error ${response.status}: ${errorText}`);
+    }
+
+    const data = await response.json();
+    return data;
+  }
+
   getUsageStats() {
     return {
       requestCount: 1, // This would be tracked in a real implementation
@@ -67,10 +106,21 @@ exports.handler = async (event, context) => {
   }
 
   try {
+    const body = JSON.parse(event.body || '{}');
     const tester = new SoccersApiTester();
 
-    // Test the connection
-    const data = await tester.testConnection();
+    let data;
+    let message = 'SoccersAPI connection successful';
+
+    if (body.action === 'test_fixtures') {
+      // Test fixtures for specific league
+      data = await tester.testFixtures(body.league_id, body.date_from, body.date_to);
+      message = `Found ${data.data ? data.data.length : 0} fixtures for league ${body.league_id}`;
+    } else {
+      // Default: test basic connection
+      data = await tester.testConnection();
+      message = 'SoccersAPI connection successful';
+    }
 
     console.log('✅ SoccersAPI test successful');
 
@@ -84,9 +134,10 @@ exports.handler = async (event, context) => {
       },
       body: JSON.stringify({
         success: true,
-        message: 'SoccersAPI connection successful',
-        dataReceived: Array.isArray(data) ? data.length : 1,
-        sampleData: Array.isArray(data) ? data.slice(0, 2) : data,
+        message: message,
+        dataReceived: data.data ? data.data.length : (Array.isArray(data) ? data.length : 1),
+        sampleData: data.data ? data.data.slice(0, 3) : (Array.isArray(data) ? data.slice(0, 2) : data),
+        fullResponse: data,
         stats: tester.getUsageStats(),
       })
     };
