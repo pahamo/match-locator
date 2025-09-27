@@ -48,6 +48,7 @@ export interface SoccersApiResponse<T> {
 class SoccersApiServiceClass {
   private baseUrl = 'https://api.soccersapi.com/v2.2';
   private apiKey: string;
+  private username: string;
   private cache = new Map<string, { data: any; timestamp: number }>();
   private cacheTimeout = 5 * 60 * 1000; // 5 minutes
   private requestCount = 0;
@@ -56,8 +57,12 @@ class SoccersApiServiceClass {
 
   constructor() {
     this.apiKey = process.env.REACT_APP_SOCCERSAPI_KEY || process.env.SOCCERSAPI_KEY || '';
+    this.username = process.env.REACT_APP_SOCCERSAPI_USERNAME || process.env.SOCCERSAPI_USERNAME || '';
     if (!this.apiKey) {
       console.warn('[SoccersAPI] API key not found. Service will not work.');
+    }
+    if (!this.username) {
+      console.warn('[SoccersAPI] Username not found. Using fallback authentication.');
     }
   }
 
@@ -92,10 +97,15 @@ class SoccersApiServiceClass {
       'User-Agent': 'FixturesApp/1.0',
     };
 
-    // Common auth patterns for sports APIs
-    url.searchParams.append('APIkey', this.apiKey); // Most common
-    // Alternative: headers['Authorization'] = `Bearer ${this.apiKey}`;
-    // Alternative: headers['X-API-Key'] = this.apiKey;
+    // SoccersAPI authentication format: user + token + t=list
+    if (this.username) {
+      url.searchParams.append('user', this.username);
+      url.searchParams.append('token', this.apiKey);
+      url.searchParams.append('t', 'list');
+    } else {
+      // Fallback to simple API key if no username
+      url.searchParams.append('APIkey', this.apiKey);
+    }
 
     try {
       this.lastRequestTime = Date.now();
