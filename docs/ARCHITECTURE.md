@@ -395,7 +395,7 @@ interface Team {
 ```typescript
 interface SimpleFixture {
   id: number;
-  kickoff_utc: string;          // ⚠️ Use kickoff_utc (NOT utc_kickoff)
+  kickoff_utc: string;          // ⚠️ Database: utc_kickoff → Interface: kickoff_utc (mapped)
   home_team: string;            // Pre-joined team name
   away_team: string;            // Pre-joined team name
   home_crest?: string;          // Optional crest URL
@@ -466,7 +466,7 @@ fixture.away.crest      // string | null
 
 **❌ COMMON MISTAKES:**
 ```typescript
-fixture.utc_kickoff     // ❌ Wrong property name
+fixture.utc_kickoff     // ❌ Wrong for interface (use kickoff_utc)
 fixture.home_team.name  // ❌ Wrong for Fixture type
 fixture.home            // ❌ Wrong for SimpleFixture type
 ```
@@ -668,7 +668,7 @@ const Header: React.FC = () => {
 
 ## Component Architecture
 
-### Design System Components (`src/components/design-system/`)
+### Design System Components (`src/design-system/` and `src/components/ui/`)
 
 #### Core Components
 - **FixtureCard**: Flexible match display with variants

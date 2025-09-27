@@ -476,16 +476,13 @@ export function isFixturePending(fixture: AdminFixture): boolean {
 // Teams API
 export async function getTeams(): Promise<Team[]> {
   try {
-    // DEBUG: Force cache busting - fetch ALL teams without is_active filtering
-    console.log('[DEBUG] getTeams called - fetching all teams');
-    console.log('[DEBUG] Supabase client initialized and ready');
+    // Fetch all teams without is_active filtering
 
     const { data, error, count } = await supabase
       .from('teams')
       .select('id,name,slug,crest_url,competition_id,short_name,club_colors,website,venue,city', { count: 'exact' })
       .order('name', { ascending: true });
 
-    console.log(`[DEBUG] getTeams query result - count: ${count}, error: ${error ? JSON.stringify(error) : 'none'}`);
 
     if (error) {
       console.error('[Supabase] getTeams error details:', {
@@ -497,10 +494,6 @@ export async function getTeams(): Promise<Team[]> {
       return [];
     }
 
-    console.log(`[DEBUG] getTeams returned ${(data || []).length} teams from database`);
-    if (data && data.length > 0) {
-      console.log('[DEBUG] First few teams:', data.slice(0, 3).map(t => ({ id: t.id, name: t.name, competition_id: t.competition_id })));
-    }
     return (data || []).map((t: any) => ({
       id: t.id,
       name: t.name,
@@ -534,7 +527,6 @@ export async function getFixturesByDateRange(startDate: string, endDate: string)
  */
 export async function getHeadToHeadFixtures(teamSlug1: string, teamSlug2: string): Promise<Fixture[]> {
   try {
-    console.log(`Fetching H2H fixtures between ${teamSlug1} and ${teamSlug2}`);
 
     // Get fixtures with raw query for better performance
     const { data: fixtureRows, error: fixturesError } = await supabase
@@ -549,7 +541,6 @@ export async function getHeadToHeadFixtures(teamSlug1: string, teamSlug2: string
     }
 
     if (!fixtureRows || fixtureRows.length === 0) {
-      console.log('No H2H fixtures found');
       return [];
     }
 
@@ -590,7 +581,6 @@ export async function getHeadToHeadFixtures(teamSlug1: string, teamSlug2: string
     // Map to Fixture objects
     const fixtures = fixtureRows.map(row => mapFixtureRow(row, providersByFixture));
 
-    console.log(`Found ${fixtures.length} H2H fixtures`);
     return fixtures;
 
   } catch (error) {
@@ -696,7 +686,6 @@ export async function getTeamBySlugIntelligent(seoSlug: string): Promise<Team | 
   // First try the SEO slug as-is (for international teams)
   let team = await getTeamBySlug(seoSlug);
   if (team) {
-    console.log(`Found team with original slug: ${seoSlug} -> ${team.name}`);
     return team;
   }
 
@@ -704,7 +693,6 @@ export async function getTeamBySlugIntelligent(seoSlug: string): Promise<Team | 
   const fcSlug = `${seoSlug}-fc`;
   team = await getTeamBySlug(fcSlug);
   if (team) {
-    console.log(`Found team with -fc suffix: ${fcSlug} -> ${team.name}`);
     return team;
   }
 
@@ -721,11 +709,9 @@ export async function getTeamBySlugIntelligent(seoSlug: string): Promise<Team | 
 
     team = await getTeamBySlug(variation);
     if (team) {
-      console.log(`Found team with variation: ${variation} -> ${team.name}`);
       return team;
     }
   }
 
-  console.log(`No team found for slug: ${seoSlug} (tried: ${seoSlug}, ${fcSlug}, ${variations.join(', ')})`);
   return null;
 }

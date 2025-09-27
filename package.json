@@ -51,7 +51,10 @@
     "teams:backfill": "node scripts/maintenance/team-metadata-backfill.mjs",
     "teams:backfill:dry": "node scripts/maintenance/team-metadata-backfill.mjs --dry-run",
     "verify:data": "node scripts/verification/data-integrity-check.mjs",
-    "generate:sitemaps": "node scripts/generate_sitemaps.mjs"
+    "generate:sitemaps": "node scripts/generate_sitemaps.mjs",
+    "cleanup": "node scripts/cleanup.js",
+    "cleanup:dry": "node scripts/cleanup.js --dry-run",
+    "cleanup:verbose": "node scripts/cleanup.js --dry-run --verbose"
   },
   "eslintConfig": {
     "extends": [

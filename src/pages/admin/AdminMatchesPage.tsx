@@ -4,6 +4,7 @@ import { saveBroadcaster } from '../../services/supabase-simple';
 import { useAdminCompetitions } from '../../hooks/useCompetitions';
 import AdminLayout from '../../components/AdminLayout';
 import AdminAuth from '../../components/AdminAuth';
+import { formatTime } from '../../utils/dateFormat';
 
 type CompetitionFilter = '' | number | 'all'; // Use competition IDs instead of hardcoded strings
 type MatchStatusFilter = '' | 'scheduled' | 'live' | 'finished';
@@ -614,7 +615,7 @@ const AdminMatchesPage: React.FC = () => {
                     </div>
                   </td>
                   <td style={{ padding: '16px 12px', fontSize: '12px', color: '#6b7280' }}>
-                    {new Date(fixture.kickoff_utc).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    {formatTime(fixture.kickoff_utc)}
                   </td>
                   <td style={{ padding: '16px 12px' }}>
                     <span style={{

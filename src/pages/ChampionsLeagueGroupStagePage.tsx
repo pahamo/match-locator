@@ -24,7 +24,6 @@ const ChampionsLeagueGroupStagePage: React.FC = () => {
         setLoading(true);
         setError(null);
 
-        console.log('Loading Champions League teams and fixtures...');
 
         // Get all Champions League fixtures first to determine which teams are participating
         // Note: Teams table might not have competition_id = 2 set correctly
@@ -35,7 +34,6 @@ const ChampionsLeagueGroupStagePage: React.FC = () => {
         const seasonStart = `${seasonYear}-08-01T00:00:00.000Z`;
         const seasonEnd = `${seasonYear + 1}-07-31T23:59:59.999Z`;
 
-        console.log('Loading Champions League fixtures for season:', seasonYear, 'from', seasonStart, 'to', seasonEnd);
 
         // Get all Champions League fixtures (competition_id = 2)
         const fixturesData = await getFixtures({
@@ -46,14 +44,11 @@ const ChampionsLeagueGroupStagePage: React.FC = () => {
           order: 'asc'
         });
 
-        console.log('Loaded fixtures count:', fixturesData.length);
-        console.log('Available stages/rounds:', Array.from(new Set(fixturesData.map(f => f.stage || f.round).filter(Boolean))));
 
         // Show all fixtures for now - don't filter by stage since we need to see what's available
         // TODO: Re-enable stage filtering once we know the correct stage names in the data
         const relevantFixtures = fixturesData; // Remove stage filtering temporarily
 
-        console.log('Using fixtures count:', relevantFixtures.length);
 
         setFixtures(relevantFixtures);
 
@@ -68,8 +63,6 @@ const ChampionsLeagueGroupStagePage: React.FC = () => {
         const teamsFromFixtures = Array.from(uniqueTeams.values()).sort((a, b) => a.name.localeCompare(b.name));
         setTeams(teamsFromFixtures);
 
-        console.log(`Final teams to display: ${teamsFromFixtures.length}`);
-        console.log('Teams found in fixtures:', teamsFromFixtures.map(t => t.name));
 
         // Update SEO meta tags
         updateDocumentMeta({

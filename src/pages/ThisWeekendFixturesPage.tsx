@@ -205,7 +205,7 @@ const ThisWeekendFixturesPage: React.FC = () => {
               gap: '16px',
               fontSize: '14px'
             }}>
-              <span>Last updated: {lastUpdated.toLocaleTimeString('en-GB')}</span>
+              <span>Last updated: {lastUpdated.toLocaleTimeString()}</span>
               <span>Updates every 2 minutes</span>
             </div>
           </div>

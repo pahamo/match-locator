@@ -35,8 +35,8 @@
 
 2. **Environment configuration:**
    ```bash
-   cp .env.example .env.local
-   # Edit .env.local with your Supabase credentials
+   cp .env.example .env
+   # Edit .env with your Supabase credentials
    ```
 
 3. **Start development server:**
@@ -199,12 +199,12 @@ src/
 npm start              # Start development server
 npm test              # Run test suite
 npm run build         # Production build
-npm run lint          # Code linting
-npm run type-check    # TypeScript checking
+npm run prebuild      # Generate sitemaps
+npm run import:all    # Import competition data
 
 # Deployment
 npm run build         # Build for production
-npm run serve         # Serve production build locally
+# Note: no serve command available, use netlify dev for local testing
 ```
 
 ## 🔧 Troubleshooting

@@ -5,6 +5,7 @@ import { getTeams } from '../../services/supabase';
 import { getMatchStatus } from '../../utils/matchStatus';
 import AdminLayout from '../../components/AdminLayout';
 import AdminAuth from '../../components/AdminAuth';
+import { SoccersApiStatus } from '../../components/admin/SoccersApiStatus';
 
 interface DashboardStats {
   teams: {
@@ -461,6 +462,11 @@ const AdminDashboardPage: React.FC = () => {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* SoccersAPI Integration */}
+        <div style={{ marginTop: '32px' }}>
+          <SoccersApiStatus />
         </div>
     </AdminLayout>
   );

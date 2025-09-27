@@ -14,7 +14,7 @@
 
 import React, { Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import HomePage from './pages/HomePage'; // Keep HomePage eager for LCP
+// TodayFixturesPage imported as homepage below
 import SmartFixtureRouter from './components/SmartFixtureRouter';
 
 import Footer from './components/Footer';
@@ -102,7 +102,7 @@ function App() {
         <div className="App">
           <Suspense fallback={<PageLoader />}>
             <Routes>
-              <Route path="/" element={<HomePage />} />
+              <Route path="/" element={<TodayFixturesPage />} />
               <Route path="/fixtures" element={<FixturesPage />} />
               {/* Dynamic fixtures pages */}
               <Route path="/fixtures/today" element={<TodayFixturesPage />} />

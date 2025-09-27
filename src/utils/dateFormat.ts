@@ -99,17 +99,75 @@ export function formatCompactDate(utcDate: string): string {
 }
 
 /**
- * Formats just the time portion of a date
+ * Formats just the time portion of a date in user's local timezone
  * @param utcDate - ISO date string in UTC
+ * @param timezone - Optional timezone (defaults to user's local timezone)
  * @returns Time in HH:MM format
  */
-export function formatTime(utcDate: string): string {
+export function formatTime(utcDate: string, timezone?: string): string {
   const date = new Date(utcDate);
+  const userTimezone = timezone || Intl.DateTimeFormat().resolvedOptions().timeZone;
+
   return date.toLocaleTimeString('en-GB', {
     hour: '2-digit',
     minute: '2-digit',
-    timeZone: 'Europe/London'
+    timeZone: userTimezone
   });
+}
+
+/**
+ * Formats time with timezone abbreviation for clarity
+ * @param utcDate - ISO date string in UTC
+ * @param timezone - Optional timezone (defaults to user's local timezone)
+ * @returns Time with timezone (e.g., "3:00 PM PST")
+ */
+export function formatTimeWithTimezone(utcDate: string, timezone?: string): string {
+  const date = new Date(utcDate);
+  const userTimezone = timezone || Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  const timeString = date.toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    timeZone: userTimezone,
+    timeZoneName: 'short'
+  });
+
+  return timeString;
+}
+
+/**
+ * Gets the user's timezone for display purposes
+ * @returns User's timezone in readable format
+ */
+export function getUserTimezone(): string {
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  // Convert to more readable format
+  const parts = timezone.split('/');
+  if (parts.length === 2) {
+    return parts[1].replace(/_/g, ' ');
+  }
+  return timezone;
+}
+
+/**
+ * Checks if a date is in a different day in user's timezone vs UTC
+ * @param utcDate - ISO date string in UTC
+ * @returns Object with UTC and local dates
+ */
+export function getDateInfo(utcDate: string) {
+  const date = new Date(utcDate);
+  const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  const utcDateOnly = date.toISOString().split('T')[0];
+  const localDateOnly = date.toLocaleDateString('en-CA', { timeZone: userTimezone }); // ISO format
+
+  return {
+    utcDate: utcDateOnly,
+    localDate: localDateOnly,
+    isDifferentDay: utcDateOnly !== localDateOnly,
+    timezone: userTimezone
+  };
 }
 
 /**

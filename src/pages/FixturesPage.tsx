@@ -11,6 +11,7 @@ import { generateFixturesMeta, updateDocumentMeta } from '../utils/seo';
 import { generateBreadcrumbs } from '../utils/breadcrumbs';
 import { getMatchStatus } from '../utils/matchStatus';
 import { formatDateOnly } from '../utils/dateFormat';
+import { TimezoneIndicator } from '../components/TimezoneIndicator';
 
 type FilterTeam = '' | string;
 type FilterMatchweek = '' | string;
@@ -211,7 +212,10 @@ const FixturesPage: React.FC = () => {
       <main>
         <div className="wrap">
           <Breadcrumbs items={generateBreadcrumbs('/fixtures')} />
-          <h1 style={{ margin: '0 0 24px 0', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>Football Fixtures</h1>
+          <div style={{ marginBottom: '24px' }}>
+            <h1 style={{ margin: '0 0 8px 0', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>Football Fixtures</h1>
+            <TimezoneIndicator variant="compact" />
+          </div>
 
           {/* Past Games Toggle Button */}
           <div style={{ marginBottom: '16px' }}>

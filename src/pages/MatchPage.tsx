@@ -32,25 +32,13 @@ const MatchPage: React.FC = () => {
           if (currentPath.startsWith('/fixtures/')) {
             const seoData = parseSeoMatchSlug(matchSlug);
             if (seoData) {
-              console.log('MatchPage: Loading fixture with SEO slug:', seoData);
-              const startTime = performance.now();
-
               fixtureData = await getFixtureByTeamsAndDate(seoData.homeTeam, seoData.awayTeam, seoData.date);
-
-              const endTime = performance.now();
-              console.log(`MatchPage: Fixture loaded via SEO search in ${endTime - startTime}ms`);
             }
           } else {
             // Legacy format with ID (/matches/id-team-vs-team-date)
             const parsedId = parseMatchSlug(matchSlug);
             if (parsedId) {
-              console.log('MatchPage: Loading fixture with legacy ID:', parsedId);
-              const startTime = performance.now();
-
               fixtureData = await getFixtureById(parsedId);
-
-              const endTime = performance.now();
-              console.log(`MatchPage: Fixture loaded via ID in ${endTime - startTime}ms`);
             }
           }
         } else {
@@ -69,7 +57,6 @@ const MatchPage: React.FC = () => {
             return;
           }
 
-          console.log('MatchPage: Loading fixture with pure ID:', parsedId);
           fixtureData = await getFixtureById(parsedId);
         }
 

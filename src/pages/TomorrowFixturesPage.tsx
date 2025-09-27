@@ -224,7 +224,7 @@ const TomorrowFixturesPage: React.FC = () => {
               fontSize: '14px',
               flexWrap: 'wrap'
             }}>
-              <span>Last updated: {lastUpdated.toLocaleTimeString('en-GB')}</span>
+              <span>Last updated: {lastUpdated.toLocaleTimeString()}</span>
               {timeUntilFirstMatch && timeUntilFirstMatch > 0 && (
                 <span>First match in: {formatTimeUntilFirstMatch(timeUntilFirstMatch)}</span>
               )}

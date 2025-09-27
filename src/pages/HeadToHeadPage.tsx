@@ -34,7 +34,6 @@ const HeadToHeadPage: React.FC = () => {
       setLoading(true);
       setError(null);
 
-      console.log(`Loading H2H data for slug: ${slug}`);
 
       // Use TeamResolver's parseH2HSlug which handles all slug variations
       const result = await TeamResolver.parseH2HSlug(slug);
@@ -82,7 +81,6 @@ const HeadToHeadPage: React.FC = () => {
         description: enhancedDescription
       });
 
-      console.log(`Loaded ${fixturesData.length} fixtures between ${team1Data.name} and ${team2Data.name}`);
 
     } catch (err) {
       console.error('Failed to load H2H data:', err);

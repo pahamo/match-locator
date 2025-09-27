@@ -175,7 +175,7 @@ const TodayFixturesPage: React.FC = () => {
               gap: '16px',
               fontSize: '14px'
             }}>
-              <span>Last updated: {lastUpdated.toLocaleTimeString('en-GB')}</span>
+              <span>Last updated: {lastUpdated.toLocaleTimeString()}</span>
               <span>Updates every 60 seconds</span>
             </div>
           </div>
