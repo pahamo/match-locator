@@ -9,7 +9,20 @@ const MatchPage = React.lazy(() => import('../pages/MatchPage'));
 const HeadToHeadPage = React.lazy(() => import('../pages/HeadToHeadPage'));
 
 const PageLoader = () => (
-  <div style={{ padding: '20px' }}>
+  <div style={{
+    padding: '20px',
+    minHeight: '200px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px'
+  }}>
+    <div style={{
+      textAlign: 'center',
+      color: '#64748b',
+      fontSize: '1rem'
+    }}>
+      Loading page...
+    </div>
     <FixtureCardSkeleton />
     <FixtureCardSkeleton />
   </div>

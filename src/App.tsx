@@ -104,11 +104,11 @@ function App() {
           <Suspense fallback={<PageLoader />}>
             <Routes>
               <Route path="/" element={<TodayFixturesPage />} />
-              <Route path="/fixtures" element={<FixturesPage />} />
-              {/* Dynamic fixtures pages */}
-              <Route path="/fixtures/today" element={<TodayFixturesPage />} />
-              <Route path="/fixtures/tomorrow" element={<TomorrowFixturesPage />} />
-              <Route path="/fixtures/this-weekend" element={<ThisWeekendFixturesPage />} />
+              <Route path="/matches" element={<FixturesPage />} />
+              {/* Dynamic matches pages */}
+              <Route path="/matches/today" element={<TodayFixturesPage />} />
+              <Route path="/matches/tomorrow" element={<TomorrowFixturesPage />} />
+              <Route path="/matches/this-weekend" element={<ThisWeekendFixturesPage />} />
               {/* Competition routes */}
               <Route path="/competitions" element={<CompetitionsOverviewPage />} />
               <Route path="/competitions/champions-league/group-stage" element={<ChampionsLeagueGroupStagePage />} />

@@ -30,36 +30,52 @@ const HeadToHeadPage: React.FC = () => {
   const loadH2HData = useCallback(async () => {
     if (!slug) return;
 
+    // Create an AbortController to handle component unmounting
+    const abortController = new AbortController();
+
     try {
+      console.log('HeadToHeadPage: Loading H2H data for slug:', slug);
       setLoading(true);
       setError(null);
 
-
       // Use TeamResolver's parseH2HSlug which handles all slug variations
+      console.log('HeadToHeadPage: Parsing slug with TeamResolver...');
       const result = await TeamResolver.parseH2HSlug(slug);
 
+      // Check if component was unmounted
+      if (abortController.signal.aborted) return;
+
       if (!result) {
+        console.error('HeadToHeadPage: TeamResolver returned null for slug:', slug);
         setError('Invalid team matchup URL format');
         setLoading(false);
         return;
       }
+
+      console.log('HeadToHeadPage: Successfully parsed teams:', result.team1.name, 'vs', result.team2.name);
 
       const { team1: team1Data, team2: team2Data } = result;
 
       // Check if we need to redirect to canonical URL
       const canonicalSlug = TeamResolver.generateH2HSlug(team1Data, team2Data);
       if (slug !== canonicalSlug) {
+        console.log('HeadToHeadPage: Redirecting to canonical slug:', canonicalSlug);
         // Redirect to canonical URL format
         setShouldRedirect(canonicalSlug);
         return;
       }
 
       // Load fixtures using the database slugs from the team data
+      console.log('HeadToHeadPage: Loading fixtures for teams:', team1Data.slug, 'vs', team2Data.slug);
       const [fixturesData, nextFixtureData] = await Promise.all([
         getHeadToHeadFixtures(team1Data.slug, team2Data.slug),
         getLiveOrNextHeadToHeadFixture(team1Data.slug, team2Data.slug)
       ]);
 
+      // Check if component was unmounted during data loading
+      if (abortController.signal.aborted) return;
+
+      console.log('HeadToHeadPage: Loaded', fixturesData.length, 'fixtures');
       setTeam1(team1Data);
       setTeam2(team2Data);
       setFixtures(fixturesData);
@@ -83,11 +99,22 @@ const HeadToHeadPage: React.FC = () => {
 
 
     } catch (err) {
-      console.error('Failed to load H2H data:', err);
+      // Check if component was unmounted
+      if (abortController.signal.aborted) return;
+
+      console.error('HeadToHeadPage: Failed to load H2H data:', err);
       setError('Failed to load team data. Please try again later.');
     } finally {
-      setLoading(false);
+      // Check if component was unmounted
+      if (!abortController.signal.aborted) {
+        setLoading(false);
+      }
     }
+
+    // Cleanup function
+    return () => {
+      abortController.abort();
+    };
   }, [slug]);
 
   useEffect(() => {
@@ -153,7 +180,7 @@ const HeadToHeadPage: React.FC = () => {
                 We couldn't find the requested team matchup. Please check the URL and try again.
               </p>
               <a
-                href="/fixtures"
+                href="/matches"
                 style={{
                   display: 'inline-block',
                   background: '#3b82f6',
@@ -164,7 +191,7 @@ const HeadToHeadPage: React.FC = () => {
                   fontWeight: '500'
                 }}
               >
-                Browse All Fixtures
+                Browse All Matches
               </a>
             </div>
           </div>
@@ -231,7 +258,7 @@ const HeadToHeadPage: React.FC = () => {
               color: '#64748b',
               margin: 0
             }}>
-              Head-to-Head Fixtures & Statistics
+              Head-to-Head Matches & Statistics
             </p>
           </div>
 
@@ -282,7 +309,7 @@ const HeadToHeadPage: React.FC = () => {
             />
           )}
 
-          {/* Upcoming Fixtures */}
+          {/* Upcoming Matches */}
           {upcomingFixtures.length > 0 && (
             <div style={{ marginBottom: '32px' }}>
               <h2 style={{
@@ -293,7 +320,7 @@ const HeadToHeadPage: React.FC = () => {
                 paddingBottom: '8px',
                 borderBottom: '2px solid #e2e8f0'
               }}>
-                Upcoming Fixtures ({upcomingFixtures.length})
+                Upcoming Matches ({upcomingFixtures.length})
               </h2>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -353,13 +380,13 @@ const HeadToHeadPage: React.FC = () => {
                 color: '#1e293b',
                 marginBottom: '8px'
               }}>
-                No Fixtures Found
+                No Matches Found
               </h3>
               <p style={{
                 color: '#64748b',
                 marginBottom: '24px'
               }}>
-                There are no scheduled fixtures between {team1.name} and {team2.name} this season.
+                There are no scheduled matches between {team1.name} and {team2.name} this season.
               </p>
               <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
                 <a
@@ -375,7 +402,7 @@ const HeadToHeadPage: React.FC = () => {
                     fontWeight: '500'
                   }}
                 >
-                  View {team1.name} Fixtures
+                  View {team1.name} Matches
                 </a>
                 <a
                   href={URLBuilder.team(team2)}
@@ -390,7 +417,7 @@ const HeadToHeadPage: React.FC = () => {
                     fontWeight: '500'
                   }}
                 >
-                  View {team2.name} Fixtures
+                  View {team2.name} Matches
                 </a>
               </div>
             </div>

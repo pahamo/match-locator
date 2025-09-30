@@ -179,8 +179,8 @@ const FixturesPage: React.FC = () => {
         <Breadcrumbs items={generateBreadcrumbs('/fixtures')} />
         <main>
           <div className="wrap">
-            <h1 style={{ margin: '0 0 24px 0', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>Football Fixtures</h1>
-            <div className="loading">Loading fixtures...</div>
+            <h1 style={{ margin: '0 0 24px 0', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>Football Matches</h1>
+            <div className="loading">Loading matches...</div>
           </div>
         </main>
       </div>
@@ -194,7 +194,7 @@ const FixturesPage: React.FC = () => {
         <Breadcrumbs items={generateBreadcrumbs('/fixtures')} />
         <main>
           <div className="wrap">
-            <h1 style={{ margin: '0 0 24px 0', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>Football Fixtures</h1>
+            <h1 style={{ margin: '0 0 24px 0', fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>Football Matches</h1>
             <div className="error">{error}</div>
             <button onClick={loadData}>Retry</button>
           </div>
@@ -523,7 +523,7 @@ const FixturesPage: React.FC = () => {
             color: '#6b7280', 
             fontSize: '14px' 
           }}>
-            Showing {Math.min(displayCount, filteredFixtures.length)} of {filteredFixtures.length} fixtures
+            Showing {Math.min(displayCount, filteredFixtures.length)} of {filteredFixtures.length} matches
           </div>
 
           {/* Fixtures List */}
@@ -535,7 +535,7 @@ const FixturesPage: React.FC = () => {
               borderRadius: '8px'
             }}>
               <p style={{ margin: 0, color: '#6b7280' }}>
-                No fixtures match the current filters.
+                No matches match the current filters.
               </p>
             </div>
           ) : (
@@ -730,7 +730,7 @@ const FixturesPage: React.FC = () => {
                     onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#5856eb'}
                     onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#6366f1'}
                   >
-                    Load More Fixtures ({filteredFixtures.length - displayCount} remaining)
+                    Load More Matches ({filteredFixtures.length - displayCount} remaining)
                   </button>
                 </div>
               )}

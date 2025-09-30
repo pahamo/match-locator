@@ -39,31 +39,38 @@ async function listAvailableLeagues() {
 
     leagues.forEach((league, index) => {
       console.log(`${index + 1}. ${league.name}`);
-      console.log(`   Country: ${league.country_name} (${league.cc.toUpperCase()})`);
+      console.log(`   Country: ${league.country_name} (${league.cc ? league.cc.toUpperCase() : 'no code'})`);
       console.log(`   ID: ${league.id}`);
       console.log(`   Type: ${league.is_cup === '1' ? 'Cup' : 'League'}`);
       console.log(`   Current Season: ${league.current_season_id}`);
       console.log('');
     });
 
-    // Check for popular leagues
+    // Check for popular leagues - search more specifically
     const popularLeagues = [
-      'Premier League',
-      'La Liga',
-      'Serie A',
-      'Bundesliga',
-      'Ligue 1',
-      'Champions League'
+      { name: 'Premier League', search: ['Premier League'] },
+      { name: 'La Liga', search: ['La Liga', 'Primera División'] },
+      { name: 'Serie A', search: ['Serie A'] },
+      { name: 'Bundesliga', search: ['Bundesliga'] },
+      { name: 'Ligue 1', search: ['Ligue 1'] },
+      { name: 'Champions League', search: ['Champions League', 'UEFA Champions'] },
+      { name: 'Europa League', search: ['Europa League', 'UEFA Europa'] },
+      { name: 'English Premier League', search: ['England', 'Premier League'] }
     ];
 
     console.log('🎯 Popular leagues check:');
     popularLeagues.forEach(popular => {
       const found = leagues.find(league =>
-        league.name.toLowerCase().includes(popular.toLowerCase()) ||
-        popular.toLowerCase().includes(league.name.toLowerCase())
+        popular.search.some(searchTerm =>
+          league.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          league.country_name?.toLowerCase().includes(searchTerm.toLowerCase())
+        )
       );
 
-      console.log(`   ${found ? '✅' : '❌'} ${popular}`);
+      console.log(`   ${found ? '✅' : '❌'} ${popular.name}`);
+      if (found) {
+        console.log(`       Found: ${found.name} (${found.country_name})`);
+      }
     });
 
     console.log(`\n📊 Credits used: ${2980 - leagues.length} (approx)`);

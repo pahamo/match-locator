@@ -84,23 +84,23 @@ export const generateBreadcrumbs = (
     case 'fixtures':
       if (pathParts.length === 1) {
         // /fixtures
-        breadcrumbs.push({ label: 'Fixtures' });
+        breadcrumbs.push({ label: 'Matches' });
       } else if (pathParts[1] === 'today') {
         // /fixtures/today
         breadcrumbs.push(
-          { label: 'Fixtures', href: '/fixtures' },
+          { label: 'Matches', href: '/matches' },
           { label: 'Today' }
         );
       } else if (pathParts[1] === 'tomorrow') {
         // /fixtures/tomorrow
         breadcrumbs.push(
-          { label: 'Fixtures', href: '/fixtures' },
+          { label: 'Matches', href: '/matches' },
           { label: 'Tomorrow' }
         );
       } else if (pathParts[1] === 'this-weekend') {
         // /fixtures/this-weekend
         breadcrumbs.push(
-          { label: 'Fixtures', href: '/fixtures' },
+          { label: 'Matches', href: '/matches' },
           { label: 'This Weekend' }
         );
       } else {
@@ -157,7 +157,7 @@ export const generateBreadcrumbs = (
       const parsedMatch = parseMatchSlug(matchSlug);
 
       breadcrumbs.push(
-        { label: 'Fixtures', href: '/fixtures' }
+        { label: 'Matches', href: '/matches' }
       );
 
       if (options.matchTitle) {

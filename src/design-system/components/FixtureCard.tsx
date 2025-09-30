@@ -233,10 +233,10 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
         </div>
       )}
 
-      {/* View Button - Only show if we should create a page */}
+      {/* Info Button - Only show if we should create a page */}
       {showViewButton && fixtureData.shouldCreatePage && fixtureData.url && (
         <Link to={fixtureData.url} className="view-button">
-          View
+          Info
         </Link>
       )}
 
