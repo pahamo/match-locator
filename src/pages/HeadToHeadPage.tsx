@@ -64,6 +64,7 @@ const HeadToHeadPage: React.FC = () => {
         console.log('HeadToHeadPage: Redirecting to canonical slug:', canonicalSlug);
         // Redirect to canonical URL format
         setShouldRedirect(canonicalSlug);
+        setLoading(false); // Clear loading state before redirect
         return;
       }
 
@@ -104,6 +105,7 @@ const HeadToHeadPage: React.FC = () => {
       console.error('HeadToHeadPage: Failed to load H2H data:', err);
       setError('Failed to load team data. Please try again later.');
     } finally {
+      console.log('HeadToHeadPage: Setting loading to false');
       setLoading(false);
     }
   }, [slug]);
