@@ -26,26 +26,16 @@ const HeadToHeadPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Debug mount/unmount
-  useEffect(() => {
-    console.log('HeadToHeadPage: Component mounted with slug:', slug);
-    return () => {
-      console.log('HeadToHeadPage: Component unmounting');
-    };
-  }, []);
 
   // Check for canonical redirect immediately
   useEffect(() => {
     if (!slug) return;
-
-    console.log('HeadToHeadPage: Checking for canonical redirect for slug:', slug);
 
     // Do a quick sync check to see if we need to redirect
     TeamResolver.parseH2HSlug(slug).then(result => {
       if (result) {
         const canonicalSlug = TeamResolver.generateH2HSlug(result.team1, result.team2);
         if (slug !== canonicalSlug) {
-          console.log('HeadToHeadPage: Redirecting to canonical slug:', canonicalSlug);
           // Use window.location.replace for cleaner redirect that doesn't break React
           window.location.replace(`/h2h/${canonicalSlug}`);
           return;
@@ -57,34 +47,26 @@ const HeadToHeadPage: React.FC = () => {
   const loadH2HData = useCallback(async () => {
     if (!slug) return;
 
-    console.log('HeadToHeadPage: Starting data load for slug:', slug);
     setLoading(true);
     setError(null);
 
     try {
       // Use TeamResolver's parseH2HSlug which handles all slug variations
-      console.log('HeadToHeadPage: Parsing slug with TeamResolver...');
       const result = await TeamResolver.parseH2HSlug(slug);
 
       if (!result) {
-        console.error('HeadToHeadPage: TeamResolver returned null for slug:', slug);
         setError('Invalid team matchup URL format');
         setLoading(false);
         return;
       }
 
-      console.log('HeadToHeadPage: Successfully parsed teams:', result.team1.name, 'vs', result.team2.name);
-
       const { team1: team1Data, team2: team2Data } = result;
 
       // Load fixtures using the database slugs from the team data
-      console.log('HeadToHeadPage: Loading fixtures for teams:', team1Data.slug, 'vs', team2Data.slug);
       const [fixturesData, nextFixtureData] = await Promise.all([
         getHeadToHeadFixtures(team1Data.slug, team2Data.slug),
         getLiveOrNextHeadToHeadFixture(team1Data.slug, team2Data.slug)
       ]);
-
-      console.log('HeadToHeadPage: Loaded', fixturesData.length, 'fixtures');
 
       // Set all data - ensure state updates trigger re-renders
       setTeam1(team1Data);
@@ -108,41 +90,27 @@ const HeadToHeadPage: React.FC = () => {
         description: enhancedDescription
       });
 
-      console.log('HeadToHeadPage: Data loading completed successfully');
-
     } catch (err) {
       console.error('HeadToHeadPage: Failed to load H2H data:', err);
       setError('Failed to load team data. Please try again later.');
     } finally {
-      console.log('HeadToHeadPage: Setting loading to false');
-      // Use functional update to ensure state change is processed
-      setLoading(prev => {
-        console.log('HeadToHeadPage: Loading state changed from', prev, 'to false');
-        return false;
-      });
+      setLoading(false);
     }
   }, [slug]);
 
   // Effect to handle initial mount and slug changes
   useEffect(() => {
-    console.log('HeadToHeadPage: useEffect triggered with slug:', slug);
-
     if (!slug) {
-      console.log('HeadToHeadPage: No slug provided');
       setError('Invalid H2H URL format');
       setLoading(false);
       return;
     }
 
-    console.log('HeadToHeadPage: Starting data load immediately');
     loadH2HData();
   }, [slug, loadH2HData]);
 
 
-  console.log('HeadToHeadPage: Render check - loading:', loading, 'team1:', !!team1, 'team2:', !!team2, 'error:', error);
-
   if (loading) {
-    console.log('HeadToHeadPage: Rendering loading state');
     return (
       <div className="h2h-page">
         <Header />
@@ -243,7 +211,6 @@ const HeadToHeadPage: React.FC = () => {
   const upcomingFixtures = fixtures.filter(f => new Date(f.kickoff_utc) > now);
   const completedFixtures = fixtures.filter(f => new Date(f.kickoff_utc) <= now);
 
-  console.log('HeadToHeadPage: Rendering main content with teams:', team1?.name, 'vs', team2?.name);
 
   return (
     <div className="h2h-page">
@@ -255,17 +222,6 @@ const HeadToHeadPage: React.FC = () => {
             matchTitle: `${team1.name} vs ${team2.name}`
           })} />
 
-          {/* DEBUG: Visible indicator */}
-          <div style={{
-            background: 'red',
-            color: 'white',
-            padding: '10px',
-            margin: '10px 0',
-            textAlign: 'center',
-            fontSize: '18px'
-          }}>
-            DEBUG: Main content is rendering! Teams: {team1?.name} vs {team2?.name}
-          </div>
 
           {/* Page Header */}
           <div style={{
