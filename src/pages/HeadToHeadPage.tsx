@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useCallback } from 'react';
+import { flushSync } from 'react-dom';
 import { useParams, Navigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Breadcrumbs from '../components/Breadcrumbs';
@@ -63,8 +64,10 @@ const HeadToHeadPage: React.FC = () => {
       if (slug !== canonicalSlug) {
         console.log('HeadToHeadPage: Redirecting to canonical slug:', canonicalSlug);
         // Redirect to canonical URL format
-        setShouldRedirect(canonicalSlug);
-        setLoading(false); // Clear loading state before redirect
+        flushSync(() => {
+          setShouldRedirect(canonicalSlug);
+          setLoading(false); // Clear loading state before redirect
+        });
         return;
       }
 
@@ -78,10 +81,12 @@ const HeadToHeadPage: React.FC = () => {
       console.log('HeadToHeadPage: Loaded', fixturesData.length, 'fixtures');
 
       // Set all data synchronously to avoid partial renders
-      setTeam1(team1Data);
-      setTeam2(team2Data);
-      setFixtures(fixturesData);
-      setNextFixture(nextFixtureData);
+      flushSync(() => {
+        setTeam1(team1Data);
+        setTeam2(team2Data);
+        setFixtures(fixturesData);
+        setNextFixture(nextFixtureData);
+      });
 
       // Update SEO meta tags with enhanced information
       const upcomingCount = fixturesData.filter(f => new Date(f.kickoff_utc) > new Date()).length;
@@ -106,7 +111,9 @@ const HeadToHeadPage: React.FC = () => {
       setError('Failed to load team data. Please try again later.');
     } finally {
       console.log('HeadToHeadPage: Setting loading to false');
-      setLoading(false);
+      flushSync(() => {
+        setLoading(false);
+      });
     }
   }, [slug]);
 
@@ -138,6 +145,8 @@ const HeadToHeadPage: React.FC = () => {
     // Redirect to h2h path (new primary location for H2H pages)
     return <Navigate to={`/h2h/${shouldRedirect}`} replace />;
   }
+
+  console.log('HeadToHeadPage: Render check - loading:', loading, 'team1:', !!team1, 'team2:', !!team2, 'error:', error);
 
   if (loading) {
     console.log('HeadToHeadPage: Rendering loading state');
