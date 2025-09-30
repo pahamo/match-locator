@@ -65,7 +65,7 @@ async function fetchTeams() {
 async function build() {
   ensureDir(publicDir); ensureDir(sitemapsDir);
   // Core pages
-  const core = [ '/', '/fixtures', '/clubs', '/about' ].map(p => `${CANONICAL_BASE}${p}`);
+  const core = [ '/', '/matches', '/clubs', '/about' ].map(p => `${CANONICAL_BASE}${p}`);
   const coreXml = [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
@@ -91,7 +91,7 @@ async function build() {
     const awaySlug = slugify(cleanTeamName(f.away_team));
     const competitionSlug = mapCompetitionIdToSlug(f.competition_id);
     const dateSlug = formatDateForSeoUrl(f.utc_kickoff);
-    return `${CANONICAL_BASE}/fixtures/${homeSlug}-vs-${awaySlug}-${competitionSlug}-${dateSlug}`;
+    return `${CANONICAL_BASE}/matches/${homeSlug}-vs-${awaySlug}-${competitionSlug}-${dateSlug}`;
   });
   const matchesXml = [
     '<?xml version="1.0" encoding="UTF-8"?>',

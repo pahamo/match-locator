@@ -6,7 +6,7 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/fixtures</loc>
+    <loc>https://matchlocator.com/matches</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>

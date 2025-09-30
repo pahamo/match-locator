@@ -84,7 +84,7 @@ const TomorrowFixturesPage: React.FC = () => {
     const meta = {
       title: 'Tomorrow\'s Football on TV - UK Schedule | Match Locator',
       description: `Tomorrow's football matches on TV - ${formattedDate}. Complete UK TV schedule for Sky Sports, TNT Sports, BBC, and more. Plan your viewing.`,
-      canonical: `${process.env.REACT_APP_CANONICAL_BASE || 'https://matchlocator.com'}/fixtures/tomorrow`,
+      canonical: `${process.env.REACT_APP_CANONICAL_BASE || 'https://matchlocator.com'}/matches/tomorrow`,
       ogTitle: 'Tomorrow\'s Football on TV - UK Schedule',
       ogDescription: `Tomorrow's football matches on TV - ${formattedDate}. Complete UK TV schedule.`,
       ogImage: `${process.env.REACT_APP_CANONICAL_BASE || 'https://matchlocator.com'}/og-tomorrow-fixtures.jpg`

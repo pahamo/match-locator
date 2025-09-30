@@ -442,7 +442,7 @@ export const generateFixturesMeta = () => {
   // Optimized fixtures page description
   const description = 'Complete football TV schedule and fixtures from Premier League, Champions League and more. Filter by competition, team, and broadcaster. Sky Sports, TNT Sports viewing guide.';
 
-  const canonical = `${CANONICAL_BASE}/fixtures`;
+  const canonical = `${CANONICAL_BASE}/matches`;
 
   return {
     title,

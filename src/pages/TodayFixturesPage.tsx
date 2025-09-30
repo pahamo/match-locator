@@ -76,7 +76,7 @@ const TodayFixturesPage: React.FC = () => {
     const meta = {
       title: 'Football on TV Today - Live UK Schedule | Match Locator',
       description: `Today's football matches on TV - ${formattedDate}. Live UK schedules for Sky Sports, TNT Sports, BBC, and more. Real-time updates with kick-off times.`,
-      canonical: `${process.env.REACT_APP_CANONICAL_BASE || 'https://matchlocator.com'}/fixtures/today`,
+      canonical: `${process.env.REACT_APP_CANONICAL_BASE || 'https://matchlocator.com'}/matches/today`,
       ogTitle: 'Football on TV Today - Live UK Schedule',
       ogDescription: `Today's football matches on TV - ${formattedDate}. Live UK schedules with real-time updates.`,
       ogImage: `${process.env.REACT_APP_CANONICAL_BASE || 'https://matchlocator.com'}/og-today-fixtures.jpg`

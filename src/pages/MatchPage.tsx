@@ -68,9 +68,9 @@ const MatchPage: React.FC = () => {
           // Update SEO meta tags
           const meta = generateMatchMeta(fixtureData);
 
-          // If this is a legacy URL (/matches/), set canonical to new format (/fixtures/)
+          // If this is a legacy URL (/fixtures/), set canonical to new format (/matches/)
           const currentPath = window.location.pathname;
-          if (currentPath.startsWith('/matches/') || currentPath.startsWith('/match/')) {
+          if (currentPath.startsWith('/fixtures/') || currentPath.startsWith('/match/')) {
             const newCanonicalUrl = `${window.location.origin}${generateSeoMatchUrl(fixtureData)}`;
             meta.canonical = newCanonicalUrl;
             meta.ogUrl = newCanonicalUrl;

@@ -102,7 +102,7 @@ const ThisWeekendFixturesPage: React.FC = () => {
     const meta = {
       title: 'Football on TV This Weekend - UK Schedule | Match Locator',
       description: 'This weekend\'s football matches on TV - Friday evening through Sunday night. Complete UK TV schedule for Sky Sports, TNT Sports, BBC, and more.',
-      canonical: `${process.env.REACT_APP_CANONICAL_BASE || 'https://matchlocator.com'}/fixtures/this-weekend`,
+      canonical: `${process.env.REACT_APP_CANONICAL_BASE || 'https://matchlocator.com'}/matches/this-weekend`,
       ogTitle: 'Football on TV This Weekend - UK Schedule',
       ogDescription: 'This weekend\'s football matches on TV with complete UK broadcasting information.',
       ogImage: `${process.env.REACT_APP_CANONICAL_BASE || 'https://matchlocator.com'}/og-weekend-fixtures.jpg`
