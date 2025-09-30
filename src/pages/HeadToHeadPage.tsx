@@ -27,23 +27,25 @@ const HeadToHeadPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [shouldRedirect, setShouldRedirect] = useState<string | null>(null);
 
+  // Debug mount/unmount
+  useEffect(() => {
+    console.log('HeadToHeadPage: Component mounted with slug:', slug);
+    return () => {
+      console.log('HeadToHeadPage: Component unmounting');
+    };
+  }, []);
+
   const loadH2HData = useCallback(async () => {
     if (!slug) return;
 
-    // Create an AbortController to handle component unmounting
-    const abortController = new AbortController();
+    console.log('HeadToHeadPage: Starting data load for slug:', slug);
+    setLoading(true);
+    setError(null);
 
     try {
-      console.log('HeadToHeadPage: Loading H2H data for slug:', slug);
-      setLoading(true);
-      setError(null);
-
       // Use TeamResolver's parseH2HSlug which handles all slug variations
       console.log('HeadToHeadPage: Parsing slug with TeamResolver...');
       const result = await TeamResolver.parseH2HSlug(slug);
-
-      // Check if component was unmounted
-      if (abortController.signal.aborted) return;
 
       if (!result) {
         console.error('HeadToHeadPage: TeamResolver returned null for slug:', slug);
@@ -72,10 +74,9 @@ const HeadToHeadPage: React.FC = () => {
         getLiveOrNextHeadToHeadFixture(team1Data.slug, team2Data.slug)
       ]);
 
-      // Check if component was unmounted during data loading
-      if (abortController.signal.aborted) return;
-
       console.log('HeadToHeadPage: Loaded', fixturesData.length, 'fixtures');
+
+      // Set all data synchronously to avoid partial renders
       setTeam1(team1Data);
       setTeam2(team2Data);
       setFixtures(fixturesData);
@@ -97,34 +98,37 @@ const HeadToHeadPage: React.FC = () => {
         description: enhancedDescription
       });
 
+      console.log('HeadToHeadPage: Data loading completed successfully');
 
     } catch (err) {
-      // Check if component was unmounted
-      if (abortController.signal.aborted) return;
-
       console.error('HeadToHeadPage: Failed to load H2H data:', err);
       setError('Failed to load team data. Please try again later.');
     } finally {
-      // Check if component was unmounted
-      if (!abortController.signal.aborted) {
-        setLoading(false);
-      }
+      setLoading(false);
     }
-
-    // Cleanup function
-    return () => {
-      abortController.abort();
-    };
   }, [slug]);
 
+  // Effect to handle initial mount and slug changes
   useEffect(() => {
+    console.log('HeadToHeadPage: useEffect triggered with slug:', slug);
+
     if (!slug) {
+      console.log('HeadToHeadPage: No slug provided');
       setError('Invalid H2H URL format');
       setLoading(false);
       return;
     }
 
-    loadH2HData();
+    // Small delay to ensure component is fully mounted
+    const timeoutId = setTimeout(() => {
+      console.log('HeadToHeadPage: Starting data load after mount delay');
+      loadH2HData();
+    }, 10);
+
+    return () => {
+      console.log('HeadToHeadPage: Cleaning up timeout');
+      clearTimeout(timeoutId);
+    };
   }, [slug, loadH2HData]);
 
   // Handle redirect after hooks
@@ -134,20 +138,47 @@ const HeadToHeadPage: React.FC = () => {
   }
 
   if (loading) {
+    console.log('HeadToHeadPage: Rendering loading state');
     return (
       <div className="h2h-page">
         <Header />
         <Breadcrumbs items={generateBreadcrumbs(window.location.pathname)} />
 
-        <main>
+        <main style={{ minHeight: '60vh' }}>
           <div className="wrap">
             <div style={{
               textAlign: 'center',
               padding: '64px 20px',
-              color: '#64748b'
+              color: '#64748b',
+              minHeight: '400px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center'
             }}>
-              <h1>Loading team data...</h1>
-              <p>Please wait while we fetch the head-to-head information.</p>
+              <div style={{
+                fontSize: '2rem',
+                marginBottom: '16px',
+                color: '#1e293b'
+              }}>
+                Loading team data...
+              </div>
+              <p style={{
+                fontSize: '1.1rem',
+                margin: '0',
+                opacity: 0.8
+              }}>
+                Please wait while we fetch the head-to-head information.
+              </p>
+              <div style={{
+                marginTop: '24px',
+                padding: '8px',
+                background: 'rgba(99, 102, 241, 0.1)',
+                borderRadius: '4px',
+                fontSize: '0.9rem'
+              }}>
+                Slug: {slug}
+              </div>
             </div>
           </div>
         </main>
@@ -207,6 +238,8 @@ const HeadToHeadPage: React.FC = () => {
   const now = new Date();
   const upcomingFixtures = fixtures.filter(f => new Date(f.kickoff_utc) > now);
   const completedFixtures = fixtures.filter(f => new Date(f.kickoff_utc) <= now);
+
+  console.log('HeadToHeadPage: Rendering main content with teams:', team1?.name, 'vs', team2?.name);
 
   return (
     <div className="h2h-page">
