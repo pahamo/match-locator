@@ -130,8 +130,9 @@ class TeamResolverClass {
     variations.add(slug.replace(/^afc-/, ''));
     variations.add('afc-' + slug);
 
-    // Premier League team-specific transformations (old → new slug mappings)
+    // Team-specific transformations (old → new slug mappings)
     const teamMappings = [
+      // Premier League teams
       // Manchester teams
       ['manchester-united-fc', 'man-united'],
       ['manchester-united', 'man-united'],
@@ -171,13 +172,90 @@ class TeamResolverClass {
       ['southampton-fc', 'southampton'],
       ['afc-bournemouth', 'bournemouth'],
 
-      // Other teams
+      // Other Premier League teams
       ['leicester-city-fc', 'leicester'],
       ['leicester-city', 'leicester'],
       ['sunderland-afc', 'sunderland'],
       ['norwich-city-fc', 'norwich'],
       ['norwich-city', 'norwich'],
-      ['watford-fc', 'watford']
+      ['watford-fc', 'watford'],
+
+      // Champions League / European teams
+      // Spanish teams
+      ['real-madrid-cf-fc', 'real-madrid'],
+      ['real-madrid-cf', 'real-madrid'],
+      ['real-madrid-fc', 'real-madrid'],
+      ['fc-barcelona', 'barcelona'],
+      ['barcelona-fc', 'barcelona'],
+      ['atletico-madrid', 'atletico'],
+      ['atlético-madrid', 'atletico'],
+      ['atletico-de-madrid', 'atletico'],
+      ['sevilla-fc', 'sevilla'],
+      ['real-sociedad', 'sociedad'],
+      ['villarreal-cf', 'villarreal'],
+
+      // Italian teams
+      ['atalanta-bc-fc', 'atalanta'],
+      ['atalanta-bc', 'atalanta'],
+      ['atalanta-bergamasca-calcio', 'atalanta'],
+      ['juventus-fc', 'juventus'],
+      ['ac-milan', 'milan'],
+      ['milan-ac', 'milan'],
+      ['inter-milan', 'inter'],
+      ['fc-internazionale-milano', 'inter'],
+      ['as-roma', 'roma'],
+      ['ss-lazio', 'lazio'],
+      ['napoli-ssc', 'napoli'],
+      ['ssc-napoli', 'napoli'],
+
+      // German teams
+      ['bayern-munich', 'bayern'],
+      ['fc-bayern-munchen', 'bayern'],
+      ['fc-bayern-münchen', 'bayern'],
+      ['borussia-dortmund', 'dortmund'],
+      ['bvb-dortmund', 'dortmund'],
+      ['rb-leipzig', 'leipzig'],
+      ['bayer-leverkusen', 'leverkusen'],
+      ['borussia-monchengladbach', 'gladbach'],
+      ['borussia-mönchengladbach', 'gladbach'],
+
+      // French teams
+      ['paris-saint-germain', 'psg'],
+      ['psg-paris', 'psg'],
+      ['olympique-marseille', 'marseille'],
+      ['om-marseille', 'marseille'],
+      ['olympique-lyonnais', 'lyon'],
+      ['ol-lyon', 'lyon'],
+      ['as-monaco', 'monaco'],
+      ['monaco-fc', 'monaco'],
+
+      // Belgian teams
+      ['club-brugge-kv', 'club-brugge'],
+      ['club-bruges', 'club-brugge'],
+      ['krc-genk', 'genk'],
+      ['standard-liege', 'standard'],
+
+      // Dutch teams
+      ['ajax-amsterdam', 'ajax'],
+      ['afc-ajax', 'ajax'],
+      ['psv-eindhoven', 'psv'],
+      ['feyenoord-rotterdam', 'feyenoord'],
+
+      // Portuguese teams
+      ['fc-porto', 'porto'],
+      ['sl-benfica', 'benfica'],
+      ['sporting-cp', 'sporting'],
+      ['sporting-lisboa', 'sporting'],
+
+      // Other European teams
+      ['fk-kairat', 'kairat'],
+      ['kairat-almaty', 'kairat'],
+      ['fc-salzburg', 'salzburg'],
+      ['red-bull-salzburg', 'salzburg'],
+      ['shakhtar-donetsk', 'shakhtar'],
+      ['fc-shakhtar', 'shakhtar'],
+      ['dynamo-kiev', 'dynamo-kyiv'],
+      ['dynamo-kyiv', 'dynamo-kyiv']
     ];
 
     // Apply all team mappings in both directions
