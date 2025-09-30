@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect, useCallback } from 'react';
-import { flushSync } from 'react-dom';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, Navigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Breadcrumbs from '../components/Breadcrumbs';
@@ -64,10 +63,8 @@ const HeadToHeadPage: React.FC = () => {
       if (slug !== canonicalSlug) {
         console.log('HeadToHeadPage: Redirecting to canonical slug:', canonicalSlug);
         // Redirect to canonical URL format
-        flushSync(() => {
-          setShouldRedirect(canonicalSlug);
-          setLoading(false); // Clear loading state before redirect
-        });
+        setShouldRedirect(canonicalSlug);
+        // Don't set loading to false here - let the new component instance handle it
         return;
       }
 
@@ -80,13 +77,11 @@ const HeadToHeadPage: React.FC = () => {
 
       console.log('HeadToHeadPage: Loaded', fixturesData.length, 'fixtures');
 
-      // Set all data synchronously to avoid partial renders
-      flushSync(() => {
-        setTeam1(team1Data);
-        setTeam2(team2Data);
-        setFixtures(fixturesData);
-        setNextFixture(nextFixtureData);
-      });
+      // Set all data - ensure state updates trigger re-renders
+      setTeam1(team1Data);
+      setTeam2(team2Data);
+      setFixtures(fixturesData);
+      setNextFixture(nextFixtureData);
 
       // Update SEO meta tags with enhanced information
       const upcomingCount = fixturesData.filter(f => new Date(f.kickoff_utc) > new Date()).length;
@@ -111,8 +106,10 @@ const HeadToHeadPage: React.FC = () => {
       setError('Failed to load team data. Please try again later.');
     } finally {
       console.log('HeadToHeadPage: Setting loading to false');
-      flushSync(() => {
-        setLoading(false);
+      // Use functional update to ensure state change is processed
+      setLoading(prev => {
+        console.log('HeadToHeadPage: Loading state changed from', prev, 'to false');
+        return false;
       });
     }
   }, [slug]);
@@ -128,16 +125,8 @@ const HeadToHeadPage: React.FC = () => {
       return;
     }
 
-    // Small delay to ensure component is fully mounted
-    const timeoutId = setTimeout(() => {
-      console.log('HeadToHeadPage: Starting data load after mount delay');
-      loadH2HData();
-    }, 10);
-
-    return () => {
-      console.log('HeadToHeadPage: Cleaning up timeout');
-      clearTimeout(timeoutId);
-    };
+    console.log('HeadToHeadPage: Starting data load immediately');
+    loadH2HData();
   }, [slug, loadH2HData]);
 
   // Handle redirect after hooks
