@@ -25,7 +25,6 @@ const HeadToHeadPage: React.FC = () => {
   const [team2, setTeam2] = useState<Team | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [shouldRedirect, setShouldRedirect] = useState<string | null>(null);
 
   // Debug mount/unmount
   useEffect(() => {
@@ -34,6 +33,26 @@ const HeadToHeadPage: React.FC = () => {
       console.log('HeadToHeadPage: Component unmounting');
     };
   }, []);
+
+  // Check for canonical redirect immediately
+  useEffect(() => {
+    if (!slug) return;
+
+    console.log('HeadToHeadPage: Checking for canonical redirect for slug:', slug);
+
+    // Do a quick sync check to see if we need to redirect
+    TeamResolver.parseH2HSlug(slug).then(result => {
+      if (result) {
+        const canonicalSlug = TeamResolver.generateH2HSlug(result.team1, result.team2);
+        if (slug !== canonicalSlug) {
+          console.log('HeadToHeadPage: Redirecting to canonical slug:', canonicalSlug);
+          // Use window.location.replace for cleaner redirect that doesn't break React
+          window.location.replace(`/h2h/${canonicalSlug}`);
+          return;
+        }
+      }
+    });
+  }, [slug]);
 
   const loadH2HData = useCallback(async () => {
     if (!slug) return;
@@ -57,16 +76,6 @@ const HeadToHeadPage: React.FC = () => {
       console.log('HeadToHeadPage: Successfully parsed teams:', result.team1.name, 'vs', result.team2.name);
 
       const { team1: team1Data, team2: team2Data } = result;
-
-      // Check if we need to redirect to canonical URL
-      const canonicalSlug = TeamResolver.generateH2HSlug(team1Data, team2Data);
-      if (slug !== canonicalSlug) {
-        console.log('HeadToHeadPage: Redirecting to canonical slug:', canonicalSlug);
-        // Redirect to canonical URL format
-        setShouldRedirect(canonicalSlug);
-        // Don't set loading to false here - let the new component instance handle it
-        return;
-      }
 
       // Load fixtures using the database slugs from the team data
       console.log('HeadToHeadPage: Loading fixtures for teams:', team1Data.slug, 'vs', team2Data.slug);
@@ -129,11 +138,6 @@ const HeadToHeadPage: React.FC = () => {
     loadH2HData();
   }, [slug, loadH2HData]);
 
-  // Handle redirect after hooks
-  if (shouldRedirect) {
-    // Redirect to h2h path (new primary location for H2H pages)
-    return <Navigate to={`/h2h/${shouldRedirect}`} replace />;
-  }
 
   console.log('HeadToHeadPage: Render check - loading:', loading, 'team1:', !!team1, 'team2:', !!team2, 'error:', error);
 
