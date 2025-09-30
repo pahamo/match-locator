@@ -245,11 +245,24 @@ const HeadToHeadPage: React.FC = () => {
     <div className="h2h-page">
       <Header />
 
-      <main>
+      <main style={{ minHeight: '60vh', background: 'white' }}>
         <div className="wrap">
           <Breadcrumbs items={generateBreadcrumbs(window.location.pathname, {
             matchTitle: `${team1.name} vs ${team2.name}`
           })} />
+
+          {/* DEBUG: Visible indicator */}
+          <div style={{
+            background: 'red',
+            color: 'white',
+            padding: '10px',
+            margin: '10px 0',
+            textAlign: 'center',
+            fontSize: '18px'
+          }}>
+            DEBUG: Main content is rendering! Teams: {team1?.name} vs {team2?.name}
+          </div>
+
           {/* Page Header */}
           <div style={{
             textAlign: 'center',
