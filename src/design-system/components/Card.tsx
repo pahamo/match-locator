@@ -12,7 +12,7 @@ import {
 // Enhanced Card component with additional variants and features
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Card variant for different contexts */
-  variant?: 'default' | 'outline' | 'filled' | 'elevated' | 'live' | 'success' | 'warning' | 'error';
+  variant?: 'default' | 'outline' | 'filled' | 'elevated' | 'live' | 'success' | 'warning' | 'error' | 'primary';
   /** Size variant */
   size?: 'sm' | 'default' | 'lg';
   /** Make card hoverable with hover effects */
@@ -54,6 +54,7 @@ export const Card: React.FC<CardProps> = ({
       'border-green-200 bg-green-50 dark:border-green-800 dark:bg-green-900/20': variant === 'success',
       'border-yellow-200 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-900/20': variant === 'warning',
       'border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20': variant === 'error',
+      'border-blue-600 bg-gradient-to-br from-blue-600 to-blue-700 text-white': variant === 'primary',
     },
 
     // Interactive states

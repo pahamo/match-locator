@@ -396,11 +396,11 @@ export const generateTeamMeta = (team: Team, upcomingCount: number = 0) => {
   const teamShort = formatTeamNameShort(team.name);
   const season = getCurrentSeason();
 
-  // Optimized title: "[Team] TV Schedule 2024/25 - Where to Watch on TV | Match Locator"
-  const title = `${teamShort} TV Schedule ${season} - Where to Watch on TV | Match Locator`;
+  // Optimized title targeting "what time is [team] playing" searches
+  const title = `${teamShort} TV Schedule - What Time Are ${teamShort} Playing? | Match Locator`;
 
-  // Optimized description: "Never miss a [Team] match. Complete TV schedule with UK channels and streaming info. Sky Sports, TNT Sports, Amazon Prime coverage."
-  const description = `Never miss a ${teamShort} match. Complete TV schedule ${season} with UK channels and streaming info. Sky Sports, TNT Sports, Amazon Prime coverage.`;
+  // Optimized description with urgency and specificity
+  const description = `What time is ${teamShort} playing? Get ${teamShort}'s complete TV schedule ${season} with kick-off times and UK channels. Sky Sports, TNT Sports, Amazon Prime coverage. Never miss a match.`;
 
   const canonical = `${CANONICAL_BASE}/clubs/${team.slug}`;
 
