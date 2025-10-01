@@ -180,20 +180,70 @@ const ClubPage: React.FC = () => {
                 </Card>
               )}
 
-              <section className="card" style={{ background: 'var(--color-card)', border: '1px solid var(--color-border)', borderRadius: 'var(--border-radius)', padding: 'var(--spacing-xl)', boxShadow: 'var(--shadow-sm)', marginBottom: 'var(--spacing-xl)' }}>
-                <h2 style={{ marginTop: 0 }}>How to watch {team ? formatTeamNameShort(team.name) : 'this team'}</h2>
-                <p>
-                  In the UK, live football TV coverage is typically carried by
-                  <a href="https://www.skysports.com/football/fixtures-results" target="_blank" rel="noreferrer" style={{ marginLeft: 6 }}>Sky Sports</a>
-                  {' '}and
-                  <a href="https://tntsports.co.uk/football" target="_blank" rel="noreferrer" style={{ marginLeft: 6 }}>TNT Sports</a> across different competitions.
-                  Listings can change; always check the official broadcaster schedule.
-                </p>
-                <ul>
-                  <li>When a broadcaster is confirmed, it appears on each fixture below.</li>
-                  <li>Kick-off times are shown in local UK time (Europe/London).</li>
-                </ul>
-              </section>
+              <Card variant="outline" className="mb-8">
+                <CardHeader size="default">
+                  <CardTitle size="default" as="h2">
+                    📺 How to Watch {team ? formatTeamNameShort(team.name) : 'This Team'} on TV
+                  </CardTitle>
+                </CardHeader>
+
+                <CardContent size="default">
+                  <Stack space="md">
+                    {nextMatch?.providers_uk?.[0] && (
+                      <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+                        <p className="font-semibold text-blue-900 dark:text-blue-100">
+                          🎯 Next Match: Watch on <span className="font-bold">{nextMatch.providers_uk[0].name}</span>
+                        </p>
+                        <p className="text-sm mt-1 text-blue-800 dark:text-blue-200">
+                          {nextMatch.home.name} vs {nextMatch.away.name} • {new Date(nextMatch.kickoff_utc).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
+                        </p>
+                      </div>
+                    )}
+
+                    <div>
+                      <p className="mb-4">
+                        {team ? formatTeamNameShort(team.name) : 'Premier League'} matches are broadcast live across multiple UK channels depending on the competition:
+                      </p>
+
+                      <Stack space="sm">
+                        <Flex align="start" gap="sm">
+                          <span className="text-lg">⚽</span>
+                          <div>
+                            <strong>Premier League:</strong>{' '}
+                            <a href="https://www.skysports.com/football/fixtures-results" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">
+                              Sky Sports
+                            </a>
+                            {' '}and{' '}
+                            <a href="https://tntsports.co.uk/football" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">
+                              TNT Sports
+                            </a>
+                          </div>
+                        </Flex>
+
+                        <Flex align="start" gap="sm">
+                          <span className="text-lg">🏆</span>
+                          <div>
+                            <strong>Champions League & Europa League:</strong> Primarily TNT Sports
+                          </div>
+                        </Flex>
+
+                        <Flex align="start" gap="sm">
+                          <span className="text-lg">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span>
+                          <div>
+                            <strong>FA Cup & Carabao Cup:</strong> BBC, ITV, Sky Sports
+                          </div>
+                        </Flex>
+                      </Stack>
+                    </div>
+
+                    <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        ℹ️ All kick-off times shown in UK time (GMT/BST) • Broadcaster confirmed fixtures are marked below
+                      </p>
+                    </div>
+                  </Stack>
+                </CardContent>
+              </Card>
 
               <section>
                 <h2 style={{ marginTop: 0 }}>Upcoming fixtures ({fixtures.length})</h2>
