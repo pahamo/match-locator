@@ -4,9 +4,10 @@ import type { Fixture, SimpleFixture } from '../types';
 interface StructuredDataProps {
   type: 'match' | 'organization' | 'website' | 'competition' | 'faq';
   data?: Fixture | SimpleFixture | any;
+  dateModified?: string; // ISO date string for content freshness
 }
 
-const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) => {
+const StructuredData: React.FC<StructuredDataProps> = ({ type, data, dateModified }) => {
   const getCompetitionName = (fixture: Fixture | SimpleFixture): string => {
     if ('competition' in fixture) {
       switch (fixture.competition) {
@@ -268,7 +269,7 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) => {
     };
   };
 
-  const generateFAQStructuredData = (faqData?: Array<{question: string; answer: string}>) => {
+  const generateFAQStructuredData = (faqData?: Array<{question: string; answer: string}>, dateModified?: string) => {
     const defaultFAQs = [
       {
         question: "What TV channels show Premier League matches in the UK?",
@@ -298,7 +299,7 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) => {
 
     const faqsToUse = faqData || defaultFAQs;
 
-    return {
+    const schema: any = {
       "@context": "https://schema.org",
       "@type": "FAQPage",
       "mainEntity": faqsToUse.map(faq => ({
@@ -310,6 +311,14 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) => {
         }
       }))
     };
+
+    // Add dateModified if provided for content freshness
+    if (dateModified) {
+      schema.dateModified = dateModified;
+      schema.datePublished = dateModified; // Use same date for simplicity
+    }
+
+    return schema;
   };
 
   let structuredData;
@@ -330,7 +339,7 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data }) => {
       structuredData = data; // Use the passed data directly for competition
       break;
     case 'faq':
-      structuredData = generateFAQStructuredData(data);
+      structuredData = generateFAQStructuredData(data, dateModified);
       break;
     default:
       return null;

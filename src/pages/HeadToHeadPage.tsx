@@ -13,6 +13,7 @@ import { generateMatchPreview, isPremierLeagueFixture } from '../utils/matchPrev
 import { URLBuilder } from '../services/URLBuilder';
 import type { Fixture, Team } from '../types';
 import { LiveMatchesTicker } from '../components/LiveMatchesTicker';
+import { PageUpdateTimestamp } from '../components/FreshnessIndicator';
 
 const HeadToHeadPage: React.FC = () => {
   const { matchSlug, contentSlug } = useParams<{ matchSlug?: string; contentSlug?: string }>();
@@ -333,6 +334,13 @@ const HeadToHeadPage: React.FC = () => {
               currentMatchDate={nextFixture.kickoff_utc}
               competitionIds={nextFixture.competition_id ? [nextFixture.competition_id] : undefined}
             />
+          )}
+
+          {/* Page Freshness Timestamp */}
+          {!loading && !error && fixtures.length > 0 && (
+            <div style={{ marginBottom: '16px', textAlign: 'center' }}>
+              <PageUpdateTimestamp label="Head-to-head data updated" />
+            </div>
           )}
 
           {/* Match Preview for Premier League fixtures */}

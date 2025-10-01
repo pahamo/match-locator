@@ -17,6 +17,8 @@ import { RelatedTeamsSection } from '../components/RelatedTeamsSection';
 import { LiveMatchesTicker } from '../components/LiveMatchesTicker';
 import { getAllCompetitionConfigs } from '../config/competitions';
 import { generateBreadcrumbs } from '../utils/breadcrumbs';
+import { FreshnessIndicator, PageUpdateTimestamp } from '../components/FreshnessIndicator';
+import { getMostRecentFixtureUpdate } from '../utils/contentFreshness';
 
 const ClubPage: React.FC = () => {
   const { slug, clubId } = useParams<{ slug?: string; clubId?: string }>();
@@ -127,7 +129,11 @@ const ClubPage: React.FC = () => {
 
   return (
     <div className="club-page">
-      <StructuredData type="faq" data={faqData} />
+      <StructuredData
+        type="faq"
+        data={faqData}
+        dateModified={new Date().toISOString()}
+      />
       <Header />
 
       <main>
@@ -143,6 +149,18 @@ const ClubPage: React.FC = () => {
           {/* Competition Badge - appears below H1 */}
           {team?.competition_id && (
             <CompetitionBadge competitionId={team.competition_id} />
+          )}
+
+          {/* Freshness Indicator */}
+          {!loading && !error && fixtures.length > 0 && (
+            <div style={{ marginTop: '12px', marginBottom: '16px' }}>
+              <FreshnessIndicator
+                date={getMostRecentFixtureUpdate(fixtures) || new Date()}
+                variant="full"
+                showBadge={true}
+              />
+              <PageUpdateTimestamp label="Fixtures last checked" />
+            </div>
           )}
 
           {loading && <div className="loading">Loading fixtures…</div>}
