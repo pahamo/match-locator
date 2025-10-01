@@ -30,7 +30,7 @@ const ProviderPage: React.FC = () => {
       <main>
         <div className="wrap">
           <Breadcrumbs items={generateBreadcrumbs(window.location.pathname, {
-            providerName: provider.name
+            customTitle: provider.name
           })} />
           <h1 style={{ marginTop: 0 }}>{provider.name}</h1>
 
