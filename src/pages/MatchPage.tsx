@@ -10,6 +10,7 @@ import { formatDetailedDate } from '../utils/dateFormat';
 import { generateBreadcrumbs } from '../utils/breadcrumbs';
 import AffiliateDisclosure, { withAffiliateAriaLabel } from '../components/legal/AffiliateDisclosure';
 import { getTeamUrlSlug } from '../utils/slugUtils';
+import { LiveMatchesTicker } from '../components/LiveMatchesTicker';
 
 const MatchPage: React.FC = () => {
   const { matchSlug, matchId, id } = useParams<{ matchSlug?: string; matchId?: string; id?: string }>();
@@ -296,6 +297,12 @@ const MatchPage: React.FC = () => {
               )}
             </div>
           </div>
+
+          {/* Live Matches Ticker - shows other matches around same time */}
+          <LiveMatchesTicker
+            currentMatchDate={fixture.kickoff_utc}
+            competitionIds={fixture.competition_id ? [fixture.competition_id] : undefined}
+          />
 
           {/* See More Section */}
           <div style={{

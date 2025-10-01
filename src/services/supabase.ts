@@ -512,6 +512,79 @@ export async function getTeams(): Promise<Team[]> {
   }
 }
 
+// Get teams from a specific competition
+export async function getTeamsByCompetition(competitionId: number, limit: number = 20): Promise<Team[]> {
+  try {
+    const { data, error } = await supabase
+      .from('teams')
+      .select('id,name,slug,crest_url,competition_id,short_name,club_colors,website,venue,city')
+      .eq('competition_id', competitionId)
+      .order('name', { ascending: true })
+      .limit(limit);
+
+    if (error) {
+      console.error('[Supabase] getTeamsByCompetition error:', error);
+      return [];
+    }
+
+    return (data || []).map((t: any) => ({
+      id: t.id,
+      name: t.name,
+      slug: t.slug,
+      crest: t.crest_url ?? null,
+      competition_id: t.competition_id,
+      short_name: t.short_name ?? null,
+      club_colors: t.club_colors ?? null,
+      website: t.website ?? null,
+      venue: t.venue ?? null,
+      city: t.city ?? null,
+    }));
+  } catch (e) {
+    console.warn('[Supabase] getTeamsByCompetition error', e);
+    return [];
+  }
+}
+
+// Get fixtures for a specific day (for LiveMatchesTicker)
+export async function getFixturesForDay(date: string, competitionIds?: number[]): Promise<Fixture[]> {
+  try {
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    let query = supabase
+      .from('fixtures')
+      .select(`
+        id,matchday,utc_kickoff,venue,status,competition_id,stage,round,
+        home:home_team_id(id,name,slug,crest_url,competition_id),
+        away:away_team_id(id,name,slug,crest_url,competition_id),
+        broadcasts:fixture_broadcasts(provider:providers(id,name,type,slug))
+      `)
+      .gte('utc_kickoff', startOfDay.toISOString())
+      .lte('utc_kickoff', endOfDay.toISOString())
+      .order('utc_kickoff', { ascending: true })
+      .limit(30);
+
+    if (competitionIds && competitionIds.length > 0) {
+      query = query.in('competition_id', competitionIds);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error('[Supabase] getFixturesForDay error:', error);
+      return [];
+    }
+
+    return (data || []).map((row: any) => mapFixtureRow(row));
+  } catch (e) {
+    console.warn('[Supabase] getFixturesForDay error', e);
+    return [];
+  }
+}
+
 // Get fixtures for a specific date range (e.g., today or tomorrow)
 export async function getFixturesByDateRange(startDate: string, endDate: string): Promise<Fixture[]> {
   return getFixtures({

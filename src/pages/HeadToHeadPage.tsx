@@ -12,6 +12,7 @@ import { generateH2HMeta, calculateH2HStats } from '../utils/headToHead';
 import { generateMatchPreview, isPremierLeagueFixture } from '../utils/matchPreview';
 import { URLBuilder } from '../services/URLBuilder';
 import type { Fixture, Team } from '../types';
+import { LiveMatchesTicker } from '../components/LiveMatchesTicker';
 
 const HeadToHeadPage: React.FC = () => {
   const { matchSlug, contentSlug } = useParams<{ matchSlug?: string; contentSlug?: string }>();
@@ -323,6 +324,14 @@ const HeadToHeadPage: React.FC = () => {
               fixture={nextFixture}
               team1Name={team1.name}
               team2Name={team2.name}
+            />
+          )}
+
+          {/* Live Matches Ticker - shows other matches around same time */}
+          {nextFixture && (
+            <LiveMatchesTicker
+              currentMatchDate={nextFixture.kickoff_utc}
+              competitionIds={nextFixture.competition_id ? [nextFixture.competition_id] : undefined}
             />
           )}
 

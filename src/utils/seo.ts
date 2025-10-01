@@ -572,3 +572,15 @@ export const generatePageMeta = (params: {
     ogUrl: canonical
   };
 };
+
+// Get list of popular Premier League teams (for internal linking fallback)
+export const getPopularTeamSlugs = (): string[] => {
+  return [
+    'arsenal',
+    'liverpool',
+    'manchester-city',
+    'manchester-united',
+    'chelsea',
+    'tottenham-hotspur'
+  ];
+};

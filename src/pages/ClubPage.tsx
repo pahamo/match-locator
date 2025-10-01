@@ -11,6 +11,9 @@ import { getMatchStatus } from '../utils/matchStatus';
 import { Card, CardHeader, CardTitle, CardContent } from '../design-system/components/Card';
 import Flex from '../design-system/components/Layout/Flex';
 import Stack from '../design-system/components/Layout/Stack';
+import { CompetitionBadge } from '../components/CompetitionBadge';
+import { RelatedTeamsSection } from '../components/RelatedTeamsSection';
+import { getAllCompetitionConfigs } from '../config/competitions';
 
 const ClubPage: React.FC = () => {
   const { slug, clubId } = useParams<{ slug?: string; clubId?: string }>();
@@ -73,6 +76,14 @@ const ClubPage: React.FC = () => {
     });
   }, [fixtures]);
 
+  // Get competition name for the team
+  const competitionName = useMemo(() => {
+    if (!team?.competition_id) return undefined;
+    const allCompetitions = getAllCompetitionConfigs();
+    const competition = allCompetitions.find(c => c.id === team.competition_id);
+    return competition?.name;
+  }, [team]);
+
   // Generate dynamic FAQ data based on team and fixtures
   const faqData = useMemo(() => {
     if (!team) return [];
@@ -121,6 +132,12 @@ const ClubPage: React.FC = () => {
           <h1 style={{ marginTop: 0 }}>
             {team ? formatTeamNameShort(team.name) : 'Team'} TV Schedule - What Time Are {team ? formatTeamNameShort(team.name) : 'Team'} Playing?
           </h1>
+
+          {/* Competition Badge - appears below H1 */}
+          {team?.competition_id && (
+            <CompetitionBadge competitionId={team.competition_id} />
+          )}
+
           {loading && <div className="loading">Loading fixtures…</div>}
           {error && <div className="error">{error}</div>}
 
@@ -245,6 +262,14 @@ const ClubPage: React.FC = () => {
                   </Stack>
                 </CardContent>
               </Card>
+
+              {/* Related Teams Section - appears after "How to Watch" */}
+              {team && (
+                <RelatedTeamsSection
+                  currentTeam={team}
+                  competitionName={competitionName}
+                />
+              )}
 
               <section>
                 <h2 style={{ marginTop: 0 }}>Upcoming fixtures ({fixtures.length})</h2>
