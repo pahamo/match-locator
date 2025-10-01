@@ -276,5 +276,6 @@ export default function DatabaseAnalysisPage() {
         </div>
       </div>
     </div>
+    </div>
   );
 }
