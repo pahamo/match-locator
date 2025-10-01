@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom';
 import { getFixtures, getTeams } from '../services/supabase';
 import type { Fixture, Team } from '../types';
 import Header from '../components/Header';
+import Breadcrumbs from '../components/Breadcrumbs';
 import StructuredData from '../components/StructuredData';
 import { updateDocumentMeta } from '../utils/seo';
+import { generateBreadcrumbs } from '../utils/breadcrumbs';
 
 interface TeamMatchup {
   fixture: Fixture;
@@ -187,18 +189,9 @@ const ChampionsLeagueGroupStagePage: React.FC = () => {
 
       <main>
         <div className="wrap">
-          <div style={{ marginBottom: '24px' }}>
-            <Link
-              to="/competitions"
-              style={{
-                color: '#6366f1',
-                textDecoration: 'underline',
-                fontSize: '14px'
-              }}
-            >
-              ← All Competitions
-            </Link>
-          </div>
+          <Breadcrumbs items={generateBreadcrumbs(window.location.pathname, {
+            competitionName: 'UEFA Champions League'
+          })} />
 
           <h1 style={{
             marginBottom: '8px',

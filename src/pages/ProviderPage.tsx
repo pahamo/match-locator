@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import Header from '../components/Header';
+import Breadcrumbs from '../components/Breadcrumbs';
 import AffiliateDisclosure, { withAffiliateAriaLabel } from '../components/legal/AffiliateDisclosure';
+import { generateBreadcrumbs } from '../utils/breadcrumbs';
 
 function humanize(slug: string): string {
   return slug.replace(/-/g, ' ').replace(/\b\w/g, m => m.toUpperCase());
@@ -27,6 +29,9 @@ const ProviderPage: React.FC = () => {
       <Header />
       <main>
         <div className="wrap">
+          <Breadcrumbs items={generateBreadcrumbs(window.location.pathname, {
+            providerName: provider.name
+          })} />
           <h1 style={{ marginTop: 0 }}>{provider.name}</h1>
 
           <section className="card" style={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: 12, padding: 24, boxShadow: 'var(--shadow-sm, 0 1px 3px rgba(0,0,0,.06))', marginBottom: 24 }}>

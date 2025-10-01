@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../services/supabase';
+import Header from '../components/Header';
+import Breadcrumbs from '../components/Breadcrumbs';
+import { generateBreadcrumbs } from '../utils/breadcrumbs';
 
 interface AnalysisResult {
   competitions: Array<{
@@ -136,19 +139,27 @@ export default function DatabaseAnalysisPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">Database Analysis</h1>
-        <p>Analyzing database structure...</p>
+      <div>
+        <Header />
+        <div className="container mx-auto px-4 py-8">
+          <Breadcrumbs items={generateBreadcrumbs(window.location.pathname)} />
+          <h1 className="text-3xl font-bold mb-6">Database Analysis</h1>
+          <p>Analyzing database structure...</p>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">Database Analysis</h1>
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          Error: {error}
+      <div>
+        <Header />
+        <div className="container mx-auto px-4 py-8">
+          <Breadcrumbs items={generateBreadcrumbs(window.location.pathname)} />
+          <h1 className="text-3xl font-bold mb-6">Database Analysis</h1>
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+            Error: {error}
+          </div>
         </div>
       </div>
     );
@@ -156,16 +167,23 @@ export default function DatabaseAnalysisPage() {
 
   if (!analysis) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">Database Analysis</h1>
-        <p>No analysis data available.</p>
+      <div>
+        <Header />
+        <div className="container mx-auto px-4 py-8">
+          <Breadcrumbs items={generateBreadcrumbs(window.location.pathname)} />
+          <h1 className="text-3xl font-bold mb-6">Database Analysis</h1>
+          <p>No analysis data available.</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-6">Database Analysis</h1>
+    <div>
+      <Header />
+      <div className="container mx-auto px-4 py-8">
+        <Breadcrumbs items={generateBreadcrumbs(window.location.pathname)} />
+        <h1 className="text-3xl font-bold mb-6">Database Analysis</h1>
 
       <div className="grid gap-6">
         {/* Competitions */}

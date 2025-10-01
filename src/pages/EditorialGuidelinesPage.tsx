@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
 import Header from '../components/Header';
+import Breadcrumbs from '../components/Breadcrumbs';
 import { ContentCard, TextContainer } from '../design-system';
 import { generatePageMeta, updateDocumentMeta } from '../utils/seo';
+import { generateBreadcrumbs } from '../utils/breadcrumbs';
 
 const EditorialGuidelinesPage: React.FC = () => {
   useEffect(() => {
@@ -17,6 +19,7 @@ const EditorialGuidelinesPage: React.FC = () => {
     <div className="editorial-guidelines-page">
       <Header />
       <main className="wrap" style={{ paddingTop: 'var(--layout-page-top-margin)' }}>
+        <Breadcrumbs items={generateBreadcrumbs(window.location.pathname)} />
         <ContentCard>
           <TextContainer>
             <header>

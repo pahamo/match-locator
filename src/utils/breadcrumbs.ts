@@ -122,6 +122,27 @@ export const generateBreadcrumbs = (
       }
       break;
 
+    case 'h2h':
+      // /h2h/team-vs-team (Head to Head pages)
+      if (pathParts[1]) {
+        const h2hSlug = pathParts[1];
+        breadcrumbs.push({ label: 'Matches', href: '/matches' });
+
+        if (h2hSlug.includes('-vs-')) {
+          const parts = h2hSlug.split('-vs-');
+          if (parts.length === 2) {
+            const team1 = parts[0].replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            const team2 = parts[1].replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            breadcrumbs.push({ label: `${team1} vs ${team2}` });
+          } else {
+            breadcrumbs.push({ label: h2hSlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) });
+          }
+        } else {
+          breadcrumbs.push({ label: h2hSlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) });
+        }
+      }
+      break;
+
     case 'content':
       if (pathParts.length === 1) {
         // /content
@@ -169,12 +190,13 @@ export const generateBreadcrumbs = (
       }
       break;
 
+    case 'club':
     case 'clubs':
       if (pathParts.length === 1) {
         // /clubs
         breadcrumbs.push({ label: 'Clubs' });
       } else {
-        // /clubs/team-slug
+        // /club/team-slug or /clubs/team-slug
         breadcrumbs.push(
           { label: 'Clubs', href: '/clubs' }
         );

@@ -4,11 +4,13 @@ import { getSimpleFixtures, getSimpleCompetitions } from '../services/supabase-s
 import { getTeams } from '../services/supabase';
 import type { SimpleFixture, Competition, Team } from '../types';
 import Header from '../components/Header';
+import Breadcrumbs from '../components/Breadcrumbs';
 import StructuredData from '../components/StructuredData';
 import { FixtureCardSkeleton } from '../components/SkeletonLoader';
 import FixtureCard from '../design-system/components/FixtureCard';
 import { getCompetitionLogo } from '../config/competitions';
 import { generateCompetitionMeta, updateDocumentMeta } from '../utils/seo';
+import { generateBreadcrumbs } from '../utils/breadcrumbs';
 
 const CompetitionPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -143,13 +145,9 @@ const CompetitionPage: React.FC = () => {
       <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
         {/* Competition Header */}
         <div style={{ marginBottom: '2rem' }}>
-          <nav style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '1rem' }}>
-            <a href="/competitions" style={{ color: '#6366f1', textDecoration: 'none' }}>
-              Competitions
-            </a>
-            {' > '}
-            <span>{competition.name}</span>
-          </nav>
+          <Breadcrumbs items={generateBreadcrumbs(window.location.pathname, {
+            competitionName: competition.name
+          })} />
 
           <div style={{
             display: 'flex',

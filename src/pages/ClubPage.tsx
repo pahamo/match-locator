@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { getFixtures } from '../services/supabase';
 import type { Fixture } from '../types';
 import Header from '../components/Header';
+import Breadcrumbs from '../components/Breadcrumbs';
 import { generateTeamMeta, updateDocumentMeta, formatTeamNameShort } from '../utils/seo';
 import { FixtureCard } from '../design-system';
 import { teamMatchesSlug } from '../utils/slugUtils';
@@ -15,6 +16,7 @@ import { CompetitionBadge } from '../components/CompetitionBadge';
 import { RelatedTeamsSection } from '../components/RelatedTeamsSection';
 import { LiveMatchesTicker } from '../components/LiveMatchesTicker';
 import { getAllCompetitionConfigs } from '../config/competitions';
+import { generateBreadcrumbs } from '../utils/breadcrumbs';
 
 const ClubPage: React.FC = () => {
   const { slug, clubId } = useParams<{ slug?: string; clubId?: string }>();
@@ -130,6 +132,10 @@ const ClubPage: React.FC = () => {
 
       <main>
         <div className="wrap">
+          <Breadcrumbs items={generateBreadcrumbs(window.location.pathname, {
+            teamName: team ? formatTeamNameShort(team.name) : 'Team'
+          })} />
+
           <h1 style={{ marginTop: 0 }}>
             {team ? formatTeamNameShort(team.name) : 'Team'} TV Schedule - What Time Are {team ? formatTeamNameShort(team.name) : 'Team'} Playing?
           </h1>

@@ -6,7 +6,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
+import Breadcrumbs from '../components/Breadcrumbs';
 import { getCurrentAPISource, isTestMode } from '../config/featureFlags';
+import { generateBreadcrumbs } from '../utils/breadcrumbs';
 
 interface SoccersAPIFixture {
   id: string;
@@ -111,6 +113,8 @@ const TestSoccersAPIPage: React.FC = () => {
         padding: '24px',
         paddingTop: '100px' // Account for fixed header
       }}>
+        <Breadcrumbs items={generateBreadcrumbs(window.location.pathname)} />
+
         {/* Page Header */}
         <div style={{ marginBottom: '32px' }}>
           <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>

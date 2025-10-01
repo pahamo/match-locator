@@ -132,15 +132,18 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
               <div className="time-column-metadata">
                 {/* League Pill */}
                 {competition && (
-                  <div
+                  <Link
+                    to={`/competitions/${competition.slug}`}
                     className="league-pill"
                     style={{
                       background: competition.colors.primary,
                       color: competition.colors.secondary,
+                      textDecoration: 'none'
                     }}
+                    title={`View ${competition.name} fixtures`}
                   >
                     {competition.shortName}
-                  </div>
+                  </Link>
                 )}
 
                 {/* Matchweek */}
@@ -307,6 +310,14 @@ const fixtureCardStyles = `
     letter-spacing: 0.5px;
     text-align: center;
     line-height: 1;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-block;
+  }
+
+  .league-pill:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
   }
 
   .matchweek-pill {

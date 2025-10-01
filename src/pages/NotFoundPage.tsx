@@ -1,6 +1,8 @@
 import React from 'react';
 import Header from '../components/Header';
+import Breadcrumbs from '../components/Breadcrumbs';
 import { ContentCard, TextContainer } from '../design-system';
+import { generateBreadcrumbs } from '../utils/breadcrumbs';
 
 const NotFoundPage: React.FC = () => {
   return (
@@ -8,6 +10,7 @@ const NotFoundPage: React.FC = () => {
       <Header />
       <main>
         <div className="wrap" style={{ paddingTop: 'var(--layout-page-top-margin)' }}>
+          <Breadcrumbs items={generateBreadcrumbs(window.location.pathname)} />
           <ContentCard>
             <TextContainer>
               <h1>Page not found</h1>
