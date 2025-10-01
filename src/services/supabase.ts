@@ -555,12 +555,11 @@ export async function getFixturesForDay(date: string, competitionIds?: number[])
     endOfDay.setHours(23, 59, 59, 999);
 
     let query = supabase
-      .from('fixtures')
+      .from('fixtures_with_teams')
       .select(`
         id,matchday,utc_kickoff,venue,status,competition_id,stage,round,
-        home:home_team_id(id,name,slug,crest_url,competition_id),
-        away:away_team_id(id,name,slug,crest_url,competition_id),
-        broadcasts:fixture_broadcasts(provider:providers(id,name,type,slug))
+        home_team_id,home_team,home_slug,home_crest,
+        away_team_id,away_team,away_slug,away_crest
       `)
       .gte('utc_kickoff', startOfDay.toISOString())
       .lte('utc_kickoff', endOfDay.toISOString())
@@ -571,14 +570,41 @@ export async function getFixturesForDay(date: string, competitionIds?: number[])
       query = query.in('competition_id', competitionIds);
     }
 
-    const { data, error } = await query;
+    const { data: rows, error } = await query;
 
     if (error) {
       console.error('[Supabase] getFixturesForDay error:', error);
       return [];
     }
 
-    return (data || []).map((row: any) => mapFixtureRow(row));
+    if (!rows || !rows.length) return [];
+
+    // Enrich providers in a second step
+    const ids = rows.map(r => r.id).filter(Boolean);
+    let providersByFixture: Record<number, Provider[]> = {};
+
+    if (ids.length) {
+      const bcasts = await getBroadcastsForFixtures(ids);
+      const providerIds = Array.from(new Set(bcasts.map(b => b.provider_id).filter(Boolean)));
+      const provs = providerIds.length ? await getProvidersByIds(providerIds) : [];
+      const byPk = Object.fromEntries(provs.map(p => [p.id, p]));
+
+      for (const b of bcasts) {
+        const fId = b.fixture_id;
+        const key = String(b.provider_id);
+        const p = byPk[key];
+        const entry = p ? { ...p } : undefined;
+        if (!providersByFixture[fId]) providersByFixture[fId] = [];
+        if (entry) providersByFixture[fId].push(entry);
+      }
+    }
+
+    let mapped = rows.map(r => mapFixtureRow(r, providersByFixture));
+
+    // Filter out test fixtures (IDs <= 30)
+    mapped = mapped.filter(f => f.id && f.id > 30);
+
+    return mapped;
   } catch (e) {
     console.warn('[Supabase] getFixturesForDay error', e);
     return [];
