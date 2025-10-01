@@ -55,8 +55,8 @@ export const LiveMatchesTicker: React.FC<LiveMatchesTickerProps> = ({
   }
 
   return (
-    <div className="mb-6">
-      <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">
+    <div style={{ marginBottom: '1.5rem' }}>
+      <h2 style={{ marginTop: 0, marginBottom: '0.75rem', fontSize: '1.25rem', fontWeight: '700' }}>
         Today's Other {competitionName} Matches - {formattedDate}
       </h2>
       <div className="overflow-hidden bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-800 dark:to-blue-900 py-3 rounded-lg shadow-lg">
