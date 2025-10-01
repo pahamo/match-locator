@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Fixture } from '../types';
 import { getFixturesForDay } from '../services/supabase';
 import { formatTeamNameShort } from '../utils/seo';
 import { generateH2HUrl } from '../utils/headToHead';
 import { Link } from 'react-router-dom';
+import { getAllCompetitionConfigs } from '../config/competitions';
 
 interface LiveMatchesTickerProps {
   currentMatchDate: string; // ISO date string
@@ -28,12 +29,37 @@ export const LiveMatchesTicker: React.FC<LiveMatchesTickerProps> = ({
     fetchMatches();
   }, [currentMatchDate, competitionIds]);
 
+  // Get competition name and formatted date for title
+  const { competitionName, formattedDate } = useMemo(() => {
+    if (!fixtures.length) return { competitionName: '', formattedDate: '' };
+
+    const allCompetitions = getAllCompetitionConfigs();
+    const competitionId = competitionIds?.[0] || fixtures[0].competition_id;
+    const competition = allCompetitions.find(c => c.id === competitionId);
+
+    const date = new Date(currentMatchDate);
+    const formatted = date.toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+
+    return {
+      competitionName: competition?.name || 'Other',
+      formattedDate: formatted
+    };
+  }, [fixtures, competitionIds, currentMatchDate]);
+
   if (loading || fixtures.length === 0) {
     return null;
   }
 
   return (
-    <div className="overflow-hidden bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-800 dark:to-blue-900 py-3 mb-6 rounded-lg shadow-lg">
+    <div className="mb-6">
+      <h2 className="text-xl font-bold mb-3 text-gray-900 dark:text-gray-100">
+        Today's Other {competitionName} Matches - {formattedDate}
+      </h2>
+      <div className="overflow-hidden bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-800 dark:to-blue-900 py-3 rounded-lg shadow-lg">
       <div className="relative flex overflow-hidden">
         <div className="flex animate-scroll whitespace-nowrap">
           {[...fixtures, ...fixtures].map((fixture, idx) => (
@@ -83,6 +109,7 @@ export const LiveMatchesTicker: React.FC<LiveMatchesTickerProps> = ({
           animation-play-state: paused;
         }
       `}</style>
+      </div>
     </div>
   );
 };
