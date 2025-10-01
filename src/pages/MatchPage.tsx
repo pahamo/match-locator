@@ -5,7 +5,7 @@ import type { Fixture } from '../types';
 import Header from '../components/Header';
 import Breadcrumbs from '../components/Breadcrumbs';
 import StructuredData from '../components/StructuredData';
-import { parseMatchSlug, parseSeoMatchSlug, generateMatchMeta, generateSeoMatchUrl, updateDocumentMeta } from '../utils/seo';
+import { parseMatchSlug, parseSeoMatchSlug, generateMatchMeta, generateSeoMatchUrl, updateDocumentMeta, formatTeamNameShort } from '../utils/seo';
 import { formatDetailedDate } from '../utils/dateFormat';
 import { generateBreadcrumbs } from '../utils/breadcrumbs';
 import AffiliateDisclosure, { withAffiliateAriaLabel } from '../components/legal/AffiliateDisclosure';
@@ -173,9 +173,9 @@ const MatchPage: React.FC = () => {
 
       <main>
         <div className="wrap">
-          <Breadcrumbs items={generateBreadcrumbs(window.location.pathname, { matchTitle: `${fixture.home.name} vs ${fixture.away.name}` })} />
+          <Breadcrumbs items={generateBreadcrumbs(window.location.pathname, { matchTitle: `${formatTeamNameShort(fixture.home.name)} vs ${formatTeamNameShort(fixture.away.name)}` })} />
           <h1 style={{ marginTop: 32, marginBottom: 16, fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>
-            {fixture.home.name} vs {fixture.away.name}
+            {formatTeamNameShort(fixture.home.name)} vs {formatTeamNameShort(fixture.away.name)}
           </h1>
           {/* Match Header */}
           <div className="fixture-card" style={{ marginBottom: '24px', padding: '24px' }}>
@@ -194,23 +194,23 @@ const MatchPage: React.FC = () => {
                   />
                 )}
                 <span className="team-name" style={{ fontSize: '1.2rem', fontWeight: '600' }}>
-                  {fixture.home.name}
+                  {formatTeamNameShort(fixture.home.name)}
                 </span>
               </div>
-              
+
               <div className="vs" style={{ fontSize: '1.1rem', fontWeight: '600' }}>vs</div>
-              
+
               <div className="team away-team">
                 {fixture.away.crest && (
-                  <img 
-                    src={fixture.away.crest} 
+                  <img
+                    src={fixture.away.crest}
                     alt={`${fixture.away.name} crest`}
                     className="team-crest"
                     style={{ width: '32px', height: '32px' }}
                   />
                 )}
                 <span className="team-name" style={{ fontSize: '1.2rem', fontWeight: '600' }}>
-                  {fixture.away.name}
+                  {formatTeamNameShort(fixture.away.name)}
                 </span>
               </div>
             </div>
@@ -333,7 +333,7 @@ const MatchPage: React.FC = () => {
                   gap: '6px'
                 }}
               >
-                🏟️ {fixture.home.name}
+                🏟️ {formatTeamNameShort(fixture.home.name)}
               </Link>
 
               {/* Away Team Button */}
@@ -352,7 +352,7 @@ const MatchPage: React.FC = () => {
                   gap: '6px'
                 }}
               >
-                🏟️ {fixture.away.name}
+                🏟️ {formatTeamNameShort(fixture.away.name)}
               </Link>
 
               {/* Competition Button */}

@@ -6,7 +6,7 @@ import H2HStatsCard from '../components/H2HStatsCard';
 import NextFixtureHero from '../components/NextFixtureHero';
 import { FixtureCard } from '../design-system';
 import { getHeadToHeadFixtures, getLiveOrNextHeadToHeadFixture, supabase } from '../services/supabase';
-import { updateDocumentMeta } from '../utils/seo';
+import { updateDocumentMeta, formatTeamNameShort } from '../utils/seo';
 import { generateBreadcrumbs } from '../utils/breadcrumbs';
 import { generateH2HMeta, calculateH2HStats } from '../utils/headToHead';
 import { generateMatchPreview, isPremierLeagueFixture } from '../utils/matchPreview';
@@ -268,7 +268,7 @@ const HeadToHeadPage: React.FC = () => {
       <main style={{ minHeight: '60vh', background: 'white' }}>
         <div className="wrap">
           <Breadcrumbs items={generateBreadcrumbs(window.location.pathname, {
-            matchTitle: `${team1.name} vs ${team2.name}`
+            matchTitle: `${formatTeamNameShort(team1.name)} vs ${formatTeamNameShort(team2.name)}`
           })} />
 
 
@@ -293,7 +293,7 @@ const HeadToHeadPage: React.FC = () => {
                 onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
                 onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
               >
-                {team1.name}
+                {formatTeamNameShort(team1.name)}
               </a>
               {' vs '}
               <a
@@ -305,7 +305,7 @@ const HeadToHeadPage: React.FC = () => {
                 onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
                 onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
               >
-                {team2.name}
+                {formatTeamNameShort(team2.name)}
               </a>
             </h1>
             <p style={{
@@ -441,7 +441,7 @@ const HeadToHeadPage: React.FC = () => {
                 color: '#64748b',
                 marginBottom: '24px'
               }}>
-                There are no scheduled matches between {team1.name} and {team2.name} this season.
+                There are no scheduled matches between {formatTeamNameShort(team1.name)} and {formatTeamNameShort(team2.name)} this season.
               </p>
               <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
                 <a
@@ -457,7 +457,7 @@ const HeadToHeadPage: React.FC = () => {
                     fontWeight: '500'
                   }}
                 >
-                  View {team1.name} Matches
+                  View {formatTeamNameShort(team1.name)} Matches
                 </a>
                 <a
                   href={URLBuilder.team(team2)}
@@ -472,7 +472,7 @@ const HeadToHeadPage: React.FC = () => {
                     fontWeight: '500'
                   }}
                 >
-                  View {team2.name} Matches
+                  View {formatTeamNameShort(team2.name)} Matches
                 </a>
               </div>
             </div>

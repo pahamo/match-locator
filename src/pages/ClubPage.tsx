@@ -77,9 +77,10 @@ const ClubPage: React.FC = () => {
   const faqData = useMemo(() => {
     if (!team) return [];
 
-    const teamName = team.name;
+    const teamName = formatTeamNameShort(team.name);
+    const opponentName = nextMatch ? formatTeamNameShort(nextMatch.home.slug === teamSlug ? nextMatch.away.name : nextMatch.home.name) : '';
     const nextMatchAnswer = nextMatch
-      ? `${teamName}'s next match is ${nextMatch.home.name} vs ${nextMatch.away.name} on ${new Date(nextMatch.kickoff_utc).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} at ${new Date(nextMatch.kickoff_utc).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })}${nextMatch.providers_uk?.[0] ? ` on ${nextMatch.providers_uk[0].name}` : ' (TV channel TBC)'}.`
+      ? `${teamName}'s next match is ${formatTeamNameShort(nextMatch.home.name)} vs ${formatTeamNameShort(nextMatch.away.name)} on ${new Date(nextMatch.kickoff_utc).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} at ${new Date(nextMatch.kickoff_utc).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })}${nextMatch.providers_uk?.[0] ? ` on ${nextMatch.providers_uk[0].name}` : ' (TV channel TBC)'}.`
       : `${teamName} has no upcoming fixtures scheduled at this time. Check back soon for updated match schedules.`;
 
     const channelAnswer = nextMatch?.providers_uk?.[0]
@@ -90,7 +91,7 @@ const ClubPage: React.FC = () => {
       {
         question: `What time is ${teamName} playing today?`,
         answer: nextMatch && new Date(nextMatch.kickoff_utc).toDateString() === new Date().toDateString()
-          ? `${teamName} is playing today at ${new Date(nextMatch.kickoff_utc).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })} UK time against ${nextMatch.home.slug === teamSlug ? nextMatch.away.name : nextMatch.home.name}${nextMatch.providers_uk?.[0] ? ` on ${nextMatch.providers_uk[0].name}` : ''}.`
+          ? `${teamName} is playing today at ${new Date(nextMatch.kickoff_utc).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })} UK time against ${opponentName}${nextMatch.providers_uk?.[0] ? ` on ${nextMatch.providers_uk[0].name}` : ''}.`
           : `${teamName} is not playing today. Their next match is ${nextMatch ? `on ${new Date(nextMatch.kickoff_utc).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}` : 'to be confirmed'}.`
       },
       {
