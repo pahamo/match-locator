@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Breadcrumbs from '../components/Breadcrumbs';
+import StructuredData from '../components/StructuredData';
 import { FixtureCard } from '../design-system';
 import CountdownTimer from '../components/CountdownTimer';
 import LiveBadge from '../components/LiveBadge';
@@ -140,8 +141,35 @@ const TodayFixturesPage: React.FC = () => {
     );
   }
 
+  // Generate dynamic FAQ data based on today's fixtures
+  const faqData = [
+    {
+      question: "What football is on TV today in the UK?",
+      answer: `Today (${getFormattedDateForSEO(getUKDate())}) there ${fixtures.length === 1 ? 'is' : 'are'} ${fixtures.length} football ${fixtures.length === 1 ? 'match' : 'matches'} on UK TV${liveFixtures.length > 0 ? `, with ${liveFixtures.length} currently live` : ''}. Matches are broadcast on Sky Sports, TNT Sports, Amazon Prime, and BBC. Check the full schedule above for kick-off times and channels.`
+    },
+    {
+      question: "What channel is football on today?",
+      answer: "Today's football matches are shown on Sky Sports (Premier League, EFL), TNT Sports (Champions League, Europa League), Amazon Prime Video (selected Premier League games), and BBC (FA Cup, selected matches). Check each match above for specific channel information."
+    },
+    {
+      question: "Is there any football on TV tonight?",
+      answer: fixtures.length > 0
+        ? `Yes, there ${fixtures.length === 1 ? 'is' : 'are'} ${fixtures.length} football ${fixtures.length === 1 ? 'match' : 'matches'} on TV today${upcomingFixtures.length > 0 ? `, including ${upcomingFixtures.length} upcoming ${upcomingFixtures.length === 1 ? 'match' : 'matches'}` : ''}. See the complete schedule above with kick-off times and UK TV channels.`
+        : "Check tomorrow's fixtures or the full match calendar for upcoming games on Sky Sports, TNT Sports, Amazon Prime and BBC."
+    },
+    {
+      question: "What time does football start today?",
+      answer: upcomingFixtures.length > 0
+        ? `The next football match kicks off at ${new Date(upcomingFixtures[0].kickoff_utc).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })} UK time on ${upcomingFixtures[0].providers_uk?.[0]?.name || 'TV'}.`
+        : fixtures.length > 0
+          ? `Today's football has already started. Check the live matches section above or view tomorrow's fixtures.`
+          : "There are no matches scheduled for today. Check tomorrow's fixtures or the full match calendar."
+    }
+  ];
+
   return (
     <div>
+      <StructuredData type="faq" data={faqData} />
       <Header />
       <main className="wrap" style={{ paddingTop: 'var(--layout-page-top-margin)' }}>
         <Breadcrumbs items={generateBreadcrumbs('/fixtures/today')} />
@@ -152,9 +180,10 @@ const TodayFixturesPage: React.FC = () => {
             marginBottom: '8px',
             display: 'flex',
             alignItems: 'center',
-            gap: '12px'
+            gap: '12px',
+            flexWrap: 'wrap'
           }}>
-            ⚽ Football on TV Today
+            <span>⚽ Football on TV Today - {getFormattedDateForSEO(getUKDate())}</span>
             {liveFixtures.length > 0 && (
               <LiveBadge kickoffTime={liveFixtures[0].kickoff_utc} variant="compact" />
             )}
@@ -167,7 +196,7 @@ const TodayFixturesPage: React.FC = () => {
             color: 'var(--color-text-secondary)'
           }}>
             <p style={{ margin: 0, fontSize: '16px' }}>
-              {getFormattedDateForSEO(getUKDate())} • Live UK TV Schedule
+              Live UK TV Schedule • {fixtures.length} {fixtures.length === 1 ? 'match' : 'matches'} today
             </p>
             <div style={{
               display: 'flex',

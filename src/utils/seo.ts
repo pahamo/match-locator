@@ -336,12 +336,12 @@ export const generateMatchMeta = (fixture: Fixture) => {
       ? fixture.providers_uk.map(p => p.name).join(', ')
       : 'Broadcaster to be confirmed';
 
-  // Optimized description: "Find out where to watch [Home] vs [Away] on [Date]. Live on [Broadcaster] at [Time]. Get full TV schedule and streaming info."
+  // Optimized description with urgency and channel emphasis
   const description = fixture.blackout?.is_blackout
-    ? `Find out where to watch ${homeShort} vs ${awayShort} on ${date}. Not shown on UK TV. Get full TV schedule and streaming info.`
+    ? `${homeShort} vs ${awayShort} - ${date} at ${time}. Not shown on UK TV. Find alternative viewing options and full match preview.`
     : fixture.providers_uk.length > 0
-      ? `Find out where to watch ${homeShort} vs ${awayShort} on ${date}. Live on ${broadcasterText} at ${time}. Get full TV schedule and streaming info.`
-      : `Find out where to watch ${homeShort} vs ${awayShort} on ${date}. Broadcaster to be confirmed. Get full TV schedule and streaming info.`;
+      ? `${homeShort} vs ${awayShort} LIVE on ${broadcasterText} - ${date} at ${time}. Watch on UK TV. Get ${broadcasterText}, team news & streaming guide.`
+      : `${homeShort} vs ${awayShort} - ${date} at ${time}. UK TV channel TBC. Check latest broadcast info, kick-off time & how to watch.`;
 
   const ogImage = fixture.home.crest || fixture.away.crest || '/favicon.png';
   const canonical = `${CANONICAL_BASE}${generateSeoMatchUrl(fixture)}`;
@@ -371,12 +371,12 @@ export const generateSimpleMatchMeta = (fixture: SimpleFixture) => {
   // Build optimized title: "[Home] vs [Away] TV Schedule - [Broadcaster] | [Date] | Match Locator"
   const title = `${homeShort} vs ${awayShort} TV Schedule - ${broadcasterForTitle} | ${date} | Match Locator`;
 
-  // Optimized description
+  // Optimized description with urgency and channel emphasis
   const description = fixture.isBlackout
-    ? `Find out where to watch ${homeShort} vs ${awayShort} on ${date}. Not shown on UK TV. Get full TV schedule and streaming info.`
+    ? `${homeShort} vs ${awayShort} - ${date} at ${time}. Not shown on UK TV. Find alternative viewing options and full match preview.`
     : fixture.broadcaster
-      ? `Find out where to watch ${homeShort} vs ${awayShort} on ${date}. Live on ${fixture.broadcaster} at ${time}. Get full TV schedule and streaming info.`
-      : `Find out where to watch ${homeShort} vs ${awayShort} on ${date}. Broadcaster to be confirmed. Get full TV schedule and streaming info.`;
+      ? `${homeShort} vs ${awayShort} LIVE on ${fixture.broadcaster} - ${date} at ${time}. Watch on UK TV. Get ${fixture.broadcaster}, team news & streaming guide.`
+      : `${homeShort} vs ${awayShort} - ${date} at ${time}. UK TV channel TBC. Check latest broadcast info, kick-off time & how to watch.`;
 
   const ogImage = fixture.home_crest || fixture.away_crest || '/favicon.png';
   const canonical = `${CANONICAL_BASE}${generateSeoSimpleMatchUrl(fixture)}`;
@@ -416,11 +416,15 @@ export const generateTeamMeta = (team: Team, upcomingCount: number = 0) => {
 };
 
 export const generateHomeMeta = () => {
-  // Optimized homepage title - focus on "Today's Matches"
-  const title = 'Football TV Schedule UK | Today\'s Matches - Where to Watch | Match Locator';
+  // Get current date for dynamic title
+  const today = new Date();
+  const dayName = today.toLocaleDateString('en-GB', { weekday: 'long' });
 
-  // Optimized homepage description
-  const description = 'UK\'s football TV schedule. Find out what matches are on TV today, tonight and this week. Premier League, Champions League on Sky Sports, TNT Sports, Amazon Prime.';
+  // Optimized homepage title - focus on "Today's Matches"
+  const title = `Football on TV Today ${dayName} - UK Schedule | Sky Sports, TNT | Match Locator`;
+
+  // Optimized homepage description with urgency and channel names
+  const description = `${dayName}'s football on UK TV. Live matches today on Sky Sports, TNT Sports, Amazon Prime. Get kick-off times, channels & how to watch Premier League, Champions League now.`;
 
   const canonical = `${CANONICAL_BASE}/`;
 

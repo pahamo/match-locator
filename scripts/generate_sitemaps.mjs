@@ -2,6 +2,10 @@
 import fs from 'fs';
 import path from 'path';
 import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+
+// Load .env file
+dotenv.config();
 
 const root = process.cwd();
 const publicDir = path.join(root, 'public');
@@ -52,9 +56,16 @@ function formatDateForSeoUrl(date) {
 }
 
 async function fetchTeams() {
-  if (!supabase) return [];
+  if (!supabase) {
+    console.warn('[sitemap] Supabase not initialized - check env vars');
+    return [];
+  }
   const { data, error } = await supabase.from('teams').select('slug, url_slug').order('name', { ascending: true });
-  if (error) { console.warn('[sitemap] teams error', error); return []; }
+  if (error) {
+    console.warn('[sitemap] teams error', error);
+    return [];
+  }
+  console.log(`[sitemap] Fetched ${data?.length || 0} teams from database`);
   return (data || []).map(team => ({
     ...team,
     preferredSlug: (team.url_slug && team.url_slug.trim()) ? team.url_slug : team.slug
@@ -101,13 +112,13 @@ async function build() {
   ].join('\n');
   writeXml(path.join(sitemapsDir, 'sitemap-matches.xml'), matchesXml);
 
-  // Teams
+  // Teams (using /clubs/ route as per App.tsx)
   const teams = await fetchTeams();
-  const teamUrls = teams.map(t => `${CANONICAL_BASE}/club/${t.preferredSlug}`);
+  const teamUrls = teams.map(t => `${CANONICAL_BASE}/clubs/${t.preferredSlug}`);
   const teamsXml = [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-    ...teamUrls.map(u => urlEntry(u, { changefreq: 'weekly', priority: '0.6' })),
+    ...teamUrls.map(u => urlEntry(u, { changefreq: 'weekly', priority: '0.7' })),
     '</urlset>'
   ].join('\n');
   writeXml(path.join(sitemapsDir, 'sitemap-teams.xml'), teamsXml);
