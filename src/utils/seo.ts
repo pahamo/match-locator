@@ -52,6 +52,38 @@ export const cleanTeamName = (teamName: string): string => {
 
 // Format team name for SEO titles (shorter version)
 export const formatTeamNameShort = (teamName: string): string => {
+  // Specific team name mappings for common shortenings
+  const teamMappings: Record<string, string> = {
+    'Brighton & Hove Albion': 'Brighton',
+    'Brighton & Hove Albion FC': 'Brighton',
+    'Wolverhampton Wanderers': 'Wolves',
+    'Wolverhampton Wanderers FC': 'Wolves',
+    'Tottenham Hotspur': 'Tottenham',
+    'Tottenham Hotspur FC': 'Tottenham',
+    'West Ham United': 'West Ham',
+    'West Ham United FC': 'West Ham',
+    'Newcastle United': 'Newcastle',
+    'Newcastle United FC': 'Newcastle',
+    'Manchester United': 'Man Utd',
+    'Manchester United FC': 'Man Utd',
+    'Manchester City': 'Man City',
+    'Manchester City FC': 'Man City',
+    'Leicester City': 'Leicester',
+    'Leicester City FC': 'Leicester',
+    'Norwich City': 'Norwich',
+    'Norwich City FC': 'Norwich',
+    'Sheffield United': 'Sheffield Utd',
+    'Sheffield United FC': 'Sheffield Utd',
+    'Nottingham Forest': 'Forest',
+    'Nottingham Forest FC': 'Forest',
+  };
+
+  // Check for exact match first
+  if (teamMappings[teamName]) {
+    return teamMappings[teamName];
+  }
+
+  // Otherwise apply generic cleaning
   return cleanTeamName(teamName)
     .replace(/\s+Football Club$/i, '')
     .replace(/\s+Association Football Club$/i, '')
