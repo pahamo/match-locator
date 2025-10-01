@@ -58,6 +58,8 @@ export interface SimpleFixture {
   kickoff_utc: string;
   home_team: string;
   away_team: string;
+  home_slug?: string;        // Team slug for SEO-friendly URLs
+  away_slug?: string;        // Team slug for SEO-friendly URLs
   home_crest?: string;
   away_crest?: string;
   broadcaster?: string;

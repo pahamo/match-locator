@@ -3,13 +3,12 @@ import { Link } from 'react-router-dom';
 import type { SimpleFixture, Fixture } from '../../types';
 import { getMatchStatus, getMatchStatusStyles } from '../../utils/matchStatus';
 import { shouldCreateMatchPage } from '../../utils/matchPageFilter';
-import { generateH2HUrl } from '../../utils/headToHead';
-import { getCanonicalTeamSlug } from '../../utils/teamSlugs';
 import { getDisplayTeamName } from '../../utils/teamNames';
 import { formatTime } from '../../utils/dateFormat';
 import { COMPETITION_CONFIGS } from '../../config/competitions';
 import OptimizedImage from '../../components/OptimizedImage';
 import { SkyAffiliateLink } from '../../components/affiliate/AffiliateLink';
+import { buildH2HUrl } from '../../utils/urlBuilder';
 
 
 export interface FixtureCardProps {
@@ -38,14 +37,12 @@ const getCompetitionInfo = (fixture: SimpleFixture | Fixture) => {
 };
 
 const getFixtureData = (fixture: SimpleFixture | Fixture) => {
-  // SIMPLIFIED: Only use shouldCreateMatchPage to determine if View button shows
+  // Determine if we should create a match page for this fixture
   const shouldCreatePage = shouldCreateMatchPage(fixture);
 
   if (isSimpleFixture(fixture)) {
-    // Generate H2H URL from SimpleFixture
-    const homeSlug = getCanonicalTeamSlug(fixture.home_team);
-    const awaySlug = getCanonicalTeamSlug(fixture.away_team);
-    const h2hUrl = shouldCreatePage ? generateH2HUrl(homeSlug, awaySlug) : null;
+    // Smart URL builder: Direct SEO URL (best) → Fixture ID fallback (robust)
+    const urlResult = shouldCreatePage ? buildH2HUrl(fixture) : null;
 
     return {
       homeTeam: fixture.home_team,
@@ -55,7 +52,8 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
       broadcaster: fixture.broadcaster,
       isBlackout: fixture.isBlackout || false,
       matchweek: fixture.matchweek,
-      url: h2hUrl,
+      url: urlResult?.url || null,
+      urlStrategy: urlResult?.strategy,  // Track which strategy used (for monitoring)
       shouldCreatePage: shouldCreatePage
     };
   } else {
@@ -63,10 +61,8 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
     const broadcasterName = hasProviders ? fixture.providers_uk[0].name : undefined;
     const isBlackout = fixture.blackout?.is_blackout || false;
 
-    // Generate H2H URL from Fixture
-    const homeSlug = getCanonicalTeamSlug(fixture.home.name);
-    const awaySlug = getCanonicalTeamSlug(fixture.away.name);
-    const h2hUrl = shouldCreatePage ? generateH2HUrl(homeSlug, awaySlug) : null;
+    // Smart URL builder: Direct SEO URL (best) → Fixture ID fallback (robust)
+    const urlResult = shouldCreatePage ? buildH2HUrl(fixture) : null;
 
     return {
       homeTeam: fixture.home.name,
@@ -76,7 +72,8 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
       broadcaster: broadcasterName,
       isBlackout: isBlackout,
       matchweek: fixture.matchweek,
-      url: h2hUrl,
+      url: urlResult?.url || null,
+      urlStrategy: urlResult?.strategy,  // Track which strategy used (for monitoring)
       shouldCreatePage: shouldCreatePage
     };
   }

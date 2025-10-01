@@ -1,16 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, Navigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import Header from '../components/Header';
 import Breadcrumbs from '../components/Breadcrumbs';
 import H2HStatsCard from '../components/H2HStatsCard';
 import NextFixtureHero from '../components/NextFixtureHero';
 import { FixtureCard } from '../design-system';
-import { getHeadToHeadFixtures, getLiveOrNextHeadToHeadFixture } from '../services/supabase';
+import { getHeadToHeadFixtures, getLiveOrNextHeadToHeadFixture, supabase } from '../services/supabase';
 import { updateDocumentMeta } from '../utils/seo';
 import { generateBreadcrumbs } from '../utils/breadcrumbs';
 import { generateH2HMeta, calculateH2HStats } from '../utils/headToHead';
 import { generateMatchPreview, isPremierLeagueFixture } from '../utils/matchPreview';
-import { TeamResolver } from '../services/TeamResolver';
 import { URLBuilder } from '../services/URLBuilder';
 import type { Fixture, Team } from '../types';
 
@@ -25,24 +24,8 @@ const HeadToHeadPage: React.FC = () => {
   const [team2, setTeam2] = useState<Team | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [shouldRedirect, setShouldRedirect] = useState<string | null>(null);
 
-
-  // Check for canonical redirect immediately
-  useEffect(() => {
-    if (!slug) return;
-
-    // Do a quick sync check to see if we need to redirect
-    TeamResolver.parseH2HSlug(slug).then(result => {
-      if (result) {
-        const canonicalSlug = TeamResolver.generateH2HSlug(result.team1, result.team2);
-        if (slug !== canonicalSlug) {
-          // Use window.location.replace for cleaner redirect that doesn't break React
-          window.location.replace(`/h2h/${canonicalSlug}`);
-          return;
-        }
-      }
-    });
-  }, [slug]);
 
   const loadH2HData = useCallback(async () => {
     if (!slug) return;
@@ -51,24 +34,74 @@ const HeadToHeadPage: React.FC = () => {
     setError(null);
 
     try {
-      // Use TeamResolver's parseH2HSlug which handles all slug variations
-      const result = await TeamResolver.parseH2HSlug(slug);
+      let fixturesData: Fixture[] = [];
+      let nextFixtureData: Fixture | null = null;
+      let team1Data: Team | null = null;
+      let team2Data: Team | null = null;
 
-      if (!result) {
-        setError('Invalid team matchup URL format');
-        setLoading(false);
+      // Check if slug is a numeric fixture ID (new approach)
+      const isNumericId = /^\d+$/.test(slug);
+
+      if (isNumericId) {
+        // NEW APPROACH: Load by fixture ID, then redirect to SEO-friendly URL
+        const fixtureId = parseInt(slug, 10);
+
+        // Load the specific fixture by ID to extract teams
+        const { data, error } = await supabase
+          .from('fixtures_with_teams')
+          .select('*')
+          .eq('id', fixtureId)
+          .single();
+
+        if (error || !data) {
+          setError('Fixture not found');
+          setLoading(false);
+          return;
+        }
+
+        // Extract team slugs
+        const homeSlug = data.home_slug;
+        const awaySlug = data.away_slug;
+
+        // Generate SEO-friendly canonical H2H URL (alphabetical order)
+        const [first, second] = [homeSlug, awaySlug].sort();
+        const canonicalH2HUrl = `/h2h/${first}-vs-${second}`;
+
+        // Redirect to SEO-friendly URL
+        setShouldRedirect(canonicalH2HUrl);
         return;
+
+      } else {
+        // LEGACY APPROACH: Parse slug as team names
+        const parts = slug.split('-vs-');
+        if (parts.length !== 2 || !parts[0]?.trim() || !parts[1]?.trim()) {
+          setError('Invalid team matchup URL format');
+          setLoading(false);
+          return;
+        }
+
+        const [teamSlug1, teamSlug2] = parts;
+
+        // Load fixtures directly - they contain full team data
+        [fixturesData, nextFixtureData] = await Promise.all([
+          getHeadToHeadFixtures(teamSlug1, teamSlug2),
+          getLiveOrNextHeadToHeadFixture(teamSlug1, teamSlug2)
+        ]);
+
+        // If no fixtures found, teams don't exist or don't play each other
+        if (fixturesData.length === 0 && !nextFixtureData) {
+          setError('No fixtures found for this matchup');
+          setLoading(false);
+          return;
+        }
+
+        // Extract team data from first fixture
+        const sampleFixture = nextFixtureData || fixturesData[0];
+        team1Data = sampleFixture.home;
+        team2Data = sampleFixture.away;
       }
 
-      const { team1: team1Data, team2: team2Data } = result;
-
-      // Load fixtures using the database slugs from the team data
-      const [fixturesData, nextFixtureData] = await Promise.all([
-        getHeadToHeadFixtures(team1Data.slug, team2Data.slug),
-        getLiveOrNextHeadToHeadFixture(team1Data.slug, team2Data.slug)
-      ]);
-
-      // Set all data - ensure state updates trigger re-renders
+      // Set all data
       setTeam1(team1Data);
       setTeam2(team2Data);
       setFixtures(fixturesData);
@@ -92,7 +125,7 @@ const HeadToHeadPage: React.FC = () => {
 
     } catch (err) {
       console.error('HeadToHeadPage: Failed to load H2H data:', err);
-      setError('Failed to load team data. Please try again later.');
+      setError('Failed to load fixtures. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -109,6 +142,22 @@ const HeadToHeadPage: React.FC = () => {
     loadH2HData();
   }, [slug, loadH2HData]);
 
+  // Handle redirect to SEO-friendly URL
+  if (shouldRedirect) {
+    window.location.replace(shouldRedirect);
+    return (
+      <div className="h2h-page">
+        <Header />
+        <main style={{ minHeight: '60vh' }}>
+          <div className="wrap">
+            <div style={{ textAlign: 'center', padding: '64px 20px' }}>
+              <p>Redirecting to match page...</p>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   if (loading) {
     return (

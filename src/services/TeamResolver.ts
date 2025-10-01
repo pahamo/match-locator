@@ -1,6 +1,10 @@
 /**
- * Centralized team resolution service
- * Handles all team lookup variations and caching
+ * Centralized team resolution service - SIMPLIFIED
+ *
+ * NOTE: This service is being phased out. H2H pages now load fixtures directly
+ * and extract team data from fixture results (zero separate team queries).
+ *
+ * Keep this minimal version for backward compatibility only.
  */
 
 import { Team } from '../types';
@@ -12,47 +16,44 @@ class TeamResolverClass {
   private cacheTimestamps = new Map<string, number>();
 
   /**
-   * Resolve any team slug format to a Team object
-   * Handles: smart slugs, old slugs, url_slugs, variations
+   * Simple slug-based team lookup (no variations, no complexity)
    */
-  async resolve(anySlug: string): Promise<Team | null> {
-    if (!anySlug?.trim()) return null;
+  async resolve(slug: string): Promise<Team | null> {
+    if (!slug?.trim()) return null;
 
-    const cacheKey = anySlug.toLowerCase();
+    const cacheKey = slug.toLowerCase();
 
-    // Check cache first
+    // Check cache
     if (this.isValidCache(cacheKey)) {
       return this.cache.get(cacheKey) || null;
     }
 
-    let team: Team | null = null;
-
     try {
-      // Try exact matches first (most common case)
-      team = await this.tryExactMatch(anySlug);
+      const { data, error } = await supabase
+        .from('teams')
+        .select('*')
+        .eq('slug', slug)
+        .limit(1)
+        .single();
 
-      // If no exact match, try variations
-      if (!team) {
-        team = await this.tryVariations(anySlug);
-      }
+      const team = (data && !error) ? this.mapTeamData(data) : null;
 
-      // Cache the result (including null results to avoid repeated lookups)
+      // Cache result
       this.cache.set(cacheKey, team);
       this.cacheTimestamps.set(cacheKey, Date.now());
 
+      return team;
     } catch (error) {
-      console.error(`TeamResolver: Error resolving "${anySlug}":`, error);
-      // Don't cache errors
+      console.error(`TeamResolver: Error resolving "${slug}":`, error);
+      return null;
     }
-
-    return team;
   }
 
   /**
-   * Parse H2H slug into two team objects
-   * Example: "man-united-vs-chelsea" -> [Team, Team]
+   * Parse H2H slug into two team slugs (simple split)
+   * Example: "arsenal-vs-chelsea" -> { team1Slug: "arsenal", team2Slug: "chelsea" }
    */
-  async parseH2HSlug(h2hSlug: string): Promise<{ team1: Team; team2: Team } | null> {
+  parseH2HSlug(h2hSlug: string): { team1Slug: string; team2Slug: string } | null {
     if (!h2hSlug) return null;
 
     const parts = h2hSlug.split('-vs-');
@@ -61,228 +62,30 @@ class TeamResolverClass {
     const [team1Slug, team2Slug] = parts;
     if (!team1Slug?.trim() || !team2Slug?.trim()) return null;
 
-    const [team1, team2] = await Promise.all([
-      this.resolve(team1Slug),
-      this.resolve(team2Slug)
-    ]);
-
-    if (!team1 || !team2) return null;
-
-    return { team1, team2 };
+    return { team1Slug, team2Slug };
   }
 
   /**
-   * Generate canonical H2H slug from team data
-   * Uses the team's consolidated slug
+   * Generate canonical H2H slug (alphabetical order)
    */
-  generateH2HSlug(team1: Team, team2: Team): string {
-    // Alphabetical order for consistency
-    const [first, second] = [team1.slug, team2.slug].sort();
+  generateH2HSlug(slug1: string, slug2: string): string {
+    const [first, second] = [slug1, slug2].sort();
     return `${first}-vs-${second}`;
   }
 
   /**
-   * Clear cache (useful for testing or data updates)
+   * Clear cache
    */
   clearCache(): void {
     this.cache.clear();
     this.cacheTimestamps.clear();
   }
 
-  private async tryExactMatch(slug: string): Promise<Team | null> {
-    // Single slug field lookup after Phase 3 migration
-    const { data, error } = await supabase
-      .from('teams')
-      .select('*')
-      .eq('slug', slug)
-      .limit(1)
-      .single();
-
-    if (data && !error) {
-      return this.mapTeamData(data);
-    }
-
-    return null;
-  }
-
-  private async tryVariations(originalSlug: string): Promise<Team | null> {
-    // Common variations to try
-    const variations = this.generateSlugVariations(originalSlug);
-
-    for (const variation of variations) {
-      if (variation === originalSlug) continue; // Skip original
-
-      const team = await this.tryExactMatch(variation);
-      if (team) return team;
-    }
-
-    return null;
-  }
-
-  private generateSlugVariations(slug: string): string[] {
-    const variations = new Set([slug]);
-
-    // Common suffix transformations
-    variations.add(slug + '-fc');
-    variations.add(slug + '-afc');
-    variations.add(slug.replace(/-fc$/, ''));
-    variations.add(slug.replace(/-afc$/, ''));
-    variations.add(slug.replace(/^afc-/, ''));
-    variations.add('afc-' + slug);
-
-    // Team-specific transformations (old → new slug mappings)
-    const teamMappings = [
-      // Premier League teams
-      // Manchester teams
-      ['manchester-united-fc', 'man-united'],
-      ['manchester-united', 'man-united'],
-      ['manchester-city-fc', 'man-city'],
-      ['manchester-city', 'man-city'],
-
-      // London teams
-      ['tottenham-hotspur-fc', 'tottenham'],
-      ['tottenham-hotspur', 'tottenham'],
-      ['arsenal-fc', 'arsenal'],
-      ['chelsea-fc', 'chelsea'],
-      ['west-ham-united-fc', 'west-ham'],
-      ['west-ham-united', 'west-ham'],
-      ['crystal-palace-fc', 'crystal-palace'],
-      ['fulham-fc', 'fulham'],
-      ['brentford-fc', 'brentford'],
-
-      // Midlands teams
-      ['aston-villa-fc', 'aston-villa'],
-      ['nottingham-forest-fc', 'forest'],
-      ['nottingham-forest', 'forest'],
-      ['wolverhampton-wanderers-fc', 'wolves'],
-      ['wolverhampton-wanderers', 'wolves'],
-
-      // Northern teams
-      ['liverpool-fc', 'liverpool'],
-      ['everton-fc', 'everton'],
-      ['leeds-united-fc', 'leeds-united'],
-      ['leeds-united', 'leeds-united'],
-      ['newcastle-united-fc', 'newcastle'],
-      ['newcastle-united', 'newcastle'],
-      ['burnley-fc', 'burnley'],
-
-      // Southern teams
-      ['brighton-hove-albion-fc', 'brighton'],
-      ['brighton-hove-albion', 'brighton'],
-      ['southampton-fc', 'southampton'],
-      ['afc-bournemouth', 'bournemouth'],
-
-      // Other Premier League teams
-      ['leicester-city-fc', 'leicester'],
-      ['leicester-city', 'leicester'],
-      ['sunderland-afc', 'sunderland'],
-      ['norwich-city-fc', 'norwich'],
-      ['norwich-city', 'norwich'],
-      ['watford-fc', 'watford'],
-
-      // Champions League / European teams
-      // Spanish teams
-      ['real-madrid-cf-fc', 'real-madrid'],
-      ['real-madrid-cf', 'real-madrid'],
-      ['real-madrid-fc', 'real-madrid'],
-      ['fc-barcelona', 'barcelona'],
-      ['barcelona-fc', 'barcelona'],
-      ['atletico-madrid', 'atletico'],
-      ['atlético-madrid', 'atletico'],
-      ['atletico-de-madrid', 'atletico'],
-      ['sevilla-fc', 'sevilla'],
-      ['real-sociedad', 'sociedad'],
-      ['villarreal-cf', 'villarreal'],
-
-      // Italian teams
-      ['atalanta-bc-fc', 'atalanta'],
-      ['atalanta-bc', 'atalanta'],
-      ['atalanta-bergamasca-calcio', 'atalanta'],
-      ['juventus-fc', 'juventus'],
-      ['ac-milan', 'milan'],
-      ['milan-ac', 'milan'],
-      ['inter-milan', 'inter'],
-      ['fc-internazionale-milano', 'inter'],
-      ['as-roma', 'roma'],
-      ['ss-lazio', 'lazio'],
-      ['napoli-ssc', 'napoli'],
-      ['ssc-napoli', 'napoli'],
-
-      // German teams
-      ['bayern-munich', 'bayern'],
-      ['fc-bayern-munchen', 'bayern'],
-      ['fc-bayern-münchen', 'bayern'],
-      ['borussia-dortmund', 'dortmund'],
-      ['bvb-dortmund', 'dortmund'],
-      ['rb-leipzig', 'leipzig'],
-      ['bayer-leverkusen', 'leverkusen'],
-      ['borussia-monchengladbach', 'gladbach'],
-      ['borussia-mönchengladbach', 'gladbach'],
-
-      // French teams
-      ['paris-saint-germain', 'psg'],
-      ['psg-paris', 'psg'],
-      ['olympique-marseille', 'marseille'],
-      ['om-marseille', 'marseille'],
-      ['olympique-lyonnais', 'lyon'],
-      ['ol-lyon', 'lyon'],
-      ['as-monaco', 'monaco'],
-      ['monaco-fc', 'monaco'],
-
-      // Belgian teams
-      ['club-brugge-kv', 'club-brugge'],
-      ['club-bruges', 'club-brugge'],
-      ['krc-genk', 'genk'],
-      ['standard-liege', 'standard'],
-
-      // Dutch teams
-      ['ajax-amsterdam', 'ajax'],
-      ['afc-ajax', 'ajax'],
-      ['psv-eindhoven', 'psv'],
-      ['feyenoord-rotterdam', 'feyenoord'],
-
-      // Portuguese teams
-      ['fc-porto', 'porto'],
-      ['sl-benfica', 'benfica'],
-      ['sporting-cp', 'sporting'],
-      ['sporting-lisboa', 'sporting'],
-
-      // Other European teams
-      ['fk-kairat', 'kairat'],
-      ['kairat-almaty', 'kairat'],
-      ['fc-salzburg', 'salzburg'],
-      ['red-bull-salzburg', 'salzburg'],
-      ['shakhtar-donetsk', 'shakhtar'],
-      ['fc-shakhtar', 'shakhtar'],
-      ['dynamo-kiev', 'dynamo-kyiv'],
-      ['dynamo-kyiv', 'dynamo-kyiv']
-    ];
-
-    // Apply all team mappings in both directions
-    teamMappings.forEach(([oldSlug, newSlug]) => {
-      if (slug === oldSlug) {
-        variations.add(newSlug);
-      }
-      if (slug === newSlug) {
-        variations.add(oldSlug);
-      }
-      // Also handle when slug contains these patterns
-      if (slug.includes(oldSlug)) {
-        variations.add(slug.replace(oldSlug, newSlug));
-      }
-      if (slug.includes(newSlug)) {
-        variations.add(slug.replace(newSlug, oldSlug));
-      }
-    });
-
-    return Array.from(variations);
-  }
-
   private mapTeamData(data: any): Team {
     return {
       id: data.id,
       name: data.name,
-      slug: data.slug, // Consolidated slug field
+      slug: data.slug,
       crest: data.crest_url,
       short_name: data.short_name,
       competition_id: data.competition_id

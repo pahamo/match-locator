@@ -29,9 +29,19 @@ const PageLoader = () => (
 );
 
 /**
+ * Check if URL is a fixture ID (pure numeric)
+ * New H2H format: /h2h/12345
+ */
+const isFixtureIdUrl = (slug: string): boolean => {
+  return /^\d+$/.test(slug);
+};
+
+/**
  * Check if URL is pure H2H format (team1-vs-team2 only, no competition/date)
  * Match URLs follow format: team1-vs-team2-competition-17-sep-2024
  * H2H URLs follow format: team1-vs-team2
+ *
+ * NOTE: Legacy format - being phased out in favor of fixture IDs
  */
 const isH2HUrl = (slug: string): boolean => {
   // First check basic H2H pattern (must contain exactly one "-vs-")
@@ -151,10 +161,20 @@ const SmartFixtureRouter: React.FC = () => {
   }
 
   try {
+    // NEW: Check if it's a fixture ID (numeric)
+    if (isFixtureIdUrl(slug)) {
+      // /h2h/12345 - Fixture ID format (new, stable approach)
+      return (
+        <Suspense fallback={<PageLoader />}>
+          <HeadToHeadPage />
+        </Suspense>
+      );
+    }
+
     // If it's a /content/ route, check if it's H2H format
     if (isContentRoute) {
       if (isH2HUrl(slug)) {
-        // Content H2H URL like /content/arsenal-vs-chelsea
+        // Content H2H URL like /content/arsenal-vs-chelsea (legacy)
         return (
           <Suspense fallback={<PageLoader />}>
             <HeadToHeadPage />
