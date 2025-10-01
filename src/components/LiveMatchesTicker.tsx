@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Fixture } from '../types';
 import { getFixturesForDay } from '../services/supabase';
 import { formatTeamNameShort } from '../utils/seo';
-import { generateSeoMatchUrl } from '../utils/seo';
+import { generateH2HUrl } from '../utils/headToHead';
 import { Link } from 'react-router-dom';
 
 interface LiveMatchesTickerProps {
@@ -39,7 +39,7 @@ export const LiveMatchesTicker: React.FC<LiveMatchesTickerProps> = ({
           {[...fixtures, ...fixtures].map((fixture, idx) => (
             <Link
               key={`${fixture.id}-${idx}`}
-              to={generateSeoMatchUrl(fixture)}
+              to={generateH2HUrl(fixture.home.slug, fixture.away.slug)}
               className="inline-flex items-center px-6 hover:bg-white/10 transition-colors"
             >
               <span className="text-white font-semibold mr-2">
