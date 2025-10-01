@@ -55,17 +55,48 @@ src/
 ├── components/          # Reusable React components
 │   ├── admin/          # Admin-specific components
 │   ├── affiliate/      # Affiliate marketing components
-│   └── design-system/  # Design system components
+│   ├── enhanced/       # Enhanced feature components
+│   ├── legal/          # Legal pages components
+│   └── ui/             # Base UI components
+├── design-system/      # Design system library
+│   ├── components/    # Reusable design components
+│   └── tokens/        # Design tokens and themes
 ├── pages/              # Route-based page components
 │   ├── admin/          # Admin interface pages
 │   ├── legal/          # Legal and compliance pages
-│   └── competitions/   # Competition-specific pages
+│   └── [various]       # Competition and feature pages
 ├── services/           # Data layer and API services
 │   ├── supabase.ts     # Main Supabase client
 │   └── supabase-simple.ts # Simplified queries
 ├── utils/              # Utility functions (SEO, formatting, etc.)
 ├── hooks/              # Custom React hooks
 └── types/              # TypeScript type definitions
+
+docs/
+├── archive/            # Historical documentation
+│   └── migrations/    # Completed migration guides
+├── ARCHITECTURE.md    # Technical architecture
+├── DEPLOYMENT.md      # Deployment & environment guide
+├── ADMIN_GUIDE.md     # Admin interface documentation
+├── DATA_MANAGEMENT.md # Database management
+└── [various]          # Feature-specific documentation
+
+database/
+├── migrations/         # Database migration scripts
+│   ├── archive/       # Completed migrations
+│   └── [active]/      # Current migrations
+└── schema/            # Database schema definitions
+
+scripts/
+├── importers/         # Data import scripts per competition
+├── maintenance/       # Database maintenance scripts
+├── verification/      # Data validation scripts
+├── utils/            # Shared script utilities
+└── health/           # System health checks
+
+data/
+├── archive/          # Historical data files
+└── [active]/         # Current data exports
 ```
 
 ## 🛠️ Technology Stack
@@ -107,6 +138,14 @@ src/
 - **[ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Code patterns and conventions
 - **[DEPLOYMENT.md](docs/DEPLOYMENT.md)** - ⚠️ **CRITICAL:** Environment setup requirements
 - **[docs/docs-map.md](docs/docs-map.md)** - Documentation structure reference
+
+### 📦 Archive Structure
+Historical files and completed migrations are organized in archive directories:
+- **docs/archive/migrations/** - Completed slug migration documentation (Sept 2025)
+- **database/migrations/archive/** - Applied SQL migrations (slug consolidation, schema updates)
+- **data/archive/** - Historical CSV exports and data templates
+
+*These files are preserved for reference but are no longer actively used in development.*
 
 ## 🎯 Current Status: Production Ready ✅
 

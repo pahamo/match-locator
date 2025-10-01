@@ -136,10 +136,15 @@ export const darkModeCSSVariables = `
   color: ${darkModeColors.gray[500]};
 }
 
-/* Automatic dark mode based on system preference */
+/* Automatic dark mode based on system preference - DISABLED */
+/*
+ * Dark mode is not fully implemented across all components yet.
+ * Automatic system preference detection causes dark-on-dark text issues.
+ * To enable dark mode manually, add class="dark" to <html> element.
+ */
+/*
 @media (prefers-color-scheme: dark) {
   :root:not(.light) {
-    /* Apply all dark mode variables */
     --color-card: ${darkModeColors.gray[100]};
     --color-border: ${darkModeColors.gray[200]};
     --color-text: ${darkModeColors.gray[500]};
@@ -152,6 +157,7 @@ export const darkModeCSSVariables = `
     color: ${darkModeColors.gray[500]};
   }
 }
+*/
 `;
 
 export type DarkModeColors = typeof darkModeColors;
