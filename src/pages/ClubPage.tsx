@@ -13,6 +13,7 @@ import Flex from '../design-system/components/Layout/Flex';
 import Stack from '../design-system/components/Layout/Stack';
 import { CompetitionBadge } from '../components/CompetitionBadge';
 import { RelatedTeamsSection } from '../components/RelatedTeamsSection';
+import { LiveMatchesTicker } from '../components/LiveMatchesTicker';
 import { getAllCompetitionConfigs } from '../config/competitions';
 
 const ClubPage: React.FC = () => {
@@ -263,11 +264,11 @@ const ClubPage: React.FC = () => {
                 </CardContent>
               </Card>
 
-              {/* Related Teams Section - appears after "How to Watch" */}
-              {team && (
-                <RelatedTeamsSection
-                  currentTeam={team}
-                  competitionName={competitionName}
+              {/* Live Matches Ticker - shows matches on same day as next match in same competition */}
+              {nextMatch && (
+                <LiveMatchesTicker
+                  currentMatchDate={nextMatch.kickoff_utc}
+                  competitionIds={nextMatch.competition_id ? [nextMatch.competition_id] : undefined}
                 />
               )}
 
@@ -288,6 +289,14 @@ const ClubPage: React.FC = () => {
                   </div>
                 )}
               </section>
+
+              {/* Related Teams Section - moved below fixtures for better UX */}
+              {team && (
+                <RelatedTeamsSection
+                  currentTeam={team}
+                  competitionName={competitionName}
+                />
+              )}
 
               <div style={{ marginTop: '1.5rem' }}>
                 <a href="/" style={{ color: 'var(--color-accent)', textDecoration: 'underline' }}>← Back to Schedule</a>
