@@ -4,6 +4,7 @@ import type { SimpleFixture, Fixture } from '../../types';
 import { getMatchStatus, getMatchStatusStyles } from '../../utils/matchStatus';
 import { shouldCreateMatchPage } from '../../utils/matchPageFilter';
 import { getDisplayTeamName } from '../../utils/teamNames';
+import { formatTeamNameShort } from '../../utils/seo';
 import { formatTime } from '../../utils/dateFormat';
 import { COMPETITION_CONFIGS } from '../../config/competitions';
 import OptimizedImage from '../../components/OptimizedImage';
@@ -168,7 +169,7 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
             />
           )}
           <span className={`team-name ${isMinimized ? 'minimized' : ''}`}>
-            <span className="team-name-full">{fixtureData.homeTeam}</span>
+            <span className="team-name-full">{formatTeamNameShort(fixtureData.homeTeam)}</span>
             <span className="team-name-short">{getDisplayTeamName(fixtureData.homeTeam, true)}</span>
           </span>
         </div>
@@ -177,7 +178,7 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
 
         <div className="team-container away-team">
           <span className={`team-name ${isMinimized ? 'minimized' : ''}`}>
-            <span className="team-name-full">{fixtureData.awayTeam}</span>
+            <span className="team-name-full">{formatTeamNameShort(fixtureData.awayTeam)}</span>
             <span className="team-name-short">{getDisplayTeamName(fixtureData.awayTeam, true)}</span>
           </span>
           {fixtureData.awayCrest && (
