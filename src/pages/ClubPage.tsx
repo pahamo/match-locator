@@ -118,7 +118,7 @@ const ClubPage: React.FC = () => {
       <main>
         <div className="wrap">
           <h1 style={{ marginTop: 0 }}>
-            {team?.name || 'Team'} TV Schedule - What Time Are {team?.name || 'Team'} Playing?
+            {team ? formatTeamNameShort(team.name) : 'Team'} TV Schedule - What Time Are {team ? formatTeamNameShort(team.name) : 'Team'} Playing?
           </h1>
           {loading && <div className="loading">Loading fixtures…</div>}
           {error && <div className="error">{error}</div>}
@@ -181,7 +181,7 @@ const ClubPage: React.FC = () => {
               )}
 
               <section className="card" style={{ background: 'var(--color-card)', border: '1px solid var(--color-border)', borderRadius: 'var(--border-radius)', padding: 'var(--spacing-xl)', boxShadow: 'var(--shadow-sm)', marginBottom: 'var(--spacing-xl)' }}>
-                <h2 style={{ marginTop: 0 }}>How to watch {team?.name || 'this team'}</h2>
+                <h2 style={{ marginTop: 0 }}>How to watch {team ? formatTeamNameShort(team.name) : 'this team'}</h2>
                 <p>
                   In the UK, live football TV coverage is typically carried by
                   <a href="https://www.skysports.com/football/fixtures-results" target="_blank" rel="noreferrer" style={{ marginLeft: 6 }}>Sky Sports</a>
