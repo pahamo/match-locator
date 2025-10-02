@@ -53,19 +53,29 @@ export async function getSimpleFixtures(competitionId?: number): Promise<SimpleF
     const fixtureIds = validFixtures.map((f: any) => f.id);
     const { data: broadcasts } = await supabase
       .from('broadcasts')
-      .select('fixture_id, provider_id')
+      .select('fixture_id, provider_id, channel_name')
       .in('fixture_id', fixtureIds);
 
-    const broadcastLookup: Record<number, number> = {};
+    const broadcastLookup: Record<number, { providerId: number; channelName: string | null }> = {};
     (broadcasts || []).forEach((b: any) => {
-      broadcastLookup[b.fixture_id] = b.provider_id;
+      broadcastLookup[b.fixture_id] = {
+        providerId: b.provider_id,
+        channelName: b.channel_name
+      };
     });
 
     // Step 4: Map to simple format
     return validFixtures.map((fixture: any) => {
-      const providerId = broadcastLookup[fixture.id];
+      const broadcast = broadcastLookup[fixture.id];
+      const providerId = broadcast?.providerId;
+      const channelName = broadcast?.channelName;
       const isBlackout = providerId === 999;
-      
+
+      // Use specific channel name if available, otherwise fall back to provider name
+      const broadcasterDisplay = isBlackout
+        ? undefined
+        : channelName || SIMPLE_BROADCASTERS.find(b => b.id === providerId)?.name || undefined;
+
       return {
         id: fixture.id,
         kickoff_utc: fixture.utc_kickoff,
@@ -79,10 +89,7 @@ export async function getSimpleFixtures(competitionId?: number): Promise<SimpleF
         competition_id: fixture.competition_id || undefined,
         stage: fixture.stage || undefined,
         round: fixture.round || undefined,
-        // Only show broadcaster name if it's not blackout
-        broadcaster: isBlackout 
-          ? undefined 
-          : SIMPLE_BROADCASTERS.find(b => b.id === providerId)?.name || undefined,
+        broadcaster: broadcasterDisplay,
       };
     });
   } catch (error) {
