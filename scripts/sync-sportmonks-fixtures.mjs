@@ -217,23 +217,45 @@ async function syncCompetitionFixtures(competitionId, sportmonksLeagueId, compet
   console.log(`\n📅 Syncing ${competitionName} (Competition ${competitionId}, Sports Monks ${sportmonksLeagueId})...`);
 
   try {
-    // Fetch fixtures from Sports Monks
-    // Note: Sports Monks API doesn't support filters on /fixtures/between
-    // We'll fetch all fixtures and filter client-side
-    const response = await makeRequest(`/fixtures/between/${options.dateFrom}/${options.dateTo}`, {
-      include: 'participants'  // Include team participant data
-    });
+    // Fetch fixtures from Sports Monks using date iteration
+    // This works better with limited subscriptions than /fixtures/between
+    const startDate = new Date(options.dateFrom);
+    const endDate = new Date(options.dateTo);
+    let allLeagueFixtures = [];
 
-    // Filter to this league only
-    const allFixtures = response.data || [];
-    const fixtures = allFixtures.filter(f => f.league_id === sportmonksLeagueId);
-    console.log(`   Found ${fixtures.length} fixtures`);
+    // Iterate through dates
+    for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+      const dateStr = d.toISOString().split('T')[0];
+
+      try {
+        const response = await makeRequest(`/fixtures/date/${dateStr}`, {
+          include: 'participants'
+        });
+
+        const dayFixtures = (response.data || []).filter(f => f.league_id === sportmonksLeagueId);
+        allLeagueFixtures = allLeagueFixtures.concat(dayFixtures);
+
+        if (dayFixtures.length > 0) {
+          console.log(`   ${dateStr}: ${dayFixtures.length} fixtures`);
+        }
+
+        stats.apiCalls++;
+
+        // Rate limit: 200ms between requests
+        await new Promise(resolve => setTimeout(resolve, 200));
+      } catch (err) {
+        if (options.verbose) {
+          console.log(`   Error on ${dateStr}:`, err.message);
+        }
+      }
+    }
+
+    const fixtures = allLeagueFixtures;
+    console.log(`   Total found: ${fixtures.length} fixtures`);
 
     if (fixtures.length === 0) {
       return;
     }
-
-    stats.apiCalls++;
 
     for (const fixture of fixtures) {
       try {
