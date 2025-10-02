@@ -253,70 +253,70 @@ const CompetitionPage: React.FC = () => {
 
           {/* Sidebar */}
           <div>
-            {/* League Standings - show if seasonId is configured */}
-            {slug && getCompetitionConfig(slug)?.seasonId && (
+            {/* League Standings - show if seasonId is configured, otherwise show teams list */}
+            {slug && getCompetitionConfig(slug)?.seasonId ? (
               <section style={{ marginBottom: '2rem' }}>
                 <LeagueStandings
                   seasonId={getCompetitionConfig(slug)!.seasonId!}
                   competitionName={competition.name}
                 />
               </section>
+            ) : (
+              /* Teams in Competition - fallback when no standings available */
+              <section style={{
+                padding: '1.5rem',
+                backgroundColor: '#f9fafb',
+                borderRadius: '8px',
+                marginBottom: '2rem'
+              }}>
+                <h3 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '1rem' }}>
+                  Teams ({teams.length})
+                </h3>
+                <div style={{ display: 'grid', gap: '0.5rem' }}>
+                  {teams.slice(0, 10).map((team) => (
+                    <a
+                      key={team.id}
+                      href={`/clubs/${team.slug}`}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        padding: '0.5rem',
+                        backgroundColor: 'white',
+                        borderRadius: '4px',
+                        textDecoration: 'none',
+                        color: 'inherit',
+                        fontSize: '0.875rem'
+                      }}
+                    >
+                      {team.crest && (
+                        <img
+                          src={team.crest}
+                          alt={`${team.name} crest`}
+                          style={{ width: '20px', height: '20px', objectFit: 'contain' }}
+                          loading="lazy"
+                        />
+                      )}
+                      <span>{team.name}</span>
+                    </a>
+                  ))}
+                  {teams.length > 10 && (
+                    <a
+                      href="/clubs"
+                      style={{
+                        padding: '0.5rem',
+                        textAlign: 'center',
+                        color: '#6366f1',
+                        textDecoration: 'none',
+                        fontSize: '0.875rem'
+                      }}
+                    >
+                      View All Teams →
+                    </a>
+                  )}
+                </div>
+              </section>
             )}
-
-            {/* Teams in Competition */}
-            <section style={{
-              padding: '1.5rem',
-              backgroundColor: '#f9fafb',
-              borderRadius: '8px',
-              marginBottom: '2rem'
-            }}>
-              <h3 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '1rem' }}>
-                Teams ({teams.length})
-              </h3>
-              <div style={{ display: 'grid', gap: '0.5rem' }}>
-                {teams.slice(0, 10).map((team) => (
-                  <a
-                    key={team.id}
-                    href={`/clubs/${team.slug}`}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.5rem',
-                      padding: '0.5rem',
-                      backgroundColor: 'white',
-                      borderRadius: '4px',
-                      textDecoration: 'none',
-                      color: 'inherit',
-                      fontSize: '0.875rem'
-                    }}
-                  >
-                    {team.crest && (
-                      <img
-                        src={team.crest}
-                        alt={`${team.name} crest`}
-                        style={{ width: '20px', height: '20px', objectFit: 'contain' }}
-                        loading="lazy"
-                      />
-                    )}
-                    <span>{team.name}</span>
-                  </a>
-                ))}
-                {teams.length > 10 && (
-                  <a
-                    href="/clubs"
-                    style={{
-                      padding: '0.5rem',
-                      textAlign: 'center',
-                      color: '#6366f1',
-                      textDecoration: 'none',
-                      fontSize: '0.875rem'
-                    }}
-                  >
-                    View All Teams →
-                  </a>
-                )}
-              </div>
-            </section>
           </div>
         </div>
       </div>

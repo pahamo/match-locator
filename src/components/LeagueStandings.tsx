@@ -86,8 +86,8 @@ export const LeagueStandings: React.FC<LeagueStandingsProps> = ({
     const fetchStandings = async () => {
       try {
         setLoading(true);
-        const token = process.env.REACT_APP_SPORTMONKS_TOKEN;
-        const url = `https://api.sportmonks.com/v3/football/standings/seasons/${seasonId}?api_token=${token}&include=participant;rule.type;details.type;form`;
+        // Use Netlify function to avoid CORS issues
+        const url = `/.netlify/functions/standings?seasonId=${seasonId}`;
 
         const response = await fetch(url);
         if (!response.ok) {
