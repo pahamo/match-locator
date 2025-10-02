@@ -13,16 +13,16 @@
 /logo.svg
   Cache-Control: no-cache, no-store, must-revalidate
 
-# JavaScript and CSS files - shorter cache for development agility
+# JavaScript and CSS files - short cache (1 hour) since they have content hashes
 /static/js/*
-  Cache-Control: public, max-age=86400, must-revalidate
+  Cache-Control: public, max-age=3600, must-revalidate
 
 /static/css/*
-  Cache-Control: public, max-age=86400, must-revalidate
+  Cache-Control: public, max-age=3600, must-revalidate
 
-# HTML files - no cache to ensure routing works
+# HTML files - NO CACHE to ensure fresh content
 /*
-  Cache-Control: public, max-age=0, must-revalidate
+  Cache-Control: no-cache, no-store, must-revalidate
 
 # Service worker - immediate update for routing fixes
 /sw.js
