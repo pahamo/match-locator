@@ -47,7 +47,28 @@ const ClubPage: React.FC = () => {
           if (data.length > 0) {
             const firstFixture = data[0];
             const teamData = firstFixture.home.slug === teamSlug ? firstFixture.home : firstFixture.away;
-            const meta = generateTeamMeta(teamData, data.length);
+
+            // Find next upcoming match for meta description
+            const upcomingMatch = data.find(fx => {
+              const status = getMatchStatus(fx.kickoff_utc).status;
+              return status === 'upcoming' || status === 'upNext';
+            });
+
+            // Prepare next match info for meta
+            const nextMatchInfo = upcomingMatch ? {
+              opponent: formatTeamNameShort(
+                upcomingMatch.home.slug === teamSlug
+                  ? upcomingMatch.away.name
+                  : upcomingMatch.home.name
+              ),
+              date: new Date(upcomingMatch.kickoff_utc).toLocaleDateString('en-GB', {
+                day: 'numeric',
+                month: 'short'
+              }),
+              channel: upcomingMatch.providers_uk?.[0]?.name
+            } : undefined;
+
+            const meta = generateTeamMeta(teamData, data.length, nextMatchInfo);
             updateDocumentMeta(meta);
           }
         }

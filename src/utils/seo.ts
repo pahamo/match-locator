@@ -424,15 +424,27 @@ export const generateSimpleMatchMeta = (fixture: SimpleFixture) => {
   };
 };
 
-export const generateTeamMeta = (team: Team, upcomingCount: number = 0) => {
+export const generateTeamMeta = (
+  team: Team,
+  upcomingCount: number = 0,
+  nextMatch?: { opponent: string; date: string; channel?: string }
+) => {
   const teamShort = formatTeamNameShort(team.name);
   const season = getCurrentSeason();
 
   // Optimized title targeting "what time is [team] playing" searches
   const title = `${teamShort} TV Schedule - What Time Are ${teamShort} Playing? | Match Locator`;
 
-  // Optimized description with urgency and specificity
-  const description = `What time is ${teamShort} playing? Get ${teamShort}'s complete TV schedule ${season} with kick-off times and UK channels. Sky Sports, TNT Sports, Amazon Prime coverage. Never miss a match.`;
+  // Enhanced description with next match info if available
+  let description: string;
+  if (nextMatch) {
+    const channelInfo = nextMatch.channel
+      ? ` on ${nextMatch.channel}`
+      : ' - channel TBC';
+    description = `${teamShort} next play ${nextMatch.opponent} ${nextMatch.date}${channelInfo}. Complete ${season} TV schedule with all fixtures, kick-off times & UK broadcast info.`;
+  } else {
+    description = `What time is ${teamShort} playing? Get ${teamShort}'s complete TV schedule ${season} with kick-off times and UK channels. Sky Sports, TNT Sports, Amazon Prime coverage. Never miss a match.`;
+  }
 
   const canonical = `${CANONICAL_BASE}/clubs/${team.slug}`;
 
