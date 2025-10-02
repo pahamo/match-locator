@@ -32,14 +32,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Debug - Check secrets
-        run: |
-          echo "SPORTMONKS_TOKEN length: ${#SPORTMONKS_TOKEN}"
-          echo "SPORTMONKS_TOKEN first 10 chars: ${SPORTMONKS_TOKEN:0:10}..."
-          echo "SPORTMONKS_TOKEN last 10 chars: ...${SPORTMONKS_TOKEN: -10}"
-        env:
-          SPORTMONKS_TOKEN: ${{ secrets.SPORTMONKS_TOKEN }}
-
       - name: Run Sports Monks sync
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
