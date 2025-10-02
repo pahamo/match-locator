@@ -151,3 +151,4 @@ const { timezone, displayName } = useTimezone();
 All match times throughout the application now display in the user's local timezone automatically. No breaking changes - existing functionality is preserved but enhanced.
 
 **The implementation is complete and ready for users! 🎉**
+
