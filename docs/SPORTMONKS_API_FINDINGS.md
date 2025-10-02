@@ -2,7 +2,8 @@
 
 **Date:** October 2, 2025
 **Status:** ✅ **API VERIFIED & WORKING**
-**Subscription:** European Plan - Football - Standard
+**Subscription:** European Plan - Football - Standard + European Club Tournaments
+**Total Leagues:** 30 (see AVAILABLE_COMPETITIONS.md for full list)
 
 ---
 
