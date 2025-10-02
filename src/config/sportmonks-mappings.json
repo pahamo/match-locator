@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-10-02T09:54:04.095Z",
+  "generated_at": "2025-10-02T10:15:00.000Z",
   "leagues": {
     "1": {
       "sportmonks_id": 8,
@@ -31,6 +31,18 @@
       "our_name": "Europa League",
       "active": true
     },
+    "6": {
+      "sportmonks_id": 2286,
+      "name": "Europa Conference League",
+      "our_name": "Europa Conference League",
+      "active": true
+    },
+    "7": {
+      "sportmonks_id": 501,
+      "name": "Premiership",
+      "our_name": "Scottish Premiership",
+      "active": true
+    },
     "8": {
       "sportmonks_id": 9,
       "name": "Championship",
@@ -40,22 +52,10 @@
   },
   "unmapped": [
     {
-      "id": 6,
-      "name": "Europa Conference League",
-      "country": "Europe",
-      "note": "Not included in your Sports Monks subscription"
-    },
-    {
-      "id": 7,
-      "name": "Scottish Premiership",
-      "country": "Scotland",
-      "note": "Not included in your Sports Monks subscription (Premiership ID 501 is Israeli league)"
-    },
-    {
       "id": 9,
       "name": "League One",
       "country": "England",
-      "note": "Not included in your Sports Monks subscription"
+      "note": "Not in Sports Monks subscription - only has Premier League, Championship, FA Cup, Carabao Cup for England"
     }
   ]
 }

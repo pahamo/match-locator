@@ -53,12 +53,30 @@ ON CONFLICT (our_competition_id) DO UPDATE SET
   last_verified_at = NOW();
 
 INSERT INTO api_competition_mapping (our_competition_id, sportmonks_league_id, sportmonks_league_name, is_active)
+VALUES (6, 2286, 'Europa Conference League', true)
+ON CONFLICT (our_competition_id) DO UPDATE SET
+  sportmonks_league_id = EXCLUDED.sportmonks_league_id,
+  sportmonks_league_name = EXCLUDED.sportmonks_league_name,
+  is_active = EXCLUDED.is_active,
+  last_verified_at = NOW();
+
+INSERT INTO api_competition_mapping (our_competition_id, sportmonks_league_id, sportmonks_league_name, is_active)
+VALUES (7, 501, 'Premiership', true)
+ON CONFLICT (our_competition_id) DO UPDATE SET
+  sportmonks_league_id = EXCLUDED.sportmonks_league_id,
+  sportmonks_league_name = EXCLUDED.sportmonks_league_name,
+  is_active = EXCLUDED.is_active,
+  last_verified_at = NOW();
+
+INSERT INTO api_competition_mapping (our_competition_id, sportmonks_league_id, sportmonks_league_name, is_active)
 VALUES (8, 9, 'Championship', true)
 ON CONFLICT (our_competition_id) DO UPDATE SET
   sportmonks_league_id = EXCLUDED.sportmonks_league_id,
   sportmonks_league_name = EXCLUDED.sportmonks_league_name,
   is_active = EXCLUDED.is_active,
   last_verified_at = NOW();
+
+-- Note: League One (competition_id 9) is not included in Sports Monks subscription
 
 -- Verify mappings
 SELECT
