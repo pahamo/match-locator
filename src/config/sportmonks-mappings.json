@@ -1,0 +1,61 @@
+{
+  "generated_at": "2025-10-02T09:54:04.095Z",
+  "leagues": {
+    "1": {
+      "sportmonks_id": 8,
+      "name": "Premier League",
+      "our_name": "Premier League",
+      "active": true
+    },
+    "2": {
+      "sportmonks_id": 2,
+      "name": "Champions League",
+      "our_name": "Champions League",
+      "active": true
+    },
+    "3": {
+      "sportmonks_id": 24,
+      "name": "FA Cup",
+      "our_name": "FA Cup",
+      "active": true
+    },
+    "4": {
+      "sportmonks_id": 27,
+      "name": "Carabao Cup",
+      "our_name": "EFL Cup",
+      "active": true
+    },
+    "5": {
+      "sportmonks_id": 5,
+      "name": "Europa League",
+      "our_name": "Europa League",
+      "active": true
+    },
+    "8": {
+      "sportmonks_id": 9,
+      "name": "Championship",
+      "our_name": "Championship",
+      "active": true
+    }
+  },
+  "unmapped": [
+    {
+      "id": 6,
+      "name": "Europa Conference League",
+      "country": "Europe",
+      "note": "Not included in your Sports Monks subscription"
+    },
+    {
+      "id": 7,
+      "name": "Scottish Premiership",
+      "country": "Scotland",
+      "note": "Not included in your Sports Monks subscription (Premiership ID 501 is Israeli league)"
+    },
+    {
+      "id": 9,
+      "name": "League One",
+      "country": "England",
+      "note": "Not included in your Sports Monks subscription"
+    }
+  ]
+}
