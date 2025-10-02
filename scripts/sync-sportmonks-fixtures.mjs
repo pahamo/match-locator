@@ -106,9 +106,17 @@ async function makeRequest(endpoint, params = {}) {
     url.searchParams.append(key, value);
   });
 
+  console.log(`[DEBUG] Making request to: ${endpoint}`);
+  console.log(`[DEBUG] Token length: ${SPORTMONKS_TOKEN.length}`);
+  console.log(`[DEBUG] Token first 10: ${SPORTMONKS_TOKEN.substring(0, 10)}`);
+
   const response = await fetch(url.toString());
+  console.log(`[DEBUG] Response status: ${response.status}`);
+
   if (!response.ok) {
-    throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+    const errorText = await response.text();
+    console.log(`[DEBUG] Error response: ${errorText}`);
+    throw new Error(`HTTP ${response.status}: ${errorText}`);
   }
 
   return response.json();
