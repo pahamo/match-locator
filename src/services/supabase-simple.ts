@@ -8,6 +8,7 @@ export type SimpleCompetition = Competition;
 export const SIMPLE_BROADCASTERS = [
   { id: 1, name: 'Sky Sports' },
   { id: 2, name: 'TNT Sports' },
+  { id: 3, name: 'BBC' },
   { id: 4, name: 'Amazon Prime Video' },
   { id: 999, name: '🚫 Blackout (No TV)' }
 ];

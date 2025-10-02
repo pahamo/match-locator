@@ -229,7 +229,7 @@ async function syncCompetitionFixtures(competitionId, sportmonksLeagueId, compet
 
       try {
         const response = await makeRequest(`/fixtures/date/${dateStr}`, {
-          include: 'participants'
+          include: 'participants;tvstations'
         });
 
         const dayFixtures = (response.data || []).filter(f => f.league_id === sportmonksLeagueId);
