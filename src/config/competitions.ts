@@ -15,8 +15,11 @@ export interface CompetitionConfig {
     primary: string;
     secondary: string;
   };
+  seasonId?: number; // Sports Monks season ID for current season
 }
 
+// Note: Season IDs are for 2024/25 season. Update annually.
+// To find current season ID: Check Sports Monks /leagues/{id} endpoint or fixture data
 export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
   'premier-league': {
     id: 1,
@@ -29,7 +32,8 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     colors: {
       primary: '#37003c',
       secondary: '#00ff87'
-    }
+    },
+    seasonId: 25583 // 2024/25 season
   },
 
   'champions-league': {
@@ -57,7 +61,8 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     colors: {
       primary: '#d20515',
       secondary: '#000000'
-    }
+    },
+    seasonId: 23819 // 2024/25 season (placeholder - verify)
   },
 
   'la-liga': {

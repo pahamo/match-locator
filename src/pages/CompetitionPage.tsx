@@ -8,9 +8,10 @@ import Breadcrumbs from '../components/Breadcrumbs';
 import StructuredData from '../components/StructuredData';
 import { FixtureCardSkeleton } from '../components/SkeletonLoader';
 import FixtureCard from '../design-system/components/FixtureCard';
-import { getCompetitionLogo } from '../config/competitions';
+import { getCompetitionLogo, getCompetitionConfig } from '../config/competitions';
 import { generateCompetitionMeta, updateDocumentMeta } from '../utils/seo';
 import { generateBreadcrumbs } from '../utils/breadcrumbs';
+import LeagueStandings from '../components/LeagueStandings';
 
 const CompetitionPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -252,6 +253,16 @@ const CompetitionPage: React.FC = () => {
 
           {/* Sidebar */}
           <div>
+            {/* League Standings - show if seasonId is configured */}
+            {slug && getCompetitionConfig(slug)?.seasonId && (
+              <section style={{ marginBottom: '2rem' }}>
+                <LeagueStandings
+                  seasonId={getCompetitionConfig(slug)!.seasonId!}
+                  competitionName={competition.name}
+                />
+              </section>
+            )}
+
             {/* Teams in Competition */}
             <section style={{
               padding: '1.5rem',

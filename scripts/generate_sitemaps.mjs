@@ -11,7 +11,7 @@ const root = process.cwd();
 const publicDir = path.join(root, 'public');
 const sitemapsDir = path.join(publicDir, 'sitemaps');
 
-const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL;
+const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || process.env.SUPABASE_URL;
 const SUPABASE_ANON = process.env.REACT_APP_SUPABASE_ANON_KEY;
 const CANONICAL_BASE = (process.env.REACT_APP_CANONICAL_BASE || 'https://matchlocator.com').replace(/\/$/, '');
 
@@ -22,7 +22,18 @@ function urlEntry(loc, { lastmod = null, changefreq = 'weekly', priority = '0.6'
   return `  <url>\n    <loc>${loc}</loc>${last}\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>\n  </url>`;
 }
 function writeXml(file, content) { fs.writeFileSync(file, content.trim() + '\n', 'utf8'); console.log('[sitemap] wrote', path.relative(publicDir, file)); }
-const supabase = (SUPABASE_URL && SUPABASE_ANON) ? createClient(SUPABASE_URL, SUPABASE_ANON) : null;
+
+// Only create supabase client if we have valid, non-empty credentials
+let supabase = null;
+if (SUPABASE_URL && SUPABASE_ANON && SUPABASE_URL.startsWith('http')) {
+  try {
+    supabase = createClient(SUPABASE_URL, SUPABASE_ANON);
+  } catch (err) {
+    console.log('[sitemap] Supabase not initialized - check env vars');
+  }
+} else {
+  console.log('[sitemap] Supabase not initialized - check env vars');
+}
 
 async function fetchFixtures() {
   if (!supabase) return [];

@@ -80,9 +80,20 @@
     -->
     <title>Match Locator - UK football TV schedule</title>
     
-    <!-- Service Worker Registration -->
+    <!-- Service Worker Registration - DISABLED IN DEVELOPMENT -->
     <script>
-      if ('serviceWorker' in navigator) {
+      // Unregister service worker in development to prevent caching issues
+      if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          for(let registration of registrations) {
+            registration.unregister();
+            console.log('SW unregistered for development');
+          }
+        });
+      }
+
+      // Only register in production
+      if ('serviceWorker' in navigator && window.location.hostname !== 'localhost') {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('/sw.js')
             .then((registration) => {
