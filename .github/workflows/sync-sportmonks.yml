@@ -1,0 +1,57 @@
+name: Daily Sports Monks Sync
+
+on:
+  # Run daily at 2 AM UTC
+  schedule:
+    - cron: '0 2 * * *'
+
+  # Allow manual trigger
+  workflow_dispatch:
+    inputs:
+      date_from:
+        description: 'Start date (YYYY-MM-DD, optional)'
+        required: false
+      date_to:
+        description: 'End date (YYYY-MM-DD, optional)'
+        required: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Sports Monks sync
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SPORTMONKS_TOKEN: ${{ secrets.SPORTMONKS_TOKEN }}
+          REACT_APP_FF_USE_SPORTMONKS: true
+          REACT_APP_FF_SPORTMONKS_ENABLE_SYNC: true
+          REACT_APP_FF_SPORTMONKS_TEST_MODE: false
+          REACT_APP_FF_SPORTMONKS_SYNC_COMPETITIONS: '1,2,3,4,5,6,7,8'
+        run: |
+          if [ -n "${{ github.event.inputs.date_from }}" ] && [ -n "${{ github.event.inputs.date_to }}" ]; then
+            # Manual run with custom dates
+            node scripts/sync-sportmonks-fixtures.mjs --date-from="${{ github.event.inputs.date_from }}" --date-to="${{ github.event.inputs.date_to }}"
+          else
+            # Default: sync today to +30 days
+            node scripts/sync-sportmonks-fixtures.mjs
+          fi
+
+      - name: Report sync status
+        if: always()
+        run: |
+          echo "✅ Sports Monks sync completed"
+          echo "Check logs above for details"
