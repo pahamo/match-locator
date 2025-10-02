@@ -7,25 +7,40 @@ const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SER
 
 console.log('🔍 Checking Competition Mappings\n');
 
+// Get actual competitions from competitions table
+const { data: competitions } = await supabase
+  .from('competitions')
+  .select('*')
+  .order('id');
+
+console.log('📊 Competitions Table:\n');
+competitions?.forEach(c => {
+  console.log(`  ${c.id}: ${c.name} (${c.slug})`);
+});
+
+// Get mappings
 const { data: mappings } = await supabase
   .from('api_competition_mapping')
   .select('*')
-  .eq('is_active', true);
+  .order('our_competition_id');
 
-console.log('Competition Mappings:');
+console.log('\n\n📋 API Competition Mappings:\n');
 mappings?.forEach(m => {
-  console.log(`  ${m.our_competition_id}: ${m.sportmonks_league_name.padEnd(30)} → Sports Monks ID: ${m.sportmonks_league_id}`);
+  const comp = competitions?.find(c => c.id === m.our_competition_id);
+  console.log(`  Mapping ID: ${m.id}`);
+  console.log(`    Our Competition: ${m.our_competition_id} - ${comp?.name || 'NOT FOUND'}`);
+  console.log(`    Sports Monks: ${m.sportmonks_league_id} - ${m.sportmonks_league_name}`);
+  console.log(`    Active: ${m.is_active}`);
+  console.log('');
 });
 
-console.log('\n');
-
-const { data: competitions } = await supabase
-  .from('competitions')
-  .select('id, name');
-
-console.log('Our Competitions:');
-competitions?.forEach(c => {
-  const mapped = mappings?.find(m => m.our_competition_id === c.id);
-  const status = mapped ? `✅ Mapped to SM ${mapped.sportmonks_league_id}` : '❌ Not mapped';
-  console.log(`  ${c.id}: ${c.name.padEnd(30)} ${status}`);
+// Check for mismatches
+console.log('\n⚠️  Checking for Mismatches:\n');
+mappings?.forEach(m => {
+  const comp = competitions?.find(c => c.id === m.our_competition_id);
+  if (comp && m.our_competition_name !== comp.name) {
+    console.log(`  ❌ Mismatch for ID ${m.our_competition_id}:`);
+    console.log(`     Mapping says: "${m.our_competition_name}"`);
+    console.log(`     Competition table says: "${comp.name}"`);
+  }
 });
