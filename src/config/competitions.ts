@@ -23,7 +23,7 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     slug: 'premier-league',
     name: 'Premier League',
     shortName: 'EPL',
-    logo: 'https://cdn.brandfetch.io/id3ei9Uwhu/theme/dark/id4u-3dVa7.svg?c=1bxid64Mup7aczewSAYMX&t=1737356816110',
+    logo: 'https://cdn.sportmonks.com/images/soccer/leagues/8/8.png',
     icon: '⚽',
     description: 'The top flight of English football with 20 teams competing for the title.',
     colors: {
@@ -37,7 +37,7 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     slug: 'champions-league',
     name: 'UEFA Champions League',
     shortName: 'UCL',
-    logo: 'https://upload.wikimedia.org/wikipedia/en/f/f5/UEFA_Champions_League.svg',
+    logo: 'https://cdn.sportmonks.com/images/soccer/leagues/2.png',
     icon: '🏆',
     description: 'Europe\'s premier club competition featuring the best teams from across the continent.',
     colors: {
@@ -51,7 +51,7 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     slug: 'bundesliga',
     name: 'Bundesliga',
     shortName: 'BUN',
-    logo: 'https://cdn.brandfetch.io/idULAJYHGL/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1756046283501',
+    logo: 'https://cdn.sportmonks.com/images/soccer/leagues/18/82.png',
     icon: '🇩🇪',
     description: 'Germany\'s premier football league featuring 18 teams.',
     colors: {
@@ -65,7 +65,7 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     slug: 'la-liga',
     name: 'La Liga',
     shortName: 'LAL',
-    logo: 'https://cdn.brandfetch.io/idB6wr4svd/w/820/h/750/theme/dark/logo.png?c=1bxid64Mup7aczewSAYMX&t=1754867400907',
+    logo: 'https://cdn.sportmonks.com/images/soccer/leagues/20/564.png',
     icon: '🇪🇸',
     description: 'Spain\'s top football division with the world\'s best players.',
     colors: {
@@ -79,7 +79,7 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     slug: 'serie-a',
     name: 'Serie A',
     shortName: 'SER',
-    logo: 'https://cdn.brandfetch.io/id_NHLWhOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1751361578120',
+    logo: 'https://cdn.sportmonks.com/images/soccer/leagues/0/384.png',
     icon: '🇮🇹',
     description: 'Italy\'s premier football league known for tactical excellence.',
     colors: {
@@ -93,7 +93,7 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     slug: 'ligue-1',
     name: 'Ligue 1',
     shortName: 'L1',
-    logo: 'https://upload.wikimedia.org/wikipedia/fr/d/d9/Logo_Ligue_1_2024.svg',
+    logo: 'https://cdn.sportmonks.com/images/soccer/leagues/13/301.png',
     icon: '🇫🇷',
     description: 'France\'s top football division featuring PSG and top European talent.',
     colors: {
@@ -107,7 +107,7 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     slug: 'primeira-liga',
     name: 'Primeira Liga',
     shortName: 'POR',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/5/5a/S%C3%ADmbolo_da_Liga_Portuguesa_de_Futebol_Profissional.png',
+    logo: 'https://cdn.sportmonks.com/images/soccer/leagues/14/462.png',
     icon: '🇵🇹',
     description: 'Portugal\'s premier football league featuring Porto, Benfica, and Sporting CP.',
     colors: {
@@ -121,7 +121,7 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     slug: 'eredivisie',
     name: 'Eredivisie',
     shortName: 'ERE',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/4/46/Eredivisie_nuovo_logo.png',
+    logo: 'https://cdn.sportmonks.com/images/soccer/leagues/72.png',
     icon: '🇳🇱',
     description: 'Netherlands\' top football division known for developing young talent.',
     colors: {
@@ -135,7 +135,7 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     slug: 'championship',
     name: 'Championship',
     shortName: 'CHA',
-    logo: 'https://upload.wikimedia.org/wikipedia/fr/c/c3/EFL_Championship.svg',
+    logo: 'https://cdn.sportmonks.com/images/soccer/leagues/9/9.png',
     icon: '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
     description: 'England\'s second tier featuring 24 teams competing for Premier League promotion.',
     colors: {
@@ -144,12 +144,12 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     }
   },
 
-  // Legacy competitions for backward compatibility
   'europa-league': {
-    id: 10,
+    id: 11,
     slug: 'europa-league',
     name: 'UEFA Europa League',
     shortName: 'UEL',
+    logo: 'https://cdn.sportmonks.com/images/soccer/leagues/5/5.png',
     icon: '🌟',
     description: 'UEFA\'s second-tier European competition for clubs.',
     colors: {
@@ -158,8 +158,9 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     }
   },
 
+  // Legacy competitions for backward compatibility
   'fa-cup': {
-    id: 11,
+    id: 10,
     slug: 'fa-cup',
     name: 'FA Cup',
     shortName: 'FAC',
