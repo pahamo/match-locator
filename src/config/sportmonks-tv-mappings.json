@@ -1,0 +1,40 @@
+{
+  "generated_at": "2025-10-02T10:07:05.888Z",
+  "uk_broadcasters": {
+    "60": {
+      "name": "Sky Go",
+      "provider_id": 1,
+      "provider_name": "Sky Sports",
+      "type": "channel"
+    },
+    "928": {
+      "name": "TNT Sports 2",
+      "provider_id": 2,
+      "provider_name": "TNT Sports",
+      "type": "channel"
+    },
+    "929": {
+      "name": "TNT Sports 3",
+      "provider_id": 2,
+      "provider_name": "TNT Sports",
+      "type": "channel"
+    },
+    "930": {
+      "name": "TNT Sports 4",
+      "provider_id": 2,
+      "provider_name": "TNT Sports",
+      "type": "channel"
+    },
+    "999": {
+      "name": "Amazon Prime Video",
+      "provider_id": 4,
+      "provider_name": "Amazon Prime Video",
+      "type": "channel"
+    }
+  },
+  "unmapped_uk": [],
+  "total_stations_found": 100,
+  "uk_broadcasters_count": 5,
+  "mapped_count": 5,
+  "unmapped_count": 0
+}
