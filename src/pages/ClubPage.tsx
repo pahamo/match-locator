@@ -129,11 +129,19 @@ const ClubPage: React.FC = () => {
 
   return (
     <div className="club-page">
+      {/* FAQ Structured Data */}
       <StructuredData
         type="faq"
         data={faqData}
         dateModified={new Date().toISOString()}
       />
+      {/* SportsTeam Structured Data */}
+      {team && (
+        <StructuredData
+          type="team"
+          data={team}
+        />
+      )}
       <Header />
 
       <main>

@@ -2,7 +2,7 @@ import React from 'react';
 import type { Fixture, SimpleFixture } from '../types';
 
 interface StructuredDataProps {
-  type: 'match' | 'organization' | 'website' | 'competition' | 'faq';
+  type: 'match' | 'organization' | 'website' | 'competition' | 'faq' | 'team';
   data?: Fixture | SimpleFixture | any;
   dateModified?: string; // ISO date string for content freshness
 }
@@ -150,52 +150,44 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data, dateModifie
       }
     };
 
-    return {
+    // Get home and away team crests
+    const homeTeamCrest = isSimpleFixture ? fixture.home_crest : fixture.home.crest;
+    const awayTeamCrest = isSimpleFixture ? fixture.away_crest : fixture.away.crest;
+
+    // Get broadcaster name for BroadcastEvent
+    const broadcasterName = getBroadcaster();
+
+    // Build enhanced team objects with logos
+    const homeTeamSchema = {
+      "@type": "SportsTeam",
+      "name": homeTeam,
+      "sport": "Football",
+      ...(homeTeamCrest && { "logo": homeTeamCrest })
+    };
+
+    const awayTeamSchema = {
+      "@type": "SportsTeam",
+      "name": awayTeam,
+      "sport": "Football",
+      ...(awayTeamCrest && { "logo": awayTeamCrest })
+    };
+
+    const baseSchema: any = {
       "@context": "https://schema.org",
       "@type": "SportsEvent",
       "name": `${homeTeam} vs ${awayTeam}`,
-      "description": `Football match between ${homeTeam} and ${awayTeam} in ${getCompetitionName(fixture)}`,
+      "description": `Football match between ${homeTeam} and ${awayTeam} in ${getCompetitionName(fixture)}. Watch on UK TV via ${broadcasterName}.`,
       "startDate": kickoffDate,
       "endDate": endDate,
       "image": getEventImage(),
-      "performer": [
-        {
-          "@type": "SportsTeam",
-          "name": homeTeam,
-          "sport": "Football"
-        },
-        {
-          "@type": "SportsTeam",
-          "name": awayTeam,
-          "sport": "Football"
-        }
-      ],
+      "performer": [homeTeamSchema, awayTeamSchema],
       "sport": {
         "@type": "Sport",
         "name": "Football"
       },
-      "homeTeam": {
-        "@type": "SportsTeam",
-        "name": homeTeam,
-        "sport": "Football"
-      },
-      "awayTeam": {
-        "@type": "SportsTeam",
-        "name": awayTeam,
-        "sport": "Football"
-      },
-      "competitor": [
-        {
-          "@type": "SportsTeam",
-          "name": homeTeam,
-          "sport": "Football"
-        },
-        {
-          "@type": "SportsTeam",
-          "name": awayTeam,
-          "sport": "Football"
-        }
-      ],
+      "homeTeam": homeTeamSchema,
+      "awayTeam": awayTeamSchema,
+      "competitor": [homeTeamSchema, awayTeamSchema],
       "organizer": {
         "@type": "SportsOrganization",
         "name": getCompetitionName(fixture),
@@ -217,16 +209,40 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data, dateModifie
         "description": "Watch this football match on UK television",
         "seller": {
           "@type": "Organization",
-          "name": getBroadcaster()
+          "name": broadcasterName
         }
       }
     };
+
+    // Add BroadcastEvent if broadcaster is known
+    if (broadcasterName && broadcasterName !== 'Match Locator') {
+      baseSchema.subEvent = {
+        "@type": "BroadcastEvent",
+        "name": `${homeTeam} vs ${awayTeam} - TV Broadcast`,
+        "isLiveBroadcast": true,
+        "startDate": kickoffDate,
+        "endDate": endDate,
+        "publishedOn": {
+          "@type": "BroadcastService",
+          "name": broadcasterName,
+          "broadcastDisplayName": broadcasterName,
+          "broadcaster": {
+            "@type": "Organization",
+            "name": broadcasterName
+          }
+        },
+        "inLanguage": "en-GB",
+        "videoFormat": "HD"
+      };
+    }
+
+    return baseSchema;
   };
 
   const generateOrganizationStructuredData = () => {
     return {
       "@context": "https://schema.org",
-      "@type": "Organization", 
+      "@type": "Organization",
       "name": "fixtures.app",
       "description": "Football TV Schedule for UK - Premier League, Champions League and more. Sky Sports & TNT Sports fixtures",
       "url": "https://matchlocator.com",
@@ -245,6 +261,47 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data, dateModifie
         "TNT Sports"
       ]
     };
+  };
+
+  const generateSportsTeamStructuredData = (teamData?: any) => {
+    if (!teamData) return null;
+
+    const schema: any = {
+      "@context": "https://schema.org",
+      "@type": "SportsTeam",
+      "name": teamData.name,
+      "sport": "Football",
+      "url": `https://matchlocator.com/club/${teamData.slug}`,
+      "description": `${teamData.name} TV schedule, fixtures, and broadcast information. Find out what channel ${teamData.name} matches are on.`
+    };
+
+    // Add logo if available
+    if (teamData.crest) {
+      schema.logo = teamData.crest;
+      schema.image = teamData.crest;
+    }
+
+    // Add venue if available
+    if (teamData.venue) {
+      schema.location = {
+        "@type": "Place",
+        "name": teamData.venue,
+        ...(teamData.city && {
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": teamData.city,
+            "addressCountry": "GB"
+          }
+        })
+      };
+    }
+
+    // Add website if available
+    if (teamData.website) {
+      schema.sameAs = [teamData.website];
+    }
+
+    return schema;
   };
 
   const generateWebsiteStructuredData = () => {
@@ -340,6 +397,10 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data, dateModifie
       break;
     case 'faq':
       structuredData = generateFAQStructuredData(data, dateModified);
+      break;
+    case 'team':
+      structuredData = generateSportsTeamStructuredData(data);
+      if (!structuredData) return null;
       break;
     default:
       return null;
