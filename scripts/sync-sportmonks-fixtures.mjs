@@ -32,6 +32,11 @@ const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_KEY;
 const SPORTMONKS_TOKEN = process.env.SPORTMONKS_TOKEN || process.env.REACT_APP_SPORTMONKS_TOKEN;
 
+console.log('[DEBUG] Environment check:');
+console.log(`  SUPABASE_URL: ${SUPABASE_URL ? 'SET' : 'MISSING'}`);
+console.log(`  SUPABASE_SERVICE_KEY: ${SUPABASE_SERVICE_KEY ? `SET (${SUPABASE_SERVICE_KEY.length} chars)` : 'MISSING'}`);
+console.log(`  SPORTMONKS_TOKEN: ${SPORTMONKS_TOKEN ? `SET (${SPORTMONKS_TOKEN.length} chars)` : 'MISSING'}`);
+
 if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) {
   console.error('❌ Missing Supabase credentials');
   process.exit(1);
@@ -562,6 +567,8 @@ async function main() {
 
   } catch (error) {
     console.error('\n❌ Sync Failed:', error.message);
+    console.error('[DEBUG] Error stack:', error.stack);
+    console.error('[DEBUG] Error type:', error.constructor.name);
 
     if (!flags.testMode) {
       await createSyncLog(null, stats, 'error', error.message);
