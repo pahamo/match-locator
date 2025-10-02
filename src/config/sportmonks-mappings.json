@@ -55,7 +55,8 @@
       "id": 9,
       "name": "League One",
       "country": "England",
-      "note": "Not in Sports Monks subscription - only has Premier League, Championship, FA Cup, Carabao Cup for England"
+      "sportmonks_id": 12,
+      "note": "Sports Monks ID: 12 - Not accessible in European Plan subscription. Only includes Premier League, Championship, FA Cup, Carabao Cup for England. Would need different plan/add-on."
     }
   ]
 }
