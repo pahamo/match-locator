@@ -12,9 +12,11 @@ import React from 'react';
 export interface FeatureFlags {
   // API Source Control (Master Switches)
   dataSources: {
-    useSoccersAPI: boolean;           // Master switch for SoccersAPI
+    useSoccersAPI: boolean;           // Master switch for SoccersAPI (DEPRECATED)
     soccersAPITestMode: boolean;      // Log only, don't update DB
     enableAPIComparison: boolean;     // Run both APIs in parallel for testing
+    useSportMonks: boolean;           // Master switch for Sports Monks API ⭐ NEW
+    sportMonksTestMode: boolean;      // Log only, don't update DB ⭐ NEW
   };
 
   // Features dependent on SoccersAPI data (auto-disabled if API switched off)
@@ -29,6 +31,17 @@ export interface FeatureFlags {
     showLineups: boolean;                // Team lineups when available
     showRealTimeUpdates: boolean;        // Live score updates
     showVenueDetails: boolean;           // Stadium info and weather
+  };
+
+  // Sports Monks API Features ⭐ NEW
+  sportMonksFeatures: {
+    enableSync: boolean;                 // Master sync toggle
+    syncCompetitions: number[];          // Competition IDs to sync
+    showLiveScores: boolean;             // Live match scores
+    showLineups: boolean;                // Team lineups
+    showMatchStats: boolean;             // Match statistics
+    showH2HData: boolean;                // Enhanced H2H data
+    showTVStations: boolean;             // Automated TV broadcast info
   };
 
   // General features (independent of API source)
@@ -49,13 +62,22 @@ const loadFeatureFlags = (): FeatureFlags => {
     return envVar ? envVar.toLowerCase() === 'true' : defaultValue;
   };
 
+  const getEnvArray = (name: string, defaultValue: number[] = []): number[] => {
+    const envVar = process.env[`REACT_APP_FF_${name}`];
+    if (!envVar) return defaultValue;
+    return envVar.split(',').map(id => parseInt(id.trim(), 10)).filter(id => !isNaN(id));
+  };
+
   const useSoccersAPI = getEnvFlag('USE_SOCCERSAPI', false);
+  const useSportMonks = getEnvFlag('USE_SPORTMONKS', false);
 
   return {
     dataSources: {
       useSoccersAPI,
       soccersAPITestMode: getEnvFlag('SOCCERSAPI_TEST_MODE', false),
       enableAPIComparison: getEnvFlag('ENABLE_API_COMPARISON', false),
+      useSportMonks,
+      sportMonksTestMode: getEnvFlag('SPORTMONKS_TEST_MODE', false),
     },
     soccersAPIFeatures: {
       // Only enable if parent API is enabled
@@ -69,6 +91,16 @@ const loadFeatureFlags = (): FeatureFlags => {
       showLineups: useSoccersAPI && getEnvFlag('LINEUPS', false),
       showRealTimeUpdates: useSoccersAPI && getEnvFlag('REALTIME_UPDATES', false),
       showVenueDetails: useSoccersAPI && getEnvFlag('VENUE_DETAILS', false),
+    },
+    sportMonksFeatures: {
+      // Only enable if Sports Monks API is enabled
+      enableSync: useSportMonks && getEnvFlag('SPORTMONKS_ENABLE_SYNC', false),
+      syncCompetitions: useSportMonks ? getEnvArray('SPORTMONKS_SYNC_COMPETITIONS', []) : [],
+      showLiveScores: useSportMonks && getEnvFlag('SPORTMONKS_LIVE_SCORES', false),
+      showLineups: useSportMonks && getEnvFlag('SPORTMONKS_LINEUPS', false),
+      showMatchStats: useSportMonks && getEnvFlag('SPORTMONKS_MATCH_STATS', false),
+      showH2HData: useSportMonks && getEnvFlag('SPORTMONKS_H2H_DATA', false),
+      showTVStations: useSportMonks && getEnvFlag('SPORTMONKS_TV_STATIONS', false),
     },
     generalFeatures: {
       // These work regardless of API source
@@ -104,6 +136,11 @@ export const isFeatureEnabled = (featurePath: string): boolean => {
     // For SoccersAPI features, also check if the API is enabled
     if (category === 'soccersAPIFeatures') {
       return FEATURE_FLAGS.dataSources.useSoccersAPI && categoryFlags[feature];
+    }
+
+    // For Sports Monks features, also check if the API is enabled
+    if (category === 'sportMonksFeatures') {
+      return FEATURE_FLAGS.dataSources.useSportMonks && categoryFlags[feature];
     }
 
     return categoryFlags[feature] || false;
@@ -166,15 +203,17 @@ export const FeatureFlag: React.FC<FeatureFlagProps> = ({ feature, children, fal
 /**
  * Get current API source for debugging
  */
-export const getCurrentAPISource = (): 'football-data' | 'soccersapi' => {
-  return FEATURE_FLAGS.dataSources.useSoccersAPI ? 'soccersapi' : 'football-data';
+export const getCurrentAPISource = (): 'football-data' | 'soccersapi' | 'sportmonks' => {
+  if (FEATURE_FLAGS.dataSources.useSportMonks) return 'sportmonks';
+  if (FEATURE_FLAGS.dataSources.useSoccersAPI) return 'soccersapi';
+  return 'football-data';
 };
 
 /**
  * Check if we're in test mode (logging but not modifying data)
  */
 export const isTestMode = (): boolean => {
-  return FEATURE_FLAGS.dataSources.soccersAPITestMode;
+  return FEATURE_FLAGS.dataSources.soccersAPITestMode || FEATURE_FLAGS.dataSources.sportMonksTestMode;
 };
 
 /**
@@ -182,4 +221,45 @@ export const isTestMode = (): boolean => {
  */
 export const isComparisonMode = (): boolean => {
   return FEATURE_FLAGS.dataSources.enableAPIComparison;
+};
+
+/**
+ * Sports Monks Helper Functions
+ */
+
+/**
+ * Check if Sports Monks sync is enabled
+ */
+export const isSportMonksSyncEnabled = (): boolean => {
+  return FEATURE_FLAGS.dataSources.useSportMonks && FEATURE_FLAGS.sportMonksFeatures.enableSync;
+};
+
+/**
+ * Get list of competition IDs enabled for Sports Monks sync
+ */
+export const getSportMonksEnabledCompetitions = (): number[] => {
+  if (!isSportMonksSyncEnabled()) return [];
+  return FEATURE_FLAGS.sportMonksFeatures.syncCompetitions;
+};
+
+/**
+ * Check if a specific competition is enabled for Sports Monks sync
+ */
+export const isCompetitionEnabledForSync = (competitionId: number): boolean => {
+  const enabledCompetitions = getSportMonksEnabledCompetitions();
+  return enabledCompetitions.length === 0 || enabledCompetitions.includes(competitionId);
+};
+
+/**
+ * Check if Sports Monks TV stations feature is enabled
+ */
+export const isSportMonksTVEnabled = (): boolean => {
+  return isFeatureEnabled('sportMonksFeatures.showTVStations');
+};
+
+/**
+ * Check if Sports Monks live scores feature is enabled
+ */
+export const isSportMonksLiveScoresEnabled = (): boolean => {
+  return isFeatureEnabled('sportMonksFeatures.showLiveScores');
 };
