@@ -108,6 +108,11 @@ function App() {
               <Route path="/matches/today" element={<TodayFixturesPage />} />
               <Route path="/matches/tomorrow" element={<TomorrowFixturesPage />} />
               <Route path="/matches/this-weekend" element={<ThisWeekendFixturesPage />} />
+              {/* Legacy /fixtures/* redirects to /matches/* */}
+              <Route path="/fixtures" element={<FixturesPage />} />
+              <Route path="/fixtures/today" element={<TodayFixturesPage />} />
+              <Route path="/fixtures/tomorrow" element={<TomorrowFixturesPage />} />
+              <Route path="/fixtures/this-weekend" element={<ThisWeekendFixturesPage />} />
               {/* Competition routes */}
               <Route path="/competitions" element={<CompetitionsOverviewPage />} />
               <Route path="/competitions/champions-league/group-stage" element={<ChampionsLeagueGroupStagePage />} />

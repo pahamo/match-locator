@@ -103,7 +103,7 @@ const TodayFixturesPage: React.FC = () => {
     return (
       <div>
         <Header />
-        <Breadcrumbs items={generateBreadcrumbs('/fixtures/today')} />
+        <Breadcrumbs items={generateBreadcrumbs('/matches/today')} />
         <main className="wrap" style={{ paddingTop: 'var(--layout-page-top-margin)' }}>
           <div style={{ textAlign: 'center', padding: '64px 20px' }}>
             <h1>Loading today's fixtures...</h1>
@@ -117,7 +117,7 @@ const TodayFixturesPage: React.FC = () => {
     return (
       <div>
         <Header />
-        <Breadcrumbs items={generateBreadcrumbs('/fixtures/today')} />
+        <Breadcrumbs items={generateBreadcrumbs('/matches/today')} />
         <main className="wrap" style={{ paddingTop: 'var(--layout-page-top-margin)' }}>
           <div style={{ textAlign: 'center', padding: '64px 20px' }}>
             <h1>Error</h1>
@@ -172,7 +172,7 @@ const TodayFixturesPage: React.FC = () => {
       <StructuredData type="faq" data={faqData} />
       <Header />
       <main className="wrap" style={{ paddingTop: 'var(--layout-page-top-margin)' }}>
-        <Breadcrumbs items={generateBreadcrumbs('/fixtures/today')} />
+        <Breadcrumbs items={generateBreadcrumbs('/matches/today')} />
         {/* Page Header */}
         <div style={{ marginBottom: '32px' }}>
           <h1 style={{
@@ -218,7 +218,7 @@ const TodayFixturesPage: React.FC = () => {
           flexWrap: 'wrap'
         }}>
           <Link
-            to="/fixtures/tomorrow"
+            to="/matches/tomorrow"
             style={{
               padding: '8px 16px',
               backgroundColor: 'var(--color-surface)',
@@ -233,7 +233,7 @@ const TodayFixturesPage: React.FC = () => {
             Tomorrow's Fixtures →
           </Link>
           <Link
-            to="/fixtures"
+            to="/matches"
             style={{
               padding: '8px 16px',
               backgroundColor: 'var(--color-surface)',
@@ -271,7 +271,7 @@ const TodayFixturesPage: React.FC = () => {
             </p>
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
               <Link
-                to="/fixtures/tomorrow"
+                to="/matches/tomorrow"
                 style={{
                   padding: '12px 24px',
                   backgroundColor: 'var(--color-primary)',
@@ -284,7 +284,7 @@ const TodayFixturesPage: React.FC = () => {
                 Tomorrow's Fixtures
               </Link>
               <Link
-                to="/fixtures"
+                to="/matches"
                 style={{
                   padding: '12px 24px',
                   backgroundColor: 'var(--color-surface)',

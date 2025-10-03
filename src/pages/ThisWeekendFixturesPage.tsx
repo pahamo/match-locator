@@ -129,7 +129,7 @@ const ThisWeekendFixturesPage: React.FC = () => {
       <div>
         <StructuredData type="faq" />
         <Header />
-        <Breadcrumbs items={generateBreadcrumbs('/fixtures/this-weekend')} />
+        <Breadcrumbs items={generateBreadcrumbs('/matches/this-weekend')} />
         <main className="wrap" style={{ paddingTop: 'var(--layout-page-top-margin)' }}>
           <div style={{ textAlign: 'center', padding: '64px 20px' }}>
             <h1>Loading weekend fixtures...</h1>
@@ -144,7 +144,7 @@ const ThisWeekendFixturesPage: React.FC = () => {
       <div>
         <StructuredData type="faq" />
         <Header />
-        <Breadcrumbs items={generateBreadcrumbs('/fixtures/this-weekend')} />
+        <Breadcrumbs items={generateBreadcrumbs('/matches/this-weekend')} />
         <main className="wrap" style={{ paddingTop: 'var(--layout-page-top-margin)' }}>
           <div style={{ textAlign: 'center', padding: '64px 20px' }}>
             <h1>Error</h1>
@@ -173,7 +173,7 @@ const ThisWeekendFixturesPage: React.FC = () => {
       <StructuredData type="faq" />
       <Header />
       <main className="wrap" style={{ paddingTop: 'var(--layout-page-top-margin)' }}>
-        <Breadcrumbs items={generateBreadcrumbs('/fixtures/this-weekend')} />
+        <Breadcrumbs items={generateBreadcrumbs('/matches/this-weekend')} />
 
         {/* Page Header */}
         <div style={{ marginBottom: '32px' }}>
@@ -219,7 +219,7 @@ const ThisWeekendFixturesPage: React.FC = () => {
           flexWrap: 'wrap'
         }}>
           <Link
-            to="/fixtures/today"
+            to="/matches/today"
             style={{
               padding: '8px 16px',
               backgroundColor: 'var(--color-surface)',
@@ -234,7 +234,7 @@ const ThisWeekendFixturesPage: React.FC = () => {
             Today's Fixtures
           </Link>
           <Link
-            to="/fixtures/tomorrow"
+            to="/matches/tomorrow"
             style={{
               padding: '8px 16px',
               backgroundColor: 'var(--color-surface)',
@@ -249,7 +249,7 @@ const ThisWeekendFixturesPage: React.FC = () => {
             Tomorrow's Fixtures
           </Link>
           <Link
-            to="/fixtures"
+            to="/matches"
             style={{
               padding: '8px 16px',
               backgroundColor: 'var(--color-surface)',
@@ -287,7 +287,7 @@ const ThisWeekendFixturesPage: React.FC = () => {
             </p>
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
               <Link
-                to="/fixtures/today"
+                to="/matches/today"
                 style={{
                   padding: '12px 24px',
                   backgroundColor: 'var(--color-primary)',
@@ -300,7 +300,7 @@ const ThisWeekendFixturesPage: React.FC = () => {
                 Today's Fixtures
               </Link>
               <Link
-                to="/fixtures"
+                to="/matches"
                 style={{
                   padding: '12px 24px',
                   backgroundColor: 'var(--color-surface)',
