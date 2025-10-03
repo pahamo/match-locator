@@ -229,7 +229,7 @@ async function syncCompetitionFixtures(competitionId, sportmonksLeagueId, compet
 
       try {
         const response = await makeRequest(`/fixtures/date/${dateStr}`, {
-          include: 'participants;tvstations;round'
+          include: 'participants;tvstations;round;scores;state'
         });
 
         const dayFixtures = (response.data || []).filter(f => f.league_id === sportmonksLeagueId);
@@ -290,12 +290,27 @@ async function syncCompetitionFixtures(competitionId, sportmonksLeagueId, compet
         // Extract matchday from round data (round.name is usually the matchweek number)
         const matchday = fixture.round?.name ? parseInt(fixture.round.name, 10) : null;
 
+        // Extract scores from the scores array (participant_id = 1 is home, 2 is away typically)
+        const homeScore = fixture.scores?.find(s => s.description === 'CURRENT')?.score?.participant === 'home'
+          ? fixture.scores.find(s => s.description === 'CURRENT')?.score?.goals
+          : null;
+        const awayScore = fixture.scores?.find(s => s.description === 'CURRENT')?.score?.participant === 'away'
+          ? fixture.scores.find(s => s.description === 'CURRENT')?.score?.goals
+          : null;
+
+        // Alternative: Try to get scores from participants array if available
+        const finalHomeScore = homeScore ?? fixture.participants?.[0]?.meta?.score ?? null;
+        const finalAwayScore = awayScore ?? fixture.participants?.[1]?.meta?.score ?? null;
+
         const fixtureData = {
           utc_kickoff: fixture.starting_at,
           home_team_id: homeTeamId,
           away_team_id: awayTeamId,
           competition_id: competitionId,
           matchday: matchday,
+          home_score: finalHomeScore,
+          away_score: finalAwayScore,
+          status: fixture.state?.state || null,
           sportmonks_fixture_id: fixture.id,
           data_source: 'sportmonks',
           last_synced_at: new Date().toISOString(),
