@@ -290,17 +290,14 @@ async function syncCompetitionFixtures(competitionId, sportmonksLeagueId, compet
         // Extract matchday from round data (round.name is usually the matchweek number)
         const matchday = fixture.round?.name ? parseInt(fixture.round.name, 10) : null;
 
-        // Extract scores from the scores array (participant_id = 1 is home, 2 is away typically)
-        const homeScore = fixture.scores?.find(s => s.description === 'CURRENT')?.score?.participant === 'home'
-          ? fixture.scores.find(s => s.description === 'CURRENT')?.score?.goals
-          : null;
-        const awayScore = fixture.scores?.find(s => s.description === 'CURRENT')?.score?.participant === 'away'
-          ? fixture.scores.find(s => s.description === 'CURRENT')?.score?.goals
-          : null;
+        // Extract scores from the scores array - find CURRENT scores for home and away
+        const currentScores = fixture.scores?.filter(s => s.description === 'CURRENT') || [];
+        const homeScore = currentScores.find(s => s.score?.participant === 'home')?.score?.goals;
+        const awayScore = currentScores.find(s => s.score?.participant === 'away')?.score?.goals;
 
-        // Alternative: Try to get scores from participants array if available
-        const finalHomeScore = homeScore ?? fixture.participants?.[0]?.meta?.score ?? null;
-        const finalAwayScore = awayScore ?? fixture.participants?.[1]?.meta?.score ?? null;
+        // Use the scores if found, otherwise null
+        const finalHomeScore = homeScore !== undefined ? homeScore : null;
+        const finalAwayScore = awayScore !== undefined ? awayScore : null;
 
         const fixtureData = {
           utc_kickoff: fixture.starting_at,
