@@ -21,28 +21,32 @@ const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competition
   const { upcomingFixtures, latestResults } = useMemo(() => {
     const now = new Date();
 
-    // Get ALL upcoming fixtures from current matchday
+    // Get ALL upcoming fixtures
     const upcomingList = fixtures
       .filter(f => new Date(f.kickoff_utc) >= now)
       .sort((a, b) => new Date(a.kickoff_utc).getTime() - new Date(b.kickoff_utc).getTime());
 
-    // Get the current matchday from the first upcoming fixture
-    const currentMatchday = upcomingList[0]?.matchweek;
-
-    // Filter to show only fixtures from the current matchday
-    const upcoming = currentMatchday
-      ? upcomingList.filter(f => f.matchweek === currentMatchday)
-      : upcomingList.slice(0, 10); // Fallback to first 10 if no matchday data
-
-    // Get ALL completed fixtures from current matchday
+    // Get ALL completed fixtures
     const pastList = fixtures
       .filter(f => new Date(f.kickoff_utc) < now)
       .sort((a, b) => new Date(b.kickoff_utc).getTime() - new Date(a.kickoff_utc).getTime());
 
-    // Filter to show only completed fixtures from the current matchday
-    const past = currentMatchday
-      ? pastList.filter(f => f.matchweek === currentMatchday)
-      : pastList.slice(0, 10); // Fallback to last 10 if no matchday data
+    // Get the current matchday from the first upcoming fixture
+    const currentMatchday = upcomingList[0]?.matchweek;
+
+    // If we have matchday data, filter by it. Otherwise show all (up to reasonable limit)
+    let upcoming: SimpleFixture[];
+    let past: SimpleFixture[];
+
+    if (currentMatchday) {
+      // Filter to show ALL fixtures from the current matchday
+      upcoming = upcomingList.filter(f => f.matchweek === currentMatchday);
+      past = pastList.filter(f => f.matchweek === currentMatchday);
+    } else {
+      // No matchday data - show all fixtures (limited to prevent page overload)
+      upcoming = upcomingList.slice(0, 50);
+      past = pastList.slice(0, 50);
+    }
 
     return {
       upcomingFixtures: upcoming,
@@ -50,7 +54,8 @@ const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competition
     };
   }, [fixtures]);
 
-  if (upcomingFixtures.length === 0 && latestResults.length === 0) {
+  // Don't show if there are no fixtures at all
+  if (fixtures.length === 0) {
     return null;
   }
 

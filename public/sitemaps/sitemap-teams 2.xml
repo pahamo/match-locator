@@ -701,11 +701,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/clubs/fc-volendam</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://matchlocator.com/clubs/volendam</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -1622,11 +1617,6 @@
   </url>
   <url>
     <loc>https://matchlocator.com/clubs/sliema-wanderers</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/clubs/slovan-bratislava</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
