@@ -241,15 +241,6 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
         </Link>
       )}
 
-      {/* Show "No UK Broadcast" only for explicitly blackout games */}
-      {showViewButton && !fixtureData.shouldCreatePage && (
-        <span className="view-button disabled" title="Not available for this competition">
-          Not Available
-        </span>
-      )}
-
-      {/* Removed blackout badge - only show "No UK Broadcast" in broadcaster section */}
-
       {/* Matchweek moved to time column for withTime variant */}
     </div>
   );
