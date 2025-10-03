@@ -62,7 +62,7 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
       primary: '#d20515',
       secondary: '#000000'
     },
-    seasonId: 23819 // 2024/25 season (placeholder - verify)
+    seasonId: 25580 // 2025/26 season
   },
 
   'la-liga': {
