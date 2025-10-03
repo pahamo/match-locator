@@ -205,11 +205,28 @@ const CompetitionPage: React.FC = () => {
               borderRadius: '8px',
               marginBottom: '2rem'
             }}>
-              <h3 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '1rem' }}>
-                Teams ({teams.length})
+              <h3 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '0.5rem' }}>
+                {competition.name} Teams
               </h3>
-              <div style={{ display: 'grid', gap: '0.5rem' }}>
-                {teams.slice(0, 10).map((team) => (
+
+              {/* SEO-optimized description */}
+              <p style={{
+                fontSize: '0.875rem',
+                color: '#6b7280',
+                marginBottom: '1rem',
+                lineHeight: '1.5'
+              }}>
+                Browse all {teams.length} teams competing in {competition.name}. Click any team to view their complete fixture schedule, TV broadcast information, and upcoming matches.
+              </p>
+
+              <div style={{
+                display: 'grid',
+                gap: '0.5rem',
+                maxHeight: '500px',
+                overflowY: 'auto',
+                paddingRight: '0.5rem'
+              }}>
+                {teams.map((team) => (
                   <a
                     key={team.id}
                     href={`/clubs/${team.slug}`}
@@ -222,8 +239,11 @@ const CompetitionPage: React.FC = () => {
                       borderRadius: '4px',
                       textDecoration: 'none',
                       color: 'inherit',
-                      fontSize: '0.875rem'
+                      fontSize: '0.875rem',
+                      transition: 'background-color 0.2s'
                     }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f3f4f6'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
                   >
                     {team.crest && (
                       <img
@@ -236,21 +256,36 @@ const CompetitionPage: React.FC = () => {
                     <span>{team.name}</span>
                   </a>
                 ))}
-                {teams.length > 10 && (
-                  <a
-                    href="/clubs"
-                    style={{
-                      padding: '0.5rem',
-                      textAlign: 'center',
-                      color: '#6366f1',
-                      textDecoration: 'none',
-                      fontSize: '0.875rem'
-                    }}
-                  >
-                    View All Teams →
-                  </a>
-                )}
               </div>
+
+              {teams.length === 0 && (
+                <p style={{
+                  textAlign: 'center',
+                  color: '#9ca3af',
+                  padding: '2rem 0',
+                  fontSize: '0.875rem'
+                }}>
+                  No teams available for this competition yet.
+                </p>
+              )}
+
+              {teams.length > 0 && (
+                <a
+                  href="/clubs"
+                  style={{
+                    display: 'block',
+                    marginTop: '1rem',
+                    padding: '0.5rem',
+                    textAlign: 'center',
+                    color: '#6366f1',
+                    textDecoration: 'none',
+                    fontSize: '0.875rem',
+                    fontWeight: '500'
+                  }}
+                >
+                  View All Teams →
+                </a>
+              )}
             </section>
             )}
           </div>
