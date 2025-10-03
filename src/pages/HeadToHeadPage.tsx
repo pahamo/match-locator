@@ -107,6 +107,19 @@ const HeadToHeadPage: React.FC = () => {
       setTeam1(team1Data);
       setTeam2(team2Data);
       setFixtures(fixturesData);
+
+      // If no upcoming fixture, show the most recent completed match
+      if (!nextFixtureData && fixturesData.length > 0) {
+        const now = new Date();
+        const completedFixtures = fixturesData
+          .filter(f => new Date(f.kickoff_utc) < now)
+          .sort((a, b) => new Date(b.kickoff_utc).getTime() - new Date(a.kickoff_utc).getTime());
+
+        if (completedFixtures.length > 0) {
+          nextFixtureData = completedFixtures[0]; // Most recent completed match
+        }
+      }
+
       setNextFixture(nextFixtureData);
 
       // Update SEO meta tags with enhanced information
