@@ -229,7 +229,7 @@ async function syncCompetitionFixtures(competitionId, sportmonksLeagueId, compet
 
       try {
         const response = await makeRequest(`/fixtures/date/${dateStr}`, {
-          include: 'participants;tvstations'
+          include: 'participants;tvstations;round'
         });
 
         const dayFixtures = (response.data || []).filter(f => f.league_id === sportmonksLeagueId);
@@ -287,11 +287,15 @@ async function syncCompetitionFixtures(competitionId, sportmonksLeagueId, compet
           .eq('sportmonks_fixture_id', fixture.id)
           .single();
 
+        // Extract matchday from round data (round.name is usually the matchweek number)
+        const matchday = fixture.round?.name ? parseInt(fixture.round.name, 10) : null;
+
         const fixtureData = {
           utc_kickoff: fixture.starting_at,
           home_team_id: homeTeamId,
           away_team_id: awayTeamId,
           competition_id: competitionId,
+          matchday: matchday,
           sportmonks_fixture_id: fixture.id,
           data_source: 'sportmonks',
           last_synced_at: new Date().toISOString(),
