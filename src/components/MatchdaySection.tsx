@@ -107,16 +107,24 @@ const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competition
     transition: 'all 0.2s',
   });
 
-  // Generate title based on active tab
-  const getTitle = () => {
+  // Generate title, metadata, and description based on active tab
+  const getTitleData = () => {
     if (activeTab === 'upcoming' && upcomingFixtures.length > 0) {
       const matchweek = upcomingFixtures[0]?.matchweek;
       const dateRange = formatDateRange(upcomingFixtures);
 
       if (matchweek) {
-        return `${competitionName} Matchday ${matchweek} Fixtures${dateRange ? ` - ${dateRange}` : ''}`;
+        return {
+          title: `Matchday ${matchweek} Fixtures`,
+          metadata: dateRange,
+          description: `View all ${upcomingFixtures.length} upcoming ${competitionName} fixtures for Matchday ${matchweek}. Check kick-off times, TV broadcast channels, and where to watch every match live in the UK.`
+        };
       }
-      return `Upcoming ${competitionName} Matches${dateRange ? ` - ${dateRange}` : ''}`;
+      return {
+        title: `Upcoming Matches`,
+        metadata: dateRange,
+        description: `View all ${upcomingFixtures.length} upcoming ${competitionName} fixtures. Check kick-off times, TV broadcast channels, and where to watch every match live in the UK.`
+      };
     }
 
     if (activeTab === 'latest' && latestResults.length > 0) {
@@ -124,18 +132,57 @@ const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competition
       const dateRange = formatDateRange(latestResults);
 
       if (matchweek) {
-        return `${competitionName} Matchday ${matchweek} Results${dateRange ? ` - ${dateRange}` : ''}`;
+        return {
+          title: `Matchday ${matchweek} Results`,
+          metadata: dateRange,
+          description: `View all ${latestResults.length} completed ${competitionName} fixtures for Matchday ${matchweek}. See final scores and match results from the latest round of matches.`
+        };
       }
-      return `Latest ${competitionName} Results${dateRange ? ` - ${dateRange}` : ''}`;
+      return {
+        title: `Latest Results`,
+        metadata: dateRange,
+        description: `View all ${latestResults.length} recent ${competitionName} results. See final scores and match outcomes from the latest matches.`
+      };
     }
 
-    return `${competitionName} Fixtures`;
+    return {
+      title: `Fixtures & Results`,
+      metadata: null,
+      description: `View upcoming fixtures and recent results for ${competitionName}.`
+    };
   };
+
+  const titleData = getTitleData();
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{getTitle()}</CardTitle>
+        <CardTitle>{titleData.title}</CardTitle>
+
+        {/* Date metadata */}
+        {titleData.metadata && (
+          <div style={{
+            fontSize: '0.875rem',
+            color: '#6b7280',
+            marginTop: '0.25rem',
+            fontWeight: '500'
+          }}>
+            {titleData.metadata}
+          </div>
+        )}
+
+        {/* SEO description */}
+        <p style={{
+          fontSize: '0.875rem',
+          color: '#4b5563',
+          lineHeight: '1.5',
+          marginTop: '0.75rem',
+          marginBottom: '0'
+        }}>
+          {titleData.description}
+        </p>
+
+        {/* Tab buttons */}
         <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
           <button
             onClick={() => setActiveTab('upcoming')}

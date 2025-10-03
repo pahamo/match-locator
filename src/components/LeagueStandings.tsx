@@ -185,7 +185,7 @@ export const LeagueStandings: React.FC<LeagueStandingsProps> = ({
     return (
       <Card>
         <CardHeader>
-          <CardTitle>{competitionName} Standings</CardTitle>
+          <CardTitle>League Table</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">Loading standings...</div>
@@ -198,7 +198,7 @@ export const LeagueStandings: React.FC<LeagueStandingsProps> = ({
     return (
       <Card>
         <CardHeader>
-          <CardTitle>{competitionName} Standings</CardTitle>
+          <CardTitle>League Table</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8 text-red-600">Error: {error}</div>
@@ -210,7 +210,7 @@ export const LeagueStandings: React.FC<LeagueStandingsProps> = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{competitionName} Standings</CardTitle>
+        <CardTitle>League Table</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">
