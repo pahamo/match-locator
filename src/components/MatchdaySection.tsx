@@ -97,10 +97,11 @@ const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competition
 
   const tabButtonStyle = (isActive: boolean) => ({
     flex: 1,
-    padding: '12px 24px',
-    backgroundColor: isActive ? '#6366f1' : '#f3f4f6',
-    color: isActive ? 'white' : '#6b7280',
+    padding: '8px 16px',
+    backgroundColor: 'transparent',
+    color: isActive ? '#1f2937' : '#9ca3af',
     border: 'none',
+    borderBottom: isActive ? '2px solid #6366f1' : '2px solid transparent',
     cursor: 'pointer',
     fontWeight: isActive ? '600' : '500',
     fontSize: '0.875rem',
@@ -205,7 +206,7 @@ const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competition
               key={fixture.id}
               fixture={fixture}
               variant="withTimeNoCompetition"
-              showMatchweek={true}
+              showMatchweek={false}
             />
           ))}
           {activeTab === 'latest' && latestResults.map((fixture) => (
@@ -213,7 +214,7 @@ const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competition
               key={fixture.id}
               fixture={fixture}
               variant="withTimeNoCompetition"
-              showMatchweek={true}
+              showMatchweek={false}
               hideBroadcaster={true}
             />
           ))}

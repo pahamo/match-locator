@@ -159,11 +159,20 @@ const CompetitionPage: React.FC = () => {
               {competition.name}
             </h1>
           </div>
-          {competition.short_name && (
-            <p style={{ fontSize: '1.125rem', color: '#6b7280', marginBottom: '1rem' }}>
-              {competition.short_name}
-            </p>
-          )}
+
+          {/* Page Overview */}
+          <p style={{
+            fontSize: '1rem',
+            color: '#4b5563',
+            lineHeight: '1.6',
+            maxWidth: '800px',
+            margin: '1rem auto',
+            textAlign: 'center'
+          }}>
+            View the latest {competition.name} fixtures, results, and league table. Check kick-off times,
+            TV broadcast information, and where to watch every match live in the UK. Stay up to date with
+            the current standings and upcoming matches.
+          </p>
         </div>
 
         {/* 2-Column Layout: Fixtures + Standings */}
