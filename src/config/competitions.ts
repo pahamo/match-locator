@@ -18,8 +18,8 @@ export interface CompetitionConfig {
   seasonId?: number; // Sports Monks season ID for current season
 }
 
-// Note: Season IDs are for 2024/25 season. Update annually.
-// To find current season ID: Check Sports Monks /leagues/{id} endpoint or fixture data
+// Note: Season IDs are for 2025/26 season. Update annually.
+// Run scripts/fetch-season-ids.mjs to get updated season IDs
 export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
   'premier-league': {
     id: 1,
@@ -33,7 +33,7 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
       primary: '#37003c',
       secondary: '#00ff87'
     },
-    seasonId: 25583 // 2024/25 season
+    seasonId: 25583 // 2025/26 season
   },
 
   'champions-league': {
@@ -47,7 +47,8 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     colors: {
       primary: '#0d1c4b',
       secondary: '#ffffff'
-    }
+    },
+    seasonId: 25580 // 2025/26 season
   },
 
   'bundesliga': {
@@ -62,7 +63,7 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
       primary: '#d20515',
       secondary: '#000000'
     },
-    seasonId: 25580 // 2025/26 season
+    seasonId: 25646 // 2025/26 season (fixed from 25580 which was UCL)
   },
 
   'la-liga': {
@@ -76,7 +77,8 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     colors: {
       primary: '#ee8707',
       secondary: '#ffffff'
-    }
+    },
+    seasonId: 25659 // 2025/26 season
   },
 
   'serie-a': {
@@ -90,7 +92,8 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     colors: {
       primary: '#004c99',
       secondary: '#ffffff'
-    }
+    },
+    seasonId: 25533 // 2025/26 season
   },
 
   'ligue-1': {
@@ -104,7 +107,8 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     colors: {
       primary: '#dae025',
       secondary: '#000000'
-    }
+    },
+    seasonId: 25651 // 2025/26 season
   },
 
   'primeira-liga': {
@@ -146,7 +150,8 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     colors: {
       primary: '#1e3a8a',
       secondary: '#ffffff'
-    }
+    },
+    seasonId: 25648 // 2025/26 season
   },
 
   'europa-league': {
@@ -160,7 +165,8 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     colors: {
       primary: '#ff6600',
       secondary: '#ffffff'
-    }
+    },
+    seasonId: 25582 // 2025/26 season
   },
 
   // Legacy competitions for backward compatibility
