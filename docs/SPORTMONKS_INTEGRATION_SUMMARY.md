@@ -305,7 +305,7 @@ In Netlify Dashboard or local `.env`:
 # API credentials
 SUPABASE_URL=your_supabase_url
 SUPABASE_SERVICE_KEY=your_service_role_key
-SPORTMONKS_TOKEN=lNX5lqJtQo2FSsKfM4PvDzhgkS4AkGLkjRtYZWjNmSZvdGHJxxtD0HyHoazs
+SPORTMONKS_TOKEN=your_sportmonks_api_token
 
 # Feature flags (Week 1: Test mode)
 REACT_APP_FF_USE_SPORTMONKS=true

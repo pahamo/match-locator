@@ -46,7 +46,7 @@ SUPABASE_URL=your_supabase_url
 SUPABASE_SERVICE_KEY=your_service_role_key
 
 # Sports Monks API
-SPORTMONKS_TOKEN=lNX5lqJtQo2FSsKfM4PvDzhgkS4AkGLkjRtYZWjNmSZvdGHJxxtD0HyHoazs
+SPORTMONKS_TOKEN=your_sportmonks_api_token
 
 # Feature Flags - Week 1 (Test Mode)
 REACT_APP_FF_USE_SPORTMONKS=true
@@ -150,7 +150,7 @@ SUPABASE_SERVICE_KEY=eyJhbGci...  # Service role key, not anon key
 ### Issue: "Missing Sports Monks API token"
 ```bash
 # Add to .env
-SPORTMONKS_TOKEN=lNX5lqJtQo2FSsKfM4PvDzhgkS4AkGLkjRtYZWjNmSZvdGHJxxtD0HyHoazs
+SPORTMONKS_TOKEN=your_sportmonks_api_token
 ```
 
 ### Issue: "Sports Monks sync is not enabled"
