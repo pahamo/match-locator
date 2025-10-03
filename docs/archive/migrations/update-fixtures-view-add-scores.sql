@@ -1,7 +1,11 @@
 -- Update fixtures_with_teams view to include score columns
 -- Run this in Supabase SQL Editor
 
-CREATE OR REPLACE VIEW fixtures_with_teams AS
+-- Drop the existing view first
+DROP VIEW IF EXISTS fixtures_with_teams;
+
+-- Recreate with score columns
+CREATE VIEW fixtures_with_teams AS
 SELECT
   f.id,
   f.matchday,
