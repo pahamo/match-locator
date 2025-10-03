@@ -1,7 +1,7 @@
 /* CSS Custom Properties */
 :root {
   --color-border: #e5e7eb;
-  --color-muted: #6b7280;
+  --color-muted: #64748b; /* Darkened from #6b7280 for better contrast (WCAG AA) */
   --color-background: #f8fafc;
   --color-card: #ffffff;
   --color-text: #111827;
@@ -48,9 +48,30 @@ img {
   display: block;
 }
 
+/* Accessibility - Focus Indicators (WCAG 2.1 Level AA) */
+*:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Remove default focus for mouse users, keep for keyboard */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
 /* Base Styles */
-* { 
-  box-sizing: border-box; 
+* {
+  box-sizing: border-box;
 }
 
 body {

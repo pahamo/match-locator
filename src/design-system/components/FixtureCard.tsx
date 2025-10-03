@@ -326,7 +326,7 @@ const fixtureCardStyles = `
   }
 
   .league-pill {
-    font-size: 9px;
+    font-size: clamp(11px, 2vw, 12px); /* Increased from 9px for better readability */
     font-weight: 700;
     padding: 2px 6px;
     border-radius: 8px;
@@ -345,9 +345,9 @@ const fixtureCardStyles = `
   }
 
   .matchweek-pill {
-    font-size: 8px;
+    font-size: clamp(10px, 2vw, 11px); /* Increased from 8px for better readability */
     font-weight: 600;
-    color: #6b7280;
+    color: #64748b; /* Darkened from #6b7280 for better contrast */
     text-transform: uppercase;
     letter-spacing: 0.5px;
     text-align: center;
