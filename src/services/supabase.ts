@@ -26,10 +26,12 @@ interface FixtureRow {
   home_team: string;
   home_slug: string; // Consolidated slug field
   home_crest?: string | null;
+  home_score?: number | null;
   away_team_id: number;
   away_team: string;
   away_slug: string; // Consolidated slug field
   away_crest?: string | null;
+  away_score?: number | null;
 }
 
 interface BroadcastRow {
@@ -59,6 +61,11 @@ function mapFixtureRow(row: FixtureRow, providersByFixture: Record<number, Provi
   // Check blackout status from providers (database-based)
   const isBlackout = providers.some(p => p.id === '999' && p.type === 'blackout');
 
+  // Add scores if available
+  const score = (row.home_score !== null && row.home_score !== undefined && row.away_score !== null && row.away_score !== undefined)
+    ? { home: row.home_score, away: row.away_score }
+    : undefined;
+
   return {
     id: row.id,
     sport: 'football',
@@ -77,6 +84,7 @@ function mapFixtureRow(row: FixtureRow, providersByFixture: Record<number, Provi
     status: row.status || 'scheduled',
     stage: row.stage ?? undefined,
     round: row.round ?? undefined,
+    score,
   };
 }
 
@@ -146,8 +154,8 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
       .from('fixtures_with_teams')
       .select(`
         id,matchday,utc_kickoff,venue,status,competition_id,stage,round,
-        home_team_id,home_team,home_slug,home_crest,
-        away_team_id,away_team,away_slug,away_crest
+        home_team_id,home_team,home_slug,home_crest,home_score,
+        away_team_id,away_team,away_slug,away_crest,away_score
       `)
       .order('utc_kickoff', { ascending: order === 'asc' })
       .limit(limit);
@@ -558,8 +566,8 @@ export async function getFixturesForDay(date: string, competitionIds?: number[])
       .from('fixtures_with_teams')
       .select(`
         id,matchday,utc_kickoff,venue,status,competition_id,stage,round,
-        home_team_id,home_team,home_slug,home_crest,
-        away_team_id,away_team,away_slug,away_crest
+        home_team_id,home_team,home_slug,home_crest,home_score,
+        away_team_id,away_team,away_slug,away_crest,away_score
       `)
       .gte('utc_kickoff', startOfDay.toISOString())
       .lte('utc_kickoff', endOfDay.toISOString())
