@@ -1,5 +1,6 @@
 // Netlify serverless function to fetch standings from Sports Monks API
 // This avoids CORS issues and keeps the API token secure
+// Updated: 2025-10-03
 
 exports.handler = async (event) => {
   const { seasonId } = event.queryStringParameters || {};
