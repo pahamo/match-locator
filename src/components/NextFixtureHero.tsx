@@ -163,7 +163,7 @@ const NextFixtureHero: React.FC<NextFixtureHeroProps> = ({
               marginBottom: '8px',
               textShadow: '0 2px 4px rgba(0,0,0,0.3)'
             }}>
-              {isCompleted && hasScore ? (
+              {isCompleted && hasScore && fixture.score ? (
                 <div style={{ fontSize: '3rem', lineHeight: '1' }}>
                   {fixture.score.home} - {fixture.score.away}
                 </div>
