@@ -145,12 +145,13 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
                     to={`/competitions/${competition.slug}`}
                     className="league-pill"
                     style={{
-                      background: competition.colors.primary,
-                      color: competition.colors.secondary,
+                      background: 'rgba(0, 0, 0, 0.08)',
+                      color: '#1f2937',
                       textDecoration: 'none',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '4px'
+                      gap: '4px',
+                      border: '1px solid rgba(0, 0, 0, 0.1)'
                     }}
                     title={`View ${competition.name} fixtures`}
                   >
