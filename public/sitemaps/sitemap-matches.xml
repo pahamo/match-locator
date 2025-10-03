@@ -2456,7 +2456,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/fulham-vs-brentford-premier-league-20-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/valencia-cf-vs-athletic-club-unknown-20-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2466,7 +2466,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/valencia-cf-vs-athletic-club-unknown-20-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/fulham-vs-brentford-premier-league-20-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2481,22 +2481,22 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/go-ahead-eagles-vs-pec-zwolle-unknown-21-sept-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://matchlocator.com/matches/pec-zwolle-vs-go-ahead-eagles-unknown-21-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/ss-lazio-vs-as-roma-unknown-21-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/go-ahead-eagles-vs-pec-zwolle-unknown-21-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/matches/as-roma-vs-ss-lazio-unknown-21-sept-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/ss-lazio-vs-as-roma-unknown-21-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2511,7 +2511,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/nec-nijmegen-vs-sc-heerenveen-unknown-21-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/psv-vs-afc-ajax-unknown-21-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2521,17 +2521,32 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/psv-vs-afc-ajax-unknown-21-sept-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://matchlocator.com/matches/sc-heerenveen-vs-nec-unknown-21-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://matchlocator.com/matches/nec-nijmegen-vs-sc-heerenveen-unknown-21-sept-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://matchlocator.com/matches/paris-vs-rc-strasbourg-alsace-unknown-21-sept-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/torino-vs-atalanta-bc-unknown-21-sept-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/sunderland-vs-aston-villa-premier-league-21-sept-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/us-cremonese-vs-parma-calcio-1913-unknown-21-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2542,21 +2557,6 @@
   </url>
   <url>
     <loc>https://matchlocator.com/matches/afc-bournemouth-vs-newcastle-united-premier-league-21-sept-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/torino-vs-atalanta-bc-unknown-21-sept-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/us-cremonese-vs-parma-calcio-1913-unknown-21-sept-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/sunderland-vs-aston-villa-premier-league-21-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2591,12 +2591,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/aj-auxerre-vs-toulouse-unknown-21-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/as-monaco-vs-fc-metz-unknown-21-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/as-monaco-vs-fc-metz-unknown-21-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/aj-auxerre-vs-toulouse-unknown-21-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2671,11 +2671,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/athletic-club-vs-girona-unknown-23-sept-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://matchlocator.com/matches/rcd-espanyol-de-barcelona-vs-valencia-cf-unknown-23-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
@@ -2686,12 +2681,17 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/sport-lisboa-e-benfica-vs-rio-ave-unknown-23-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/athletic-club-vs-girona-unknown-23-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/matches/benfica-vs-rio-ave-unknown-23-sept-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/sport-lisboa-e-benfica-vs-rio-ave-unknown-23-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2726,7 +2726,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/club-atltico-de-madrid-vs-rayo-vallecano-de-madrid-unknown-24-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/atltico-madrid-vs-rayo-vallecano-de-madrid-unknown-24-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2736,12 +2736,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/atltico-madrid-vs-rayo-vallecano-de-madrid-unknown-24-sept-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/ca-osasuna-vs-elche-cf-unknown-25-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/club-atltico-de-madrid-vs-rayo-vallecano-de-madrid-unknown-24-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2751,12 +2746,17 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/fc-barcelona-vs-real-oviedo-unknown-25-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/ca-osasuna-vs-elche-cf-unknown-25-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/matches/real-oviedo-vs-fc-barcelona-unknown-25-sept-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/fc-barcelona-vs-real-oviedo-unknown-25-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2771,12 +2771,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/fc-bayern-mnchen-vs-sv-werder-bremen-bundesliga-26-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/fc-bayern-mnchen-vs-werder-bremen-bundesliga-26-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/fc-bayern-mnchen-vs-werder-bremen-bundesliga-26-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/fc-bayern-mnchen-vs-sv-werder-bremen-bundesliga-26-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2811,12 +2811,17 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/swansea-city-vs-millwall-unknown-27-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/brentford-vs-manchester-premier-league-27-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/brentford-vs-manchester-premier-league-27-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/coventry-city-vs-birmingham-city-unknown-27-sept-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/swansea-city-vs-millwall-unknown-27-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2831,11 +2836,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/coventry-city-vs-birmingham-city-unknown-27-sept-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://matchlocator.com/matches/getafe-cf-vs-levante-ud-unknown-27-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
@@ -2846,17 +2846,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://matchlocator.com/matches/1-fsv-mainz-05-vs-borussia-dortmund-bundesliga-27-sept-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://matchlocator.com/matches/vfl-wolfsburg-vs-rb-leipzig-bundesliga-27-sept-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/borussia-dortmund-vs-fsv-mainz-05-bundesliga-27-sept-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/1-fc-heidenheim-1846-vs-fc-augsburg-bundesliga-27-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2881,22 +2876,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/1-fsv-mainz-05-vs-borussia-dortmund-bundesliga-27-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/borussia-dortmund-vs-fsv-mainz-05-bundesliga-27-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/preston-north-end-vs-bristol-city-unknown-27-sept-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/brighton-hove-albion-vs-chelsea-premier-league-27-sept-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/crystal-palace-vs-liverpool-premier-league-27-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/1-fc-heidenheim-1846-vs-fc-augsburg-bundesliga-27-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2911,32 +2896,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/leeds-united-vs-afc-bournemouth-premier-league-27-sept-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/charlton-athletic-vs-blackburn-rovers-unknown-27-sept-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/liverpool-vs-crystal-palace-premier-league-27-sept-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/ipswich-town-vs-portsmouth-unknown-27-sept-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/oxford-united-vs-sheffield-united-unknown-27-sept-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/sheffield-wednesday-vs-queens-park-rangers-unknown-27-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/watford-vs-hull-city-unknown-27-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2946,17 +2906,62 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://matchlocator.com/matches/crystal-palace-vs-liverpool-premier-league-27-sept-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/ipswich-town-vs-portsmouth-unknown-27-sept-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/liverpool-vs-crystal-palace-premier-league-27-sept-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/oxford-united-vs-sheffield-united-unknown-27-sept-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/brighton-hove-albion-vs-chelsea-premier-league-27-sept-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/preston-north-end-vs-bristol-city-unknown-27-sept-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/charlton-athletic-vs-blackburn-rovers-unknown-27-sept-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://matchlocator.com/matches/stoke-city-vs-norwich-city-unknown-27-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/watford-vs-hull-city-unknown-27-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/leeds-united-vs-afc-bournemouth-premier-league-27-sept-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/sheffield-wednesday-vs-queens-park-rangers-unknown-27-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/matches/club-atltico-de-madrid-vs-real-madrid-cf-unknown-27-sept-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/cd-santa-clara-vs-cd-tondela-unknown-27-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2967,11 +2972,6 @@
   </url>
   <url>
     <loc>https://matchlocator.com/matches/afc-ajax-vs-nac-breda-unknown-27-sept-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/cd-santa-clara-vs-cd-tondela-unknown-27-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2991,12 +2991,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/nottingham-forest-vs-sunderland-premier-league-27-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/borussia-mnchengladbach-vs-eintracht-frankfurt-bundesliga-27-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/borussia-mnchengladbach-vs-eintracht-frankfurt-bundesliga-27-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/nottingham-forest-vs-sunderland-premier-league-27-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3006,12 +3006,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/cf-estrela-da-amadora-vs-avs-unknown-27-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/toulouse-vs-fc-nantes-unknown-27-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/toulouse-vs-fc-nantes-unknown-27-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/cf-estrela-da-amadora-vs-avs-unknown-27-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3026,7 +3026,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/villarreal-cf-vs-athletic-club-unknown-27-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/heracles-almelo-vs-sparta-rotterdam-unknown-27-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3036,7 +3036,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/heracles-almelo-vs-sparta-rotterdam-unknown-27-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/villarreal-cf-vs-athletic-club-unknown-27-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3071,11 +3071,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/fc-groningen-vs-feyenoord-rotterdam-unknown-28-sept-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://matchlocator.com/matches/fc-utrecht-vs-sc-heerenveen-unknown-28-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
@@ -3086,7 +3081,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/ac-pisa-1909-vs-acf-fiorentina-unknown-28-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/fc-groningen-vs-feyenoord-rotterdam-unknown-28-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3106,12 +3101,17 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/as-roma-vs-hellas-verona-unknown-28-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/aston-villa-vs-fulham-premier-league-28-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/aston-villa-vs-fulham-premier-league-28-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/ac-pisa-1909-vs-acf-fiorentina-unknown-28-sept-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/as-roma-vs-hellas-verona-unknown-28-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3146,12 +3146,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/lille-osc-vs-olympique-lyonnais-unknown-28-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/fc-metz-vs-le-havre-ac-unknown-28-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/fc-metz-vs-le-havre-ac-unknown-28-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/lille-osc-vs-olympique-lyonnais-unknown-28-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3186,12 +3186,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/stade-rennais-fc-1901-vs-racing-club-de-lens-unknown-28-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/ac-milan-vs-ssc-napoli-unknown-28-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/ac-milan-vs-ssc-napoli-unknown-28-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/stade-rennais-fc-1901-vs-racing-club-de-lens-unknown-28-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3226,12 +3226,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/west-ham-united-vs-everton-premier-league-29-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/fc-arouca-vs-fc-porto-unknown-29-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/fc-arouca-vs-fc-porto-unknown-29-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/west-ham-united-vs-everton-premier-league-29-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3246,17 +3246,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/atalanta-bc-vs-club-brugge-kv-champions-league-30-sept-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://matchlocator.com/matches/club-brugge-kv-vs-atalanta-bc-champions-league-30-sept-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/fk-kairat-vs-real-madrid-cf-champions-league-30-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3266,27 +3256,22 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://matchlocator.com/matches/atalanta-bc-vs-club-brugge-kv-champions-league-30-sept-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/fk-kairat-vs-real-madrid-cf-champions-league-30-sept-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://matchlocator.com/matches/real-oviedo-vs-valencia-cf-unknown-30-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/birmingham-city-vs-sheffield-wednesday-unknown-30-sept-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/sheffield-united-vs-southampton-unknown-30-sept-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://matchlocator.com/matches/blackburn-rovers-vs-swansea-city-unknown-30-sept-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/bristol-city-vs-ipswich-town-unknown-30-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3301,32 +3286,22 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://matchlocator.com/matches/sheffield-united-vs-southampton-unknown-30-sept-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/birmingham-city-vs-sheffield-wednesday-unknown-30-sept-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://matchlocator.com/matches/hull-city-vs-preston-north-end-unknown-30-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/paphos-vs-fc-bayern-mnchen-champions-league-30-sept-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/derby-county-vs-charlton-athletic-unknown-30-sept-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/club-atltico-de-madrid-vs-eintracht-frankfurt-champions-league-30-sept-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/olympique-de-marseille-vs-afc-ajax-champions-league-30-sept-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/chelsea-vs-sport-lisboa-e-benfica-champions-league-30-sept-2025</loc>
+    <loc>https://matchlocator.com/matches/bristol-city-vs-ipswich-town-unknown-30-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3346,6 +3321,31 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://matchlocator.com/matches/chelsea-vs-sport-lisboa-e-benfica-champions-league-30-sept-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/paphos-vs-fc-bayern-mnchen-champions-league-30-sept-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/olympique-de-marseille-vs-afc-ajax-champions-league-30-sept-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/club-atltico-de-madrid-vs-eintracht-frankfurt-champions-league-30-sept-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/derby-county-vs-charlton-athletic-unknown-30-sept-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://matchlocator.com/matches/eintracht-frankfurt-vs-atltico-madrid-champions-league-30-sept-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
@@ -3361,22 +3361,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/royale-union-saint-gilloise-vs-newcastle-united-champions-league-1-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://matchlocator.com/matches/qaraba-vs-fc-kbenhavn-champions-league-1-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/millwall-vs-coventry-city-unknown-1-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/portsmouth-vs-watford-unknown-1-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/royale-union-saint-gilloise-vs-newcastle-united-champions-league-1-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3386,12 +3376,27 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://matchlocator.com/matches/portsmouth-vs-watford-unknown-1-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/millwall-vs-coventry-city-unknown-1-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/queens-park-rangers-vs-oxford-united-unknown-1-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://matchlocator.com/matches/villarreal-cf-vs-juventus-champions-league-1-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/arsenal-vs-pae-olympiakos-sfp-champions-league-1-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/ssc-napoli-vs-sporting-clube-de-portugal-champions-league-1-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3401,7 +3406,32 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/ssc-napoli-vs-sporting-clube-de-portugal-champions-league-1-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/fc-barcelona-vs-paris-saint-germain-champions-league-1-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/manchester-vs-as-monaco-champions-league-1-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/arsenal-vs-pae-olympiakos-sfp-champions-league-1-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/arsenal-vs-olympiacos-fc-champions-league-1-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/juventus-vs-villarreal-cf-champions-league-1-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/athletic-club-vs-borussia-dortmund-champions-league-1-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3421,47 +3451,17 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/juventus-vs-villarreal-cf-champions-league-1-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/fc-barcelona-vs-paris-saint-germain-champions-league-1-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/manchester-vs-as-monaco-champions-league-1-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/arsenal-vs-olympiacos-fc-champions-league-1-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/queens-park-rangers-vs-oxford-united-unknown-1-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/athletic-club-vs-borussia-dortmund-champions-league-1-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://matchlocator.com/matches/bayer-04-leverkusen-vs-psv-champions-league-1-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/sc-freiburg-vs-bologna-fc-1909-unknown-2-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/sporting-braga-vs-celtic-unknown-2-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/fenerbahe-vs-ogc-nice-unknown-2-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/sc-freiburg-vs-bologna-fc-1909-unknown-2-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3486,11 +3486,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/sporting-braga-vs-celtic-unknown-2-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://matchlocator.com/matches/go-ahead-eagles-vs-panathinaikos-unknown-2-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
@@ -3501,17 +3496,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/feyenoord-rotterdam-vs-aston-villa-unknown-2-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/celta-de-vigo-vs-paok-unknown-2-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/basel-vs-vfb-stuttgart-unknown-2-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/fenerbahe-vs-ogc-nice-unknown-2-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3526,7 +3511,22 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://matchlocator.com/matches/celta-de-vigo-vs-paok-unknown-2-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/feyenoord-rotterdam-vs-aston-villa-unknown-2-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://matchlocator.com/matches/nottingham-forest-vs-fc-midtjylland-unknown-2-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/basel-vs-vfb-stuttgart-unknown-2-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3556,6 +3556,11 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://matchlocator.com/matches/birmingham-vs-wrexham-unknown-3-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://matchlocator.com/matches/ca-osasuna-vs-getafe-cf-unknown-3-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
@@ -3566,22 +3571,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/birmingham-vs-wrexham-unknown-3-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://matchlocator.com/matches/casa-pia-ac-vs-estoril-unknown-3-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/hull-city-vs-sheffield-united-unknown-4-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/leeds-united-vs-tottenham-hotspur-premier-league-4-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3592,6 +3582,16 @@
   </url>
   <url>
     <loc>https://matchlocator.com/matches/coventry-city-vs-sheffield-wednesday-unknown-4-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/hull-city-vs-sheffield-united-unknown-4-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/leeds-united-vs-tottenham-hotspur-premier-league-4-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3621,12 +3621,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/borussia-dortmund-vs-rb-leipzig-bundesliga-4-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/werder-bremen-vs-fc-st-pauli-1910-bundesliga-4-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/werder-bremen-vs-fc-st-pauli-1910-bundesliga-4-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/borussia-dortmund-vs-rb-leipzig-bundesliga-4-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3656,7 +3656,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/as-roma-vs-acf-fiorentina-unknown-5-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/burnley-vs-aston-villa-premier-league-5-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3666,7 +3666,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/burnley-vs-aston-villa-premier-league-5-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/as-roma-vs-acf-fiorentina-unknown-5-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3681,17 +3681,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/real-oviedo-vs-rcd-espanyol-de-barcelona-unknown-17-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://matchlocator.com/matches/middlesbrough-vs-ipswich-town-unknown-17-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/swansea-vs-southampton-unknown-18-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/real-oviedo-vs-rcd-espanyol-de-barcelona-unknown-17-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3701,12 +3696,17 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://matchlocator.com/matches/oxford-united-vs-derby-county-unknown-18-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://matchlocator.com/matches/millwall-vs-queens-park-rangers-unknown-18-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/oxford-united-vs-derby-county-unknown-18-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/swansea-vs-southampton-unknown-18-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3716,12 +3716,17 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://matchlocator.com/matches/ac-pisa-1909-vs-hellas-verona-unknown-18-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://matchlocator.com/matches/us-lecce-vs-us-sassuolo-calcio-unknown-18-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/ac-pisa-1909-vs-hellas-verona-unknown-18-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/rb-leipzig-vs-hamburger-sv-bundesliga-18-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3732,11 +3737,6 @@
   </url>
   <url>
     <loc>https://matchlocator.com/matches/fsv-mainz-05-vs-bayer-04-leverkusen-bundesliga-18-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/rb-leipzig-vs-hamburger-sv-bundesliga-18-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3776,12 +3776,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/parma-calcio-1913-vs-genoa-cfc-unknown-19-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/cagliari-calcio-vs-bologna-fc-1909-unknown-19-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/cagliari-calcio-vs-bologna-fc-1909-unknown-19-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/parma-calcio-1913-vs-genoa-cfc-unknown-19-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3811,6 +3811,16 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://matchlocator.com/matches/ipswich-town-vs-charlton-athletic-unknown-21-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/derby-county-vs-norwich-unknown-21-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://matchlocator.com/matches/sheffield-united-vs-blackburn-rovers-unknown-21-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
@@ -3821,12 +3831,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/derby-county-vs-norwich-unknown-21-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/ipswich-town-vs-charlton-athletic-unknown-21-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/birmingham-vs-preston-north-end-unknown-21-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3841,37 +3846,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/birmingham-vs-preston-north-end-unknown-21-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/bristol-city-vs-southampton-unknown-21-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/union-saint-gilloise-vs-fc-internazionale-milano-champions-league-21-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://matchlocator.com/matches/borussia-dortmund-vs-fc-kbenhavn-champions-league-21-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/bayer-04-leverkusen-vs-paris-saint-germain-champions-league-21-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/arsenal-vs-atltico-madrid-champions-league-21-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/villarreal-cf-vs-manchester-champions-league-21-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3886,12 +3861,42 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://matchlocator.com/matches/bayer-04-leverkusen-vs-paris-saint-germain-champions-league-21-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/villarreal-cf-vs-manchester-champions-league-21-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/bristol-city-vs-southampton-unknown-21-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/arsenal-vs-atltico-madrid-champions-league-21-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/union-saint-gilloise-vs-fc-internazionale-milano-champions-league-21-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://matchlocator.com/matches/athletic-club-vs-qaraba-champions-league-22-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/matches/galatasaray-sk-vs-bod-glimt-champions-league-22-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/west-bromwich-albion-vs-watford-unknown-22-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3906,22 +3911,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/west-bromwich-albion-vs-watford-unknown-22-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/atalanta-bc-vs-sk-slavia-praha-champions-league-22-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/chelsea-vs-afc-ajax-champions-league-22-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/middlesbrough-vs-sheffield-wednesday-unknown-22-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/fc-bayern-mnchen-vs-club-brugge-kv-champions-league-22-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3941,22 +3931,22 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/fc-bayern-mnchen-vs-club-brugge-kv-champions-league-22-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://matchlocator.com/matches/sporting-clube-de-portugal-vs-olympique-marseille-champions-league-22-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/genk-vs-real-betis-balompi-unknown-23-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/middlesbrough-vs-sheffield-wednesday-unknown-22-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/feyenoord-rotterdam-vs-panathinaikos-unknown-23-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/chelsea-vs-afc-ajax-champions-league-22-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/atalanta-bc-vs-sk-slavia-praha-champions-league-22-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3966,7 +3956,27 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://matchlocator.com/matches/brann-vs-rangers-unknown-23-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://matchlocator.com/matches/fcsb-vs-bologna-fc-1909-unknown-23-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/go-ahead-eagles-vs-aston-villa-unknown-23-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/genk-vs-real-betis-balompi-unknown-23-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/olympique-lyonnais-vs-basel-unknown-23-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -3981,27 +3991,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/brann-vs-rangers-unknown-23-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/olympique-lyonnais-vs-basel-unknown-23-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/go-ahead-eagles-vs-aston-villa-unknown-23-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/malm-ff-vs-dinamo-zagreb-unknown-23-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/sturm-graz-vs-celtic-unknown-23-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/feyenoord-rotterdam-vs-panathinaikos-unknown-23-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4011,12 +4001,22 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/maccabi-tel-aviv-vs-fc-midtjylland-unknown-23-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/sturm-graz-vs-celtic-unknown-23-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/malm-ff-vs-dinamo-zagreb-unknown-23-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/matches/as-roma-vs-viktoria-plze-unknown-23-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/maccabi-tel-aviv-vs-fc-midtjylland-unknown-23-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4051,12 +4051,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/preston-north-end-vs-sheffield-united-unknown-24-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/leeds-united-vs-west-ham-united-premier-league-24-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/leeds-united-vs-west-ham-united-premier-league-24-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/preston-north-end-vs-sheffield-united-unknown-24-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4066,12 +4066,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/stoke-vs-portsmouth-unknown-25-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/coventry-city-vs-watford-unknown-25-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/coventry-city-vs-watford-unknown-25-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/stoke-vs-portsmouth-unknown-25-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4081,17 +4081,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/parma-calcio-1913-vs-como-1907-unknown-25-oct-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://matchlocator.com/matches/us-lecce-vs-udinese-calcio-unknown-25-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/hamburger-sv-vs-vfl-wolfsburg-bundesliga-25-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/parma-calcio-1913-vs-como-1907-unknown-25-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4101,7 +4096,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/eintracht-frankfurt-vs-fc-st-pauli-1910-bundesliga-25-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/fc-augsburg-vs-rb-leipzig-bundesliga-25-oct-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/hamburger-sv-vs-vfl-wolfsburg-bundesliga-25-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4111,7 +4111,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/fc-augsburg-vs-rb-leipzig-bundesliga-25-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/eintracht-frankfurt-vs-fc-st-pauli-1910-bundesliga-25-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4141,7 +4141,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/cagliari-calcio-vs-hellas-verona-unknown-26-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/crystal-palace-vs-arsenal-premier-league-26-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4156,7 +4156,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/crystal-palace-vs-arsenal-premier-league-26-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/afc-bournemouth-vs-nottingham-forest-premier-league-26-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4166,7 +4166,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/afc-bournemouth-vs-nottingham-forest-premier-league-26-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/cagliari-calcio-vs-hellas-verona-unknown-26-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4206,12 +4206,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/le-havre-ac-vs-stade-brestois-29-unknown-29-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/ogc-nice-vs-losc-lille-unknown-29-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/ogc-nice-vs-losc-lille-unknown-29-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/le-havre-ac-vs-stade-brestois-29-unknown-29-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4226,12 +4226,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/bologna-fc-1909-vs-torino-unknown-29-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/genoa-cfc-vs-us-cremonese-unknown-29-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/genoa-cfc-vs-us-cremonese-unknown-29-oct-2025</loc>
+    <loc>https://matchlocator.com/matches/bologna-fc-1909-vs-torino-unknown-29-oct-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4266,17 +4266,17 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://matchlocator.com/matches/leicester-city-vs-blackburn-rovers-unknown-1-nov-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://matchlocator.com/matches/norwich-vs-hull-city-unknown-1-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/matches/west-bromwich-albion-vs-sheffield-wednesday-unknown-1-nov-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/leicester-city-vs-blackburn-rovers-unknown-1-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4296,7 +4296,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/1-fc-heidenheim-1846-vs-eintracht-frankfurt-bundesliga-1-nov-2025</loc>
+    <loc>https://matchlocator.com/matches/fc-union-berlin-vs-sc-freiburg-bundesliga-1-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4306,7 +4306,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/fc-union-berlin-vs-sc-freiburg-bundesliga-1-nov-2025</loc>
+    <loc>https://matchlocator.com/matches/1-fc-heidenheim-1846-vs-eintracht-frankfurt-bundesliga-1-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4336,7 +4336,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/acf-fiorentina-vs-us-lecce-unknown-2-nov-2025</loc>
+    <loc>https://matchlocator.com/matches/newcastle-united-vs-west-ham-united-premier-league-2-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4346,7 +4346,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/newcastle-united-vs-west-ham-united-premier-league-2-nov-2025</loc>
+    <loc>https://matchlocator.com/matches/acf-fiorentina-vs-us-lecce-unknown-2-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4376,12 +4376,32 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://matchlocator.com/matches/eintracht-frankfurt-vs-ssc-napoli-champions-league-4-nov-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://matchlocator.com/matches/arsenal-vs-sk-slavia-praha-champions-league-4-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/eintracht-frankfurt-vs-ssc-napoli-champions-league-4-nov-2025</loc>
+    <loc>https://matchlocator.com/matches/bod-glimt-vs-as-monaco-champions-league-4-nov-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/atltico-madrid-vs-union-saint-gilloise-champions-league-4-nov-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/liverpool-vs-real-madrid-cf-champions-league-4-nov-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/fc-kbenhavn-vs-tottenham-hotspur-champions-league-4-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4392,26 +4412,6 @@
   </url>
   <url>
     <loc>https://matchlocator.com/matches/psv-vs-olympiacos-fc-champions-league-4-nov-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/fc-kbenhavn-vs-tottenham-hotspur-champions-league-4-nov-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/bod-glimt-vs-as-monaco-champions-league-4-nov-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/liverpool-vs-real-madrid-cf-champions-league-4-nov-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/atltico-madrid-vs-union-saint-gilloise-champions-league-4-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4431,16 +4431,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/newcastle-united-vs-athletic-club-champions-league-5-nov-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/manchester-vs-borussia-dortmund-champions-league-5-nov-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://matchlocator.com/matches/olympique-marseille-vs-atalanta-bc-champions-league-5-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
@@ -4451,7 +4441,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/afc-ajax-vs-galatasaray-sk-champions-league-5-nov-2025</loc>
+    <loc>https://matchlocator.com/matches/newcastle-united-vs-athletic-club-champions-league-5-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4462,6 +4452,16 @@
   </url>
   <url>
     <loc>https://matchlocator.com/matches/club-brugge-kv-vs-fc-barcelona-champions-league-5-nov-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/afc-ajax-vs-galatasaray-sk-champions-league-5-nov-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/manchester-vs-borussia-dortmund-champions-league-5-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4491,12 +4491,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/us-lecce-vs-hellas-verona-unknown-8-nov-2025</loc>
+    <loc>https://matchlocator.com/matches/cagliari-calcio-vs-como-1907-unknown-8-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/cagliari-calcio-vs-como-1907-unknown-8-nov-2025</loc>
+    <loc>https://matchlocator.com/matches/us-lecce-vs-hellas-verona-unknown-8-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4516,17 +4516,17 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/genoa-cfc-vs-acf-fiorentina-unknown-9-nov-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://matchlocator.com/matches/brentford-vs-newcastle-united-premier-league-9-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/matches/brighton-hove-albion-vs-crystal-palace-premier-league-9-nov-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/genoa-cfc-vs-acf-fiorentina-unknown-9-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4546,27 +4546,17 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/cagliari-calcio-vs-genoa-cfc-unknown-22-nov-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://matchlocator.com/matches/udinese-calcio-vs-bologna-fc-1909-unknown-22-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/fc-augsburg-vs-hamburger-sv-bundesliga-22-nov-2025</loc>
+    <loc>https://matchlocator.com/matches/cagliari-calcio-vs-genoa-cfc-unknown-22-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/fc-bayern-mnchen-vs-sc-freiburg-bundesliga-22-nov-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/borussia-mnchengladbach-vs-1-fc-heidenheim-1846-bundesliga-22-nov-2025</loc>
+    <loc>https://matchlocator.com/matches/borussia-dortmund-vs-vfb-stuttgart-bundesliga-22-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4576,7 +4566,17 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/borussia-dortmund-vs-vfb-stuttgart-bundesliga-22-nov-2025</loc>
+    <loc>https://matchlocator.com/matches/fc-augsburg-vs-hamburger-sv-bundesliga-22-nov-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/borussia-mnchengladbach-vs-1-fc-heidenheim-1846-bundesliga-22-nov-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/fc-bayern-mnchen-vs-sc-freiburg-bundesliga-22-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4606,12 +4606,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/leeds-united-vs-aston-villa-premier-league-23-nov-2025</loc>
+    <loc>https://matchlocator.com/matches/aj-auxerre-vs-olympique-lyonnais-unknown-23-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/aj-auxerre-vs-olympique-lyonnais-unknown-23-nov-2025</loc>
+    <loc>https://matchlocator.com/matches/leeds-united-vs-aston-villa-premier-league-23-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4636,37 +4636,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/galatasaray-sk-vs-union-saint-gilloise-champions-league-25-nov-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://matchlocator.com/matches/afc-ajax-vs-benfica-champions-league-25-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/ssc-napoli-vs-qaraba-champions-league-25-nov-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/borussia-dortmund-vs-villarreal-cf-champions-league-25-nov-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/fc-barcelona-vs-chelsea-champions-league-25-nov-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/newcastle-united-vs-olympique-marseille-champions-league-25-nov-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/juventus-vs-bod-glimt-champions-league-25-nov-2025</loc>
+    <loc>https://matchlocator.com/matches/galatasaray-sk-vs-union-saint-gilloise-champions-league-25-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4676,7 +4651,32 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://matchlocator.com/matches/fc-barcelona-vs-chelsea-champions-league-25-nov-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://matchlocator.com/matches/sk-slavia-praha-vs-athletic-club-champions-league-25-nov-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/borussia-dortmund-vs-villarreal-cf-champions-league-25-nov-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/juventus-vs-bod-glimt-champions-league-25-nov-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/newcastle-united-vs-olympique-marseille-champions-league-25-nov-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/ssc-napoli-vs-qaraba-champions-league-25-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4691,12 +4691,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/paris-saint-germain-vs-tottenham-hotspur-champions-league-26-nov-2025</loc>
+    <loc>https://matchlocator.com/matches/eintracht-frankfurt-vs-atalanta-bc-champions-league-26-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/real-madrid-cf-vs-olympiacos-fc-champions-league-26-nov-2025</loc>
+    <loc>https://matchlocator.com/matches/paris-saint-germain-vs-tottenham-hotspur-champions-league-26-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4716,12 +4716,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/atltico-madrid-vs-fc-internazionale-milano-champions-league-26-nov-2025</loc>
+    <loc>https://matchlocator.com/matches/real-madrid-cf-vs-olympiacos-fc-champions-league-26-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/eintracht-frankfurt-vs-atalanta-bc-champions-league-26-nov-2025</loc>
+    <loc>https://matchlocator.com/matches/atltico-madrid-vs-fc-internazionale-milano-champions-league-26-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4746,7 +4746,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/tsg-hoffenheim-vs-fc-augsburg-bundesliga-29-nov-2025</loc>
+    <loc>https://matchlocator.com/matches/werder-bremen-vs-fc-kln-bundesliga-29-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4756,12 +4756,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/werder-bremen-vs-fc-kln-bundesliga-29-nov-2025</loc>
+    <loc>https://matchlocator.com/matches/tsg-hoffenheim-vs-fc-augsburg-bundesliga-29-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/manchester-vs-leeds-united-premier-league-29-nov-2025</loc>
+    <loc>https://matchlocator.com/matches/sunderland-vs-afc-bournemouth-premier-league-29-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4771,7 +4771,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/sunderland-vs-afc-bournemouth-premier-league-29-nov-2025</loc>
+    <loc>https://matchlocator.com/matches/manchester-vs-leeds-united-premier-league-29-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4791,12 +4791,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/nottingham-forest-vs-brighton-hove-albion-premier-league-30-nov-2025</loc>
+    <loc>https://matchlocator.com/matches/liverpool-vs-west-ham-united-premier-league-30-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/liverpool-vs-west-ham-united-premier-league-30-nov-2025</loc>
+    <loc>https://matchlocator.com/matches/nottingham-forest-vs-brighton-hove-albion-premier-league-30-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4806,12 +4806,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/parma-calcio-1913-vs-udinese-calcio-unknown-30-nov-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/bologna-fc-1909-vs-us-cremonese-unknown-30-nov-2025</loc>
+    <loc>https://matchlocator.com/matches/ac-milan-vs-ss-lazio-unknown-30-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4821,7 +4816,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/us-lecce-vs-torino-unknown-30-nov-2025</loc>
+    <loc>https://matchlocator.com/matches/parma-calcio-1913-vs-udinese-calcio-unknown-30-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4831,7 +4826,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/ac-milan-vs-ss-lazio-unknown-30-nov-2025</loc>
+    <loc>https://matchlocator.com/matches/bologna-fc-1909-vs-us-cremonese-unknown-30-nov-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4846,22 +4841,27 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://matchlocator.com/matches/us-lecce-vs-torino-unknown-30-nov-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://matchlocator.com/matches/fc-arouca-vs-sporting-braga-unknown-1-dec-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/nottingham-forest-vs-wolverhampton-wanderers-premier-league-3-dec-2025</loc>
+    <loc>https://matchlocator.com/matches/tottenham-hotspur-vs-newcastle-united-premier-league-3-dec-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/afc-bournemouth-vs-everton-premier-league-3-dec-2025</loc>
+    <loc>https://matchlocator.com/matches/aston-villa-vs-brighton-hove-albion-premier-league-3-dec-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/manchester-vs-fulham-premier-league-3-dec-2025</loc>
+    <loc>https://matchlocator.com/matches/leeds-united-vs-chelsea-premier-league-3-dec-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4876,6 +4876,21 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://matchlocator.com/matches/manchester-vs-fulham-premier-league-3-dec-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/nottingham-forest-vs-wolverhampton-wanderers-premier-league-3-dec-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/afc-bournemouth-vs-everton-premier-league-3-dec-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://matchlocator.com/matches/burnley-vs-crystal-palace-premier-league-3-dec-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
@@ -4886,27 +4901,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/tottenham-hotspur-vs-newcastle-united-premier-league-3-dec-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/leeds-united-vs-chelsea-premier-league-3-dec-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/aston-villa-vs-brighton-hove-albion-premier-league-3-dec-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://matchlocator.com/matches/benfica-vs-sporting-clube-de-portugal-unknown-5-dec-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/afc-bournemouth-vs-chelsea-premier-league-6-dec-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4921,7 +4916,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/aston-villa-vs-arsenal-premier-league-6-dec-2025</loc>
+    <loc>https://matchlocator.com/matches/liverpool-vs-leeds-united-premier-league-6-dec-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/afc-bournemouth-vs-chelsea-premier-league-6-dec-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4936,17 +4936,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/liverpool-vs-leeds-united-premier-league-6-dec-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/ac-pisa-1909-vs-parma-calcio-1913-unknown-7-dec-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/matches/ss-lazio-vs-bologna-fc-1909-unknown-7-dec-2025</loc>
+    <loc>https://matchlocator.com/matches/aston-villa-vs-arsenal-premier-league-6-dec-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4961,7 +4951,17 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://matchlocator.com/matches/ac-pisa-1909-vs-parma-calcio-1913-unknown-7-dec-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://matchlocator.com/matches/ac-milan-vs-torino-unknown-7-dec-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/genoa-cfc-vs-udinese-calcio-unknown-7-dec-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4971,22 +4971,22 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/us-sassuolo-calcio-vs-acf-fiorentina-unknown-7-dec-2025</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://matchlocator.com/matches/fc-internazionale-milano-vs-como-1907-unknown-7-dec-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/as-roma-vs-cagliari-calcio-unknown-7-dec-2025</loc>
+    <loc>https://matchlocator.com/matches/us-sassuolo-calcio-vs-acf-fiorentina-unknown-7-dec-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/matches/genoa-cfc-vs-udinese-calcio-unknown-7-dec-2025</loc>
+    <loc>https://matchlocator.com/matches/ss-lazio-vs-bologna-fc-1909-unknown-7-dec-2025</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/matches/as-roma-vs-cagliari-calcio-unknown-7-dec-2025</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
