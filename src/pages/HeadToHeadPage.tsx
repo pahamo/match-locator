@@ -1,28 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, Navigate } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useParams } from 'react-router-dom';
 import Header from '../components/Header';
 import Breadcrumbs from '../components/Breadcrumbs';
 import H2HStatsCard from '../components/H2HStatsCard';
 import NextFixtureHero from '../components/NextFixtureHero';
 import { FixtureCard } from '../design-system';
-import {
-  getHeadToHeadFixtures,
-  getNextHeadToHeadFixture,
-  getTeamBySlug
-} from '../services/supabase';
-import { updateDocumentMeta } from '../utils/seo';
+import { getHeadToHeadFixtures, getLiveOrNextHeadToHeadFixture, supabase } from '../services/supabase';
+import { updateDocumentMeta, formatTeamNameShort } from '../utils/seo';
 import { generateBreadcrumbs } from '../utils/breadcrumbs';
-import {
-  parseH2HSlug,
-  needsCanonicalRedirect,
-  generateH2HMeta,
-  cleanTeamNameForDisplay,
-  calculateH2HStats
-} from '../utils/headToHead';
-import { normalizeTeamSlug, mapSeoSlugToDbSlugEnhanced } from '../utils/teamSlugs';
-import { isSupportedTeam } from '../utils/teamSlugs';
+import { generateH2HMeta, calculateH2HStats } from '../utils/headToHead';
 import { generateMatchPreview, isPremierLeagueFixture } from '../utils/matchPreview';
+import { URLBuilder } from '../services/URLBuilder';
 import type { Fixture, Team } from '../types';
+import { LiveMatchesTicker } from '../components/LiveMatchesTicker';
+import { PageUpdateTimestamp } from '../components/FreshnessIndicator';
 
 const HeadToHeadPage: React.FC = () => {
   const { matchSlug, contentSlug } = useParams<{ matchSlug?: string; contentSlug?: string }>();
@@ -37,80 +28,82 @@ const HeadToHeadPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [shouldRedirect, setShouldRedirect] = useState<string | null>(null);
 
-  // Parse team slugs from URL
-  const parsedTeams = slug ? parseH2HSlug(slug) : null;
 
-  useEffect(() => {
-    // Check if we need to redirect to canonical URL
-    const canonicalSlug = slug ? needsCanonicalRedirect(slug) : null;
-    if (canonicalSlug) {
-      setShouldRedirect(canonicalSlug);
-      return;
-    }
+  const loadH2HData = useCallback(async () => {
+    if (!slug) return;
 
-    if (!parsedTeams) {
-      setError('Invalid team matchup URL');
-      setLoading(false);
-      return;
-    }
-
-    // Validate this is a supported H2H matchup (Premier League or Champions League)
-    if (!slug) {
-      setError('Invalid H2H URL format');
-      setLoading(false);
-      return;
-    }
-
-    const parts = slug.split('-vs-');
-    if (parts.length !== 2 || !isSupportedTeam(parts[0]) || !isSupportedTeam(parts[1])) {
-      setError('H2H pages are currently available for Premier League and Champions League teams only');
-      setLoading(false);
-      return;
-    }
-
-    loadH2HData();
-  }, [slug]);
-
-  // Handle redirect after hooks
-  if (shouldRedirect) {
-    // Redirect to h2h path (new primary location for H2H pages)
-    return <Navigate to={`/h2h/${shouldRedirect}`} replace />;
-  }
-
-  const loadH2HData = async () => {
-    if (!parsedTeams) return;
+    setLoading(true);
+    setError(null);
 
     try {
-      setLoading(true);
-      setError(null);
+      let fixturesData: Fixture[] = [];
+      let nextFixtureData: Fixture | null = null;
+      let team1Data: Team | null = null;
+      let team2Data: Team | null = null;
 
-      // Normalize team slugs to handle variations (SEO-friendly)
-      const seoTeam1Slug = normalizeTeamSlug(parsedTeams.team1Slug);
-      const seoTeam2Slug = normalizeTeamSlug(parsedTeams.team2Slug);
+      // Check if slug is a numeric fixture ID (new approach)
+      const isNumericId = /^\d+$/.test(slug);
 
-      // Map SEO slugs to database slugs (enhanced mapping for Premier League and Champions League)
-      const dbTeam1Slug = mapSeoSlugToDbSlugEnhanced(seoTeam1Slug);
-      const dbTeam2Slug = mapSeoSlugToDbSlugEnhanced(seoTeam2Slug);
+      if (isNumericId) {
+        // NEW APPROACH: Load by fixture ID, then redirect to SEO-friendly URL
+        const fixtureId = parseInt(slug, 10);
 
-      console.log(`Loading H2H data for ${seoTeam1Slug} vs ${seoTeam2Slug}`);
-      console.log(`Database lookup: ${dbTeam1Slug} vs ${dbTeam2Slug}`);
+        // Load the specific fixture by ID to extract teams
+        const { data, error } = await supabase
+          .from('fixtures_with_teams')
+          .select('*')
+          .eq('id', fixtureId)
+          .single();
 
-      // Load teams and fixtures in parallel using database slugs
-      const [team1Data, team2Data, fixturesData, nextFixtureData] = await Promise.all([
-        getTeamBySlug(dbTeam1Slug),
-        getTeamBySlug(dbTeam2Slug),
-        getHeadToHeadFixtures(dbTeam1Slug, dbTeam2Slug),
-        getNextHeadToHeadFixture(dbTeam1Slug, dbTeam2Slug)
-      ]);
+        if (error || !data) {
+          setError('Fixture not found');
+          setLoading(false);
+          return;
+        }
 
-      // Validate teams exist
-      if (!team1Data || !team2Data) {
-        const missingTeam = !team1Data ? seoTeam1Slug : seoTeam2Slug;
-        setError(`Team not found: ${cleanTeamNameForDisplay(missingTeam)}`);
-        setLoading(false);
+        // Extract team slugs
+        const homeSlug = data.home_slug;
+        const awaySlug = data.away_slug;
+
+        // Generate SEO-friendly canonical H2H URL (alphabetical order)
+        const [first, second] = [homeSlug, awaySlug].sort();
+        const canonicalH2HUrl = `/h2h/${first}-vs-${second}`;
+
+        // Redirect to SEO-friendly URL
+        setShouldRedirect(canonicalH2HUrl);
         return;
+
+      } else {
+        // LEGACY APPROACH: Parse slug as team names
+        const parts = slug.split('-vs-');
+        if (parts.length !== 2 || !parts[0]?.trim() || !parts[1]?.trim()) {
+          setError('Invalid team matchup URL format');
+          setLoading(false);
+          return;
+        }
+
+        const [teamSlug1, teamSlug2] = parts;
+
+        // Load fixtures directly - they contain full team data
+        [fixturesData, nextFixtureData] = await Promise.all([
+          getHeadToHeadFixtures(teamSlug1, teamSlug2),
+          getLiveOrNextHeadToHeadFixture(teamSlug1, teamSlug2)
+        ]);
+
+        // If no fixtures found, teams don't exist or don't play each other
+        if (fixturesData.length === 0 && !nextFixtureData) {
+          setError('No fixtures found for this matchup');
+          setLoading(false);
+          return;
+        }
+
+        // Extract team data from first fixture
+        const sampleFixture = nextFixtureData || fixturesData[0];
+        team1Data = sampleFixture.home;
+        team2Data = sampleFixture.away;
       }
 
+      // Set all data
       setTeam1(team1Data);
       setTeam2(team2Data);
       setFixtures(fixturesData);
@@ -132,15 +125,41 @@ const HeadToHeadPage: React.FC = () => {
         description: enhancedDescription
       });
 
-      console.log(`Loaded ${fixturesData.length} fixtures between ${team1Data.name} and ${team2Data.name}`);
-
     } catch (err) {
-      console.error('Failed to load H2H data:', err);
-      setError('Failed to load team data. Please try again later.');
+      console.error('HeadToHeadPage: Failed to load H2H data:', err);
+      setError('Failed to load fixtures. Please try again later.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [slug]);
+
+  // Effect to handle initial mount and slug changes
+  useEffect(() => {
+    if (!slug) {
+      setError('Invalid H2H URL format');
+      setLoading(false);
+      return;
+    }
+
+    loadH2HData();
+  }, [slug, loadH2HData]);
+
+  // Handle redirect to SEO-friendly URL
+  if (shouldRedirect) {
+    window.location.replace(shouldRedirect);
+    return (
+      <div className="h2h-page">
+        <Header />
+        <main style={{ minHeight: '60vh' }}>
+          <div className="wrap">
+            <div style={{ textAlign: 'center', padding: '64px 20px' }}>
+              <p>Redirecting to match page...</p>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -148,15 +167,41 @@ const HeadToHeadPage: React.FC = () => {
         <Header />
         <Breadcrumbs items={generateBreadcrumbs(window.location.pathname)} />
 
-        <main>
+        <main style={{ minHeight: '60vh' }}>
           <div className="wrap">
             <div style={{
               textAlign: 'center',
               padding: '64px 20px',
-              color: '#64748b'
+              color: '#64748b',
+              minHeight: '400px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center'
             }}>
-              <h1>Loading team data...</h1>
-              <p>Please wait while we fetch the head-to-head information.</p>
+              <div style={{
+                fontSize: '2rem',
+                marginBottom: '16px',
+                color: '#1e293b'
+              }}>
+                Loading team data...
+              </div>
+              <p style={{
+                fontSize: '1.1rem',
+                margin: '0',
+                opacity: 0.8
+              }}>
+                Please wait while we fetch the head-to-head information.
+              </p>
+              <div style={{
+                marginTop: '24px',
+                padding: '8px',
+                background: 'rgba(99, 102, 241, 0.1)',
+                borderRadius: '4px',
+                fontSize: '0.9rem'
+              }}>
+                Slug: {slug}
+              </div>
             </div>
           </div>
         </main>
@@ -189,7 +234,7 @@ const HeadToHeadPage: React.FC = () => {
                 We couldn't find the requested team matchup. Please check the URL and try again.
               </p>
               <a
-                href="/fixtures"
+                href="/matches"
                 style={{
                   display: 'inline-block',
                   background: '#3b82f6',
@@ -200,7 +245,7 @@ const HeadToHeadPage: React.FC = () => {
                   fontWeight: '500'
                 }}
               >
-                Browse All Fixtures
+                Browse All Matches
               </a>
             </div>
           </div>
@@ -217,15 +262,18 @@ const HeadToHeadPage: React.FC = () => {
   const upcomingFixtures = fixtures.filter(f => new Date(f.kickoff_utc) > now);
   const completedFixtures = fixtures.filter(f => new Date(f.kickoff_utc) <= now);
 
+
   return (
     <div className="h2h-page">
       <Header />
 
-      <main>
+      <main style={{ minHeight: '60vh', background: 'white' }}>
         <div className="wrap">
           <Breadcrumbs items={generateBreadcrumbs(window.location.pathname, {
-            matchTitle: `${team1.name} vs ${team2.name}`
+            matchTitle: `${formatTeamNameShort(team1.name)} vs ${formatTeamNameShort(team2.name)}`
           })} />
+
+
           {/* Page Header */}
           <div style={{
             textAlign: 'center',
@@ -239,7 +287,7 @@ const HeadToHeadPage: React.FC = () => {
               marginBottom: '8px'
             }}>
               <a
-                href={`/clubs/${team1.slug}`}
+                href={URLBuilder.team(team1)}
                 style={{
                   color: 'inherit',
                   textDecoration: 'none'
@@ -247,11 +295,11 @@ const HeadToHeadPage: React.FC = () => {
                 onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
                 onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
               >
-                {team1.name}
+                {formatTeamNameShort(team1.name)}
               </a>
               {' vs '}
               <a
-                href={`/clubs/${team2.slug}`}
+                href={URLBuilder.team(team2)}
                 style={{
                   color: 'inherit',
                   textDecoration: 'none'
@@ -259,7 +307,7 @@ const HeadToHeadPage: React.FC = () => {
                 onMouseEnter={(e) => e.currentTarget.style.textDecoration = 'underline'}
                 onMouseLeave={(e) => e.currentTarget.style.textDecoration = 'none'}
               >
-                {team2.name}
+                {formatTeamNameShort(team2.name)}
               </a>
             </h1>
             <p style={{
@@ -267,7 +315,7 @@ const HeadToHeadPage: React.FC = () => {
               color: '#64748b',
               margin: 0
             }}>
-              Head-to-Head Fixtures & Statistics
+              Head-to-Head Matches & Statistics
             </p>
           </div>
 
@@ -278,6 +326,21 @@ const HeadToHeadPage: React.FC = () => {
               team1Name={team1.name}
               team2Name={team2.name}
             />
+          )}
+
+          {/* Live Matches Ticker - shows other matches around same time */}
+          {nextFixture && (
+            <LiveMatchesTicker
+              currentMatchDate={nextFixture.kickoff_utc}
+              competitionIds={nextFixture.competition_id ? [nextFixture.competition_id] : undefined}
+            />
+          )}
+
+          {/* Page Freshness Timestamp */}
+          {!loading && !error && fixtures.length > 0 && (
+            <div style={{ marginBottom: '16px', textAlign: 'center' }}>
+              <PageUpdateTimestamp label="Head-to-head data updated" />
+            </div>
           )}
 
           {/* Match Preview for Premier League fixtures */}
@@ -318,7 +381,7 @@ const HeadToHeadPage: React.FC = () => {
             />
           )}
 
-          {/* Upcoming Fixtures */}
+          {/* Upcoming Matches */}
           {upcomingFixtures.length > 0 && (
             <div style={{ marginBottom: '32px' }}>
               <h2 style={{
@@ -329,7 +392,7 @@ const HeadToHeadPage: React.FC = () => {
                 paddingBottom: '8px',
                 borderBottom: '2px solid #e2e8f0'
               }}>
-                Upcoming Fixtures ({upcomingFixtures.length})
+                Upcoming Matches ({upcomingFixtures.length})
               </h2>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
@@ -389,17 +452,17 @@ const HeadToHeadPage: React.FC = () => {
                 color: '#1e293b',
                 marginBottom: '8px'
               }}>
-                No Fixtures Found
+                No Matches Found
               </h3>
               <p style={{
                 color: '#64748b',
                 marginBottom: '24px'
               }}>
-                There are no scheduled fixtures between {team1.name} and {team2.name} this season.
+                There are no scheduled matches between {formatTeamNameShort(team1.name)} and {formatTeamNameShort(team2.name)} this season.
               </p>
               <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
                 <a
-                  href={`/clubs/${team1.slug}`}
+                  href={URLBuilder.team(team1)}
                   style={{
                     display: 'inline-block',
                     background: '#3b82f6',
@@ -411,10 +474,10 @@ const HeadToHeadPage: React.FC = () => {
                     fontWeight: '500'
                   }}
                 >
-                  View {team1.name} Fixtures
+                  View {formatTeamNameShort(team1.name)} Matches
                 </a>
                 <a
-                  href={`/clubs/${team2.slug}`}
+                  href={URLBuilder.team(team2)}
                   style={{
                     display: 'inline-block',
                     background: '#3b82f6',
@@ -426,7 +489,7 @@ const HeadToHeadPage: React.FC = () => {
                     fontWeight: '500'
                   }}
                 >
-                  View {team2.name} Fixtures
+                  View {formatTeamNameShort(team2.name)} Matches
                 </a>
               </div>
             </div>

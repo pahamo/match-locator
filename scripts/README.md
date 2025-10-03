@@ -15,6 +15,7 @@ This directory contains scripts for importing football data from external APIs i
 
 ### Automation
 - `generate_sitemaps.mjs` - SEO sitemap generation
+- `cleanup.js` - Automated codebase cleanup and maintenance
 
 ## Usage
 
@@ -61,3 +62,26 @@ The import system is designed to be:
 - **Configurable** - Easy to add new competitions
 - **Fault-tolerant** - Handles API errors and rate limits
 - **Idempotent** - Safe to run multiple times
+
+## Codebase Maintenance
+
+### Cleanup Script (`cleanup.js`)
+
+Automated maintenance script for code quality and technical debt management.
+
+**Quick Commands:**
+```bash
+npm run cleanup:dry     # Preview changes
+npm run cleanup:verbose # Detailed preview
+npm run cleanup         # Execute cleanup
+```
+
+**Features:**
+- Remove system files (.DS_Store, logs)
+- Clean empty folders and build artifacts
+- Update dependencies to latest minor versions
+- Format code with Prettier and ESLint auto-fix
+- Extract magic numbers and fix import patterns
+- Generate detailed cleanup reports
+
+**Safety:** Always use `--dry-run` first to preview changes. The script protects important directories and logs all actions for rollback reference.

@@ -2,6 +2,7 @@
   # Prevent CRA from failing the build on ESLint warnings in CI
   command = "CI= npm run build"
   publish = "build"
+  functions = "netlify/functions"
 
 # Enforce HTTPS
 [[redirects]]
@@ -74,6 +75,31 @@
     for = "/*"
     [context.branch-deploy.headers.values]
       X-Robots-Tag = "noindex"
+
+# Development context: disable caching for frequent changes
+[context.dev]
+  [[context.dev.headers]]
+    for = "/static/css/*.css"
+    [context.dev.headers.values]
+      Cache-Control = "no-cache"
+
+  [[context.dev.headers]]
+    for = "/static/js/*.js"
+    [context.dev.headers.values]
+      Cache-Control = "no-cache"
+
+# Redirect fixtures URLs to matches URLs
+[[redirects]]
+  from = "/fixtures"
+  to = "/matches"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/fixtures/*"
+  to = "/matches/:splat"
+  status = 301
+  force = true
 
 # SPA fallback - catch all non-file requests
 [[redirects]]

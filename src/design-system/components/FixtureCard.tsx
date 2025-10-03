@@ -3,13 +3,13 @@ import { Link } from 'react-router-dom';
 import type { SimpleFixture, Fixture } from '../../types';
 import { getMatchStatus, getMatchStatusStyles } from '../../utils/matchStatus';
 import { shouldCreateMatchPage } from '../../utils/matchPageFilter';
-import { generateH2HUrl } from '../../utils/headToHead';
-import { getCanonicalTeamSlug } from '../../utils/teamSlugs';
 import { getDisplayTeamName } from '../../utils/teamNames';
+import { formatTeamNameShort } from '../../utils/seo';
 import { formatTime } from '../../utils/dateFormat';
 import { COMPETITION_CONFIGS } from '../../config/competitions';
 import OptimizedImage from '../../components/OptimizedImage';
 import { SkyAffiliateLink } from '../../components/affiliate/AffiliateLink';
+import { buildH2HUrl } from '../../utils/urlBuilder';
 
 
 export interface FixtureCardProps {
@@ -38,14 +38,12 @@ const getCompetitionInfo = (fixture: SimpleFixture | Fixture) => {
 };
 
 const getFixtureData = (fixture: SimpleFixture | Fixture) => {
-  // SIMPLIFIED: Only use shouldCreateMatchPage to determine if View button shows
+  // Determine if we should create a match page for this fixture
   const shouldCreatePage = shouldCreateMatchPage(fixture);
 
   if (isSimpleFixture(fixture)) {
-    // Generate H2H URL from SimpleFixture
-    const homeSlug = getCanonicalTeamSlug(fixture.home_team);
-    const awaySlug = getCanonicalTeamSlug(fixture.away_team);
-    const h2hUrl = shouldCreatePage ? generateH2HUrl(homeSlug, awaySlug) : null;
+    // Smart URL builder: Direct SEO URL (best) → Fixture ID fallback (robust)
+    const urlResult = shouldCreatePage ? buildH2HUrl(fixture) : null;
 
     return {
       homeTeam: fixture.home_team,
@@ -55,18 +53,20 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
       broadcaster: fixture.broadcaster,
       isBlackout: fixture.isBlackout || false,
       matchweek: fixture.matchweek,
-      url: h2hUrl,
-      shouldCreatePage: shouldCreatePage
+      url: urlResult?.url || null,
+      urlStrategy: urlResult?.strategy,  // Track which strategy used (for monitoring)
+      shouldCreatePage: shouldCreatePage,
+      homeScore: fixture.home_score,
+      awayScore: fixture.away_score,
+      status: fixture.status
     };
   } else {
     const hasProviders = fixture.providers_uk && fixture.providers_uk.length > 0;
     const broadcasterName = hasProviders ? fixture.providers_uk[0].name : undefined;
     const isBlackout = fixture.blackout?.is_blackout || false;
 
-    // Generate H2H URL from Fixture
-    const homeSlug = getCanonicalTeamSlug(fixture.home.name);
-    const awaySlug = getCanonicalTeamSlug(fixture.away.name);
-    const h2hUrl = shouldCreatePage ? generateH2HUrl(homeSlug, awaySlug) : null;
+    // Smart URL builder: Direct SEO URL (best) → Fixture ID fallback (robust)
+    const urlResult = shouldCreatePage ? buildH2HUrl(fixture) : null;
 
     return {
       homeTeam: fixture.home.name,
@@ -76,8 +76,12 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
       broadcaster: broadcasterName,
       isBlackout: isBlackout,
       matchweek: fixture.matchweek,
-      url: h2hUrl,
-      shouldCreatePage: shouldCreatePage
+      url: urlResult?.url || null,
+      urlStrategy: urlResult?.strategy,  // Track which strategy used (for monitoring)
+      shouldCreatePage: shouldCreatePage,
+      homeScore: fixture.score?.home,
+      awayScore: fixture.score?.away,
+      status: fixture.status
     };
   }
 };
@@ -134,15 +138,18 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
               <div className="time-column-metadata">
                 {/* League Pill */}
                 {competition && (
-                  <div
+                  <Link
+                    to={`/competitions/${competition.slug}`}
                     className="league-pill"
                     style={{
                       background: competition.colors.primary,
                       color: competition.colors.secondary,
+                      textDecoration: 'none'
                     }}
+                    title={`View ${competition.name} fixtures`}
                   >
                     {competition.shortName}
-                  </div>
+                  </Link>
                 )}
 
                 {/* Matchweek */}
@@ -171,16 +178,22 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
             />
           )}
           <span className={`team-name ${isMinimized ? 'minimized' : ''}`}>
-            <span className="team-name-full">{fixtureData.homeTeam}</span>
+            <span className="team-name-full">{formatTeamNameShort(fixtureData.homeTeam)}</span>
             <span className="team-name-short">{getDisplayTeamName(fixtureData.homeTeam, true)}</span>
           </span>
         </div>
 
-        <div className="vs-divider">vs</div>
+        {fixtureData.homeScore !== undefined && fixtureData.awayScore !== undefined ? (
+          <div className="score-display">
+            {fixtureData.homeScore} - {fixtureData.awayScore}
+          </div>
+        ) : (
+          <div className="vs-divider">vs</div>
+        )}
 
         <div className="team-container away-team">
           <span className={`team-name ${isMinimized ? 'minimized' : ''}`}>
-            <span className="team-name-full">{fixtureData.awayTeam}</span>
+            <span className="team-name-full">{formatTeamNameShort(fixtureData.awayTeam)}</span>
             <span className="team-name-short">{getDisplayTeamName(fixtureData.awayTeam, true)}</span>
           </span>
           {fixtureData.awayCrest && (
@@ -233,21 +246,12 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
         </div>
       )}
 
-      {/* View Button - Only show if we should create a page */}
+      {/* Info Button - Only show if we should create a page */}
       {showViewButton && fixtureData.shouldCreatePage && fixtureData.url && (
         <Link to={fixtureData.url} className="view-button">
-          View
+          Info
         </Link>
       )}
-
-      {/* Show "No UK Broadcast" only for explicitly blackout games */}
-      {showViewButton && !fixtureData.shouldCreatePage && (
-        <span className="view-button disabled" title="Not available for this competition">
-          Not Available
-        </span>
-      )}
-
-      {/* Removed blackout badge - only show "No UK Broadcast" in broadcaster section */}
 
       {/* Matchweek moved to time column for withTime variant */}
     </div>
@@ -309,6 +313,14 @@ const fixtureCardStyles = `
     letter-spacing: 0.5px;
     text-align: center;
     line-height: 1;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-block;
+  }
+
+  .league-pill:hover {
+    opacity: 0.85;
+    transform: translateY(-1px);
   }
 
   .matchweek-pill {
@@ -319,6 +331,18 @@ const fixtureCardStyles = `
     letter-spacing: 0.5px;
     text-align: center;
     line-height: 1;
+  }
+
+  .score-display {
+    background: #e5e7eb;
+    color: #1f2937;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    min-width: 60px;
+    text-align: center;
   }
 
   .broadcaster-info {

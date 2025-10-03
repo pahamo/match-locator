@@ -119,7 +119,7 @@ const Header: React.FC<HeaderProps> = React.memo(({
           Home
         </a>
         <a
-          href="/fixtures"
+          href="/matches"
           style={{
             color: '#6366f1',
             textDecoration: 'none',
@@ -135,7 +135,7 @@ const Header: React.FC<HeaderProps> = React.memo(({
           onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
           onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
         >
-          Fixtures
+          Matches
         </a>
 
         {/* Competitions Dropdown */}
@@ -357,7 +357,7 @@ const Header: React.FC<HeaderProps> = React.memo(({
               Home
             </a>
             <a
-              href="/fixtures"
+              href="/matches"
               style={{
                 color: '#6366f1',
                 textDecoration: 'none',
@@ -371,7 +371,7 @@ const Header: React.FC<HeaderProps> = React.memo(({
               onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
               onClick={() => setMobileMenuOpen(false)}
             >
-              Fixtures
+              Matches
             </a>
 
             {/* Mobile Competitions Section */}

@@ -84,23 +84,23 @@ export const generateBreadcrumbs = (
     case 'fixtures':
       if (pathParts.length === 1) {
         // /fixtures
-        breadcrumbs.push({ label: 'Fixtures' });
+        breadcrumbs.push({ label: 'Matches' });
       } else if (pathParts[1] === 'today') {
         // /fixtures/today
         breadcrumbs.push(
-          { label: 'Fixtures', href: '/fixtures' },
+          { label: 'Matches', href: '/matches' },
           { label: 'Today' }
         );
       } else if (pathParts[1] === 'tomorrow') {
         // /fixtures/tomorrow
         breadcrumbs.push(
-          { label: 'Fixtures', href: '/fixtures' },
+          { label: 'Matches', href: '/matches' },
           { label: 'Tomorrow' }
         );
       } else if (pathParts[1] === 'this-weekend') {
         // /fixtures/this-weekend
         breadcrumbs.push(
-          { label: 'Fixtures', href: '/fixtures' },
+          { label: 'Matches', href: '/matches' },
           { label: 'This Weekend' }
         );
       } else {
@@ -118,6 +118,27 @@ export const generateBreadcrumbs = (
           breadcrumbs.push({ label: `${parsedMatch.homeTeam} vs ${parsedMatch.awayTeam}` });
         } else {
           breadcrumbs.push({ label: 'Match Details' });
+        }
+      }
+      break;
+
+    case 'h2h':
+      // /h2h/team-vs-team (Head to Head pages)
+      if (pathParts[1]) {
+        const h2hSlug = pathParts[1];
+        breadcrumbs.push({ label: 'Matches', href: '/matches' });
+
+        if (h2hSlug.includes('-vs-')) {
+          const parts = h2hSlug.split('-vs-');
+          if (parts.length === 2) {
+            const team1 = parts[0].replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            const team2 = parts[1].replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+            breadcrumbs.push({ label: `${team1} vs ${team2}` });
+          } else {
+            breadcrumbs.push({ label: h2hSlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) });
+          }
+        } else {
+          breadcrumbs.push({ label: h2hSlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) });
         }
       }
       break;
@@ -157,7 +178,7 @@ export const generateBreadcrumbs = (
       const parsedMatch = parseMatchSlug(matchSlug);
 
       breadcrumbs.push(
-        { label: 'Fixtures', href: '/fixtures' }
+        { label: 'Matches', href: '/matches' }
       );
 
       if (options.matchTitle) {
@@ -169,12 +190,13 @@ export const generateBreadcrumbs = (
       }
       break;
 
+    case 'club':
     case 'clubs':
       if (pathParts.length === 1) {
         // /clubs
         breadcrumbs.push({ label: 'Clubs' });
       } else {
-        // /clubs/team-slug
+        // /club/team-slug or /clubs/team-slug
         breadcrumbs.push(
           { label: 'Clubs', href: '/clubs' }
         );

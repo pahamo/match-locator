@@ -14,7 +14,7 @@
 
 import React, { Suspense, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import HomePage from './pages/HomePage'; // Keep HomePage eager for LCP
+// TodayFixturesPage imported as homepage below
 import SmartFixtureRouter from './components/SmartFixtureRouter';
 
 import Footer from './components/Footer';
@@ -42,6 +42,8 @@ const AdminTeamsPage = React.lazy(() => import('./pages/admin/AdminTeamsPage'));
 const AdminMatchesPage = React.lazy(() => import('./pages/admin/AdminMatchesPage'));
 const AdminCompetitionsPage = React.lazy(() => import('./pages/admin/AdminCompetitionsPage'));
 const AdminTeamsExportPage = React.lazy(() => import('./pages/admin/AdminTeamsExportPage'));
+const AdminRedirectsPage = React.lazy(() => import('./pages/admin/AdminRedirectsPage'));
+const AdminFixDataPage = React.lazy(() => import('./pages/admin/AdminFixDataPage'));
 const ClubsPage = React.lazy(() => import('./pages/ClubsPage'));
 const FixturesPage = React.lazy(() => import('./pages/FixturesPage'));
 const CompetitionsOverviewPage = React.lazy(() => import('./pages/CompetitionsOverviewPage'));
@@ -59,6 +61,8 @@ const TomorrowFixturesPage = React.lazy(() => import('./pages/TomorrowFixturesPa
 const ThisWeekendFixturesPage = React.lazy(() => import('./pages/ThisWeekendFixturesPage'));
 const HowToWatchPage = React.lazy(() => import('./pages/HowToWatchPage'));
 const CookieSettingsModal = React.lazy(() => import('./components/cookies/CookieSettingsModal'));
+const DesignSystemDemo = React.lazy(() => import('./design-system/demo-page'));
+const DatabaseAnalysisPage = React.lazy(() => import('./pages/DatabaseAnalysisPage'));
 
 // Loading fallback component
 const PageLoader = () => (
@@ -69,6 +73,10 @@ const PageLoader = () => (
 );
 
 function App() {
+  // Initialize design tokens
+  React.useEffect(() => {
+    injectDesignTokens();
+  }, []);
   const [cookieOpen, setCookieOpen] = React.useState(false);
   // Blackout state for fixtures (ensures setBlackoutIds exists)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -94,9 +102,14 @@ function App() {
         <div className="App">
           <Suspense fallback={<PageLoader />}>
             <Routes>
-              <Route path="/" element={<HomePage />} />
+              <Route path="/" element={<TodayFixturesPage />} />
+              <Route path="/matches" element={<FixturesPage />} />
+              {/* Dynamic matches pages */}
+              <Route path="/matches/today" element={<TodayFixturesPage />} />
+              <Route path="/matches/tomorrow" element={<TomorrowFixturesPage />} />
+              <Route path="/matches/this-weekend" element={<ThisWeekendFixturesPage />} />
+              {/* Legacy /fixtures/* redirects to /matches/* */}
               <Route path="/fixtures" element={<FixturesPage />} />
-              {/* Dynamic fixtures pages */}
               <Route path="/fixtures/today" element={<TodayFixturesPage />} />
               <Route path="/fixtures/tomorrow" element={<TomorrowFixturesPage />} />
               <Route path="/fixtures/this-weekend" element={<ThisWeekendFixturesPage />} />
@@ -125,6 +138,8 @@ function App() {
               <Route path="/admin/teams/export" element={<AdminTeamsExportPage />} />
               <Route path="/admin/matches" element={<AdminMatchesPage />} />
               <Route path="/admin/competitions" element={<AdminCompetitionsPage />} />
+              <Route path="/admin/redirects" element={<AdminRedirectsPage />} />
+              <Route path="/admin/fix-data" element={<AdminFixDataPage />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/legal/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/legal/cookie-policy" element={<CookiePolicy />} />
@@ -133,6 +148,8 @@ function App() {
               <Route path="/how-we-make-money" element={<HowWeSupportThisSitePage />} />
               <Route path="/how-to-watch/:slug" element={<HowToWatchPage />} />
               <Route path="/contact" element={<ContactPage />} />
+              <Route path="/design-demo" element={<DesignSystemDemo />} />
+              <Route path="/database-analysis" element={<DatabaseAnalysisPage />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Suspense>

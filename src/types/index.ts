@@ -1,7 +1,7 @@
 export interface Team {
   id: number;
   name: string;
-  slug: string;
+  slug: string; // Consolidated slug field (previously url_slug values)
   crest: string | null;
   competition_id?: number;
   short_name?: string | null;
@@ -58,6 +58,8 @@ export interface SimpleFixture {
   kickoff_utc: string;
   home_team: string;
   away_team: string;
+  home_slug?: string;        // Team slug for SEO-friendly URLs
+  away_slug?: string;        // Team slug for SEO-friendly URLs
   home_crest?: string;
   away_crest?: string;
   broadcaster?: string;
@@ -67,6 +69,9 @@ export interface SimpleFixture {
   competition_id?: number;
   stage?: string;
   round?: string;
+  home_score?: number | null;
+  away_score?: number | null;
+  status?: string;
 }
 
 // Competition interface

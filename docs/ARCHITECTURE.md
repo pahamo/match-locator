@@ -123,16 +123,32 @@ The H2H (Head-to-Head) Architecture is a **major architectural shift** implement
 
 ### Technical Implementation
 
-#### URL Structure
+#### URL Structure (Updated October 2025)
 ```
-# H2H Pages (NEW - Primary)
-/h2h/arsenal-vs-liverpool          # All fixtures between these teams
+# H2H Pages - Fixture ID Approach (CURRENT - Most Stable)
+/h2h/12345                         # Fixture ID → redirects to SEO-friendly URL
+  ↓ (client-side redirect)
+/h2h/arsenal-vs-liverpool          # Final SEO-friendly URL
+
+# H2H Pages - Direct Team Slugs (Legacy, Still Supported)
+/h2h/arsenal-vs-liverpool          # Direct access works
 /h2h/manchester-city-vs-tottenham-hotspur
 
 # Legacy Match Pages (REDIRECTED)
 /matches/123-arsenal-vs-liverpool-2025-01-15  → /h2h/arsenal-vs-liverpool
 /match/456-chelsea-vs-tottenham    → /h2h/chelsea-vs-tottenham-hotspur
 ```
+
+**Architecture Evolution:**
+1. **Phase 1 (Sept 2025)**: Slug-based H2H routing (`/h2h/team1-vs-team2`)
+2. **Phase 2 (Oct 2025)**: Fixture ID routing with SEO redirect (`/h2h/[id]` → `/h2h/team1-vs-team2`)
+
+**Why Fixture IDs?**
+- ✅ **Stability**: Fixture IDs never change, team slugs can be updated
+- ✅ **Simplicity**: Single database query to get teams, no slug matching logic
+- ✅ **Reliability**: Eliminates daily breakage from slug mismatches
+- ✅ **SEO Preserved**: Client-side redirect ensures clean URLs in browser
+- ✅ **Backward Compatible**: Legacy slug URLs still work
 
 #### Core Components
 
@@ -155,12 +171,151 @@ The H2H (Head-to-Head) Architecture is a **major architectural shift** implement
 /src/utils/teamSlugs.ts           # SEO-friendly team slug management
 ```
 
+#### Fixture ID Routing Architecture (October 2025)
+
+**Problem Solved:**
+- H2H pages were breaking daily due to slug mismatches
+- Database: `west-ham-united` vs URL: `west-ham` → "No fixtures found"
+- 304-line TeamResolver with 100+ hardcoded mappings couldn't scale
+- Complex slug matching logic caused runtime failures
+
+**Solution: Fixture ID → Team Slug Redirect Flow**
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ USER CLICKS "INFO" BUTTON ON FIXTURE CARD                        │
+└────────────────────────┬────────────────────────────────────────┘
+                         ↓
+┌─────────────────────────────────────────────────────────────────┐
+│ FixtureCard.tsx generates URL: /h2h/54321                       │
+└────────────────────────┬────────────────────────────────────────┘
+                         ↓
+┌─────────────────────────────────────────────────────────────────┐
+│ SmartFixtureRouter detects numeric ID → loads HeadToHeadPage    │
+└────────────────────────┬────────────────────────────────────────┘
+                         ↓
+┌─────────────────────────────────────────────────────────────────┐
+│ HeadToHeadPage.tsx                                               │
+│ 1. Detects slug="54321" is numeric                              │
+│ 2. Queries: supabase.from('fixtures_with_teams').eq('id', 54321)│
+│ 3. Extracts: home_slug='arsenal', away_slug='west-ham-united'  │
+│ 4. Generates: /h2h/arsenal-vs-west-ham-united (alphabetical)    │
+│ 5. Sets shouldRedirect state                                     │
+│ 6. Calls: window.location.replace('/h2h/arsenal-vs-west-ham...')│
+└────────────────────────┬────────────────────────────────────────┘
+                         ↓
+┌─────────────────────────────────────────────────────────────────┐
+│ Browser redirects to SEO-friendly URL                            │
+│ HeadToHeadPage loads again with slug="arsenal-vs-west-ham..."  │
+│ Parses team slugs → loads all H2H fixtures → renders page       │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Key Implementation Files:**
+
+**1. FixtureCard.tsx** (URL Generation)
+```typescript
+// src/design-system/components/FixtureCard.tsx
+const getFixtureData = (fixture: SimpleFixture | Fixture) => {
+  const shouldCreatePage = shouldCreateMatchPage(fixture);
+
+  // Generate H2H URL using fixture ID (new, stable approach)
+  const h2hUrl = shouldCreatePage ? `/h2h/${fixture.id}` : null;
+
+  return {
+    url: h2hUrl,  // /h2h/54321
+    shouldCreatePage: shouldCreatePage
+  };
+};
+```
+
+**2. SmartFixtureRouter.tsx** (Route Detection)
+```typescript
+// src/components/SmartFixtureRouter.tsx
+const isFixtureIdUrl = (slug: string): boolean => {
+  return /^\d+$/.test(slug);  // Check if purely numeric
+};
+
+// In component:
+if (isFixtureIdUrl(slug)) {
+  // Numeric ID detected → load HeadToHeadPage
+  return (
+    <Suspense fallback={<PageLoader />}>
+      <HeadToHeadPage />
+    </Suspense>
+  );
+}
+```
+
+**3. HeadToHeadPage.tsx** (Fixture ID Loading & Redirect)
+```typescript
+// src/pages/HeadToHeadPage.tsx
+const loadH2HData = useCallback(async () => {
+  const isNumericId = /^\d+$/.test(slug);
+
+  if (isNumericId) {
+    // NEW APPROACH: Load by fixture ID, then redirect
+    const fixtureId = parseInt(slug, 10);
+
+    // Single stable query - always works
+    const { data, error } = await supabase
+      .from('fixtures_with_teams')
+      .select('*')
+      .eq('id', fixtureId)
+      .single();
+
+    if (error || !data) {
+      setError('Fixture not found');
+      return;
+    }
+
+    // Extract team slugs from fixture data
+    const homeSlug = data.home_slug;
+    const awaySlug = data.away_slug;
+
+    // Generate canonical H2H URL (alphabetical order for consistency)
+    const [first, second] = [homeSlug, awaySlug].sort();
+    const canonicalH2HUrl = `/h2h/${first}-vs-${second}`;
+
+    // Redirect to SEO-friendly URL
+    setShouldRedirect(canonicalH2HUrl);
+    return;
+  }
+
+  // Legacy slug-based loading still supported...
+}, [slug]);
+
+// Handle redirect
+if (shouldRedirect) {
+  window.location.replace(shouldRedirect);
+  return <RedirectMessage />;
+}
+```
+
+**Benefits:**
+- ✅ **Zero slug matching complexity** - ID lookup is instant and reliable
+- ✅ **Database-driven team names** - always current, no hardcoded mappings
+- ✅ **Can't break from schema changes** - IDs are permanent
+- ✅ **SEO-friendly URLs preserved** - redirect ensures clean browser URLs
+- ✅ **Reduced code complexity** - TeamResolver reduced from 304 to 107 lines (65% reduction)
+
+**Performance:**
+- Adds ~50-100ms for redirect (one extra HTTP request)
+- Acceptable trade-off for reliability and maintainability
+- Can optimize with server-side redirects if needed
+
 #### Smart Routing System
 
-The `SmartFixtureRouter` intelligently handles both H2H and legacy URLs:
+The `SmartFixtureRouter` intelligently handles fixture IDs, H2H slugs, and legacy URLs:
 
 ```typescript
 // src/components/SmartFixtureRouter.tsx
+// Priority 1: Fixture ID detection (new, most stable)
+const isFixtureIdUrl = (slug: string): boolean => {
+  return /^\d+$/.test(slug);
+};
+
+// Priority 2: H2H slug detection (legacy, still supported)
 const isH2HUrl = (slug: string): boolean => {
   // Pure H2H: team1-vs-team2
   // Match URL: team1-vs-team2-competition-date
@@ -395,7 +550,7 @@ interface Team {
 ```typescript
 interface SimpleFixture {
   id: number;
-  kickoff_utc: string;          // ⚠️ Use kickoff_utc (NOT utc_kickoff)
+  kickoff_utc: string;          // ⚠️ Database: utc_kickoff → Interface: kickoff_utc (mapped)
   home_team: string;            // Pre-joined team name
   away_team: string;            // Pre-joined team name
   home_crest?: string;          // Optional crest URL
@@ -466,7 +621,7 @@ fixture.away.crest      // string | null
 
 **❌ COMMON MISTAKES:**
 ```typescript
-fixture.utc_kickoff     // ❌ Wrong property name
+fixture.utc_kickoff     // ❌ Wrong for interface (use kickoff_utc)
 fixture.home_team.name  // ❌ Wrong for Fixture type
 fixture.home            // ❌ Wrong for SimpleFixture type
 ```
@@ -668,7 +823,7 @@ const Header: React.FC = () => {
 
 ## Component Architecture
 
-### Design System Components (`src/components/design-system/`)
+### Design System Components (`src/design-system/` and `src/components/ui/`)
 
 #### Core Components
 - **FixtureCard**: Flexible match display with variants

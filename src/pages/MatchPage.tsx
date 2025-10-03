@@ -5,10 +5,12 @@ import type { Fixture } from '../types';
 import Header from '../components/Header';
 import Breadcrumbs from '../components/Breadcrumbs';
 import StructuredData from '../components/StructuredData';
-import { parseMatchSlug, parseSeoMatchSlug, generateMatchMeta, generateSeoMatchUrl, updateDocumentMeta } from '../utils/seo';
+import { parseMatchSlug, parseSeoMatchSlug, generateMatchMeta, generateSeoMatchUrl, updateDocumentMeta, formatTeamNameShort } from '../utils/seo';
 import { formatDetailedDate } from '../utils/dateFormat';
 import { generateBreadcrumbs } from '../utils/breadcrumbs';
 import AffiliateDisclosure, { withAffiliateAriaLabel } from '../components/legal/AffiliateDisclosure';
+import { getTeamUrlSlug } from '../utils/slugUtils';
+import { LiveMatchesTicker } from '../components/LiveMatchesTicker';
 
 const MatchPage: React.FC = () => {
   const { matchSlug, matchId, id } = useParams<{ matchSlug?: string; matchId?: string; id?: string }>();
@@ -31,25 +33,13 @@ const MatchPage: React.FC = () => {
           if (currentPath.startsWith('/fixtures/')) {
             const seoData = parseSeoMatchSlug(matchSlug);
             if (seoData) {
-              console.log('MatchPage: Loading fixture with SEO slug:', seoData);
-              const startTime = performance.now();
-
               fixtureData = await getFixtureByTeamsAndDate(seoData.homeTeam, seoData.awayTeam, seoData.date);
-
-              const endTime = performance.now();
-              console.log(`MatchPage: Fixture loaded via SEO search in ${endTime - startTime}ms`);
             }
           } else {
             // Legacy format with ID (/matches/id-team-vs-team-date)
             const parsedId = parseMatchSlug(matchSlug);
             if (parsedId) {
-              console.log('MatchPage: Loading fixture with legacy ID:', parsedId);
-              const startTime = performance.now();
-
               fixtureData = await getFixtureById(parsedId);
-
-              const endTime = performance.now();
-              console.log(`MatchPage: Fixture loaded via ID in ${endTime - startTime}ms`);
             }
           }
         } else {
@@ -68,7 +58,6 @@ const MatchPage: React.FC = () => {
             return;
           }
 
-          console.log('MatchPage: Loading fixture with pure ID:', parsedId);
           fixtureData = await getFixtureById(parsedId);
         }
 
@@ -80,9 +69,9 @@ const MatchPage: React.FC = () => {
           // Update SEO meta tags
           const meta = generateMatchMeta(fixtureData);
 
-          // If this is a legacy URL (/matches/), set canonical to new format (/fixtures/)
+          // If this is a legacy URL (/fixtures/), set canonical to new format (/matches/)
           const currentPath = window.location.pathname;
-          if (currentPath.startsWith('/matches/') || currentPath.startsWith('/match/')) {
+          if (currentPath.startsWith('/fixtures/') || currentPath.startsWith('/match/')) {
             const newCanonicalUrl = `${window.location.origin}${generateSeoMatchUrl(fixtureData)}`;
             meta.canonical = newCanonicalUrl;
             meta.ogUrl = newCanonicalUrl;
@@ -185,9 +174,9 @@ const MatchPage: React.FC = () => {
 
       <main>
         <div className="wrap">
-          <Breadcrumbs items={generateBreadcrumbs(window.location.pathname, { matchTitle: `${fixture.home.name} vs ${fixture.away.name}` })} />
+          <Breadcrumbs items={generateBreadcrumbs(window.location.pathname, { matchTitle: `${formatTeamNameShort(fixture.home.name)} vs ${formatTeamNameShort(fixture.away.name)}` })} />
           <h1 style={{ marginTop: 32, marginBottom: 16, fontSize: 'clamp(1.5rem, 5vw, 1.875rem)', fontWeight: '700' }}>
-            {fixture.home.name} vs {fixture.away.name}
+            {formatTeamNameShort(fixture.home.name)} vs {formatTeamNameShort(fixture.away.name)}
           </h1>
           {/* Match Header */}
           <div className="fixture-card" style={{ marginBottom: '24px', padding: '24px' }}>
@@ -206,23 +195,23 @@ const MatchPage: React.FC = () => {
                   />
                 )}
                 <span className="team-name" style={{ fontSize: '1.2rem', fontWeight: '600' }}>
-                  {fixture.home.name}
+                  {formatTeamNameShort(fixture.home.name)}
                 </span>
               </div>
-              
+
               <div className="vs" style={{ fontSize: '1.1rem', fontWeight: '600' }}>vs</div>
-              
+
               <div className="team away-team">
                 {fixture.away.crest && (
-                  <img 
-                    src={fixture.away.crest} 
+                  <img
+                    src={fixture.away.crest}
                     alt={`${fixture.away.name} crest`}
                     className="team-crest"
                     style={{ width: '32px', height: '32px' }}
                   />
                 )}
                 <span className="team-name" style={{ fontSize: '1.2rem', fontWeight: '600' }}>
-                  {fixture.away.name}
+                  {formatTeamNameShort(fixture.away.name)}
                 </span>
               </div>
             </div>
@@ -309,6 +298,12 @@ const MatchPage: React.FC = () => {
             </div>
           </div>
 
+          {/* Live Matches Ticker - shows other matches around same time */}
+          <LiveMatchesTicker
+            currentMatchDate={fixture.kickoff_utc}
+            competitionIds={fixture.competition_id ? [fixture.competition_id] : undefined}
+          />
+
           {/* See More Section */}
           <div style={{
             marginTop: '24px',
@@ -331,7 +326,7 @@ const MatchPage: React.FC = () => {
             }}>
               {/* Home Team Button */}
               <Link
-                to={`/clubs/${fixture.home.slug || fixture.home.name.toLowerCase().replace(/\s+/g, '-')}`}
+                to={`/club/${getTeamUrlSlug(fixture.home)}`}
                 style={{
                   padding: '8px 16px',
                   backgroundColor: '#6366f1',
@@ -345,12 +340,12 @@ const MatchPage: React.FC = () => {
                   gap: '6px'
                 }}
               >
-                🏟️ {fixture.home.name}
+                🏟️ {formatTeamNameShort(fixture.home.name)}
               </Link>
 
               {/* Away Team Button */}
               <Link
-                to={`/clubs/${fixture.away.slug || fixture.away.name.toLowerCase().replace(/\s+/g, '-')}`}
+                to={`/club/${getTeamUrlSlug(fixture.away)}`}
                 style={{
                   padding: '8px 16px',
                   backgroundColor: '#6366f1',
@@ -364,7 +359,7 @@ const MatchPage: React.FC = () => {
                   gap: '6px'
                 }}
               >
-                🏟️ {fixture.away.name}
+                🏟️ {formatTeamNameShort(fixture.away.name)}
               </Link>
 
               {/* Competition Button */}

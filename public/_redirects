@@ -1,0 +1,9 @@
+# Team URL Redirects
+# Redirect old /clubs/ paths to new /club/ paths
+/clubs/:slug /club/:slug 301!
+
+# Note: H2H redirects removed - now handled dynamically by JavaScript in HeadToHeadPage
+# This eliminates the need for static redirect maintenance and provides better error handling
+
+# Future team redirects can be added here if needed
+# Format: /club/old-slug /club/new-slug 301!

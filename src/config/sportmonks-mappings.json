@@ -1,0 +1,62 @@
+{
+  "generated_at": "2025-10-02T10:15:00.000Z",
+  "leagues": {
+    "1": {
+      "sportmonks_id": 8,
+      "name": "Premier League",
+      "our_name": "Premier League",
+      "active": true
+    },
+    "2": {
+      "sportmonks_id": 2,
+      "name": "Champions League",
+      "our_name": "Champions League",
+      "active": true
+    },
+    "3": {
+      "sportmonks_id": 24,
+      "name": "FA Cup",
+      "our_name": "FA Cup",
+      "active": true
+    },
+    "4": {
+      "sportmonks_id": 27,
+      "name": "Carabao Cup",
+      "our_name": "EFL Cup",
+      "active": true
+    },
+    "5": {
+      "sportmonks_id": 5,
+      "name": "Europa League",
+      "our_name": "Europa League",
+      "active": true
+    },
+    "6": {
+      "sportmonks_id": 2286,
+      "name": "Europa Conference League",
+      "our_name": "Europa Conference League",
+      "active": true
+    },
+    "7": {
+      "sportmonks_id": 501,
+      "name": "Premiership",
+      "our_name": "Scottish Premiership",
+      "active": true
+    },
+    "8": {
+      "sportmonks_id": 9,
+      "name": "Championship",
+      "our_name": "Championship",
+      "active": true
+    }
+  },
+  "unmapped": [
+    {
+      "id": 9,
+      "name": "League One",
+      "country": "England",
+      "sportmonks_id": 12,
+      "note": "Sports Monks ID: 12 - Not accessible in European Plan subscription. Only includes Premier League, Championship, FA Cup, Carabao Cup for England. Would need different plan/add-on."
+    }
+  ]
+}

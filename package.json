@@ -3,6 +3,14 @@
   "version": "0.1.1",
   "private": true,
   "dependencies": {
+    "@radix-ui/react-avatar": "^1.1.10",
+    "@radix-ui/react-checkbox": "^1.3.3",
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-label": "^2.1.7",
+    "@radix-ui/react-progress": "^1.1.7",
+    "@radix-ui/react-select": "^2.2.6",
+    "@radix-ui/react-slot": "^1.2.3",
+    "@radix-ui/react-tabs": "^1.1.13",
     "@supabase/supabase-js": "^2.57.4",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.8.0",
@@ -12,11 +20,16 @@
     "@types/node": "^18.19.0",
     "@types/react": "^19.1.12",
     "@types/react-dom": "^19.1.9",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "dotenv": "^17.2.2",
+    "lucide-react": "^0.544.0",
+    "node-fetch": "^2.7.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-router-dom": "^7.8.2",
     "react-scripts": "5.0.1",
+    "tailwind-merge": "^3.3.1",
     "typescript": "^4.9.5",
     "web-vitals": "^3.0.0"
   },
@@ -39,7 +52,10 @@
     "teams:backfill": "node scripts/maintenance/team-metadata-backfill.mjs",
     "teams:backfill:dry": "node scripts/maintenance/team-metadata-backfill.mjs --dry-run",
     "verify:data": "node scripts/verification/data-integrity-check.mjs",
-    "generate:sitemaps": "node scripts/generate_sitemaps.mjs"
+    "generate:sitemaps": "node scripts/generate_sitemaps.mjs",
+    "cleanup": "node scripts/cleanup.js",
+    "cleanup:dry": "node scripts/cleanup.js --dry-run",
+    "cleanup:verbose": "node scripts/cleanup.js --dry-run --verbose"
   },
   "eslintConfig": {
     "extends": [
@@ -58,5 +74,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "^0.5.19"
   }
 }

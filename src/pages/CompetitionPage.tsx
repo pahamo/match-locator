@@ -4,11 +4,14 @@ import { getSimpleFixtures, getSimpleCompetitions } from '../services/supabase-s
 import { getTeams } from '../services/supabase';
 import type { SimpleFixture, Competition, Team } from '../types';
 import Header from '../components/Header';
+import Breadcrumbs from '../components/Breadcrumbs';
 import StructuredData from '../components/StructuredData';
 import { FixtureCardSkeleton } from '../components/SkeletonLoader';
-import FixtureCard from '../design-system/components/FixtureCard';
-import { getCompetitionLogo } from '../config/competitions';
+import { getCompetitionLogo, getCompetitionConfig } from '../config/competitions';
 import { generateCompetitionMeta, updateDocumentMeta } from '../utils/seo';
+import { generateBreadcrumbs } from '../utils/breadcrumbs';
+import LeagueStandings from '../components/LeagueStandings';
+import MatchdaySection from '../components/MatchdaySection';
 
 const CompetitionPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -68,23 +71,6 @@ const CompetitionPage: React.FC = () => {
     loadCompetitionData();
   }, [loadCompetitionData]);
 
-
-  const getUpcomingFixtures = (fixtures: SimpleFixture[], limit = 5) => {
-    const now = new Date();
-    return fixtures
-      .filter(f => new Date(f.kickoff_utc) >= now)
-      .slice(0, limit);
-  };
-
-  const getRecentResults = (fixtures: SimpleFixture[], limit = 5) => {
-    const now = new Date();
-    return fixtures
-      .filter(f => new Date(f.kickoff_utc) < now)
-      .slice(-limit)
-      .reverse();
-  };
-
-
   if (loading) {
     return (
       <div>
@@ -122,9 +108,6 @@ const CompetitionPage: React.FC = () => {
     );
   }
 
-  const upcomingFixtures = getUpcomingFixtures(fixtures);
-  const recentResults = getRecentResults(fixtures);
-
   return (
     <div>
       <StructuredData
@@ -143,13 +126,9 @@ const CompetitionPage: React.FC = () => {
       <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
         {/* Competition Header */}
         <div style={{ marginBottom: '2rem' }}>
-          <nav style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '1rem' }}>
-            <a href="/competitions" style={{ color: '#6366f1', textDecoration: 'none' }}>
-              Competitions
-            </a>
-            {' > '}
-            <span>{competition.name}</span>
-          </nav>
+          <Breadcrumbs items={generateBreadcrumbs(window.location.pathname, {
+            competitionName: competition.name
+          })} />
 
           <div style={{
             display: 'flex',
@@ -187,74 +166,24 @@ const CompetitionPage: React.FC = () => {
           )}
         </div>
 
+        {/* Matchday Section - Upcoming and Latest */}
+        <div style={{ marginBottom: '2rem' }}>
+          <MatchdaySection
+            fixtures={fixtures}
+            competitionName={competition.name}
+          />
+        </div>
 
-        {/* Main Content Grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '2rem'
-        }}>
-          {/* Fixtures Section */}
-          <div>
-            {/* Upcoming Fixtures */}
+        {/* League Standings or Teams List */}
+        <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+          {slug && getCompetitionConfig(slug)?.seasonId ? (
             <section style={{ marginBottom: '2rem' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem' }}>
-                Upcoming Fixtures
-              </h2>
-              {upcomingFixtures.length > 0 ? (
-                <div>
-                  {upcomingFixtures.map((fixture) => (
-                    <FixtureCard
-                      key={fixture.id}
-                      fixture={fixture}
-                      variant="compact"
-                      showMatchweek={true}
-                    />
-                  ))}
-                  <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-                    <a
-                      href="/fixtures"
-                      style={{
-                        color: '#6366f1',
-                        textDecoration: 'none',
-                        fontSize: '0.875rem',
-                        fontWeight: '500'
-                      }}
-                    >
-                      View All Fixtures →
-                    </a>
-                  </div>
-                </div>
-              ) : (
-                <p style={{ color: '#6b7280' }}>No upcoming fixtures scheduled.</p>
-              )}
+              <LeagueStandings
+                seasonId={getCompetitionConfig(slug)!.seasonId!}
+                competitionName={competition.name}
+              />
             </section>
-
-            {/* Recent Results */}
-            <section>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem' }}>
-                Recent Results
-              </h2>
-              {recentResults.length > 0 ? (
-                <div>
-                  {recentResults.map((fixture) => (
-                    <FixtureCard
-                      key={fixture.id}
-                      fixture={fixture}
-                      variant="compact"
-                      showMatchweek={true}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <p style={{ color: '#6b7280' }}>No recent results available.</p>
-              )}
-            </section>
-          </div>
-
-          {/* Sidebar */}
-          <div>
-            {/* Teams in Competition */}
+          ) : (
             <section style={{
               padding: '1.5rem',
               backgroundColor: '#f9fafb',
@@ -308,7 +237,7 @@ const CompetitionPage: React.FC = () => {
                 )}
               </div>
             </section>
-          </div>
+          )}
         </div>
       </div>
     </div>

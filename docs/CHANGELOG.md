@@ -15,6 +15,25 @@ This changelog follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ---
 
+## [2.2.0] - 2025-09-26 - Database Analysis & Data Management
+
+### Added
+- Database analysis page (`/database-analysis`) for analyzing team-competition relationships
+- Admin data fix tool (`/admin/fix-data`) for automatically correcting team competition_id assignments
+- Enhanced admin dashboard with links to new database tools
+
+### Fixed
+- Champions League page now extracts teams from fixtures when competition_id is missing
+- Corrected variable reference in Champions League meta description
+- Resolved TypeScript compilation errors in Champions League page
+- Improved Champions League team visibility regardless of fixture availability
+
+### Changed
+- Champions League page now uses fixture-based team discovery as fallback
+- Updated admin interface to include database management tools
+
+---
+
 ## [2.1.0] - 2025-09-17 - Documentation Consolidation
 
 ### Added

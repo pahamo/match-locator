@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { tokens } from '../tokens';
 import type { Team } from '../../types';
 import { getDisplayTeamName } from '../../utils/teamNames';
+import { getTeamUrlSlug } from '../../utils/slugUtils';
 
 export interface ClubCardProps {
   team: Team;
@@ -112,7 +113,7 @@ const ClubCard: React.FC<ClubCardProps> = ({
   
   return (
     <Link
-      to={`/clubs/${team.slug}`}
+      to={`/club/${getTeamUrlSlug(team)}`}
       className={`club-card club-card--${variant} ${className}`}
       style={baseCardStyle}
       onMouseEnter={(e) => {

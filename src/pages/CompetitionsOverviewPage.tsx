@@ -3,9 +3,11 @@ import { Link } from 'react-router-dom';
 import { getSimpleCompetitions } from '../services/supabase-simple';
 import type { Competition } from '../types';
 import Header from '../components/Header';
+import Breadcrumbs from '../components/Breadcrumbs';
 import { FixtureCardSkeleton } from '../components/SkeletonLoader';
 import { getCompetitionLogo, getCompetitionIcon, getCompetitionDescription } from '../config/competitions';
 import { generateCompetitionsOverviewMeta, updateDocumentMeta } from '../utils/seo';
+import { generateBreadcrumbs } from '../utils/breadcrumbs';
 
 const CompetitionsOverviewPage: React.FC = () => {
   const [competitions, setCompetitions] = useState<Competition[]>([]);
@@ -80,6 +82,7 @@ const CompetitionsOverviewPage: React.FC = () => {
     <div>
       <Header />
       <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+        <Breadcrumbs items={generateBreadcrumbs(window.location.pathname)} />
         <h1 style={{ marginBottom: '1rem' }}>Football Competitions</h1>
         <p style={{ marginBottom: '2rem', color: '#6b7280' }}>
           Follow fixtures, results, and TV schedules across all major football competitions.

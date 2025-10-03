@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getFixtures } from '../services/supabase';
+import { getFixtures, getTeams } from '../services/supabase';
 import type { Fixture, Team } from '../types';
 import Header from '../components/Header';
+import Breadcrumbs from '../components/Breadcrumbs';
 import StructuredData from '../components/StructuredData';
 import { updateDocumentMeta } from '../utils/seo';
+import { generateBreadcrumbs } from '../utils/breadcrumbs';
 
 interface TeamMatchup {
   fixture: Fixture;
@@ -19,65 +21,66 @@ const ChampionsLeagueGroupStagePage: React.FC = () => {
   const [expandedTeam, setExpandedTeam] = useState<number | null>(null);
 
   useEffect(() => {
-    const loadFixtures = async () => {
+    const loadData = async () => {
       try {
         setLoading(true);
         setError(null);
 
-        // Get Champions League fixtures (competition_id = 2)
+
+        // Get all Champions League fixtures first to determine which teams are participating
+        // Note: Teams table might not have competition_id = 2 set correctly
+
         // Set date range to cover entire current season
         const now = new Date();
         const seasonYear = now.getUTCMonth() >= 6 ? now.getUTCFullYear() : now.getUTCFullYear() - 1;
         const seasonStart = `${seasonYear}-08-01T00:00:00.000Z`;
         const seasonEnd = `${seasonYear + 1}-07-31T23:59:59.999Z`;
 
-        console.log('Loading Champions League fixtures for season:', seasonYear, 'from', seasonStart, 'to', seasonEnd);
 
+        // Get all Champions League fixtures (competition_id = 2)
         const fixturesData = await getFixtures({
           competitionId: 2,
           dateFrom: seasonStart,
           dateTo: seasonEnd,
-          limit: 200, // Increased limit for full season
+          limit: 300, // Increased limit for full season
           order: 'asc'
         });
 
-        console.log('Loaded fixtures count:', fixturesData.length);
-        console.log('Sample fixtures:', fixturesData.slice(0, 3));
 
-        // Filter for league stage only
-        const leagueStageFixtures = fixturesData.filter(f =>
-          f.stage === 'LEAGUE_STAGE' || f.round === 'LEAGUE_STAGE'
-        );
+        // Show all fixtures for now - don't filter by stage since we need to see what's available
+        // TODO: Re-enable stage filtering once we know the correct stage names in the data
+        const relevantFixtures = fixturesData; // Remove stage filtering temporarily
 
-        console.log('League stage fixtures after filtering:', leagueStageFixtures.length);
 
-        setFixtures(leagueStageFixtures);
+        setFixtures(relevantFixtures);
 
-        // Extract unique teams from fixtures
+        // Extract teams from Champions League fixtures since competition_id might not be set correctly
+        // This approach ensures we show teams that actually have Champions League fixtures
         const uniqueTeams = new Map<number, Team>();
-        leagueStageFixtures.forEach(fixture => {
+        relevantFixtures.forEach(fixture => {
           uniqueTeams.set(fixture.home.id, fixture.home);
           uniqueTeams.set(fixture.away.id, fixture.away);
         });
 
-        const sortedTeams = Array.from(uniqueTeams.values()).sort((a, b) => a.name.localeCompare(b.name));
-        setTeams(sortedTeams);
+        const teamsFromFixtures = Array.from(uniqueTeams.values()).sort((a, b) => a.name.localeCompare(b.name));
+        setTeams(teamsFromFixtures);
+
 
         // Update SEO meta tags
         updateDocumentMeta({
-          title: 'UEFA Champions League - League Stage Matrix | Match Locator',
-          description: 'UEFA Champions League league stage fixtures matrix. See who plays who in an easy grid view.'
+          title: 'UEFA Champions League - Teams & Fixtures Matrix | Match Locator',
+          description: `UEFA Champions League teams and fixtures matrix. View all ${teamsFromFixtures.length} teams and their matchups in an easy grid view.`
         });
 
       } catch (err) {
-        console.error('Failed to load Champions League fixtures:', err);
-        setError('Failed to load fixtures. Please try again later.');
+        console.error('Failed to load Champions League data:', err);
+        setError('Failed to load Champions League data. Please try again later.');
       } finally {
         setLoading(false);
       }
     };
 
-    loadFixtures();
+    loadData();
   }, []);
 
   // Helper function to find fixture between two teams
@@ -186,18 +189,9 @@ const ChampionsLeagueGroupStagePage: React.FC = () => {
 
       <main>
         <div className="wrap">
-          <div style={{ marginBottom: '24px' }}>
-            <Link
-              to="/competitions"
-              style={{
-                color: '#6366f1',
-                textDecoration: 'underline',
-                fontSize: '14px'
-              }}
-            >
-              ← All Competitions
-            </Link>
-          </div>
+          <Breadcrumbs items={generateBreadcrumbs(window.location.pathname, {
+            competitionName: 'UEFA Champions League'
+          })} />
 
           <h1 style={{
             marginBottom: '8px',

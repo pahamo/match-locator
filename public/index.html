@@ -4,21 +4,26 @@
     <meta charset="utf-8" />
 
     <!-- Comprehensive Favicon Implementation for Better Search Results -->
-    <!-- Cache-busting version: 20250925 -->
-    <link rel="icon" type="image/x-icon" href="/favicon.ico?v=20250925" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=20250925" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=20250925" />
-    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png?v=20250925" />
-    <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png?v=20250925" />
+    <!-- Cache-busting version: 1737811200 - Aggressive timestamp to force refresh -->
+    <!-- NOTE: Using only colored favicons, avoiding grayscale placeholders -->
 
-    <!-- Apple Touch Icons -->
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=20250925" />
+    <!-- Primary favicon - SVG for modern browsers (best quality) -->
+    <link rel="icon" type="image/svg+xml" href="/logo.svg?t=1737811200" />
 
-    <!-- Android/Chrome Icons -->
-    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png?v=20250925" />
+    <!-- Fallback - 512x512 colored PNG (confirmed colored format) -->
+    <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png?t=1737811200" />
 
-    <!-- SVG Icon for modern browsers -->
-    <link rel="icon" type="image/svg+xml" href="/logo.svg?v=20250925" />
+    <!-- Use 512x512 for all sizes until placeholder PNGs are replaced -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon.png?t=1737811200" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?t=1737811200" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png?t=1737811200" />
+
+    <!-- Traditional ICO favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico?t=1737811200" />
+    <link rel="shortcut icon" href="/favicon.ico?t=1737811200" />
+
+    <!-- Apple Touch Icons - may be grayscale placeholder -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon.png?t=1737811200" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="theme-color" content="#6366f1" />
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -31,13 +36,13 @@
     <meta property="og:title" content="Match Locator - UK football TV schedule">
     <meta property="og:description" content="Find which broadcaster (Sky Sports, TNT Sports, BBC) shows every Premier League match.">
     <meta property="og:url" content="https://matchlocator.com">
-    <meta property="og:image" content="https://matchlocator.com/favicon-192x192.png?v=20250925">
+    <meta property="og:image" content="https://matchlocator.com/favicon-192x192.png?t=1737811200">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Match Locator - UK football TV schedule">
     <meta name="twitter:description" content="Find which broadcaster shows every Premier League match.">
-    <meta name="twitter:image" content="https://matchlocator.com/favicon-192x192.png?v=20250925">
+    <meta name="twitter:image" content="https://matchlocator.com/favicon-192x192.png?t=1737811200">
     <meta
       name="description"
       content="Match Locator - UK football TV schedule. Find which broadcaster (Sky Sports, TNT Sports, BBC) shows every Premier League match."
@@ -48,10 +53,17 @@
       *{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;color:#1a202c;background:#fff;opacity:0;transition:opacity 0.3s ease-in-out}body.loaded{opacity:1}.wrap{max-width:1200px;margin:0 auto;padding:0 16px}header{background:#fff;border-bottom:1px solid #e2e8f0;padding:clamp(8px,2vw,16px) clamp(16px,4vw,24px);display:flex;justify-content:space-between;align-items:center;flex-wrap:nowrap;gap:12px;min-height:clamp(48px,6vh,56px);position:relative}.header-content{display:flex;align-items:center;justify-content:space-between;height:60px}.skeleton{background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:loading 1.5s infinite;border-radius:4px}@keyframes loading{0%{background-position:200% 0}100%{background-position:-200% 0}}.fixture-card-skeleton{height:120px;margin-bottom:12px;border-radius:8px;border:1px solid #e5e7eb}h1{font-size:clamp(1.5rem,5vw,1.875rem);font-weight:700;margin:0 0 24px 0;line-height:1.2}img{display:block;max-width:100%;height:auto}img[alt*="crest"]{width:24px;height:24px;aspect-ratio:1/1;object-fit:contain;flex-shrink:0}.day-group-card{min-height:120px;border-radius:16px;border:1px solid rgba(229,231,235,0.7);background:rgba(255,255,255,0.7);backdrop-filter:blur(8px);padding:clamp(8px,2vw,16px);margin-bottom:24px}nav{display:flex;gap:clamp(8px,2vw,16px);align-items:center;flex-shrink:0}@media(max-width:768px){nav{display:none}}button[aria-label*="menu"]{display:none;align-items:center;justify-content:center;background:transparent;border:1px solid #e5e7eb;border-radius:6px;width:36px;height:36px;cursor:pointer;color:#6366f1;padding:0}@media(max-width:768px){button[aria-label*="menu"]{display:flex}}@media(max-width:640px){.broadcaster-badges{display:none!important}}@keyframes pulse-red{0%,100%{box-shadow:0 4px 20px rgba(239,68,68,0.25),0 0 0 1px rgba(239,68,68,0.1)}50%{box-shadow:0 6px 25px rgba(239,68,68,0.4),0 0 0 2px rgba(239,68,68,0.2)}}@keyframes pulse-glow{0%,100%{box-shadow:0 2px 8px rgba(239,68,68,0.4);transform:scale(1)}50%{box-shadow:0 3px 12px rgba(239,68,68,0.6);transform:scale(1.02)}}@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}.image-loader{width:16px;height:16px;border:2px solid #e5e7eb;border-top:2px solid #3b82f6;border-radius:50%;animation:spin 1s linear infinite}.image-placeholder{background-color:#f3f4f6;border-radius:4px;display:flex;align-items:center;justify-content:center;position:relative}.optimized-image{object-fit:contain;transition:opacity 0.2s ease-in-out}.fixture-card{background:white;border:1px solid #e2e8f0;border-radius:6px;padding:12px;margin-bottom:6px;display:flex;align-items:center;gap:12px;min-height:auto;position:relative}.fixture-card.minimized{padding:8px;gap:8px;margin-bottom:4px;opacity:0.7;font-size:13px}.fixture-card.first{border-radius:6px 6px 0 0;margin-bottom:1px}.fixture-card.middle{border-radius:0;margin-bottom:1px}.fixture-card.last{border-radius:0 0 6px 6px}.teams-section{display:flex;align-items:center;gap:8px;flex:1;min-width:0}.team-container{display:flex;align-items:center;gap:4px;flex:1;min-width:0}.team-name{font-size:14px;font-weight:500;line-height:1.3;word-break:break-word;hyphens:auto;min-width:0}.team-name.minimized{font-size:13px}.vs-divider{font-size:12px;color:#9ca3af;font-weight:500;flex-shrink:0}.away-team{justify-content:flex-end}.live-indicator{width:8px;height:8px;background:#ef4444;border-radius:50%;flex-shrink:0}.live-indicator.minimized{width:6px;height:6px}.live-badge{font-size:12px;padding:2px 6px;border-radius:4px;background:#fee2e2;color:#dc2626;font-weight:500}.broadcaster-info{display:flex;align-items:center;gap:8px;flex-shrink:0}.broadcaster-badge{font-size:12px;padding:2px 6px;border-radius:4px;font-weight:500}.broadcaster-badge.available{background:#dcfce7;color:#16a34a}.broadcaster-badge.blackout{background:#fee2e2;color:#dc2626}.broadcaster-badge.tbd{background:#fef3c7;color:#d97706}.view-button{color:#6366f1;text-decoration:none;font-size:12px;font-weight:500;padding:4px 8px;border-radius:4px;border:1px solid #6366f1;transition:all 0.2s;display:inline-block;align-items:center;justify-content:center;margin-left:8px}.view-button:hover{background:#6366f1;color:white}.matchweek-badge{font-size:12px;color:#6b7280;font-weight:500;background:#f3f4f6;padding:2px 6px;border-radius:4px;flex-shrink:0}.flex-shrink-0{flex-shrink:0}@media(max-width:640px){.broadcaster-info{display:none}.view-button{font-size:14px;padding:8px 16px;display:inline-flex;min-height:44px;margin-left:0}}
     </style>
     
-    <!-- Preconnect to external resources -->
+    <!-- Preconnect to external resources for faster third-party loads -->
     <link rel="preconnect" href="https://analytics.kinotto.co" crossorigin>
     <link rel="preconnect" href="https://nkfuzkrazehjivzmdrvt.supabase.co" crossorigin>
     <link rel="dns-prefetch" href="https://crests.football-data.org">
+
+    <!-- Prefetch DNS for potential team crest CDNs -->
+    <link rel="dns-prefetch" href="https://upload.wikimedia.org">
+
+    <!-- Resource hints for improved navigation -->
+    <link rel="prefetch" href="/manifest.json">
+    <link rel="prefetch" href="/sw.js">
     
     <!-- Build process will inject CSS and JS files here -->
     
@@ -68,9 +80,20 @@
     -->
     <title>Match Locator - UK football TV schedule</title>
     
-    <!-- Service Worker Registration -->
+    <!-- Service Worker Registration - DISABLED IN DEVELOPMENT -->
     <script>
-      if ('serviceWorker' in navigator) {
+      // Unregister service worker in development to prevent caching issues
+      if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          for(let registration of registrations) {
+            registration.unregister();
+            console.log('SW unregistered for development');
+          }
+        });
+      }
+
+      // Only register in production
+      if ('serviceWorker' in navigator && window.location.hostname !== 'localhost') {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('/sw.js')
             .then((registration) => {

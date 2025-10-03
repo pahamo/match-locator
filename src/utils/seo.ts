@@ -52,6 +52,38 @@ export const cleanTeamName = (teamName: string): string => {
 
 // Format team name for SEO titles (shorter version)
 export const formatTeamNameShort = (teamName: string): string => {
+  // Specific team name mappings for common shortenings
+  const teamMappings: Record<string, string> = {
+    'Brighton & Hove Albion': 'Brighton',
+    'Brighton & Hove Albion FC': 'Brighton',
+    'Wolverhampton Wanderers': 'Wolves',
+    'Wolverhampton Wanderers FC': 'Wolves',
+    'Tottenham Hotspur': 'Tottenham',
+    'Tottenham Hotspur FC': 'Tottenham',
+    'West Ham United': 'West Ham',
+    'West Ham United FC': 'West Ham',
+    'Newcastle United': 'Newcastle',
+    'Newcastle United FC': 'Newcastle',
+    'Manchester United': 'Man Utd',
+    'Manchester United FC': 'Man Utd',
+    'Manchester City': 'Man City',
+    'Manchester City FC': 'Man City',
+    'Leicester City': 'Leicester',
+    'Leicester City FC': 'Leicester',
+    'Norwich City': 'Norwich',
+    'Norwich City FC': 'Norwich',
+    'Sheffield United': 'Sheffield Utd',
+    'Sheffield United FC': 'Sheffield Utd',
+    'Nottingham Forest': 'Forest',
+    'Nottingham Forest FC': 'Forest',
+  };
+
+  // Check for exact match first
+  if (teamMappings[teamName]) {
+    return teamMappings[teamName];
+  }
+
+  // Otherwise apply generic cleaning
   return cleanTeamName(teamName)
     .replace(/\s+Football Club$/i, '')
     .replace(/\s+Association Football Club$/i, '')
@@ -336,12 +368,12 @@ export const generateMatchMeta = (fixture: Fixture) => {
       ? fixture.providers_uk.map(p => p.name).join(', ')
       : 'Broadcaster to be confirmed';
 
-  // Optimized description: "Find out where to watch [Home] vs [Away] on [Date]. Live on [Broadcaster] at [Time]. Get full TV schedule and streaming info."
+  // Optimized description with urgency and channel emphasis
   const description = fixture.blackout?.is_blackout
-    ? `Find out where to watch ${homeShort} vs ${awayShort} on ${date}. Not shown on UK TV. Get full TV schedule and streaming info.`
+    ? `${homeShort} vs ${awayShort} - ${date} at ${time}. Not shown on UK TV. Find alternative viewing options and full match preview.`
     : fixture.providers_uk.length > 0
-      ? `Find out where to watch ${homeShort} vs ${awayShort} on ${date}. Live on ${broadcasterText} at ${time}. Get full TV schedule and streaming info.`
-      : `Find out where to watch ${homeShort} vs ${awayShort} on ${date}. Broadcaster to be confirmed. Get full TV schedule and streaming info.`;
+      ? `${homeShort} vs ${awayShort} LIVE on ${broadcasterText} - ${date} at ${time}. Watch on UK TV. Get ${broadcasterText}, team news & streaming guide.`
+      : `${homeShort} vs ${awayShort} - ${date} at ${time}. UK TV channel TBC. Check latest broadcast info, kick-off time & how to watch.`;
 
   const ogImage = fixture.home.crest || fixture.away.crest || '/favicon.png';
   const canonical = `${CANONICAL_BASE}${generateSeoMatchUrl(fixture)}`;
@@ -371,12 +403,12 @@ export const generateSimpleMatchMeta = (fixture: SimpleFixture) => {
   // Build optimized title: "[Home] vs [Away] TV Schedule - [Broadcaster] | [Date] | Match Locator"
   const title = `${homeShort} vs ${awayShort} TV Schedule - ${broadcasterForTitle} | ${date} | Match Locator`;
 
-  // Optimized description
+  // Optimized description with urgency and channel emphasis
   const description = fixture.isBlackout
-    ? `Find out where to watch ${homeShort} vs ${awayShort} on ${date}. Not shown on UK TV. Get full TV schedule and streaming info.`
+    ? `${homeShort} vs ${awayShort} - ${date} at ${time}. Not shown on UK TV. Find alternative viewing options and full match preview.`
     : fixture.broadcaster
-      ? `Find out where to watch ${homeShort} vs ${awayShort} on ${date}. Live on ${fixture.broadcaster} at ${time}. Get full TV schedule and streaming info.`
-      : `Find out where to watch ${homeShort} vs ${awayShort} on ${date}. Broadcaster to be confirmed. Get full TV schedule and streaming info.`;
+      ? `${homeShort} vs ${awayShort} LIVE on ${fixture.broadcaster} - ${date} at ${time}. Watch on UK TV. Get ${fixture.broadcaster}, team news & streaming guide.`
+      : `${homeShort} vs ${awayShort} - ${date} at ${time}. UK TV channel TBC. Check latest broadcast info, kick-off time & how to watch.`;
 
   const ogImage = fixture.home_crest || fixture.away_crest || '/favicon.png';
   const canonical = `${CANONICAL_BASE}${generateSeoSimpleMatchUrl(fixture)}`;
@@ -392,15 +424,27 @@ export const generateSimpleMatchMeta = (fixture: SimpleFixture) => {
   };
 };
 
-export const generateTeamMeta = (team: Team, upcomingCount: number = 0) => {
+export const generateTeamMeta = (
+  team: Team,
+  upcomingCount: number = 0,
+  nextMatch?: { opponent: string; date: string; channel?: string }
+) => {
   const teamShort = formatTeamNameShort(team.name);
   const season = getCurrentSeason();
 
-  // Optimized title: "[Team] TV Schedule 2024/25 - Where to Watch on TV | Match Locator"
-  const title = `${teamShort} TV Schedule ${season} - Where to Watch on TV | Match Locator`;
+  // Optimized title targeting "what time is [team] playing" searches
+  const title = `${teamShort} TV Schedule - What Time Are ${teamShort} Playing? | Match Locator`;
 
-  // Optimized description: "Never miss a [Team] match. Complete TV schedule with UK channels and streaming info. Sky Sports, TNT Sports, Amazon Prime coverage."
-  const description = `Never miss a ${teamShort} match. Complete TV schedule ${season} with UK channels and streaming info. Sky Sports, TNT Sports, Amazon Prime coverage.`;
+  // Enhanced description with next match info if available
+  let description: string;
+  if (nextMatch) {
+    const channelInfo = nextMatch.channel
+      ? ` on ${nextMatch.channel}`
+      : ' - channel TBC';
+    description = `${teamShort} next play ${nextMatch.opponent} ${nextMatch.date}${channelInfo}. Complete ${season} TV schedule with all fixtures, kick-off times & UK broadcast info.`;
+  } else {
+    description = `What time is ${teamShort} playing? Get ${teamShort}'s complete TV schedule ${season} with kick-off times and UK channels. Sky Sports, TNT Sports, Amazon Prime coverage. Never miss a match.`;
+  }
 
   const canonical = `${CANONICAL_BASE}/clubs/${team.slug}`;
 
@@ -416,11 +460,15 @@ export const generateTeamMeta = (team: Team, upcomingCount: number = 0) => {
 };
 
 export const generateHomeMeta = () => {
-  // Optimized homepage title - focus on "Today's Matches"
-  const title = 'Football TV Schedule UK | Today\'s Matches - Where to Watch | Match Locator';
+  // Get current date for dynamic title
+  const today = new Date();
+  const dayName = today.toLocaleDateString('en-GB', { weekday: 'long' });
 
-  // Optimized homepage description
-  const description = 'UK\'s football TV schedule. Find out what matches are on TV today, tonight and this week. Premier League, Champions League on Sky Sports, TNT Sports, Amazon Prime.';
+  // Optimized homepage title - focus on "Today's Matches"
+  const title = `Football on TV Today ${dayName} - UK Schedule | Sky Sports, TNT | Match Locator`;
+
+  // Optimized homepage description with urgency and channel names
+  const description = `${dayName}'s football on UK TV. Live matches today on Sky Sports, TNT Sports, Amazon Prime. Get kick-off times, channels & how to watch Premier League, Champions League now.`;
 
   const canonical = `${CANONICAL_BASE}/`;
 
@@ -442,7 +490,7 @@ export const generateFixturesMeta = () => {
   // Optimized fixtures page description
   const description = 'Complete football TV schedule and fixtures from Premier League, Champions League and more. Filter by competition, team, and broadcaster. Sky Sports, TNT Sports viewing guide.';
 
-  const canonical = `${CANONICAL_BASE}/fixtures`;
+  const canonical = `${CANONICAL_BASE}/matches`;
 
   return {
     title,
@@ -535,4 +583,16 @@ export const generatePageMeta = (params: {
     ogImage: '/favicon.png',
     ogUrl: canonical
   };
+};
+
+// Get list of popular Premier League teams (for internal linking fallback)
+export const getPopularTeamSlugs = (): string[] => {
+  return [
+    'arsenal',
+    'liverpool',
+    'manchester-city',
+    'manchester-united',
+    'chelsea',
+    'tottenham-hotspur'
+  ];
 };

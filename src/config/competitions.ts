@@ -15,21 +15,25 @@ export interface CompetitionConfig {
     primary: string;
     secondary: string;
   };
+  seasonId?: number; // Sports Monks season ID for current season
 }
 
+// Note: Season IDs are for 2025/26 season. Update annually.
+// Run scripts/fetch-season-ids.mjs to get updated season IDs
 export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
   'premier-league': {
     id: 1,
     slug: 'premier-league',
     name: 'Premier League',
     shortName: 'EPL',
-    logo: 'https://cdn.brandfetch.io/id3ei9Uwhu/theme/dark/id4u-3dVa7.svg?c=1bxid64Mup7aczewSAYMX&t=1737356816110',
+    logo: 'https://cdn.sportmonks.com/images/soccer/leagues/8/8.png',
     icon: '⚽',
     description: 'The top flight of English football with 20 teams competing for the title.',
     colors: {
       primary: '#37003c',
       secondary: '#00ff87'
-    }
+    },
+    seasonId: 25583 // 2025/26 season
   },
 
   'champions-league': {
@@ -37,13 +41,14 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     slug: 'champions-league',
     name: 'UEFA Champions League',
     shortName: 'UCL',
-    logo: 'https://upload.wikimedia.org/wikipedia/en/f/f5/UEFA_Champions_League.svg',
+    logo: 'https://cdn.sportmonks.com/images/soccer/leagues/2.png',
     icon: '🏆',
     description: 'Europe\'s premier club competition featuring the best teams from across the continent.',
     colors: {
       primary: '#0d1c4b',
       secondary: '#ffffff'
-    }
+    },
+    seasonId: 25580 // 2025/26 season
   },
 
   'bundesliga': {
@@ -51,13 +56,14 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     slug: 'bundesliga',
     name: 'Bundesliga',
     shortName: 'BUN',
-    logo: 'https://cdn.brandfetch.io/idULAJYHGL/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1756046283501',
+    logo: 'https://cdn.sportmonks.com/images/soccer/leagues/18/82.png',
     icon: '🇩🇪',
     description: 'Germany\'s premier football league featuring 18 teams.',
     colors: {
       primary: '#d20515',
       secondary: '#000000'
-    }
+    },
+    seasonId: 25646 // 2025/26 season (fixed from 25580 which was UCL)
   },
 
   'la-liga': {
@@ -65,13 +71,14 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     slug: 'la-liga',
     name: 'La Liga',
     shortName: 'LAL',
-    logo: 'https://cdn.brandfetch.io/idB6wr4svd/w/820/h/750/theme/dark/logo.png?c=1bxid64Mup7aczewSAYMX&t=1754867400907',
+    logo: 'https://cdn.sportmonks.com/images/soccer/leagues/20/564.png',
     icon: '🇪🇸',
     description: 'Spain\'s top football division with the world\'s best players.',
     colors: {
       primary: '#ee8707',
       secondary: '#ffffff'
-    }
+    },
+    seasonId: 25659 // 2025/26 season
   },
 
   'serie-a': {
@@ -79,13 +86,14 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     slug: 'serie-a',
     name: 'Serie A',
     shortName: 'SER',
-    logo: 'https://cdn.brandfetch.io/id_NHLWhOF/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1751361578120',
+    logo: 'https://cdn.sportmonks.com/images/soccer/leagues/0/384.png',
     icon: '🇮🇹',
     description: 'Italy\'s premier football league known for tactical excellence.',
     colors: {
       primary: '#004c99',
       secondary: '#ffffff'
-    }
+    },
+    seasonId: 25533 // 2025/26 season
   },
 
   'ligue-1': {
@@ -93,13 +101,14 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     slug: 'ligue-1',
     name: 'Ligue 1',
     shortName: 'L1',
-    logo: 'https://upload.wikimedia.org/wikipedia/fr/d/d9/Logo_Ligue_1_2024.svg',
+    logo: 'https://cdn.sportmonks.com/images/soccer/leagues/13/301.png',
     icon: '🇫🇷',
     description: 'France\'s top football division featuring PSG and top European talent.',
     colors: {
       primary: '#dae025',
       secondary: '#000000'
-    }
+    },
+    seasonId: 25651 // 2025/26 season
   },
 
   'primeira-liga': {
@@ -107,7 +116,7 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     slug: 'primeira-liga',
     name: 'Primeira Liga',
     shortName: 'POR',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/5/5a/S%C3%ADmbolo_da_Liga_Portuguesa_de_Futebol_Profissional.png',
+    logo: 'https://cdn.sportmonks.com/images/soccer/leagues/14/462.png',
     icon: '🇵🇹',
     description: 'Portugal\'s premier football league featuring Porto, Benfica, and Sporting CP.',
     colors: {
@@ -121,7 +130,7 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     slug: 'eredivisie',
     name: 'Eredivisie',
     shortName: 'ERE',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/4/46/Eredivisie_nuovo_logo.png',
+    logo: 'https://cdn.sportmonks.com/images/soccer/leagues/72.png',
     icon: '🇳🇱',
     description: 'Netherlands\' top football division known for developing young talent.',
     colors: {
@@ -135,31 +144,34 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     slug: 'championship',
     name: 'Championship',
     shortName: 'CHA',
-    logo: 'https://upload.wikimedia.org/wikipedia/fr/c/c3/EFL_Championship.svg',
+    logo: 'https://cdn.sportmonks.com/images/soccer/leagues/9/9.png',
     icon: '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
     description: 'England\'s second tier featuring 24 teams competing for Premier League promotion.',
     colors: {
       primary: '#1e3a8a',
       secondary: '#ffffff'
-    }
+    },
+    seasonId: 25648 // 2025/26 season
   },
 
-  // Legacy competitions for backward compatibility
   'europa-league': {
-    id: 10,
+    id: 11,
     slug: 'europa-league',
     name: 'UEFA Europa League',
     shortName: 'UEL',
+    logo: 'https://cdn.sportmonks.com/images/soccer/leagues/5/5.png',
     icon: '🌟',
     description: 'UEFA\'s second-tier European competition for clubs.',
     colors: {
       primary: '#ff6600',
       secondary: '#ffffff'
-    }
+    },
+    seasonId: 25582 // 2025/26 season
   },
 
+  // Legacy competitions for backward compatibility
   'fa-cup': {
-    id: 11,
+    id: 10,
     slug: 'fa-cup',
     name: 'FA Cup',
     shortName: 'FAC',

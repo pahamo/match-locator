@@ -1,5 +1,7 @@
 # https://www.robotstxt.org/robotstxt.html
 # LIVE: Allow crawling (flip back to Disallow:/ during prelaunch/testing)
 User-agent: *
-Disallow: /matches/*
+Allow: /
+Disallow: /admin
+Disallow: /api
 Sitemap: https://matchlocator.com/sitemap.xml

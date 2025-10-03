@@ -84,7 +84,7 @@ const TomorrowFixturesPage: React.FC = () => {
     const meta = {
       title: 'Tomorrow\'s Football on TV - UK Schedule | Match Locator',
       description: `Tomorrow's football matches on TV - ${formattedDate}. Complete UK TV schedule for Sky Sports, TNT Sports, BBC, and more. Plan your viewing.`,
-      canonical: `${process.env.REACT_APP_CANONICAL_BASE || 'https://matchlocator.com'}/fixtures/tomorrow`,
+      canonical: `${process.env.REACT_APP_CANONICAL_BASE || 'https://matchlocator.com'}/matches/tomorrow`,
       ogTitle: 'Tomorrow\'s Football on TV - UK Schedule',
       ogDescription: `Tomorrow's football matches on TV - ${formattedDate}. Complete UK TV schedule.`,
       ogImage: `${process.env.REACT_APP_CANONICAL_BASE || 'https://matchlocator.com'}/og-tomorrow-fixtures.jpg`
@@ -150,7 +150,7 @@ const TomorrowFixturesPage: React.FC = () => {
     return (
       <div>
         <Header />
-        <Breadcrumbs items={generateBreadcrumbs('/fixtures/tomorrow')} />
+        <Breadcrumbs items={generateBreadcrumbs('/matches/tomorrow')} />
         <main className="wrap" style={{ paddingTop: 'var(--layout-page-top-margin)' }}>
           <div style={{ textAlign: 'center', padding: '64px 20px' }}>
             <h1>Loading tomorrow's fixtures...</h1>
@@ -164,7 +164,7 @@ const TomorrowFixturesPage: React.FC = () => {
     return (
       <div>
         <Header />
-        <Breadcrumbs items={generateBreadcrumbs('/fixtures/tomorrow')} />
+        <Breadcrumbs items={generateBreadcrumbs('/matches/tomorrow')} />
         <main className="wrap" style={{ paddingTop: 'var(--layout-page-top-margin)' }}>
           <div style={{ textAlign: 'center', padding: '64px 20px' }}>
             <h1>Error</h1>
@@ -195,7 +195,7 @@ const TomorrowFixturesPage: React.FC = () => {
     <div>
       <Header />
       <main className="wrap" style={{ paddingTop: 'var(--layout-page-top-margin)' }}>
-        <Breadcrumbs items={generateBreadcrumbs('/fixtures/tomorrow')} />
+        <Breadcrumbs items={generateBreadcrumbs('/matches/tomorrow')} />
         {/* Page Header */}
         <div style={{ marginBottom: '32px' }}>
           <h1 style={{
@@ -224,7 +224,7 @@ const TomorrowFixturesPage: React.FC = () => {
               fontSize: '14px',
               flexWrap: 'wrap'
             }}>
-              <span>Last updated: {lastUpdated.toLocaleTimeString('en-GB')}</span>
+              <span>Last updated: {lastUpdated.toLocaleTimeString()}</span>
               {timeUntilFirstMatch && timeUntilFirstMatch > 0 && (
                 <span>First match in: {formatTimeUntilFirstMatch(timeUntilFirstMatch)}</span>
               )}
@@ -240,7 +240,7 @@ const TomorrowFixturesPage: React.FC = () => {
           flexWrap: 'wrap'
         }}>
           <Link
-            to="/fixtures/today"
+            to="/matches/today"
             style={{
               padding: '8px 16px',
               backgroundColor: 'var(--color-surface)',
@@ -255,7 +255,7 @@ const TomorrowFixturesPage: React.FC = () => {
             ← Today's Fixtures
           </Link>
           <Link
-            to="/fixtures"
+            to="/matches"
             style={{
               padding: '8px 16px',
               backgroundColor: 'var(--color-surface)',
@@ -293,7 +293,7 @@ const TomorrowFixturesPage: React.FC = () => {
             </p>
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
               <Link
-                to="/fixtures/today"
+                to="/matches/today"
                 style={{
                   padding: '12px 24px',
                   backgroundColor: 'var(--color-primary)',
@@ -306,7 +306,7 @@ const TomorrowFixturesPage: React.FC = () => {
                 Today's Fixtures
               </Link>
               <Link
-                to="/fixtures"
+                to="/matches"
                 style={{
                   padding: '12px 24px',
                   backgroundColor: 'var(--color-surface)',

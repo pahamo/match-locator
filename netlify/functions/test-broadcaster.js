@@ -13,7 +13,7 @@ exports.handler = async (event, context) => {
     // Test environment variables
     log('Environment check:');
     log(`URL: ${process.env.REACT_APP_SUPABASE_URL ? 'SET' : 'NOT SET'}`);
-    log(`KEY: ${process.env.SUPABASE_SERVICE_ROLE_KEY ? 'SET' : 'NOT SET'}`);
+    log(`KEY: ${process.env.SUPABASE_SERVICE_KEY ? 'SET' : 'NOT SET'}`);
 
     if (!process.env.REACT_APP_SUPABASE_URL) {
       log('ERROR: REACT_APP_SUPABASE_URL is missing');
@@ -23,11 +23,11 @@ exports.handler = async (event, context) => {
       };
     }
 
-    if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
-      log('ERROR: SUPABASE_SERVICE_ROLE_KEY is missing');
+    if (!process.env.SUPABASE_SERVICE_KEY) {
+      log('ERROR: SUPABASE_SERVICE_KEY is missing');
       return {
         statusCode: 500,
-        body: JSON.stringify({ logs, error: 'Missing SERVICE_ROLE_KEY' })
+        body: JSON.stringify({ logs, error: 'Missing SERVICE_KEY' })
       };
     }
 
@@ -35,7 +35,7 @@ exports.handler = async (event, context) => {
     log('Creating Supabase client...');
     const supabase = createClient(
       process.env.REACT_APP_SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY
+      process.env.SUPABASE_SERVICE_KEY
     );
     log('Supabase client created');
 
@@ -56,69 +56,13 @@ exports.handler = async (event, context) => {
 
     log(`Database test successful. Found ${data?.length || 0} records`);
 
-    // Test the update/insert operation
-    log('Testing update/insert operation...');
-
-    // First try to update existing record
-    const { data: updateData, error: updateError } = await supabase
-      .from('broadcasts')
-      .update({ provider_id: 1 })
-      .eq('fixture_id', 438)
-      .select();
-
-    if (updateError) {
-      log(`UPDATE FAILED: ${JSON.stringify(updateError, null, 2)}`);
-      return {
-        statusCode: 500,
-        body: JSON.stringify({
-          logs,
-          success: false,
-          updateError: updateError,
-          message: 'Update operation failed'
-        })
-      };
-    }
-
-    let finalData = updateData;
-
-    // If no rows were updated, insert a new record
-    if (!updateData || updateData.length === 0) {
-      log('No existing record found, attempting insert...');
-      const { data: insertData, error: insertError } = await supabase
-        .from('broadcasts')
-        .insert({
-          fixture_id: 438,
-          provider_id: 1
-        })
-        .select();
-
-      if (insertError) {
-        log(`INSERT FAILED: ${JSON.stringify(insertError, null, 2)}`);
-        return {
-          statusCode: 500,
-          body: JSON.stringify({
-            logs,
-            success: false,
-            insertError: insertError,
-            message: 'Insert operation failed'
-          })
-        };
-      }
-
-      log('INSERT SUCCESS!');
-      finalData = insertData;
-    } else {
-      log('UPDATE SUCCESS!');
-    }
-
     return {
       statusCode: 200,
       body: JSON.stringify({
         logs,
         success: true,
-        message: 'All tests passed including update/insert',
-        sampleData: data?.length,
-        finalData
+        message: 'All tests passed',
+        sampleData: data?.length
       })
     };
 

@@ -102,7 +102,7 @@ const ThisWeekendFixturesPage: React.FC = () => {
     const meta = {
       title: 'Football on TV This Weekend - UK Schedule | Match Locator',
       description: 'This weekend\'s football matches on TV - Friday evening through Sunday night. Complete UK TV schedule for Sky Sports, TNT Sports, BBC, and more.',
-      canonical: `${process.env.REACT_APP_CANONICAL_BASE || 'https://matchlocator.com'}/fixtures/this-weekend`,
+      canonical: `${process.env.REACT_APP_CANONICAL_BASE || 'https://matchlocator.com'}/matches/this-weekend`,
       ogTitle: 'Football on TV This Weekend - UK Schedule',
       ogDescription: 'This weekend\'s football matches on TV with complete UK broadcasting information.',
       ogImage: `${process.env.REACT_APP_CANONICAL_BASE || 'https://matchlocator.com'}/og-weekend-fixtures.jpg`
@@ -129,7 +129,7 @@ const ThisWeekendFixturesPage: React.FC = () => {
       <div>
         <StructuredData type="faq" />
         <Header />
-        <Breadcrumbs items={generateBreadcrumbs('/fixtures/this-weekend')} />
+        <Breadcrumbs items={generateBreadcrumbs('/matches/this-weekend')} />
         <main className="wrap" style={{ paddingTop: 'var(--layout-page-top-margin)' }}>
           <div style={{ textAlign: 'center', padding: '64px 20px' }}>
             <h1>Loading weekend fixtures...</h1>
@@ -144,7 +144,7 @@ const ThisWeekendFixturesPage: React.FC = () => {
       <div>
         <StructuredData type="faq" />
         <Header />
-        <Breadcrumbs items={generateBreadcrumbs('/fixtures/this-weekend')} />
+        <Breadcrumbs items={generateBreadcrumbs('/matches/this-weekend')} />
         <main className="wrap" style={{ paddingTop: 'var(--layout-page-top-margin)' }}>
           <div style={{ textAlign: 'center', padding: '64px 20px' }}>
             <h1>Error</h1>
@@ -173,7 +173,7 @@ const ThisWeekendFixturesPage: React.FC = () => {
       <StructuredData type="faq" />
       <Header />
       <main className="wrap" style={{ paddingTop: 'var(--layout-page-top-margin)' }}>
-        <Breadcrumbs items={generateBreadcrumbs('/fixtures/this-weekend')} />
+        <Breadcrumbs items={generateBreadcrumbs('/matches/this-weekend')} />
 
         {/* Page Header */}
         <div style={{ marginBottom: '32px' }}>
@@ -205,7 +205,7 @@ const ThisWeekendFixturesPage: React.FC = () => {
               gap: '16px',
               fontSize: '14px'
             }}>
-              <span>Last updated: {lastUpdated.toLocaleTimeString('en-GB')}</span>
+              <span>Last updated: {lastUpdated.toLocaleTimeString()}</span>
               <span>Updates every 2 minutes</span>
             </div>
           </div>
@@ -219,7 +219,7 @@ const ThisWeekendFixturesPage: React.FC = () => {
           flexWrap: 'wrap'
         }}>
           <Link
-            to="/fixtures/today"
+            to="/matches/today"
             style={{
               padding: '8px 16px',
               backgroundColor: 'var(--color-surface)',
@@ -234,7 +234,7 @@ const ThisWeekendFixturesPage: React.FC = () => {
             Today's Fixtures
           </Link>
           <Link
-            to="/fixtures/tomorrow"
+            to="/matches/tomorrow"
             style={{
               padding: '8px 16px',
               backgroundColor: 'var(--color-surface)',
@@ -249,7 +249,7 @@ const ThisWeekendFixturesPage: React.FC = () => {
             Tomorrow's Fixtures
           </Link>
           <Link
-            to="/fixtures"
+            to="/matches"
             style={{
               padding: '8px 16px',
               backgroundColor: 'var(--color-surface)',
@@ -287,7 +287,7 @@ const ThisWeekendFixturesPage: React.FC = () => {
             </p>
             <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
               <Link
-                to="/fixtures/today"
+                to="/matches/today"
                 style={{
                   padding: '12px 24px',
                   backgroundColor: 'var(--color-primary)',
@@ -300,7 +300,7 @@ const ThisWeekendFixturesPage: React.FC = () => {
                 Today's Fixtures
               </Link>
               <Link
-                to="/fixtures"
+                to="/matches"
                 style={{
                   padding: '12px 24px',
                   backgroundColor: 'var(--color-surface)',

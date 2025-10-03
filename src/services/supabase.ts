@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Fixture, FixturesApiParams, Provider, Team } from '../types';
 import { mapCompetitionIdToSlug } from '../utils/competitionMapping';
+import { ProviderService } from './ProviderService';
 
 // Require credentials from environment variables
 const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
@@ -23,11 +24,11 @@ interface FixtureRow {
   round?: string | null;
   home_team_id: number;
   home_team: string;
-  home_slug: string;
+  home_slug: string; // Consolidated slug field
   home_crest?: string | null;
   away_team_id: number;
   away_team: string;
-  away_slug: string;
+  away_slug: string; // Consolidated slug field
   away_crest?: string | null;
 }
 
@@ -36,13 +37,7 @@ interface BroadcastRow {
   provider_id: number;
 }
 
-interface ProviderRow {
-  id: number;
-  display_name?: string;
-  name?: string;
-  type?: string;
-  url?: string;
-}
+// ProviderRow interface removed - no longer used after ProviderService implementation
 
 function mapFixtureRow(row: FixtureRow, providersByFixture: Record<number, Provider[]> = {}): Fixture {
   const kickoffIso = row.utc_kickoff;
@@ -50,13 +45,13 @@ function mapFixtureRow(row: FixtureRow, providersByFixture: Record<number, Provi
   const home: Team = {
     id: row.home_team_id,
     name: row.home_team,
-    slug: row.home_slug,
+    slug: row.home_slug, // Consolidated slug field
     crest: row.home_crest || null,
   };
   const away: Team = {
     id: row.away_team_id,
     name: row.away_team,
-    slug: row.away_slug,
+    slug: row.away_slug, // Consolidated slug field
     crest: row.away_crest || null,
   };
   const providers = providersByFixture[row.id] || [];
@@ -106,48 +101,9 @@ async function getBroadcastsForFixtures(ids: number[]): Promise<BroadcastRow[]> 
   }
 }
 
+// Use centralized ProviderService instead of local implementation
 async function getProvidersByIds(ids: number[] = []): Promise<Provider[]> {
-  let rows: ProviderRow[] | null = null;
-  try {
-    let query = supabase
-      .from('providers')
-      .select('id,display_name,name,type')
-      .order('display_name', { ascending: true });
-
-    if (ids.length > 0) {
-      query = query.in('id', ids);
-    }
-
-    const resp = await query;
-    if (resp.error) {
-      console.warn('[Supabase] getProvidersByIds error', resp.error);
-    } else {
-      rows = resp.data as any;
-    }
-  } catch (e) {
-    console.warn('[Supabase] getProvidersByIds exception', e);
-  }
-
-  const mapped = (rows || []).map((p: ProviderRow) => ({
-    id: String(p.id),
-    name: p.display_name || p.name || 'Unknown',
-    type: p.type || 'unknown',
-    href: undefined,
-    status: 'confirmed',
-  }));
-
-  // Fallbacks for common UK providers in case providers table is incomplete
-  const byId = new Map<string, Provider>(mapped.map(p => [p.id, p]));
-  const ensure = (numId: number, name: string, href: string) => {
-    const key = String(numId);
-    if (!byId.has(key) && ids.includes(numId)) {
-      byId.set(key, { id: key, name, type: 'tv', href, status: 'confirmed' });
-    }
-  };
-  ensure(1, 'Sky Sports', 'https://www.skysports.com/football/fixtures-results');
-  ensure(2, 'TNT Sports', 'https://tntsports.co.uk/football');
-
-  return Array.from(byId.values());
+  return ProviderService.getProviders(ids);
 }
 
 export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixture[]> {
@@ -245,9 +201,12 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
     
     let mapped = rows.map(r => mapFixtureRow(r, providersByFixture));
 
-    // Apply team filter if specified
+    // Apply team filter if specified - consolidated slug field
     if (teamSlug) {
-      mapped = mapped.filter(fx => fx.home.slug === teamSlug || fx.away.slug === teamSlug);
+      mapped = mapped.filter(fx =>
+        fx.home.slug === teamSlug ||
+        fx.away.slug === teamSlug
+      );
     }
     
     // Apply filtering logic to exclude test fixtures (IDs <= 30)
@@ -517,16 +476,13 @@ export function isFixturePending(fixture: AdminFixture): boolean {
 // Teams API
 export async function getTeams(): Promise<Team[]> {
   try {
-    // DEBUG: Force cache busting - fetch ALL teams without is_active filtering
-    console.log('[DEBUG] getTeams called - fetching all teams');
-    console.log('[DEBUG] Supabase client initialized and ready');
+    // Fetch all teams without is_active filtering
 
     const { data, error, count } = await supabase
       .from('teams')
       .select('id,name,slug,crest_url,competition_id,short_name,club_colors,website,venue,city', { count: 'exact' })
       .order('name', { ascending: true });
 
-    console.log(`[DEBUG] getTeams query result - count: ${count}, error: ${error ? JSON.stringify(error) : 'none'}`);
 
     if (error) {
       console.error('[Supabase] getTeams error details:', {
@@ -538,10 +494,39 @@ export async function getTeams(): Promise<Team[]> {
       return [];
     }
 
-    console.log(`[DEBUG] getTeams returned ${(data || []).length} teams from database`);
-    if (data && data.length > 0) {
-      console.log('[DEBUG] First few teams:', data.slice(0, 3).map(t => ({ id: t.id, name: t.name, competition_id: t.competition_id })));
+    return (data || []).map((t: any) => ({
+      id: t.id,
+      name: t.name,
+      slug: t.slug, // Consolidated slug field
+      crest: t.crest_url ?? null,
+      competition_id: t.competition_id,
+      short_name: t.short_name ?? null,
+      club_colors: t.club_colors ?? null,
+      website: t.website ?? null,
+      venue: t.venue ?? null,
+      city: t.city ?? null,
+    }));
+  } catch (e) {
+    console.warn('[Supabase] getTeams error', e);
+    return [];
+  }
+}
+
+// Get teams from a specific competition
+export async function getTeamsByCompetition(competitionId: number, limit: number = 20): Promise<Team[]> {
+  try {
+    const { data, error } = await supabase
+      .from('teams')
+      .select('id,name,slug,crest_url,competition_id,short_name,club_colors,website,venue,city')
+      .eq('competition_id', competitionId)
+      .order('name', { ascending: true })
+      .limit(limit);
+
+    if (error) {
+      console.error('[Supabase] getTeamsByCompetition error:', error);
+      return [];
     }
+
     return (data || []).map((t: any) => ({
       id: t.id,
       name: t.name,
@@ -555,7 +540,73 @@ export async function getTeams(): Promise<Team[]> {
       city: t.city ?? null,
     }));
   } catch (e) {
-    console.warn('[Supabase] getTeams error', e);
+    console.warn('[Supabase] getTeamsByCompetition error', e);
+    return [];
+  }
+}
+
+// Get fixtures for a specific day (for LiveMatchesTicker)
+export async function getFixturesForDay(date: string, competitionIds?: number[]): Promise<Fixture[]> {
+  try {
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    let query = supabase
+      .from('fixtures_with_teams')
+      .select(`
+        id,matchday,utc_kickoff,venue,status,competition_id,stage,round,
+        home_team_id,home_team,home_slug,home_crest,
+        away_team_id,away_team,away_slug,away_crest
+      `)
+      .gte('utc_kickoff', startOfDay.toISOString())
+      .lte('utc_kickoff', endOfDay.toISOString())
+      .order('utc_kickoff', { ascending: true })
+      .limit(30);
+
+    if (competitionIds && competitionIds.length > 0) {
+      query = query.in('competition_id', competitionIds);
+    }
+
+    const { data: rows, error } = await query;
+
+    if (error) {
+      console.error('[Supabase] getFixturesForDay error:', error);
+      return [];
+    }
+
+    if (!rows || !rows.length) return [];
+
+    // Enrich providers in a second step
+    const ids = rows.map(r => r.id).filter(Boolean);
+    let providersByFixture: Record<number, Provider[]> = {};
+
+    if (ids.length) {
+      const bcasts = await getBroadcastsForFixtures(ids);
+      const providerIds = Array.from(new Set(bcasts.map(b => b.provider_id).filter(Boolean)));
+      const provs = providerIds.length ? await getProvidersByIds(providerIds) : [];
+      const byPk = Object.fromEntries(provs.map(p => [p.id, p]));
+
+      for (const b of bcasts) {
+        const fId = b.fixture_id;
+        const key = String(b.provider_id);
+        const p = byPk[key];
+        const entry = p ? { ...p } : undefined;
+        if (!providersByFixture[fId]) providersByFixture[fId] = [];
+        if (entry) providersByFixture[fId].push(entry);
+      }
+    }
+
+    let mapped = rows.map(r => mapFixtureRow(r, providersByFixture));
+
+    // Filter out test fixtures (IDs <= 30)
+    mapped = mapped.filter(f => f.id && f.id > 30);
+
+    return mapped;
+  } catch (e) {
+    console.warn('[Supabase] getFixturesForDay error', e);
     return [];
   }
 }
@@ -575,7 +626,6 @@ export async function getFixturesByDateRange(startDate: string, endDate: string)
  */
 export async function getHeadToHeadFixtures(teamSlug1: string, teamSlug2: string): Promise<Fixture[]> {
   try {
-    console.log(`Fetching H2H fixtures between ${teamSlug1} and ${teamSlug2}`);
 
     // Get fixtures with raw query for better performance
     const { data: fixtureRows, error: fixturesError } = await supabase
@@ -590,7 +640,6 @@ export async function getHeadToHeadFixtures(teamSlug1: string, teamSlug2: string
     }
 
     if (!fixtureRows || fixtureRows.length === 0) {
-      console.log('No H2H fixtures found');
       return [];
     }
 
@@ -608,27 +657,29 @@ export async function getHeadToHeadFixtures(teamSlug1: string, teamSlug2: string
       // Continue without broadcast data rather than fail completely
     }
 
-    // Group providers by fixture
+    // Group providers by fixture using proper provider lookup
     const providersByFixture: Record<number, Provider[]> = {};
     if (broadcastRows) {
+      // Get all unique provider IDs
+      const allProviderIds = Array.from(new Set(broadcastRows.map(row => row.provider_id).filter(Boolean)));
+      const allProviders = allProviderIds.length ? await getProvidersByIds(allProviderIds) : [];
+      const providerMap = Object.fromEntries(allProviders.map(p => [p.id, p]));
+
+      // Group providers by fixture
       broadcastRows.forEach(row => {
         if (!providersByFixture[row.fixture_id]) {
           providersByFixture[row.fixture_id] = [];
         }
-        providersByFixture[row.fixture_id].push({
-          id: row.provider_id,
-          name: `Provider ${row.provider_id}`,
-          type: 'tv', // Default since not available in view
-          slug: '', // Default since not available in view
-          url: '' // Default since not available in view
-        });
+        const provider = providerMap[String(row.provider_id)];
+        if (provider) {
+          providersByFixture[row.fixture_id].push(provider);
+        }
       });
     }
 
     // Map to Fixture objects
     const fixtures = fixtureRows.map(row => mapFixtureRow(row, providersByFixture));
 
-    console.log(`Found ${fixtures.length} H2H fixtures`);
     return fixtures;
 
   } catch (error) {
@@ -673,18 +724,11 @@ export async function getNextHeadToHeadFixture(teamSlug1: string, teamSlug2: str
       console.error('Error fetching broadcast data for next fixture:', broadcastError);
     }
 
-    // Map providers
-    const providers: Provider[] = [];
-    if (broadcastRows) {
-      broadcastRows.forEach(broadcastRow => {
-        providers.push({
-          id: broadcastRow.provider_id,
-          name: `Provider ${broadcastRow.provider_id}`,
-          type: 'tv', // Default since not available in view
-          slug: '', // Default since not available in view
-          url: '' // Default since not available in view
-        });
-      });
+    // Map providers using proper provider lookup
+    let providers: Provider[] = [];
+    if (broadcastRows && broadcastRows.length > 0) {
+      const providerIds = Array.from(new Set(broadcastRows.map(b => b.provider_id).filter(Boolean)));
+      providers = providerIds.length ? await getProvidersByIds(providerIds) : [];
     }
 
     const providersByFixture = { [row.id]: providers };
@@ -697,10 +741,70 @@ export async function getNextHeadToHeadFixture(teamSlug1: string, teamSlug2: str
 }
 
 /**
+ * Get the live fixture OR next upcoming fixture between two teams
+ * Prioritizes live games over future fixtures
+ */
+export async function getLiveOrNextHeadToHeadFixture(teamSlug1: string, teamSlug2: string): Promise<Fixture | null> {
+  try {
+    const now = new Date();
+    const nowIso = now.toISOString();
+
+    // First, check for live games (started within last 3 hours and not finished)
+    const threeHoursAgo = new Date(now.getTime() - 3 * 60 * 60 * 1000).toISOString();
+
+    const { data: liveFixtures, error: liveError } = await supabase
+      .from('fixtures_with_teams')
+      .select('*')
+      .or(`and(home_slug.eq.${teamSlug1},away_slug.eq.${teamSlug2}),and(home_slug.eq.${teamSlug2},away_slug.eq.${teamSlug1})`)
+      .gte('utc_kickoff', threeHoursAgo)
+      .lte('utc_kickoff', nowIso)
+      .order('utc_kickoff', { ascending: false })
+      .limit(1);
+
+    if (liveError) {
+      console.error('Error fetching live H2H fixture:', liveError);
+    }
+
+    // If we found a live game, return it
+    if (liveFixtures && liveFixtures.length > 0) {
+      const liveFixture = liveFixtures[0];
+
+      // Get broadcast data for the live fixture
+      const { data: broadcastRows, error: broadcastError } = await supabase
+        .from('broadcasts')
+        .select('fixture_id, provider_id')
+        .eq('fixture_id', liveFixture.id);
+
+      if (broadcastError) {
+        console.error('Error fetching broadcast data for live fixture:', broadcastError);
+      }
+
+      // Map providers
+      let providers: Provider[] = [];
+      if (broadcastRows && broadcastRows.length > 0) {
+        const providerIds = Array.from(new Set(broadcastRows.map(b => b.provider_id).filter(Boolean)));
+        providers = providerIds.length ? await getProvidersByIds(providerIds) : [];
+      }
+
+      const providersByFixture = { [liveFixture.id]: providers };
+      return mapFixtureRow(liveFixture, providersByFixture);
+    }
+
+    // No live game found, fall back to next upcoming fixture
+    return getNextHeadToHeadFixture(teamSlug1, teamSlug2);
+
+  } catch (error) {
+    console.error('Failed to fetch live or next H2H fixture:', error);
+    throw error;
+  }
+}
+
+/**
  * Get team by slug
  */
 export async function getTeamBySlug(slug: string): Promise<Team | null> {
   try {
+    // Single slug field lookup after Phase 3 migration
     const { data, error } = await supabase
       .from('teams')
       .select('*')
@@ -720,7 +824,7 @@ export async function getTeamBySlug(slug: string): Promise<Team | null> {
     return {
       id: data.id,
       name: data.name,
-      slug: data.slug,
+      slug: data.slug, // Consolidated slug field
       crest: data.crest,
       short_name: data.short_name,
       competition_id: data.competition_id
@@ -740,7 +844,6 @@ export async function getTeamBySlugIntelligent(seoSlug: string): Promise<Team | 
   // First try the SEO slug as-is (for international teams)
   let team = await getTeamBySlug(seoSlug);
   if (team) {
-    console.log(`Found team with original slug: ${seoSlug} -> ${team.name}`);
     return team;
   }
 
@@ -748,7 +851,6 @@ export async function getTeamBySlugIntelligent(seoSlug: string): Promise<Team | 
   const fcSlug = `${seoSlug}-fc`;
   team = await getTeamBySlug(fcSlug);
   if (team) {
-    console.log(`Found team with -fc suffix: ${fcSlug} -> ${team.name}`);
     return team;
   }
 
@@ -765,11 +867,9 @@ export async function getTeamBySlugIntelligent(seoSlug: string): Promise<Team | 
 
     team = await getTeamBySlug(variation);
     if (team) {
-      console.log(`Found team with variation: ${variation} -> ${team.name}`);
       return team;
     }
   }
 
-  console.log(`No team found for slug: ${seoSlug} (tried: ${seoSlug}, ${fcSlug}, ${variations.join(', ')})`);
   return null;
 }

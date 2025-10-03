@@ -2,12 +2,16 @@
 import fs from 'fs';
 import path from 'path';
 import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+
+// Load .env file
+dotenv.config();
 
 const root = process.cwd();
 const publicDir = path.join(root, 'public');
 const sitemapsDir = path.join(publicDir, 'sitemaps');
 
-const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL;
+const SUPABASE_URL = process.env.REACT_APP_SUPABASE_URL || process.env.SUPABASE_URL;
 const SUPABASE_ANON = process.env.REACT_APP_SUPABASE_ANON_KEY;
 const CANONICAL_BASE = (process.env.REACT_APP_CANONICAL_BASE || 'https://matchlocator.com').replace(/\/$/, '');
 
@@ -18,7 +22,18 @@ function urlEntry(loc, { lastmod = null, changefreq = 'weekly', priority = '0.6'
   return `  <url>\n    <loc>${loc}</loc>${last}\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>\n  </url>`;
 }
 function writeXml(file, content) { fs.writeFileSync(file, content.trim() + '\n', 'utf8'); console.log('[sitemap] wrote', path.relative(publicDir, file)); }
-const supabase = (SUPABASE_URL && SUPABASE_ANON) ? createClient(SUPABASE_URL, SUPABASE_ANON) : null;
+
+// Only create supabase client if we have valid, non-empty credentials
+let supabase = null;
+if (SUPABASE_URL && SUPABASE_ANON && SUPABASE_URL.startsWith('http')) {
+  try {
+    supabase = createClient(SUPABASE_URL, SUPABASE_ANON);
+  } catch (err) {
+    console.log('[sitemap] Supabase not initialized - check env vars');
+  }
+} else {
+  console.log('[sitemap] Supabase not initialized - check env vars');
+}
 
 async function fetchFixtures() {
   if (!supabase) return [];
@@ -52,17 +67,27 @@ function formatDateForSeoUrl(date) {
 }
 
 async function fetchTeams() {
-  if (!supabase) return [];
-  const { data, error } = await supabase.from('teams').select('slug').order('name', { ascending: true });
-  if (error) { console.warn('[sitemap] teams error', error); return []; }
-  return data || [];
+  if (!supabase) {
+    console.warn('[sitemap] Supabase not initialized - check env vars');
+    return [];
+  }
+  const { data, error } = await supabase.from('teams').select('slug, url_slug').order('name', { ascending: true });
+  if (error) {
+    console.warn('[sitemap] teams error', error);
+    return [];
+  }
+  console.log(`[sitemap] Fetched ${data?.length || 0} teams from database`);
+  return (data || []).map(team => ({
+    ...team,
+    preferredSlug: (team.url_slug && team.url_slug.trim()) ? team.url_slug : team.slug
+  }));
 }
 
 
 async function build() {
   ensureDir(publicDir); ensureDir(sitemapsDir);
   // Core pages
-  const core = [ '/', '/fixtures', '/clubs', '/about' ].map(p => `${CANONICAL_BASE}${p}`);
+  const core = [ '/', '/matches', '/clubs', '/about' ].map(p => `${CANONICAL_BASE}${p}`);
   const coreXml = [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
@@ -88,7 +113,7 @@ async function build() {
     const awaySlug = slugify(cleanTeamName(f.away_team));
     const competitionSlug = mapCompetitionIdToSlug(f.competition_id);
     const dateSlug = formatDateForSeoUrl(f.utc_kickoff);
-    return `${CANONICAL_BASE}/fixtures/${homeSlug}-vs-${awaySlug}-${competitionSlug}-${dateSlug}`;
+    return `${CANONICAL_BASE}/matches/${homeSlug}-vs-${awaySlug}-${competitionSlug}-${dateSlug}`;
   });
   const matchesXml = [
     '<?xml version="1.0" encoding="UTF-8"?>',
@@ -98,13 +123,13 @@ async function build() {
   ].join('\n');
   writeXml(path.join(sitemapsDir, 'sitemap-matches.xml'), matchesXml);
 
-  // Teams
+  // Teams (using /clubs/ route as per App.tsx)
   const teams = await fetchTeams();
-  const teamUrls = teams.map(t => `${CANONICAL_BASE}/clubs/${t.slug}`);
+  const teamUrls = teams.map(t => `${CANONICAL_BASE}/clubs/${t.preferredSlug}`);
   const teamsXml = [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-    ...teamUrls.map(u => urlEntry(u, { changefreq: 'weekly', priority: '0.6' })),
+    ...teamUrls.map(u => urlEntry(u, { changefreq: 'weekly', priority: '0.7' })),
     '</urlset>'
   ].join('\n');
   writeXml(path.join(sitemapsDir, 'sitemap-teams.xml'), teamsXml);

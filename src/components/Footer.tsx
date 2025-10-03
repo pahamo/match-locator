@@ -32,7 +32,7 @@ const Footer: React.FC<FooterProps> = React.memo(({ onOpenCookieSettings }) => {
         </div>
         <nav aria-label="Footer navigation" style={{ display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
           <a href="/" style={{ color: '#6366f1', fontSize: '14px', textDecoration: 'none' }}>Home</a>
-          <a href="/fixtures" style={{ color: '#6366f1', fontSize: '14px', textDecoration: 'none' }}>Fixtures</a>
+          <a href="/matches" style={{ color: '#6366f1', fontSize: '14px', textDecoration: 'none' }}>Matches</a>
           <a href="/clubs" style={{ color: '#6366f1', fontSize: '14px', textDecoration: 'none' }}>Clubs</a>
           <a href="/about" style={{ color: '#6366f1', fontSize: '14px', textDecoration: 'none' }}>About</a>
           <a href="/contact" style={{ color: '#6366f1', fontSize: '14px', textDecoration: 'none' }}>Contact</a>
