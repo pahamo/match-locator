@@ -25,7 +25,7 @@ export async function getSimpleFixtures(competitionId?: number): Promise<SimpleF
 
     let query = supabase
       .from('fixtures_with_teams')
-      .select('id, utc_kickoff, home_team_id, away_team_id, home_team, away_team, home_crest, away_crest, matchday, competition_id, stage, round, status')
+      .select('id, utc_kickoff, home_team_id, away_team_id, home_team, away_team, home_crest, away_crest, matchday, competition_id, stage, round, status, home_score, away_score')
       .gte('utc_kickoff', seasonStartIso)
       .order('utc_kickoff', { ascending: true });
 
@@ -90,6 +90,8 @@ export async function getSimpleFixtures(competitionId?: number): Promise<SimpleF
         stage: fixture.stage || undefined,
         round: fixture.round || undefined,
         broadcaster: broadcasterDisplay,
+        home_score: fixture.home_score ?? undefined,
+        away_score: fixture.away_score ?? undefined,
         status: fixture.status || undefined,
       };
     });

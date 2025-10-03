@@ -21,6 +21,7 @@ export interface FixtureCardProps {
   style?: React.CSSProperties;
   groupPosition?: 'single' | 'first' | 'middle' | 'last';
   isInLiveGroup?: boolean; // New prop to disable individual live styling when in a live group
+  hideBroadcaster?: boolean; // Hide broadcaster info (e.g., for completed matches)
 }
 
 // Helper functions to work with both fixture types
@@ -94,7 +95,8 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
   className = '',
   style = {},
   groupPosition = 'single',
-  isInLiveGroup = false
+  isInLiveGroup = false,
+  hideBroadcaster = false
 }) => {
   const matchStatus = React.useMemo(() => getMatchStatus(fixture.kickoff_utc), [fixture.kickoff_utc]);
   const statusStyles = React.useMemo(() => getMatchStatusStyles(matchStatus), [matchStatus]);
@@ -221,8 +223,8 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
         </div>
       )}
 
-      {/* Broadcaster Info - Hidden in minimized view */}
-      {!isMinimized && (
+      {/* Broadcaster Info - Hidden in minimized view or when hideBroadcaster is true */}
+      {!isMinimized && !hideBroadcaster && (
         <div className="broadcaster-info">
           {fixtureData.isBlackout ? (
             <span className="broadcaster-badge blackout">🚫 No UK Broadcast</span>

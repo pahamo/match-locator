@@ -21,12 +21,12 @@ const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competition
   const { upcomingFixtures, latestResults } = useMemo(() => {
     const now = new Date();
 
-    // Get ALL upcoming fixtures
+    // Get ALL upcoming fixtures sorted by date
     const upcomingList = fixtures
       .filter(f => new Date(f.kickoff_utc) >= now)
       .sort((a, b) => new Date(a.kickoff_utc).getTime() - new Date(b.kickoff_utc).getTime());
 
-    // Get ALL completed fixtures
+    // Get ALL completed fixtures sorted by date (most recent first)
     const pastList = fixtures
       .filter(f => new Date(f.kickoff_utc) < now)
       .sort((a, b) => new Date(b.kickoff_utc).getTime() - new Date(a.kickoff_utc).getTime());
@@ -34,18 +34,29 @@ const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competition
     // Get the current matchday from the first upcoming fixture
     const currentMatchday = upcomingList[0]?.matchweek;
 
-    // If we have matchday data, filter by it. Otherwise show all (up to reasonable limit)
     let upcoming: SimpleFixture[];
     let past: SimpleFixture[];
 
     if (currentMatchday) {
-      // Filter to show ALL fixtures from the current matchday
+      // If we have matchday data, show ALL fixtures from that matchday
       upcoming = upcomingList.filter(f => f.matchweek === currentMatchday);
       past = pastList.filter(f => f.matchweek === currentMatchday);
     } else {
-      // No matchday data - show all fixtures (limited to prevent page overload)
-      upcoming = upcomingList.slice(0, 50);
-      past = pastList.slice(0, 50);
+      // No matchday data - group by date instead
+      // Get the date of the next upcoming fixture
+      const nextFixtureDate = upcomingList[0] ? new Date(upcomingList[0].kickoff_utc).toDateString() : null;
+
+      // Get the date of the most recent completed fixture
+      const lastFixtureDate = pastList[0] ? new Date(pastList[0].kickoff_utc).toDateString() : null;
+
+      // Filter to show only fixtures from those specific dates
+      upcoming = nextFixtureDate
+        ? upcomingList.filter(f => new Date(f.kickoff_utc).toDateString() === nextFixtureDate)
+        : [];
+
+      past = lastFixtureDate
+        ? pastList.filter(f => new Date(f.kickoff_utc).toDateString() === lastFixtureDate)
+        : [];
     }
 
     return {
@@ -105,6 +116,7 @@ const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competition
               fixture={fixture}
               variant="compact"
               showMatchweek={true}
+              hideBroadcaster={true}
             />
           ))}
         </Flex>
