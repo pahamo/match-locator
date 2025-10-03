@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import type { SimpleFixture } from '../types';
 import FixtureCard from '../design-system/components/FixtureCard';
-import { Card, CardHeader, CardContent } from '../design-system/components/Card';
+import { Card, CardHeader, CardContent, CardTitle } from '../design-system/components/Card';
 import Flex from '../design-system/components/Layout/Flex';
 
 interface MatchdaySectionProps {
@@ -17,6 +17,31 @@ type TabType = 'upcoming' | 'latest';
  */
 const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competitionName }) => {
   const [activeTab, setActiveTab] = useState<TabType>('upcoming');
+
+  // Helper function to format date range for the title
+  const formatDateRange = (fixtures: SimpleFixture[]) => {
+    if (fixtures.length === 0) return '';
+
+    const dates = fixtures.map(f => new Date(f.kickoff_utc));
+    const minDate = new Date(Math.min(...dates.map(d => d.getTime())));
+    const maxDate = new Date(Math.max(...dates.map(d => d.getTime())));
+
+    const formatDate = (date: Date) => {
+      return date.toLocaleDateString('en-GB', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      });
+    };
+
+    // If all fixtures are on the same day
+    if (minDate.toDateString() === maxDate.toDateString()) {
+      return formatDate(minDate);
+    }
+
+    // If fixtures span multiple days
+    return `${formatDate(minDate)} - ${formatDate(maxDate)}`;
+  };
 
   const { upcomingFixtures, latestResults } = useMemo(() => {
     const now = new Date();
@@ -82,21 +107,47 @@ const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competition
     transition: 'all 0.2s',
   });
 
+  // Generate title based on active tab
+  const getTitle = () => {
+    if (activeTab === 'upcoming' && upcomingFixtures.length > 0) {
+      const matchweek = upcomingFixtures[0]?.matchweek;
+      const dateRange = formatDateRange(upcomingFixtures);
+
+      if (matchweek) {
+        return `${competitionName} Matchday ${matchweek} Fixtures${dateRange ? ` - ${dateRange}` : ''}`;
+      }
+      return `Upcoming ${competitionName} Matches${dateRange ? ` - ${dateRange}` : ''}`;
+    }
+
+    if (activeTab === 'latest' && latestResults.length > 0) {
+      const matchweek = latestResults[0]?.matchweek;
+      const dateRange = formatDateRange(latestResults);
+
+      if (matchweek) {
+        return `${competitionName} Matchday ${matchweek} Results${dateRange ? ` - ${dateRange}` : ''}`;
+      }
+      return `Latest ${competitionName} Results${dateRange ? ` - ${dateRange}` : ''}`;
+    }
+
+    return `${competitionName} Fixtures`;
+  };
+
   return (
     <Card>
-      <CardHeader style={{ paddingBottom: 0 }}>
-        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+      <CardHeader>
+        <CardTitle>{getTitle()}</CardTitle>
+        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
           <button
             onClick={() => setActiveTab('upcoming')}
             style={tabButtonStyle(activeTab === 'upcoming')}
           >
-            Upcoming Fixtures ({upcomingFixtures.length})
+            Upcoming ({upcomingFixtures.length})
           </button>
           <button
             onClick={() => setActiveTab('latest')}
             style={tabButtonStyle(activeTab === 'latest')}
           >
-            Latest Results ({latestResults.length})
+            Results ({latestResults.length})
           </button>
         </div>
       </CardHeader>
@@ -106,7 +157,7 @@ const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competition
             <FixtureCard
               key={fixture.id}
               fixture={fixture}
-              variant="withTime"
+              variant="withTimeNoCompetition"
               showMatchweek={true}
             />
           ))}
@@ -114,7 +165,7 @@ const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competition
             <FixtureCard
               key={fixture.id}
               fixture={fixture}
-              variant="withTime"
+              variant="withTimeNoCompetition"
               showMatchweek={true}
               hideBroadcaster={true}
             />

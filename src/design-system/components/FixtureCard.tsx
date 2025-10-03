@@ -14,7 +14,7 @@ import { buildH2HUrl } from '../../utils/urlBuilder';
 
 export interface FixtureCardProps {
   fixture: SimpleFixture | Fixture;
-  variant?: 'default' | 'compact' | 'detailed' | 'minimized' | 'withTime';
+  variant?: 'default' | 'compact' | 'detailed' | 'minimized' | 'withTime' | 'withTimeNoCompetition';
   showMatchweek?: boolean;
   showViewButton?: boolean;
   className?: string;
@@ -107,7 +107,8 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
     : statusStyles;
   const fixtureData = React.useMemo(() => getFixtureData(fixture), [fixture]);
   const isMinimized = variant === 'minimized';
-  const isWithTime = variant === 'withTime';
+  const isWithTime = variant === 'withTime' || variant === 'withTimeNoCompetition';
+  const showCompetitionBadge = variant === 'withTime'; // Only show competition badge for 'withTime', not 'withTimeNoCompetition'
 
   // Generate CSS class names instead of inline styles
   const getCardClasses = () => {
@@ -138,8 +139,8 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
             const competition = getCompetitionInfo(fixture);
             return (
               <div className="time-column-metadata">
-                {/* League Pill */}
-                {competition && (
+                {/* League Pill - Only show if showCompetitionBadge is true */}
+                {showCompetitionBadge && competition && (
                   <Link
                     to={`/competitions/${competition.slug}`}
                     className="league-pill"
