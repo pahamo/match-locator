@@ -69,6 +69,9 @@ export interface SimpleFixture {
   competition_id?: number;
   stage?: string;
   round?: string;
+  home_score?: number | null;
+  away_score?: number | null;
+  status?: string;
 }
 
 // Competition interface

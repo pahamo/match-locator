@@ -55,7 +55,10 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
       matchweek: fixture.matchweek,
       url: urlResult?.url || null,
       urlStrategy: urlResult?.strategy,  // Track which strategy used (for monitoring)
-      shouldCreatePage: shouldCreatePage
+      shouldCreatePage: shouldCreatePage,
+      homeScore: fixture.home_score,
+      awayScore: fixture.away_score,
+      status: fixture.status
     };
   } else {
     const hasProviders = fixture.providers_uk && fixture.providers_uk.length > 0;
@@ -75,7 +78,10 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
       matchweek: fixture.matchweek,
       url: urlResult?.url || null,
       urlStrategy: urlResult?.strategy,  // Track which strategy used (for monitoring)
-      shouldCreatePage: shouldCreatePage
+      shouldCreatePage: shouldCreatePage,
+      homeScore: fixture.score?.home,
+      awayScore: fixture.score?.away,
+      status: fixture.status
     };
   }
 };
@@ -177,7 +183,13 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
           </span>
         </div>
 
-        <div className="vs-divider">vs</div>
+        {fixtureData.homeScore !== undefined && fixtureData.awayScore !== undefined ? (
+          <div className="score-display">
+            {fixtureData.homeScore} - {fixtureData.awayScore}
+          </div>
+        ) : (
+          <div className="vs-divider">vs</div>
+        )}
 
         <div className="team-container away-team">
           <span className={`team-name ${isMinimized ? 'minimized' : ''}`}>
@@ -319,6 +331,18 @@ const fixtureCardStyles = `
     letter-spacing: 0.5px;
     text-align: center;
     line-height: 1;
+  }
+
+  .score-display {
+    background: #e5e7eb;
+    color: #1f2937;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    min-width: 60px;
+    text-align: center;
   }
 
   .broadcaster-info {

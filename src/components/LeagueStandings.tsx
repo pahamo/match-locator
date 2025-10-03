@@ -90,6 +90,16 @@ export const LeagueStandings: React.FC<LeagueStandingsProps> = ({
         const url = `/.netlify/functions/standings?seasonId=${seasonId}`;
 
         const response = await fetch(url);
+
+        // Check if we got HTML instead of JSON (happens in dev mode without Netlify)
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('text/html')) {
+          // Running in dev mode without Netlify functions
+          setError('Standings not available in development mode. Run `netlify dev` to enable.');
+          setLoading(false);
+          return;
+        }
+
         if (!response.ok) {
           throw new Error(`API error: ${response.status}`);
         }

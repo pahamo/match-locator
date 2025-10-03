@@ -7,11 +7,11 @@ import Header from '../components/Header';
 import Breadcrumbs from '../components/Breadcrumbs';
 import StructuredData from '../components/StructuredData';
 import { FixtureCardSkeleton } from '../components/SkeletonLoader';
-import FixtureCard from '../design-system/components/FixtureCard';
 import { getCompetitionLogo, getCompetitionConfig } from '../config/competitions';
 import { generateCompetitionMeta, updateDocumentMeta } from '../utils/seo';
 import { generateBreadcrumbs } from '../utils/breadcrumbs';
 import LeagueStandings from '../components/LeagueStandings';
+import MatchdaySection from '../components/MatchdaySection';
 
 const CompetitionPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -71,23 +71,6 @@ const CompetitionPage: React.FC = () => {
     loadCompetitionData();
   }, [loadCompetitionData]);
 
-
-  const getUpcomingFixtures = (fixtures: SimpleFixture[], limit = 5) => {
-    const now = new Date();
-    return fixtures
-      .filter(f => new Date(f.kickoff_utc) >= now)
-      .slice(0, limit);
-  };
-
-  const getRecentResults = (fixtures: SimpleFixture[], limit = 5) => {
-    const now = new Date();
-    return fixtures
-      .filter(f => new Date(f.kickoff_utc) < now)
-      .slice(-limit)
-      .reverse();
-  };
-
-
   if (loading) {
     return (
       <div>
@@ -124,9 +107,6 @@ const CompetitionPage: React.FC = () => {
       </div>
     );
   }
-
-  const upcomingFixtures = getUpcomingFixtures(fixtures);
-  const recentResults = getRecentResults(fixtures);
 
   return (
     <div>
@@ -186,138 +166,78 @@ const CompetitionPage: React.FC = () => {
           )}
         </div>
 
+        {/* Matchday Section - Upcoming and Latest */}
+        <div style={{ marginBottom: '2rem' }}>
+          <MatchdaySection
+            fixtures={fixtures}
+            competitionName={competition.name}
+          />
+        </div>
 
-        {/* Main Content Grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: '2rem'
-        }}>
-          {/* Fixtures Section */}
-          <div>
-            {/* Upcoming Fixtures */}
+        {/* League Standings or Teams List */}
+        <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+          {slug && getCompetitionConfig(slug)?.seasonId ? (
             <section style={{ marginBottom: '2rem' }}>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem' }}>
-                Upcoming Fixtures
-              </h2>
-              {upcomingFixtures.length > 0 ? (
-                <div>
-                  {upcomingFixtures.map((fixture) => (
-                    <FixtureCard
-                      key={fixture.id}
-                      fixture={fixture}
-                      variant="compact"
-                      showMatchweek={true}
-                    />
-                  ))}
-                  <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-                    <a
-                      href="/fixtures"
-                      style={{
-                        color: '#6366f1',
-                        textDecoration: 'none',
-                        fontSize: '0.875rem',
-                        fontWeight: '500'
-                      }}
-                    >
-                      View All Fixtures →
-                    </a>
-                  </div>
-                </div>
-              ) : (
-                <p style={{ color: '#6b7280' }}>No upcoming fixtures scheduled.</p>
-              )}
+              <LeagueStandings
+                seasonId={getCompetitionConfig(slug)!.seasonId!}
+                competitionName={competition.name}
+              />
             </section>
-
-            {/* Recent Results */}
-            <section>
-              <h2 style={{ fontSize: '1.5rem', fontWeight: '600', marginBottom: '1rem' }}>
-                Recent Results
-              </h2>
-              {recentResults.length > 0 ? (
-                <div>
-                  {recentResults.map((fixture) => (
-                    <FixtureCard
-                      key={fixture.id}
-                      fixture={fixture}
-                      variant="compact"
-                      showMatchweek={true}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <p style={{ color: '#6b7280' }}>No recent results available.</p>
-              )}
+          ) : (
+            <section style={{
+              padding: '1.5rem',
+              backgroundColor: '#f9fafb',
+              borderRadius: '8px',
+              marginBottom: '2rem'
+            }}>
+              <h3 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '1rem' }}>
+                Teams ({teams.length})
+              </h3>
+              <div style={{ display: 'grid', gap: '0.5rem' }}>
+                {teams.slice(0, 10).map((team) => (
+                  <a
+                    key={team.id}
+                    href={`/clubs/${team.slug}`}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      padding: '0.5rem',
+                      backgroundColor: 'white',
+                      borderRadius: '4px',
+                      textDecoration: 'none',
+                      color: 'inherit',
+                      fontSize: '0.875rem'
+                    }}
+                  >
+                    {team.crest && (
+                      <img
+                        src={team.crest}
+                        alt={`${team.name} crest`}
+                        style={{ width: '20px', height: '20px', objectFit: 'contain' }}
+                        loading="lazy"
+                      />
+                    )}
+                    <span>{team.name}</span>
+                  </a>
+                ))}
+                {teams.length > 10 && (
+                  <a
+                    href="/clubs"
+                    style={{
+                      padding: '0.5rem',
+                      textAlign: 'center',
+                      color: '#6366f1',
+                      textDecoration: 'none',
+                      fontSize: '0.875rem'
+                    }}
+                  >
+                    View All Teams →
+                  </a>
+                )}
+              </div>
             </section>
-          </div>
-
-          {/* Sidebar */}
-          <div>
-            {/* League Standings - show if seasonId is configured, otherwise show teams list */}
-            {slug && getCompetitionConfig(slug)?.seasonId ? (
-              <section style={{ marginBottom: '2rem' }}>
-                <LeagueStandings
-                  seasonId={getCompetitionConfig(slug)!.seasonId!}
-                  competitionName={competition.name}
-                />
-              </section>
-            ) : (
-              /* Teams in Competition - fallback when no standings available */
-              <section style={{
-                padding: '1.5rem',
-                backgroundColor: '#f9fafb',
-                borderRadius: '8px',
-                marginBottom: '2rem'
-              }}>
-                <h3 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '1rem' }}>
-                  Teams ({teams.length})
-                </h3>
-                <div style={{ display: 'grid', gap: '0.5rem' }}>
-                  {teams.slice(0, 10).map((team) => (
-                    <a
-                      key={team.id}
-                      href={`/clubs/${team.slug}`}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        padding: '0.5rem',
-                        backgroundColor: 'white',
-                        borderRadius: '4px',
-                        textDecoration: 'none',
-                        color: 'inherit',
-                        fontSize: '0.875rem'
-                      }}
-                    >
-                      {team.crest && (
-                        <img
-                          src={team.crest}
-                          alt={`${team.name} crest`}
-                          style={{ width: '20px', height: '20px', objectFit: 'contain' }}
-                          loading="lazy"
-                        />
-                      )}
-                      <span>{team.name}</span>
-                    </a>
-                  ))}
-                  {teams.length > 10 && (
-                    <a
-                      href="/clubs"
-                      style={{
-                        padding: '0.5rem',
-                        textAlign: 'center',
-                        color: '#6366f1',
-                        textDecoration: 'none',
-                        fontSize: '0.875rem'
-                      }}
-                    >
-                      View All Teams →
-                    </a>
-                  )}
-                </div>
-              </section>
-            )}
-          </div>
+          )}
         </div>
       </div>
     </div>
