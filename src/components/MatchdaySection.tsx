@@ -70,14 +70,7 @@ const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competition
   }
 
   return (
-    <div style={{
-      display: 'grid',
-      gridTemplateColumns: '1fr 1fr',
-      gap: '1.5rem',
-      '@media (max-width: 768px)': {
-        gridTemplateColumns: '1fr'
-      }
-    }} className="matchday-section-grid">
+    <div className="matchday-section-grid">
       {/* Upcoming Fixtures Column */}
       <Card>
         <CardHeader>
@@ -129,9 +122,15 @@ if (typeof document !== 'undefined' && !document.getElementById('matchday-sectio
   const styleSheet = document.createElement('style');
   styleSheet.id = 'matchday-section-styles';
   styleSheet.textContent = `
+    .matchday-section-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
     @media (max-width: 768px) {
       .matchday-section-grid {
-        grid-template-columns: 1fr !important;
+        grid-template-columns: 1fr;
       }
     }
   `;
