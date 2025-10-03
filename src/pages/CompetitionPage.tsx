@@ -166,24 +166,30 @@ const CompetitionPage: React.FC = () => {
           )}
         </div>
 
-        {/* Matchday Section - Upcoming and Latest */}
-        <div style={{ marginBottom: '2rem' }}>
-          <MatchdaySection
-            fixtures={fixtures}
-            competitionName={competition.name}
-          />
-        </div>
+        {/* 2-Column Layout: Fixtures + Standings */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '1.5rem',
+          marginBottom: '2rem'
+        }} className="competition-content-grid">
+          {/* Left Column: Matchday Section */}
+          <div>
+            <MatchdaySection
+              fixtures={fixtures}
+              competitionName={competition.name}
+            />
+          </div>
 
-        {/* League Standings or Teams List */}
-        <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-          {slug && getCompetitionConfig(slug)?.seasonId ? (
-            <section style={{ marginBottom: '2rem' }}>
+          {/* Right Column: Standings or Teams List */}
+          <div>
+            {slug && getCompetitionConfig(slug)?.seasonId ? (
               <LeagueStandings
                 seasonId={getCompetitionConfig(slug)!.seasonId!}
                 competitionName={competition.name}
+                compact={true}
               />
-            </section>
-          ) : (
+            ) : (
             <section style={{
               padding: '1.5rem',
               backgroundColor: '#f9fafb',
@@ -237,7 +243,8 @@ const CompetitionPage: React.FC = () => {
                 )}
               </div>
             </section>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -12,10 +12,11 @@ interface MatchdaySectionProps {
 type TabType = 'upcoming' | 'latest';
 
 /**
- * Component that displays upcoming and latest fixtures side-by-side
+ * Component that displays upcoming and latest fixtures with tabs
  * Shows all fixtures from current matchday or date grouping
  */
 const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competitionName }) => {
+  const [activeTab, setActiveTab] = useState<TabType>('upcoming');
 
   const { upcomingFixtures, latestResults } = useMemo(() => {
     const now = new Date();
@@ -69,72 +70,59 @@ const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competition
     return null;
   }
 
-  return (
-    <div className="matchday-section-grid">
-      {/* Upcoming Fixtures Column */}
-      <Card>
-        <CardHeader>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: '600', margin: 0 }}>
-            Upcoming Fixtures ({upcomingFixtures.length})
-          </h2>
-        </CardHeader>
-        <CardContent>
-          <Flex direction="column" gap="sm">
-            {upcomingFixtures.map((fixture) => (
-              <FixtureCard
-                key={fixture.id}
-                fixture={fixture}
-                variant="withTime"
-                showMatchweek={true}
-              />
-            ))}
-          </Flex>
-        </CardContent>
-      </Card>
+  const tabButtonStyle = (isActive: boolean) => ({
+    flex: 1,
+    padding: '12px 24px',
+    backgroundColor: isActive ? '#6366f1' : '#f3f4f6',
+    color: isActive ? 'white' : '#6b7280',
+    border: 'none',
+    cursor: 'pointer',
+    fontWeight: isActive ? '600' : '500',
+    fontSize: '0.875rem',
+    transition: 'all 0.2s',
+  });
 
-      {/* Latest Results Column */}
-      <Card>
-        <CardHeader>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: '600', margin: 0 }}>
+  return (
+    <Card>
+      <CardHeader style={{ paddingBottom: 0 }}>
+        <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+          <button
+            onClick={() => setActiveTab('upcoming')}
+            style={tabButtonStyle(activeTab === 'upcoming')}
+          >
+            Upcoming Fixtures ({upcomingFixtures.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('latest')}
+            style={tabButtonStyle(activeTab === 'latest')}
+          >
             Latest Results ({latestResults.length})
-          </h2>
-        </CardHeader>
-        <CardContent>
-          <Flex direction="column" gap="sm">
-            {latestResults.map((fixture) => (
-              <FixtureCard
-                key={fixture.id}
-                fixture={fixture}
-                variant="withTime"
-                showMatchweek={true}
-                hideBroadcaster={true}
-              />
-            ))}
-          </Flex>
-        </CardContent>
-      </Card>
-    </div>
+          </button>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <Flex direction="column" gap="sm">
+          {activeTab === 'upcoming' && upcomingFixtures.map((fixture) => (
+            <FixtureCard
+              key={fixture.id}
+              fixture={fixture}
+              variant="withTime"
+              showMatchweek={true}
+            />
+          ))}
+          {activeTab === 'latest' && latestResults.map((fixture) => (
+            <FixtureCard
+              key={fixture.id}
+              fixture={fixture}
+              variant="withTime"
+              showMatchweek={true}
+              hideBroadcaster={true}
+            />
+          ))}
+        </Flex>
+      </CardContent>
+    </Card>
   );
 };
-
-// Inject responsive styles
-if (typeof document !== 'undefined' && !document.getElementById('matchday-section-styles')) {
-  const styleSheet = document.createElement('style');
-  styleSheet.id = 'matchday-section-styles';
-  styleSheet.textContent = `
-    .matchday-section-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-    }
-
-    @media (max-width: 768px) {
-      .matchday-section-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  `;
-  document.head.appendChild(styleSheet);
-}
 
 export default MatchdaySection;
