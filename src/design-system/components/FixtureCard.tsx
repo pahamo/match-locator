@@ -147,11 +147,28 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
                     style={{
                       background: competition.colors.primary,
                       color: competition.colors.secondary,
-                      textDecoration: 'none'
+                      textDecoration: 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
                     }}
                     title={`View ${competition.name} fixtures`}
                   >
-                    {competition.shortName}
+                    {competition.logo && (
+                      <img
+                        src={competition.logo}
+                        alt={`${competition.name} logo`}
+                        style={{
+                          width: '14px',
+                          height: '14px',
+                          objectFit: 'contain'
+                        }}
+                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                      />
+                    )}
+                    <span className="league-pill-text">
+                      {competition.shortName}
+                    </span>
                   </Link>
                 )}
 
