@@ -310,6 +310,28 @@ const fixtureCardStyles = `
     gap: 4px;
   }
 
+  /* Mobile optimizations for time column */
+  @media (max-width: 640px) {
+    .time-column {
+      min-width: 50px;
+      padding-right: 6px;
+      gap: 2px;
+    }
+
+    .kickoff-time {
+      font-size: 12px;
+    }
+
+    .league-pill {
+      font-size: 10px;
+      padding: 1px 4px;
+    }
+
+    .matchweek-pill {
+      font-size: 9px;
+    }
+  }
+
   .kickoff-time {
     font-size: 13px;
     font-weight: 600;
@@ -430,6 +452,34 @@ const fixtureCardStyles = `
 
     .fixture-card.with-time {
       grid-template-columns: auto 1fr auto;
+      gap: 8px;
+      padding: 10px 8px;
+    }
+
+    .fixture-card.with-time .teams-section {
+      gap: 6px;
+    }
+
+    .fixture-card.with-time .team-container {
+      gap: 3px;
+    }
+
+    .fixture-card.with-time .team-name {
+      font-size: 13px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .fixture-card.with-time .vs-divider {
+      font-size: 11px;
+      min-width: 16px;
+    }
+
+    .score-display {
+      font-size: 13px;
+      padding: 4px 8px;
+      min-width: 50px;
     }
   }
 `;

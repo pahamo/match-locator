@@ -231,13 +231,13 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
 export async function getFixtureById(id: number): Promise<Fixture | undefined> {
   try {
     if (!id) return undefined;
-    
+
     const { data: rows, error } = await supabase
       .from('fixtures_with_teams')
       .select(`
         id,matchday,utc_kickoff,venue,status,competition_id,stage,round,
-        home_team_id,home_team,home_slug,home_crest,
-        away_team_id,away_team,away_slug,away_crest
+        home_team_id,home_team,home_slug,home_crest,home_score,
+        away_team_id,away_team,away_slug,away_crest,away_score
       `)
       .eq('id', id)
       .limit(1);
@@ -368,8 +368,8 @@ export async function getAdminFixtures(competitionId: number = 1): Promise<Admin
       .from('fixtures_with_teams')
       .select(`
         id,matchday,utc_kickoff,venue,status,competition_id,stage,round,
-        home_team_id,home_team,home_slug,home_crest,
-        away_team_id,away_team,away_slug,away_crest
+        home_team_id,home_team,home_slug,home_crest,home_score,
+        away_team_id,away_team,away_slug,away_crest,away_score
       `)
       .eq('competition_id', competitionId)
       .gte('utc_kickoff', currentSeasonStart)

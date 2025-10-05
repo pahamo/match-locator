@@ -45,18 +45,26 @@ const CompetitionPage: React.FC = () => {
         updateDocumentMeta(meta);
       }
 
-      // Load fixtures and teams for this competition
-      const [fixturesData, teamsData] = await Promise.all([
+      // Load fixtures and full teams list
+      const [fixturesData, allTeams] = await Promise.all([
         getSimpleFixtures(currentCompetition.id),
         getTeams()
       ]);
 
       setFixtures(fixturesData);
 
-      // Filter teams for this competition
-      const competitionTeams = teamsData.filter(team =>
-        team.competition_id === currentCompetition.id
-      );
+      // Extract unique team IDs from fixtures
+      const teamIdsInFixtures = new Set<number>();
+      fixturesData.forEach((fixture: any) => {
+        if (fixture.home_team_id) teamIdsInFixtures.add(fixture.home_team_id);
+        if (fixture.away_team_id) teamIdsInFixtures.add(fixture.away_team_id);
+      });
+
+      // Get full team objects for teams that have fixtures in this competition
+      const competitionTeams = allTeams
+        .filter(team => teamIdsInFixtures.has(team.id))
+        .sort((a, b) => a.name.localeCompare(b.name));
+
       setTeams(competitionTeams);
 
     } catch (err) {
