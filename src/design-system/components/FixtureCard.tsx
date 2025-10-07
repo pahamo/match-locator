@@ -11,6 +11,42 @@ import OptimizedImage from '../../components/OptimizedImage';
 import { SkyAffiliateLink } from '../../components/affiliate/AffiliateLink';
 import { buildH2HUrl } from '../../utils/urlBuilder';
 
+// Helper function to get relative day label
+const getRelativeDayLabel = (dateString: string): string => {
+  const date = new Date(dateString);
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  // Reset time parts for comparison
+  const resetTime = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const dateOnly = resetTime(date);
+  const todayOnly = resetTime(today);
+  const tomorrowOnly = resetTime(tomorrow);
+
+  // Get day difference
+  const diffTime = dateOnly.getTime() - todayOnly.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) return 'Today';
+  if (diffDays === 1) return 'Tomorrow';
+  if (diffDays === -1) return 'Yesterday';
+
+  // For dates within the next week, show "This [Day]"
+  if (diffDays > 0 && diffDays <= 7) {
+    const dayName = date.toLocaleDateString('en-GB', { weekday: 'long' });
+    return `This ${dayName}`;
+  }
+
+  // For dates in the past week, show "[Day]"
+  if (diffDays < 0 && diffDays >= -7) {
+    return date.toLocaleDateString('en-GB', { weekday: 'long' });
+  }
+
+  // For further dates, show short date
+  return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+};
+
 
 export interface FixtureCardProps {
   fixture: SimpleFixture | Fixture;
@@ -132,9 +168,23 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
       {/* Time Column - only for withTime variant */}
       {isWithTime && (
         <div className="time-column">
+          {/* Day Label */}
+          <div style={{
+            fontSize: '11px',
+            fontWeight: '600',
+            color: '#6b7280',
+            textAlign: 'center',
+            lineHeight: 1,
+            marginBottom: '2px'
+          }}>
+            {getRelativeDayLabel(fixture.kickoff_utc)}
+          </div>
+
+          {/* Time */}
           <div className="kickoff-time">
             {formatTime(fixture.kickoff_utc)}
           </div>
+
           {(() => {
             const competition = getCompetitionInfo(fixture);
             return (
