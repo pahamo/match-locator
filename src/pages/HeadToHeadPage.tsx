@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import Header from '../components/Header';
 import Breadcrumbs from '../components/Breadcrumbs';
+import StructuredData from '../components/StructuredData';
 import H2HStatsCard from '../components/H2HStatsCard';
 import NextFixtureHero from '../components/NextFixtureHero';
 import { FixtureCard } from '../design-system';
@@ -278,6 +279,7 @@ const HeadToHeadPage: React.FC = () => {
 
   return (
     <div className="h2h-page">
+      {nextFixture && <StructuredData type="match" data={nextFixture} />}
       <Header />
 
       <main style={{ minHeight: '60vh', background: 'white' }}>
