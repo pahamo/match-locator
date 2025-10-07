@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { usePublicCompetitions } from '../hooks/useCompetitions';
+import { useIsMobile } from '../hooks/useMediaQuery';
 import { getCompetitionIcon, getCompetitionLogo } from '../config/competitions';
 import OptimizedImage from './OptimizedImage';
 
@@ -17,6 +18,23 @@ const Header: React.FC<HeaderProps> = React.memo(({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [competitionsDropdownOpen, setCompetitionsDropdownOpen] = useState(false);
   const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [currentPath, setCurrentPath] = useState('');
+
+  // Detect mobile viewport using custom hook (replaces window.innerWidth checks)
+  const isMobile = useIsMobile();
+
+  // Track current page for active indicators
+  React.useEffect(() => {
+    setCurrentPath(window.location.pathname);
+  }, []);
+
+  // Helper to determine if a link is active
+  const isActive = (path: string) => {
+    if (path === '/') {
+      return currentPath === '/';
+    }
+    return currentPath.startsWith(path);
+  };
 
   // Keyboard navigation for mobile menu
   React.useEffect(() => {
@@ -28,6 +46,45 @@ const Header: React.FC<HeaderProps> = React.memo(({
 
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
+  }, [mobileMenuOpen]);
+
+  // Focus trap for mobile menu
+  React.useEffect(() => {
+    if (!mobileMenuOpen) return;
+
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (!mobileMenu) return;
+
+    const focusableElements = mobileMenu.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled])'
+    );
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    const handleTabKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab') return;
+
+      if (e.shiftKey) {
+        // Shift + Tab: wrap from first to last
+        if (document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement?.focus();
+        }
+      } else {
+        // Tab: wrap from last to first
+        if (document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement?.focus();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleTabKey);
+
+    // Focus first element when menu opens
+    firstElement?.focus();
+
+    return () => document.removeEventListener('keydown', handleTabKey);
   }, [mobileMenuOpen]);
 
   // Load competitions dynamically from database
@@ -97,7 +154,7 @@ const Header: React.FC<HeaderProps> = React.memo(({
             color: '#6b7280',
             marginTop: '1px',
             lineHeight: '1.3',
-            display: window.innerWidth <= 640 ? 'none' : 'block'
+            display: isMobile ? 'none' : 'block'
           }}>
             {subtitle}
           </p>
@@ -106,7 +163,7 @@ const Header: React.FC<HeaderProps> = React.memo(({
 
       {/* Desktop Navigation */}
       <nav style={{
-        display: window.innerWidth <= 768 ? 'none' : 'flex',
+        display: isMobile ? 'none' : 'flex',
         gap: 'clamp(8px, 2vw, 16px)',
         alignItems: 'center',
         flexShrink: 0
@@ -123,10 +180,13 @@ const Header: React.FC<HeaderProps> = React.memo(({
             transition: 'background-color 0.2s',
             minHeight: '36px',
             display: 'flex',
-            alignItems: 'center'
+            alignItems: 'center',
+            backgroundColor: isActive('/') ? '#eef2ff' : 'transparent',
+            borderBottom: isActive('/') ? '2px solid #6366f1' : '2px solid transparent'
           }}
-          onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
-          onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+          onMouseOver={(e) => e.currentTarget.style.backgroundColor = isActive('/') ? '#eef2ff' : '#f8fafc'}
+          onMouseOut={(e) => e.currentTarget.style.backgroundColor = isActive('/') ? '#eef2ff' : 'transparent'}
+          aria-current={isActive('/') ? 'page' : undefined}
         >
           Home
         </a>
@@ -142,10 +202,13 @@ const Header: React.FC<HeaderProps> = React.memo(({
             transition: 'background-color 0.2s',
             minHeight: '36px',
             display: 'flex',
-            alignItems: 'center'
+            alignItems: 'center',
+            backgroundColor: isActive('/matches') ? '#eef2ff' : 'transparent',
+            borderBottom: isActive('/matches') ? '2px solid #6366f1' : '2px solid transparent'
           }}
-          onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
-          onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+          onMouseOver={(e) => e.currentTarget.style.backgroundColor = isActive('/matches') ? '#eef2ff' : '#f8fafc'}
+          onMouseOut={(e) => e.currentTarget.style.backgroundColor = isActive('/matches') ? '#eef2ff' : 'transparent'}
+          aria-current={isActive('/matches') ? 'page' : undefined}
         >
           Matches
         </a>
@@ -169,6 +232,22 @@ const Header: React.FC<HeaderProps> = React.memo(({
         >
           <a
             href="/competitions"
+            role="button"
+            aria-haspopup="true"
+            aria-expanded={competitionsDropdownOpen}
+            aria-current={isActive('/competitions') ? 'page' : undefined}
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setCompetitionsDropdownOpen(!competitionsDropdownOpen);
+              } else if (e.key === 'Escape') {
+                setCompetitionsDropdownOpen(false);
+              } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                setCompetitionsDropdownOpen(true);
+              }
+            }}
             style={{
               color: '#6366f1',
               textDecoration: 'none',
@@ -181,7 +260,8 @@ const Header: React.FC<HeaderProps> = React.memo(({
               display: 'flex',
               alignItems: 'center',
               gap: '4px',
-              backgroundColor: competitionsDropdownOpen ? '#f8fafc' : 'transparent'
+              backgroundColor: isActive('/competitions') ? '#eef2ff' : (competitionsDropdownOpen ? '#f8fafc' : 'transparent'),
+              borderBottom: isActive('/competitions') ? '2px solid #6366f1' : '2px solid transparent'
             }}
           >
             Competitions
@@ -196,21 +276,31 @@ const Header: React.FC<HeaderProps> = React.memo(({
 
           {/* Dropdown Menu */}
           {competitionsDropdownOpen && (
-            <div style={{
-              position: 'absolute',
-              top: '100%',
-              left: 0,
-              background: 'white',
-              border: '1px solid #e5e7eb',
-              borderRadius: '8px',
-              boxShadow: '0 4px 12px rgb(0 0 0 / 0.15)',
-              minWidth: '220px',
-              zIndex: 1000,
-              marginTop: '2px'
-            }}>
+            <div
+              role="menu"
+              aria-label="Competition list"
+              style={{
+                position: 'absolute',
+                top: '100%',
+                left: 0,
+                background: 'white',
+                border: '1px solid #e5e7eb',
+                borderRadius: '8px',
+                boxShadow: '0 4px 12px rgb(0 0 0 / 0.15)',
+                minWidth: '220px',
+                zIndex: 1000,
+                marginTop: '2px'
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') {
+                  setCompetitionsDropdownOpen(false);
+                }
+              }}
+            >
               <div style={{ padding: '8px 0' }}>
                 <a
                   href="/competitions"
+                  role="menuitem"
                   style={{
                     display: 'block',
                     padding: '8px 16px',
@@ -231,6 +321,7 @@ const Header: React.FC<HeaderProps> = React.memo(({
                   <a
                     key={comp.slug}
                     href={`/competitions/${comp.slug}`}
+                    role="menuitem"
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -276,10 +367,13 @@ const Header: React.FC<HeaderProps> = React.memo(({
             transition: 'background-color 0.2s',
             minHeight: '36px',
             display: 'flex',
-            alignItems: 'center'
+            alignItems: 'center',
+            backgroundColor: isActive('/clubs') ? '#eef2ff' : 'transparent',
+            borderBottom: isActive('/clubs') ? '2px solid #6366f1' : '2px solid transparent'
           }}
-          onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
-          onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+          onMouseOver={(e) => e.currentTarget.style.backgroundColor = isActive('/clubs') ? '#eef2ff' : '#f8fafc'}
+          onMouseOut={(e) => e.currentTarget.style.backgroundColor = isActive('/clubs') ? '#eef2ff' : 'transparent'}
+          aria-current={isActive('/clubs') ? 'page' : undefined}
         >
           Clubs
         </a>
@@ -295,10 +389,13 @@ const Header: React.FC<HeaderProps> = React.memo(({
             transition: 'background-color 0.2s',
             minHeight: '36px',
             display: 'flex',
-            alignItems: 'center'
+            alignItems: 'center',
+            backgroundColor: isActive('/about') ? '#eef2ff' : 'transparent',
+            borderBottom: isActive('/about') ? '2px solid #6366f1' : '2px solid transparent'
           }}
-          onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
-          onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+          onMouseOver={(e) => e.currentTarget.style.backgroundColor = isActive('/about') ? '#eef2ff' : '#f8fafc'}
+          onMouseOut={(e) => e.currentTarget.style.backgroundColor = isActive('/about') ? '#eef2ff' : 'transparent'}
+          aria-current={isActive('/about') ? 'page' : undefined}
         >
           About
         </a>
@@ -308,7 +405,7 @@ const Header: React.FC<HeaderProps> = React.memo(({
       <button
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         style={{
-          display: window.innerWidth <= 768 ? 'flex' : 'none',
+          display: isMobile ? 'flex' : 'none',
           alignItems: 'center',
           justifyContent: 'center',
           background: 'transparent',
@@ -354,7 +451,7 @@ const Header: React.FC<HeaderProps> = React.memo(({
             boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
             minWidth: '200px',
             zIndex: 50,
-            display: window.innerWidth <= 768 ? 'block' : 'none'
+            display: isMobile ? 'block' : 'none'
           }}
         >
           <nav style={{ display: 'flex', flexDirection: 'column', padding: '8px 0' }}>
@@ -367,11 +464,14 @@ const Header: React.FC<HeaderProps> = React.memo(({
                 fontWeight: '500',
                 padding: '12px 16px',
                 transition: 'background-color 0.2s',
-                display: 'block'
+                display: 'block',
+                backgroundColor: isActive('/') ? '#eef2ff' : 'transparent',
+                borderLeft: isActive('/') ? '3px solid #6366f1' : '3px solid transparent'
               }}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
-              onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = isActive('/') ? '#eef2ff' : '#f8fafc'}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = isActive('/') ? '#eef2ff' : 'transparent'}
               onClick={() => setMobileMenuOpen(false)}
+              aria-current={isActive('/') ? 'page' : undefined}
             >
               Home
             </a>
@@ -384,11 +484,14 @@ const Header: React.FC<HeaderProps> = React.memo(({
                 fontWeight: '500',
                 padding: '12px 16px',
                 transition: 'background-color 0.2s',
-                display: 'block'
+                display: 'block',
+                backgroundColor: isActive('/matches') ? '#eef2ff' : 'transparent',
+                borderLeft: isActive('/matches') ? '3px solid #6366f1' : '3px solid transparent'
               }}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
-              onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = isActive('/matches') ? '#eef2ff' : '#f8fafc'}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = isActive('/matches') ? '#eef2ff' : 'transparent'}
               onClick={() => setMobileMenuOpen(false)}
+              aria-current={isActive('/matches') ? 'page' : undefined}
             >
               Matches
             </a>
@@ -414,11 +517,14 @@ const Header: React.FC<HeaderProps> = React.memo(({
                   fontWeight: '500',
                   padding: '10px 16px',
                   transition: 'background-color 0.2s',
-                  display: 'block'
+                  display: 'block',
+                  backgroundColor: isActive('/competitions') && currentPath === '/competitions' ? '#eef2ff' : 'transparent',
+                  borderLeft: isActive('/competitions') && currentPath === '/competitions' ? '3px solid #6366f1' : '3px solid transparent'
                 }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = (isActive('/competitions') && currentPath === '/competitions') ? '#eef2ff' : '#f8fafc'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = (isActive('/competitions') && currentPath === '/competitions') ? '#eef2ff' : 'transparent'}
                 onClick={() => setMobileMenuOpen(false)}
+                aria-current={(isActive('/competitions') && currentPath === '/competitions') ? 'page' : undefined}
               >
                 📊 All Competitions
               </a>
@@ -435,11 +541,14 @@ const Header: React.FC<HeaderProps> = React.memo(({
                     transition: 'background-color 0.2s',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '8px'
+                    gap: '8px',
+                    backgroundColor: currentPath === `/competitions/${comp.slug}` ? '#eef2ff' : 'transparent',
+                    borderLeft: currentPath === `/competitions/${comp.slug}` ? '3px solid #6366f1' : '3px solid transparent'
                   }}
-                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
-                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = currentPath === `/competitions/${comp.slug}` ? '#eef2ff' : '#f8fafc'}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = currentPath === `/competitions/${comp.slug}` ? '#eef2ff' : 'transparent'}
                   onClick={() => setMobileMenuOpen(false)}
+                  aria-current={currentPath === `/competitions/${comp.slug}` ? 'page' : undefined}
                 >
                   {comp.logo ? (
                     <OptimizedImage
@@ -467,11 +576,14 @@ const Header: React.FC<HeaderProps> = React.memo(({
                 transition: 'background-color 0.2s',
                 display: 'block',
                 borderTop: '1px solid #f3f4f6',
-                marginTop: '8px'
+                marginTop: '8px',
+                backgroundColor: isActive('/clubs') ? '#eef2ff' : 'transparent',
+                borderLeft: isActive('/clubs') ? '3px solid #6366f1' : '3px solid transparent'
               }}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
-              onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = isActive('/clubs') ? '#eef2ff' : '#f8fafc'}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = isActive('/clubs') ? '#eef2ff' : 'transparent'}
               onClick={() => setMobileMenuOpen(false)}
+              aria-current={isActive('/clubs') ? 'page' : undefined}
             >
               Clubs
             </a>
@@ -484,11 +596,14 @@ const Header: React.FC<HeaderProps> = React.memo(({
                 fontWeight: '500',
                 padding: '12px 16px',
                 transition: 'background-color 0.2s',
-                display: 'block'
+                display: 'block',
+                backgroundColor: isActive('/about') ? '#eef2ff' : 'transparent',
+                borderLeft: isActive('/about') ? '3px solid #6366f1' : '3px solid transparent'
               }}
-              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
-              onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = isActive('/about') ? '#eef2ff' : '#f8fafc'}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = isActive('/about') ? '#eef2ff' : 'transparent'}
               onClick={() => setMobileMenuOpen(false)}
+              aria-current={isActive('/about') ? 'page' : undefined}
             >
               About
             </a>
