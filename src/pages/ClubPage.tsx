@@ -171,7 +171,7 @@ const ClubPage: React.FC = () => {
             teamName: team ? formatTeamNameShort(team.name) : 'Team'
           })} />
 
-          <h1 style={{ marginTop: 0 }}>
+          <h1 style={{ marginTop: 0, fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}>
             {team ? formatTeamNameShort(team.name) : 'Team'} TV Schedule - What Time Are {team ? formatTeamNameShort(team.name) : 'Team'} Playing?
           </h1>
 

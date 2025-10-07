@@ -296,7 +296,7 @@ const HeadToHeadPage: React.FC = () => {
             paddingTop: '16px'
           }}>
             <h1 style={{
-              fontSize: 'clamp(2rem, 5vw, 3rem)',
+              fontSize: 'clamp(2rem, 5vw, 3.5rem)',
               fontWeight: '700',
               color: '#1e293b',
               marginBottom: '8px'

@@ -443,7 +443,7 @@ export const generateTeamMeta = (
       : ' - channel TBC';
     description = `${teamShort} next play ${nextMatch.opponent} ${nextMatch.date}${channelInfo}. Complete ${season} TV schedule with all fixtures, kick-off times & UK broadcast info.`;
   } else {
-    description = `What time is ${teamShort} playing? Get ${teamShort}'s complete TV schedule ${season} with kick-off times and UK channels. Sky Sports, TNT Sports, Amazon Prime coverage. Never miss a match.`;
+    description = `Find out when ${teamShort} are playing next! Complete ${season} TV schedule with all kick-off times and UK broadcast channels. Sky Sports, TNT Sports, Amazon Prime & BBC coverage. Never miss a ${teamShort} match.`;
   }
 
   const canonical = `${CANONICAL_BASE}/clubs/${team.slug}`;
@@ -531,8 +531,8 @@ export const generateCompetitionMeta = (competitionSlug: string) => {
   // Optimized competition title: "[Competition] TV Schedule 2024/25 - Sky, TNT, Amazon | Match Locator"
   const title = `${competitionName} TV Schedule ${season} - ${broadcasters} | Match Locator`;
 
-  // Optimized competition description: "Complete [Competition] TV schedule for UK viewers. Find out which matches are on Sky Sports, TNT Sports, Amazon Prime and more."
-  const description = `Complete ${competitionName} TV schedule for UK viewers. Find out which matches are on ${broadcasters} and more. All fixtures and broadcast info.`;
+  // Optimized competition description: "Find out which channel is showing [Competition] matches! Complete UK TV guide..."
+  const description = `Find out which channel is showing ${competitionName} matches! Complete UK TV schedule for ${broadcasters} and more. All fixtures, kick-off times, and where to watch every match.`;
 
   const canonical = `${CANONICAL_BASE}/competitions/${competitionSlug}`;
 

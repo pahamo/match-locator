@@ -76,10 +76,10 @@ const TodayFixturesPage: React.FC = () => {
 
     const meta = {
       title: 'Football on TV Today - Live UK Schedule | Match Locator',
-      description: `Today's football matches on TV - ${formattedDate}. Live UK schedules for Sky Sports, TNT Sports, BBC, and more. Real-time updates with kick-off times.`,
+      description: `Find out which channel is showing football today! Complete ${formattedDate} TV guide for Sky Sports, TNT Sports, BBC & Amazon Prime. Live updates, kick-off times, and where to watch every match.`,
       canonical: `${process.env.REACT_APP_CANONICAL_BASE || 'https://matchlocator.com'}/matches/today`,
       ogTitle: 'Football on TV Today - Live UK Schedule',
-      ogDescription: `Today's football matches on TV - ${formattedDate}. Live UK schedules with real-time updates.`,
+      ogDescription: `Find out which channel is showing football today! ${formattedDate} TV guide with live updates.`,
       ogImage: `${process.env.REACT_APP_CANONICAL_BASE || 'https://matchlocator.com'}/og-today-fixtures.jpg`
     };
 
@@ -176,7 +176,7 @@ const TodayFixturesPage: React.FC = () => {
         {/* Page Header */}
         <div style={{ marginBottom: '32px' }}>
           <h1 style={{
-            fontSize: 'clamp(1.75rem, 4vw, 2.5rem)',
+            fontSize: 'clamp(2rem, 5vw, 3.5rem)',
             marginBottom: '8px',
             display: 'flex',
             alignItems: 'center',
@@ -188,6 +188,36 @@ const TodayFixturesPage: React.FC = () => {
               <LiveBadge kickoffTime={liveFixtures[0].kickoff_utc} variant="compact" />
             )}
           </h1>
+
+          {/* Hero Value Proposition */}
+          <div style={{
+            background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+            borderRadius: '12px',
+            padding: 'clamp(20px, 4vw, 32px)',
+            marginBottom: '24px',
+            color: 'white',
+            textAlign: 'center'
+          }}>
+            <p style={{
+              margin: '0 0 12px 0',
+              fontSize: 'clamp(18px, 3vw, 22px)',
+              fontWeight: '600',
+              lineHeight: '1.4'
+            }}>
+              Your Complete Guide to UK Football on TV
+            </p>
+            <p style={{
+              margin: 0,
+              fontSize: 'clamp(14px, 2.5vw, 16px)',
+              opacity: 0.95,
+              lineHeight: '1.5',
+              maxWidth: '800px',
+              marginLeft: 'auto',
+              marginRight: 'auto'
+            }}>
+              Find every Premier League, Champions League, and FA Cup match shown on Sky Sports, TNT Sports, BBC, and Amazon Prime. Real-time updates, kick-off times, and broadcast info — completely free.
+            </p>
+          </div>
 
           <div style={{
             display: 'flex',

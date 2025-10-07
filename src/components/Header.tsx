@@ -124,7 +124,7 @@ const Header: React.FC<HeaderProps> = React.memo(({
           }}
           aria-label="Match Locator home page"
         >
-          <OptimizedImage src="/logo.svg" alt="Match Locator logo" width={28} height={28} lazy={false} />
+          <OptimizedImage src="/logo.svg" alt="Match Locator logo" width={isMobile ? 28 : 36} height={isMobile ? 28 : 36} lazy={false} />
         </a>
         <div style={{ minWidth: 0, flex: 1 }}>
           <a
@@ -137,7 +137,7 @@ const Header: React.FC<HeaderProps> = React.memo(({
           >
             <div style={{
               margin: 0,
-              fontSize: 'clamp(16px, 4vw, 20px)',
+              fontSize: 'clamp(18px, 4vw, 24px)',
               fontWeight: '700',
               color: '#1f2937',
               lineHeight: '1.2',
@@ -150,7 +150,7 @@ const Header: React.FC<HeaderProps> = React.memo(({
           </a>
           <p style={{
             margin: 0,
-            fontSize: 'clamp(11px, 2.5vw, 13px)',
+            fontSize: 'clamp(12px, 2.5vw, 15px)',
             color: '#6b7280',
             marginTop: '1px',
             lineHeight: '1.3',

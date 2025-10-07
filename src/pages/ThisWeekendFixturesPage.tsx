@@ -178,7 +178,7 @@ const ThisWeekendFixturesPage: React.FC = () => {
         {/* Page Header */}
         <div style={{ marginBottom: '32px' }}>
           <h1 style={{
-            fontSize: 'clamp(1.75rem, 4vw, 2.5rem)',
+            fontSize: 'clamp(2rem, 5vw, 3.5rem)',
             marginBottom: '8px',
             display: 'flex',
             alignItems: 'center',

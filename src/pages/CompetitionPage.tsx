@@ -162,7 +162,7 @@ const CompetitionPage: React.FC = () => {
               />
             )}
             <h1 style={{
-              fontSize: isMobile ? '1.5rem' : '2.5rem',
+              fontSize: isMobile ? '1.5rem' : '3.5rem',
               fontWeight: 'bold',
               margin: 0,
               textAlign: isMobile ? 'left' : 'center',
