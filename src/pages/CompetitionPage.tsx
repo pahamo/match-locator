@@ -131,6 +131,27 @@ const CompetitionPage: React.FC = () => {
           "description": `${competition.name} fixtures, results, and TV schedule information.`
         }}
       />
+      <StructuredData
+        type="faq"
+        data={[
+          {
+            question: `What channel is ${competition.name} on in the UK?`,
+            answer: `${competition.name} matches in the UK are shown on various broadcasters including Sky Sports, TNT Sports, BBC, and Amazon Prime Video. The specific channel depends on the match. Check our complete TV schedule above to see which broadcaster is showing each ${competition.name} match.`
+          },
+          {
+            question: `Where can I watch ${competition.name} fixtures?`,
+            answer: `You can watch ${competition.name} fixtures on Sky Sports, TNT Sports (formerly BT Sport), BBC, Amazon Prime Video, and other UK broadcasters. Use our TV guide above to find kick-off times and broadcast information for every match.`
+          },
+          {
+            question: `What time do ${competition.name} matches kick off?`,
+            answer: `${competition.name} kick-off times vary throughout the season. Matches typically start at 12:30pm, 3:00pm, 5:30pm, or 8:00pm on weekends, with midweek fixtures usually at 7:45pm or 8:00pm. Check our fixtures list above for exact kick-off times.`
+          },
+          {
+            question: `How can I find ${competition.name} results and standings?`,
+            answer: `Our ${competition.name} page shows the latest results, upcoming fixtures, and current league standings. The table is updated regularly with the latest match outcomes, points, and team positions. Scroll to the standings section above to see the current ${competition.name} table.`
+          }
+        ]}
+      />
       <Header />
 
       <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>

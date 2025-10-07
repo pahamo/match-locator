@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Breadcrumbs from '../components/Breadcrumbs';
+import StructuredData from '../components/StructuredData';
 import { FixtureCard } from '../design-system';
 import CountdownTimer from '../components/CountdownTimer';
 import { getFixturesByDateRange } from '../services/supabase';
@@ -191,8 +192,33 @@ const TomorrowFixturesPage: React.FC = () => {
   const ukTomorrow = new Date(getUKDate());
   ukTomorrow.setDate(ukTomorrow.getDate() + 1);
 
+  // Generate dynamic FAQ data based on tomorrow's fixtures
+  const faqData = [
+    {
+      question: "What football is on TV tomorrow in the UK?",
+      answer: `Tomorrow (${getFormattedDateForSEO(ukTomorrow)}) there ${fixtures.length === 1 ? 'is' : 'are'} ${fixtures.length} football ${fixtures.length === 1 ? 'match' : 'matches'} on UK TV. Matches are broadcast on Sky Sports, TNT Sports, Amazon Prime, and BBC. Check the full schedule above for kick-off times and channels.`
+    },
+    {
+      question: "What channel is football on tomorrow?",
+      answer: "Tomorrow's football matches are shown on Sky Sports (Premier League, EFL), TNT Sports (Champions League, Europa League), Amazon Prime Video (selected Premier League games), and BBC (FA Cup, selected matches). Check each match above for specific channel information."
+    },
+    {
+      question: "What time does football start tomorrow?",
+      answer: firstMatch
+        ? `The first football match tomorrow kicks off at ${new Date(firstMatch.kickoff_utc).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })} UK time on ${firstMatch.providers_uk?.[0]?.name || 'TV'}.`
+        : "Check the schedule above for exact kick-off times for tomorrow's matches."
+    },
+    {
+      question: "Is there any football on TV tomorrow night?",
+      answer: fixtures.length > 0
+        ? `Yes, there ${fixtures.length === 1 ? 'is' : 'are'} ${fixtures.length} football ${fixtures.length === 1 ? 'match' : 'matches'} on TV tomorrow. See the complete schedule above with kick-off times and UK TV channels.`
+        : "Check the full match calendar for upcoming games on Sky Sports, TNT Sports, Amazon Prime and BBC."
+    }
+  ];
+
   return (
     <div>
+      <StructuredData type="faq" data={faqData} />
       <Header />
       <main className="wrap" style={{ paddingTop: 'var(--layout-page-top-margin)' }}>
         <Breadcrumbs items={generateBreadcrumbs('/matches/tomorrow')} />

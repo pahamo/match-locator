@@ -486,9 +486,9 @@ export async function getTeams(): Promise<Team[]> {
   try {
     // Fetch all teams without is_active filtering
 
-    const { data, error, count } = await supabase
+    const { data, error } = await supabase
       .from('teams')
-      .select('id,name,slug,crest_url,competition_id,short_name,club_colors,website,venue,city', { count: 'exact' })
+      .select('id,name,slug,crest_url,competition_id,short_name,club_colors,website,venue,city')
       .order('name', { ascending: true });
 
 

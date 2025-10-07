@@ -22,7 +22,6 @@ const getRelativeDayLabel = (dateString: string): string => {
   const resetTime = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
   const dateOnly = resetTime(date);
   const todayOnly = resetTime(today);
-  const tomorrowOnly = resetTime(tomorrow);
 
   // Get day difference
   const diffTime = dateOnly.getTime() - todayOnly.getTime();
