@@ -1,0 +1,3097 @@
+{
+  "id": 19,
+  "sport_id": 1,
+  "country_id": 462,
+  "venue_id": 204,
+  "gender": "male",
+  "name": "Arsenal",
+  "short_code": "ARS",
+  "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+  "founded": 1886,
+  "type": "domestic",
+  "placeholder": false,
+  "last_played_at": "2025-10-01 19:00:00",
+  "upcoming": [
+    {
+      "id": 19427515,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372201,
+      "state_id": 1,
+      "venue_id": 204,
+      "name": "Arsenal vs West Ham United",
+      "starting_at": "2025-10-04 14:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": true,
+      "has_premium_odds": true,
+      "starting_at_timestamp": 1759586400,
+      "meta": {
+        "location": "home"
+      },
+      "participants": [
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": 2
+          }
+        },
+        {
+          "id": 1,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 214,
+          "gender": "male",
+          "name": "West Ham United",
+          "short_code": "WHU",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/1/1.png",
+          "founded": 1895,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-29 19:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": 19
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427528,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372202,
+      "state_id": 1,
+      "venue_id": 485,
+      "name": "Fulham vs Arsenal",
+      "starting_at": "2025-10-18 16:30:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": true,
+      "has_premium_odds": true,
+      "starting_at_timestamp": 1760805000,
+      "meta": {
+        "location": "away"
+      },
+      "participants": [
+        {
+          "id": 11,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 485,
+          "gender": "male",
+          "name": "Fulham",
+          "short_code": "FUL",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/11/11.png",
+          "founded": 1879,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-28 13:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19568463,
+      "sport_id": 1,
+      "league_id": 2,
+      "season_id": 25580,
+      "stage_id": 77478049,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 388951,
+      "state_id": 1,
+      "venue_id": 204,
+      "name": "Arsenal vs Atlético Madrid",
+      "starting_at": "2025-10-21 19:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": true,
+      "has_premium_odds": true,
+      "starting_at_timestamp": 1761073200,
+      "meta": {
+        "location": "home"
+      },
+      "participants": [
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 7980,
+          "sport_id": 1,
+          "country_id": 32,
+          "venue_id": 140808,
+          "gender": "male",
+          "name": "Atlético Madrid",
+          "short_code": "ATM",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/12/7980.png",
+          "founded": 1903,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-30 19:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 2,
+        "sport_id": 1,
+        "country_id": 41,
+        "name": "Champions League",
+        "active": true,
+        "short_code": "UEFA CL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/2.png",
+        "type": "league",
+        "sub_type": "cup_international",
+        "last_played_at": "2025-10-01 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427536,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372203,
+      "state_id": 1,
+      "venue_id": 204,
+      "name": "Arsenal vs Crystal Palace",
+      "starting_at": "2025-10-26 14:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1761487200,
+      "meta": {
+        "location": "home"
+      },
+      "participants": [
+        {
+          "id": 51,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 201,
+          "gender": "male",
+          "name": "Crystal Palace",
+          "short_code": "CRY",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/51.png",
+          "founded": 1905,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-02 16:45:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19585903,
+      "sport_id": 1,
+      "league_id": 27,
+      "season_id": 25654,
+      "stage_id": 77478370,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 391135,
+      "state_id": 1,
+      "venue_id": 204,
+      "name": "Arsenal vs Brighton & Hove Albion",
+      "starting_at": "2025-10-29 19:45:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1761767100,
+      "meta": {
+        "location": "home"
+      },
+      "participants": [
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 78,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 480,
+          "gender": "male",
+          "name": "Brighton & Hove Albion",
+          "short_code": "BHA",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/14/78.png",
+          "founded": 1901,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-27 14:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 27,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Carabao Cup",
+        "active": true,
+        "short_code": "UK CAR",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/27/27.png",
+        "type": "league",
+        "sub_type": "domestic_cup",
+        "last_played_at": "2025-09-24 19:00:00",
+        "category": 2,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427547,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372204,
+      "state_id": 1,
+      "venue_id": 200,
+      "name": "Burnley vs Arsenal",
+      "starting_at": "2025-11-01 15:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1762009200,
+      "meta": {
+        "location": "away"
+      },
+      "participants": [
+        {
+          "id": 27,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 200,
+          "gender": "male",
+          "name": "Burnley",
+          "short_code": "BUR",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/27/27.png",
+          "founded": 1882,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-27 14:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19568587,
+      "sport_id": 1,
+      "league_id": 2,
+      "season_id": 25580,
+      "stage_id": 77478049,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 388952,
+      "state_id": 1,
+      "venue_id": 5530,
+      "name": "Slavia Praha vs Arsenal",
+      "starting_at": "2025-11-04 17:45:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1762278300,
+      "meta": {
+        "location": "away"
+      },
+      "participants": [
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 216,
+          "sport_id": 1,
+          "country_id": 245,
+          "venue_id": 5530,
+          "gender": "male",
+          "name": "Slavia Praha",
+          "short_code": null,
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/24/216.png",
+          "founded": 1892,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-30 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 2,
+        "sport_id": 1,
+        "country_id": 41,
+        "name": "Champions League",
+        "active": true,
+        "short_code": "UEFA CL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/2.png",
+        "type": "league",
+        "sub_type": "cup_international",
+        "last_played_at": "2025-10-01 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427563,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372205,
+      "state_id": 1,
+      "venue_id": 212,
+      "name": "Sunderland vs Arsenal",
+      "starting_at": "2025-11-08 17:30:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1762623000,
+      "meta": {
+        "location": "away"
+      },
+      "participants": [
+        {
+          "id": 3,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 212,
+          "gender": "male",
+          "name": "Sunderland",
+          "short_code": "SUN",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/3/3.png",
+          "founded": 1879,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-27 16:30:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427566,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372206,
+      "state_id": 1,
+      "venue_id": 204,
+      "name": "Arsenal vs Tottenham Hotspur",
+      "starting_at": "2025-11-23 16:30:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1763915400,
+      "meta": {
+        "location": "home"
+      },
+      "participants": [
+        {
+          "id": 6,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 281313,
+          "gender": "male",
+          "name": "Tottenham Hotspur",
+          "short_code": "TOT",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/6/6.png",
+          "founded": 1882,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-30 19:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19568462,
+      "sport_id": 1,
+      "league_id": 2,
+      "season_id": 25580,
+      "stage_id": 77478049,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 388953,
+      "state_id": 1,
+      "venue_id": 204,
+      "name": "Arsenal vs FC Bayern München",
+      "starting_at": "2025-11-26 20:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1764187200,
+      "meta": {
+        "location": "home"
+      },
+      "participants": [
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 503,
+          "sport_id": 1,
+          "country_id": 11,
+          "venue_id": 53,
+          "gender": "male",
+          "name": "FC Bayern München",
+          "short_code": "FCB",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/23/503.png",
+          "founded": 1900,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-30 19:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 2,
+        "sport_id": 1,
+        "country_id": 41,
+        "name": "Champions League",
+        "active": true,
+        "short_code": "UEFA CL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/2.png",
+        "type": "league",
+        "sub_type": "cup_international",
+        "last_played_at": "2025-10-01 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427578,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372207,
+      "state_id": 1,
+      "venue_id": 321614,
+      "name": "Chelsea vs Arsenal",
+      "starting_at": "2025-11-30 16:30:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1764520200,
+      "meta": {
+        "location": "away"
+      },
+      "participants": [
+        {
+          "id": 18,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 321614,
+          "gender": "male",
+          "name": "Chelsea",
+          "short_code": "CHE",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/18/18.png",
+          "founded": 1905,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-30 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427586,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372208,
+      "state_id": 1,
+      "venue_id": 204,
+      "name": "Arsenal vs Brentford",
+      "starting_at": "2025-12-03 20:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1764792000,
+      "meta": {
+        "location": "home"
+      },
+      "participants": [
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 236,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 338817,
+          "gender": "male",
+          "name": "Brentford",
+          "short_code": "BRE",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/12/236.png",
+          "founded": 1889,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-27 11:30:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427596,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372209,
+      "state_id": 1,
+      "venue_id": 5,
+      "name": "Aston Villa vs Arsenal",
+      "starting_at": "2025-12-06 15:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1765033200,
+      "meta": {
+        "location": "away"
+      },
+      "participants": [
+        {
+          "id": 15,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 5,
+          "gender": "male",
+          "name": "Aston Villa",
+          "short_code": "AVL",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/15/15.png",
+          "founded": 1874,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-02 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19568507,
+      "sport_id": 1,
+      "league_id": 2,
+      "season_id": 25580,
+      "stage_id": 77478049,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 388954,
+      "state_id": 1,
+      "venue_id": 1572,
+      "name": "Club Brugge vs Arsenal",
+      "starting_at": "2025-12-10 20:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1765396800,
+      "meta": {
+        "location": "away"
+      },
+      "participants": [
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 340,
+          "sport_id": 1,
+          "country_id": 556,
+          "venue_id": 1572,
+          "gender": "male",
+          "name": "Club Brugge",
+          "short_code": "BRU",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/20/340.png",
+          "founded": 1891,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-30 16:45:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 2,
+        "sport_id": 1,
+        "country_id": 41,
+        "name": "Champions League",
+        "active": true,
+        "short_code": "UEFA CL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/2.png",
+        "type": "league",
+        "sub_type": "cup_international",
+        "last_played_at": "2025-10-01 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427606,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372210,
+      "state_id": 1,
+      "venue_id": 204,
+      "name": "Arsenal vs Wolverhampton Wanderers",
+      "starting_at": "2025-12-13 15:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1765638000,
+      "meta": {
+        "location": "home"
+      },
+      "participants": [
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 29,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 492,
+          "gender": "male",
+          "name": "Wolverhampton Wanderers",
+          "short_code": "WOL",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/29/29.png",
+          "founded": 1877,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-27 19:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427619,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372211,
+      "state_id": 1,
+      "venue_id": 343762,
+      "name": "Everton vs Arsenal",
+      "starting_at": "2025-12-20 15:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1766242800,
+      "meta": {
+        "location": "away"
+      },
+      "participants": [
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 13,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 343762,
+          "gender": "male",
+          "name": "Everton",
+          "short_code": "EVE",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/13/13.png",
+          "founded": 1878,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-29 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427626,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372212,
+      "state_id": 1,
+      "venue_id": 204,
+      "name": "Arsenal vs Brighton & Hove Albion",
+      "starting_at": "2025-12-27 15:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1766847600,
+      "meta": {
+        "location": "home"
+      },
+      "participants": [
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 78,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 480,
+          "gender": "male",
+          "name": "Brighton & Hove Albion",
+          "short_code": "BHA",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/14/78.png",
+          "founded": 1901,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-27 14:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427636,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372213,
+      "state_id": 1,
+      "venue_id": 204,
+      "name": "Arsenal vs Aston Villa",
+      "starting_at": "2025-12-30 20:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1767124800,
+      "meta": {
+        "location": "home"
+      },
+      "participants": [
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 15,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 5,
+          "gender": "male",
+          "name": "Aston Villa",
+          "short_code": "AVL",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/15/15.png",
+          "founded": 1874,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-02 19:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427647,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372214,
+      "state_id": 1,
+      "venue_id": 146,
+      "name": "AFC Bournemouth vs Arsenal",
+      "starting_at": "2026-01-03 15:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1767452400,
+      "meta": {
+        "location": "away"
+      },
+      "participants": [
+        {
+          "id": 52,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 146,
+          "gender": "male",
+          "name": "AFC Bournemouth",
+          "short_code": "BOU",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/20/52.png",
+          "founded": 1899,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-27 14:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427656,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372215,
+      "state_id": 1,
+      "venue_id": 204,
+      "name": "Arsenal vs Liverpool",
+      "starting_at": "2026-01-07 20:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1767816000,
+      "meta": {
+        "location": "home"
+      },
+      "participants": [
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 8,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 230,
+          "gender": "male",
+          "name": "Liverpool",
+          "short_code": "LIV",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/8/8.png",
+          "founded": 1892,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-30 19:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427672,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372216,
+      "state_id": 1,
+      "venue_id": 542,
+      "name": "Nottingham Forest vs Arsenal",
+      "starting_at": "2026-01-17 15:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1768662000,
+      "meta": {
+        "location": "away"
+      },
+      "participants": [
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 63,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 542,
+          "gender": "male",
+          "name": "Nottingham Forest",
+          "short_code": "NFO",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/31/63.png",
+          "founded": 1865,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-02 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19568527,
+      "sport_id": 1,
+      "league_id": 2,
+      "season_id": 25580,
+      "stage_id": 77478049,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 388955,
+      "state_id": 1,
+      "venue_id": 1721,
+      "name": "Inter vs Arsenal",
+      "starting_at": "2026-01-20 20:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1768939200,
+      "meta": {
+        "location": "away"
+      },
+      "participants": [
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 2930,
+          "sport_id": 1,
+          "country_id": 251,
+          "venue_id": 1721,
+          "gender": "male",
+          "name": "Inter",
+          "short_code": "INT",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/18/2930.png",
+          "founded": 1908,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-30 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 2,
+        "sport_id": 1,
+        "country_id": 41,
+        "name": "Champions League",
+        "active": true,
+        "short_code": "UEFA CL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/2.png",
+        "type": "league",
+        "sub_type": "cup_international",
+        "last_played_at": "2025-10-01 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427676,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372217,
+      "state_id": 1,
+      "venue_id": 204,
+      "name": "Arsenal vs Manchester United",
+      "starting_at": "2026-01-24 15:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1769266800,
+      "meta": {
+        "location": "home"
+      },
+      "participants": [
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 14,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 206,
+          "gender": "male",
+          "name": "Manchester United",
+          "short_code": "MUN",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/14/14.png",
+          "founded": 1878,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-27 11:30:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19568465,
+      "sport_id": 1,
+      "league_id": 2,
+      "season_id": 25580,
+      "stage_id": 77478049,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 388956,
+      "state_id": 1,
+      "venue_id": 204,
+      "name": "Arsenal vs Kairat",
+      "starting_at": "2026-01-28 20:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1769630400,
+      "meta": {
+        "location": "home"
+      },
+      "participants": [
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 3108,
+          "sport_id": 1,
+          "country_id": 2427,
+          "venue_id": 7374,
+          "gender": "male",
+          "name": "Kairat",
+          "short_code": null,
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/4/3108.png",
+          "founded": 1952,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-30 16:45:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 2,
+        "sport_id": 1,
+        "country_id": 41,
+        "name": "Champions League",
+        "active": true,
+        "short_code": "UEFA CL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/2.png",
+        "type": "league",
+        "sub_type": "cup_international",
+        "last_played_at": "2025-10-01 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427689,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372218,
+      "state_id": 1,
+      "venue_id": 488,
+      "name": "Leeds United vs Arsenal",
+      "starting_at": "2026-01-31 15:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1769871600,
+      "meta": {
+        "location": "away"
+      },
+      "participants": [
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 71,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 488,
+          "gender": "male",
+          "name": "Leeds United",
+          "short_code": "LEE",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/7/71.png",
+          "founded": 1919,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-27 14:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427696,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372219,
+      "state_id": 1,
+      "venue_id": 204,
+      "name": "Arsenal vs Sunderland",
+      "starting_at": "2026-02-07 15:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1770476400,
+      "meta": {
+        "location": "home"
+      },
+      "participants": [
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 3,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 212,
+          "gender": "male",
+          "name": "Sunderland",
+          "short_code": "SUN",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/3/3.png",
+          "founded": 1879,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-27 16:30:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427707,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372220,
+      "state_id": 1,
+      "venue_id": 338817,
+      "name": "Brentford vs Arsenal",
+      "starting_at": "2026-02-11 20:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1770840000,
+      "meta": {
+        "location": "away"
+      },
+      "participants": [
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 236,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 338817,
+          "gender": "male",
+          "name": "Brentford",
+          "short_code": "BRE",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/12/236.png",
+          "founded": 1889,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-27 11:30:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427153,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372144,
+      "state_id": 1,
+      "venue_id": 281313,
+      "name": "Tottenham Hotspur vs Arsenal",
+      "starting_at": "2026-02-21 15:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1771686000,
+      "meta": {
+        "location": "away"
+      },
+      "participants": [
+        {
+          "id": 6,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 281313,
+          "gender": "male",
+          "name": "Tottenham Hotspur",
+          "short_code": "TOT",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/6/6.png",
+          "founded": 1882,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-30 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427155,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372145,
+      "state_id": 1,
+      "venue_id": 204,
+      "name": "Arsenal vs Chelsea",
+      "starting_at": "2026-02-28 15:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1772290800,
+      "meta": {
+        "location": "home"
+      },
+      "participants": [
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 18,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 321614,
+          "gender": "male",
+          "name": "Chelsea",
+          "short_code": "CHE",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/18/18.png",
+          "founded": 1905,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-30 19:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427167,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372146,
+      "state_id": 1,
+      "venue_id": 480,
+      "name": "Brighton & Hove Albion vs Arsenal",
+      "starting_at": "2026-03-04 20:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1772654400,
+      "meta": {
+        "location": "away"
+      },
+      "participants": [
+        {
+          "id": 78,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 480,
+          "gender": "male",
+          "name": "Brighton & Hove Albion",
+          "short_code": "BHA",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/14/78.png",
+          "founded": 1901,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-27 14:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427175,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372147,
+      "state_id": 1,
+      "venue_id": 204,
+      "name": "Arsenal vs Everton",
+      "starting_at": "2026-03-14 15:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1773500400,
+      "meta": {
+        "location": "home"
+      },
+      "participants": [
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 13,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 343762,
+          "gender": "male",
+          "name": "Everton",
+          "short_code": "EVE",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/13/13.png",
+          "founded": 1878,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-29 19:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427718,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372148,
+      "state_id": 1,
+      "venue_id": 492,
+      "name": "Wolverhampton Wanderers vs Arsenal",
+      "starting_at": "2026-03-21 15:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1774105200,
+      "meta": {
+        "location": "away"
+      },
+      "participants": [
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 29,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 492,
+          "gender": "male",
+          "name": "Wolverhampton Wanderers",
+          "short_code": "WOL",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/29/29.png",
+          "founded": 1877,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-27 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427721,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372149,
+      "state_id": 1,
+      "venue_id": 204,
+      "name": "Arsenal vs AFC Bournemouth",
+      "starting_at": "2026-04-11 14:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1775916000,
+      "meta": {
+        "location": "home"
+      },
+      "participants": [
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 52,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 146,
+          "gender": "male",
+          "name": "AFC Bournemouth",
+          "short_code": "BOU",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/20/52.png",
+          "founded": 1899,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-27 14:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427734,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372221,
+      "state_id": 1,
+      "venue_id": 151,
+      "name": "Manchester City vs Arsenal",
+      "starting_at": "2026-04-18 14:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1776520800,
+      "meta": {
+        "location": "away"
+      },
+      "participants": [
+        {
+          "id": 9,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 151,
+          "gender": "male",
+          "name": "Manchester City",
+          "short_code": "MCI",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/9/9.png",
+          "founded": 1880,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427738,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372150,
+      "state_id": 1,
+      "venue_id": 204,
+      "name": "Arsenal vs Newcastle United",
+      "starting_at": "2026-04-25 14:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1777125600,
+      "meta": {
+        "location": "home"
+      },
+      "participants": [
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 20,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 449,
+          "gender": "male",
+          "name": "Newcastle United",
+          "short_code": "NEW",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/20/20.png",
+          "founded": 1892,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 16:45:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427206,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372151,
+      "state_id": 1,
+      "venue_id": 204,
+      "name": "Arsenal vs Fulham",
+      "starting_at": "2026-05-02 14:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1777730400,
+      "meta": {
+        "location": "home"
+      },
+      "participants": [
+        {
+          "id": 11,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 485,
+          "gender": "male",
+          "name": "Fulham",
+          "short_code": "FUL",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/11/11.png",
+          "founded": 1879,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-28 13:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427225,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372152,
+      "state_id": 1,
+      "venue_id": 214,
+      "name": "West Ham United vs Arsenal",
+      "starting_at": "2026-05-09 14:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1778335200,
+      "meta": {
+        "location": "away"
+      },
+      "participants": [
+        {
+          "id": 1,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 214,
+          "gender": "male",
+          "name": "West Ham United",
+          "short_code": "WHU",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/1/1.png",
+          "founded": 1895,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-29 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427226,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372153,
+      "state_id": 1,
+      "venue_id": 204,
+      "name": "Arsenal vs Burnley",
+      "starting_at": "2026-05-17 14:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1779026400,
+      "meta": {
+        "location": "home"
+      },
+      "participants": [
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 27,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 200,
+          "gender": "male",
+          "name": "Burnley",
+          "short_code": "BUR",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/27/27.png",
+          "founded": 1882,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-09-27 14:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    },
+    {
+      "id": 19427238,
+      "sport_id": 1,
+      "league_id": 8,
+      "season_id": 25583,
+      "stage_id": 77476879,
+      "group_id": null,
+      "aggregate_id": null,
+      "round_id": 372154,
+      "state_id": 1,
+      "venue_id": 201,
+      "name": "Crystal Palace vs Arsenal",
+      "starting_at": "2026-05-24 15:00:00",
+      "result_info": null,
+      "leg": "1/1",
+      "details": null,
+      "length": 90,
+      "placeholder": false,
+      "has_odds": false,
+      "has_premium_odds": false,
+      "starting_at_timestamp": 1779634800,
+      "meta": {
+        "location": "away"
+      },
+      "participants": [
+        {
+          "id": 51,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 201,
+          "gender": "male",
+          "name": "Crystal Palace",
+          "short_code": "CRY",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/51.png",
+          "founded": 1905,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-02 16:45:00",
+          "meta": {
+            "location": "home",
+            "winner": null,
+            "position": null
+          }
+        },
+        {
+          "id": 19,
+          "sport_id": 1,
+          "country_id": 462,
+          "venue_id": 204,
+          "gender": "male",
+          "name": "Arsenal",
+          "short_code": "ARS",
+          "image_path": "https://cdn.sportmonks.com/images/soccer/teams/19/19.png",
+          "founded": 1886,
+          "type": "domestic",
+          "placeholder": false,
+          "last_played_at": "2025-10-01 19:00:00",
+          "meta": {
+            "location": "away",
+            "winner": null,
+            "position": null
+          }
+        }
+      ],
+      "league": {
+        "id": 8,
+        "sport_id": 1,
+        "country_id": 462,
+        "name": "Premier League",
+        "active": true,
+        "short_code": "UK PL",
+        "image_path": "https://cdn.sportmonks.com/images/soccer/leagues/8/8.png",
+        "type": "league",
+        "sub_type": "domestic",
+        "last_played_at": "2025-09-29 19:00:00",
+        "category": 1,
+        "has_jerseys": false
+      }
+    }
+  ]
+}

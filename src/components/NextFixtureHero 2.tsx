@@ -22,8 +22,6 @@ const NextFixtureHero: React.FC<NextFixtureHeroProps> = ({
   const matchStatus = getMatchStatus(fixture.kickoff_utc);
   const isLive = matchStatus.status === 'live';
   const isUpcoming = matchStatus.status === 'upcoming' || matchStatus.status === 'upNext';
-  const isCompleted = matchStatus.status === 'finished';
-  const hasScore = fixture.score?.home !== undefined && fixture.score?.away !== undefined;
 
   const getBroadcasterIcons = () => {
     return fixture.providers_uk.map(provider => {
@@ -83,7 +81,7 @@ const NextFixtureHero: React.FC<NextFixtureHeroProps> = ({
             marginBottom: '8px',
             textShadow: '0 2px 4px rgba(0,0,0,0.3)'
           }}>
-            {isLive ? 'LIVE NOW' : isCompleted ? 'Final Score' : 'Next Meeting'}
+            {isLive ? 'LIVE NOW' : 'Next Meeting'}
           </h1>
 
           <p style={{
@@ -155,7 +153,7 @@ const NextFixtureHero: React.FC<NextFixtureHeroProps> = ({
             </a>
           </div>
 
-          {/* VS/Score and Competition */}
+          {/* VS and Competition */}
           <div style={{ textAlign: 'center' }}>
             <div style={{
               fontSize: '2rem',
@@ -163,13 +161,7 @@ const NextFixtureHero: React.FC<NextFixtureHeroProps> = ({
               marginBottom: '8px',
               textShadow: '0 2px 4px rgba(0,0,0,0.3)'
             }}>
-              {isCompleted && hasScore && fixture.score ? (
-                <div style={{ fontSize: '3rem', lineHeight: '1' }}>
-                  {fixture.score.home} - {fixture.score.away}
-                </div>
-              ) : (
-                'VS'
-              )}
+              VS
             </div>
             <a
               href={`/competitions/${fixture.competition || 'premier-league'}`}

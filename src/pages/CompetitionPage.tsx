@@ -45,18 +45,26 @@ const CompetitionPage: React.FC = () => {
         updateDocumentMeta(meta);
       }
 
-      // Load fixtures and teams for this competition
-      const [fixturesData, teamsData] = await Promise.all([
+      // Load fixtures and full teams list
+      const [fixturesData, allTeams] = await Promise.all([
         getSimpleFixtures(currentCompetition.id),
         getTeams()
       ]);
 
       setFixtures(fixturesData);
 
-      // Filter teams for this competition
-      const competitionTeams = teamsData.filter(team =>
-        team.competition_id === currentCompetition.id
-      );
+      // Extract unique team IDs from fixtures
+      const teamIdsInFixtures = new Set<number>();
+      fixturesData.forEach((fixture: any) => {
+        if (fixture.home_team_id) teamIdsInFixtures.add(fixture.home_team_id);
+        if (fixture.away_team_id) teamIdsInFixtures.add(fixture.away_team_id);
+      });
+
+      // Get full team objects for teams that have fixtures in this competition
+      const competitionTeams = allTeams
+        .filter(team => teamIdsInFixtures.has(team.id))
+        .sort((a, b) => a.name.localeCompare(b.name));
+
       setTeams(competitionTeams);
 
     } catch (err) {
@@ -159,42 +167,74 @@ const CompetitionPage: React.FC = () => {
               {competition.name}
             </h1>
           </div>
-          {competition.short_name && (
-            <p style={{ fontSize: '1.125rem', color: '#6b7280', marginBottom: '1rem' }}>
-              {competition.short_name}
-            </p>
-          )}
+
+          {/* Page Overview */}
+          <p style={{
+            fontSize: '1rem',
+            color: '#4b5563',
+            lineHeight: '1.6',
+            maxWidth: '800px',
+            margin: '1rem auto',
+            textAlign: 'center'
+          }}>
+            View the latest {competition.name} fixtures, results, and league table. Check kick-off times,
+            TV broadcast information, and where to watch every match live in the UK. Stay up to date with
+            the current standings and upcoming matches.
+          </p>
         </div>
 
-        {/* Matchday Section - Upcoming and Latest */}
-        <div style={{ marginBottom: '2rem' }}>
-          <MatchdaySection
-            fixtures={fixtures}
-            competitionName={competition.name}
-          />
-        </div>
+        {/* 2-Column Layout: Fixtures + Standings */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '1.5rem',
+          marginBottom: '2rem'
+        }} className="competition-content-grid">
+          {/* Left Column: Matchday Section */}
+          <div>
+            <MatchdaySection
+              fixtures={fixtures}
+              competitionName={competition.name}
+            />
+          </div>
 
-        {/* League Standings or Teams List */}
-        <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-          {slug && getCompetitionConfig(slug)?.seasonId ? (
-            <section style={{ marginBottom: '2rem' }}>
+          {/* Right Column: Standings or Teams List */}
+          <div>
+            {slug && getCompetitionConfig(slug)?.seasonId ? (
               <LeagueStandings
                 seasonId={getCompetitionConfig(slug)!.seasonId!}
                 competitionName={competition.name}
+                compact={true}
               />
-            </section>
-          ) : (
+            ) : (
             <section style={{
               padding: '1.5rem',
               backgroundColor: '#f9fafb',
               borderRadius: '8px',
               marginBottom: '2rem'
             }}>
-              <h3 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '1rem' }}>
-                Teams ({teams.length})
+              <h3 style={{ fontSize: '1.125rem', fontWeight: '600', marginBottom: '0.5rem' }}>
+                {competition.name} Teams
               </h3>
-              <div style={{ display: 'grid', gap: '0.5rem' }}>
-                {teams.slice(0, 10).map((team) => (
+
+              {/* SEO-optimized description */}
+              <p style={{
+                fontSize: '0.875rem',
+                color: '#6b7280',
+                marginBottom: '1rem',
+                lineHeight: '1.5'
+              }}>
+                Browse all {teams.length} teams competing in {competition.name}. Click any team to view their complete fixture schedule, TV broadcast information, and upcoming matches.
+              </p>
+
+              <div style={{
+                display: 'grid',
+                gap: '0.5rem',
+                maxHeight: '500px',
+                overflowY: 'auto',
+                paddingRight: '0.5rem'
+              }}>
+                {teams.map((team) => (
                   <a
                     key={team.id}
                     href={`/clubs/${team.slug}`}
@@ -207,8 +247,11 @@ const CompetitionPage: React.FC = () => {
                       borderRadius: '4px',
                       textDecoration: 'none',
                       color: 'inherit',
-                      fontSize: '0.875rem'
+                      fontSize: '0.875rem',
+                      transition: 'background-color 0.2s'
                     }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f3f4f6'}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
                   >
                     {team.crest && (
                       <img
@@ -221,23 +264,39 @@ const CompetitionPage: React.FC = () => {
                     <span>{team.name}</span>
                   </a>
                 ))}
-                {teams.length > 10 && (
-                  <a
-                    href="/clubs"
-                    style={{
-                      padding: '0.5rem',
-                      textAlign: 'center',
-                      color: '#6366f1',
-                      textDecoration: 'none',
-                      fontSize: '0.875rem'
-                    }}
-                  >
-                    View All Teams →
-                  </a>
-                )}
               </div>
+
+              {teams.length === 0 && (
+                <p style={{
+                  textAlign: 'center',
+                  color: '#9ca3af',
+                  padding: '2rem 0',
+                  fontSize: '0.875rem'
+                }}>
+                  No teams available for this competition yet.
+                </p>
+              )}
+
+              {teams.length > 0 && (
+                <a
+                  href="/clubs"
+                  style={{
+                    display: 'block',
+                    marginTop: '1rem',
+                    padding: '0.5rem',
+                    textAlign: 'center',
+                    color: '#6366f1',
+                    textDecoration: 'none',
+                    fontSize: '0.875rem',
+                    fontWeight: '500'
+                  }}
+                >
+                  View All Teams →
+                </a>
+              )}
             </section>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -36,6 +36,7 @@ interface StandingEntry {
 interface LeagueStandingsProps {
   seasonId: number;
   competitionName?: string;
+  compact?: boolean; // Compact mode hides some columns
 }
 
 interface ParsedStanding {
@@ -76,7 +77,8 @@ const parseStandingDetails = (details: StandingDetail[]) => {
 
 export const LeagueStandings: React.FC<LeagueStandingsProps> = ({
   seasonId,
-  competitionName = 'League'
+  competitionName = 'League',
+  compact = false
 }) => {
   const [standings, setStandings] = useState<ParsedStanding[]>([]);
   const [loading, setLoading] = useState(true);
@@ -183,7 +185,7 @@ export const LeagueStandings: React.FC<LeagueStandingsProps> = ({
     return (
       <Card>
         <CardHeader>
-          <CardTitle>{competitionName} Standings</CardTitle>
+          <CardTitle>League Table</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">Loading standings...</div>
@@ -196,7 +198,7 @@ export const LeagueStandings: React.FC<LeagueStandingsProps> = ({
     return (
       <Card>
         <CardHeader>
-          <CardTitle>{competitionName} Standings</CardTitle>
+          <CardTitle>League Table</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8 text-red-600">Error: {error}</div>
@@ -208,7 +210,7 @@ export const LeagueStandings: React.FC<LeagueStandingsProps> = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{competitionName} Standings</CardTitle>
+        <CardTitle>League Table</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">
@@ -217,15 +219,15 @@ export const LeagueStandings: React.FC<LeagueStandingsProps> = ({
               <tr className="border-b border-gray-200 dark:border-gray-700">
                 <th className="text-left py-3 px-2 font-semibold">Pos</th>
                 <th className="text-left py-3 px-2 font-semibold">Team</th>
-                <th className="text-center py-3 px-2 font-semibold">P</th>
-                <th className="text-center py-3 px-2 font-semibold hidden sm:table-cell">W</th>
-                <th className="text-center py-3 px-2 font-semibold hidden sm:table-cell">D</th>
-                <th className="text-center py-3 px-2 font-semibold hidden sm:table-cell">L</th>
-                <th className="text-center py-3 px-2 font-semibold hidden md:table-cell">GF</th>
-                <th className="text-center py-3 px-2 font-semibold hidden md:table-cell">GA</th>
+                <th className={`text-center py-3 px-2 font-semibold ${compact ? 'hidden' : ''}`}>P</th>
+                <th className={`text-center py-3 px-2 font-semibold ${compact ? 'hidden' : 'hidden sm:table-cell'}`}>W</th>
+                <th className={`text-center py-3 px-2 font-semibold ${compact ? 'hidden' : 'hidden sm:table-cell'}`}>D</th>
+                <th className={`text-center py-3 px-2 font-semibold ${compact ? 'hidden' : 'hidden sm:table-cell'}`}>L</th>
+                <th className={`text-center py-3 px-2 font-semibold ${compact ? 'hidden' : 'hidden md:table-cell'}`}>GF</th>
+                <th className={`text-center py-3 px-2 font-semibold ${compact ? 'hidden' : 'hidden md:table-cell'}`}>GA</th>
                 <th className="text-center py-3 px-2 font-semibold">GD</th>
                 <th className="text-center py-3 px-2 font-semibold">Pts</th>
-                <th className="text-center py-3 px-2 font-semibold hidden lg:table-cell">Form</th>
+                <th className={`text-center py-3 px-2 font-semibold ${compact ? 'hidden' : 'hidden lg:table-cell'}`}>Form</th>
               </tr>
             </thead>
             <tbody>
@@ -256,12 +258,12 @@ export const LeagueStandings: React.FC<LeagueStandingsProps> = ({
                       <span className="font-medium">{team.teamName}</span>
                     </div>
                   </td>
-                  <td className="text-center py-3 px-2">{team.played}</td>
-                  <td className="text-center py-3 px-2 hidden sm:table-cell">{team.won}</td>
-                  <td className="text-center py-3 px-2 hidden sm:table-cell">{team.drawn}</td>
-                  <td className="text-center py-3 px-2 hidden sm:table-cell">{team.lost}</td>
-                  <td className="text-center py-3 px-2 hidden md:table-cell">{team.goalsFor}</td>
-                  <td className="text-center py-3 px-2 hidden md:table-cell">{team.goalsAgainst}</td>
+                  <td className={`text-center py-3 px-2 ${compact ? 'hidden' : ''}`}>{team.played}</td>
+                  <td className={`text-center py-3 px-2 ${compact ? 'hidden' : 'hidden sm:table-cell'}`}>{team.won}</td>
+                  <td className={`text-center py-3 px-2 ${compact ? 'hidden' : 'hidden sm:table-cell'}`}>{team.drawn}</td>
+                  <td className={`text-center py-3 px-2 ${compact ? 'hidden' : 'hidden sm:table-cell'}`}>{team.lost}</td>
+                  <td className={`text-center py-3 px-2 ${compact ? 'hidden' : 'hidden md:table-cell'}`}>{team.goalsFor}</td>
+                  <td className={`text-center py-3 px-2 ${compact ? 'hidden' : 'hidden md:table-cell'}`}>{team.goalsAgainst}</td>
                   <td className="text-center py-3 px-2">
                     <span className={team.goalDifference > 0 ? 'text-green-600 dark:text-green-400' : team.goalDifference < 0 ? 'text-red-600 dark:text-red-400' : ''}>
                       {team.goalDifference > 0 ? '+' : ''}{team.goalDifference}
@@ -270,7 +272,7 @@ export const LeagueStandings: React.FC<LeagueStandingsProps> = ({
                   <td className="text-center py-3 px-2">
                     <span className="font-bold text-base">{team.points}</span>
                   </td>
-                  <td className="text-center py-3 px-2 hidden lg:table-cell">
+                  <td className={`text-center py-3 px-2 ${compact ? 'hidden' : 'hidden lg:table-cell'}`}>
                     <div className="flex gap-1 justify-center">
                       {team.form.map((result, idx) => (
                         <React.Fragment key={idx}>

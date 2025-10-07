@@ -380,8 +380,9 @@ const TodayFixturesPage: React.FC = () => {
                 <FixtureCard
                   key={fixture.id}
                   fixture={fixture}
-                  variant="compact"
-                  showViewButton={false}
+                  variant="withTime"
+                  showViewButton={true}
+                  hideBroadcaster={true}
                 />
               ))}
             </div>

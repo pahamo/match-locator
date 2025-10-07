@@ -14,14 +14,13 @@ import { buildH2HUrl } from '../../utils/urlBuilder';
 
 export interface FixtureCardProps {
   fixture: SimpleFixture | Fixture;
-  variant?: 'default' | 'compact' | 'detailed' | 'minimized' | 'withTime' | 'withTimeNoCompetition';
+  variant?: 'default' | 'compact' | 'detailed' | 'minimized' | 'withTime';
   showMatchweek?: boolean;
   showViewButton?: boolean;
   className?: string;
   style?: React.CSSProperties;
   groupPosition?: 'single' | 'first' | 'middle' | 'last';
   isInLiveGroup?: boolean; // New prop to disable individual live styling when in a live group
-  hideBroadcaster?: boolean; // Hide broadcaster info (e.g., for completed matches)
 }
 
 // Helper functions to work with both fixture types
@@ -56,10 +55,7 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
       matchweek: fixture.matchweek,
       url: urlResult?.url || null,
       urlStrategy: urlResult?.strategy,  // Track which strategy used (for monitoring)
-      shouldCreatePage: shouldCreatePage,
-      homeScore: fixture.home_score,
-      awayScore: fixture.away_score,
-      status: fixture.status
+      shouldCreatePage: shouldCreatePage
     };
   } else {
     const hasProviders = fixture.providers_uk && fixture.providers_uk.length > 0;
@@ -79,10 +75,7 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
       matchweek: fixture.matchweek,
       url: urlResult?.url || null,
       urlStrategy: urlResult?.strategy,  // Track which strategy used (for monitoring)
-      shouldCreatePage: shouldCreatePage,
-      homeScore: fixture.score?.home,
-      awayScore: fixture.score?.away,
-      status: fixture.status
+      shouldCreatePage: shouldCreatePage
     };
   }
 };
@@ -95,8 +88,7 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
   className = '',
   style = {},
   groupPosition = 'single',
-  isInLiveGroup = false,
-  hideBroadcaster = false
+  isInLiveGroup = false
 }) => {
   const matchStatus = React.useMemo(() => getMatchStatus(fixture.kickoff_utc), [fixture.kickoff_utc]);
   const statusStyles = React.useMemo(() => getMatchStatusStyles(matchStatus), [matchStatus]);
@@ -107,8 +99,7 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
     : statusStyles;
   const fixtureData = React.useMemo(() => getFixtureData(fixture), [fixture]);
   const isMinimized = variant === 'minimized';
-  const isWithTime = variant === 'withTime' || variant === 'withTimeNoCompetition';
-  const showCompetitionBadge = variant === 'withTime'; // Only show competition badge for 'withTime', not 'withTimeNoCompetition'
+  const isWithTime = variant === 'withTime';
 
   // Generate CSS class names instead of inline styles
   const getCardClasses = () => {
@@ -139,37 +130,19 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
             const competition = getCompetitionInfo(fixture);
             return (
               <div className="time-column-metadata">
-                {/* League Pill - Only show if showCompetitionBadge is true */}
-                {showCompetitionBadge && competition && (
+                {/* League Pill */}
+                {competition && (
                   <Link
                     to={`/competitions/${competition.slug}`}
                     className="league-pill"
                     style={{
-                      background: 'rgba(0, 0, 0, 0.08)',
-                      color: '#1f2937',
-                      textDecoration: 'none',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                      border: '1px solid rgba(0, 0, 0, 0.1)'
+                      background: competition.colors.primary,
+                      color: competition.colors.secondary,
+                      textDecoration: 'none'
                     }}
                     title={`View ${competition.name} fixtures`}
                   >
-                    {competition.logo && (
-                      <img
-                        src={competition.logo}
-                        alt={`${competition.name} logo`}
-                        style={{
-                          width: '14px',
-                          height: '14px',
-                          objectFit: 'contain'
-                        }}
-                        onError={(e) => { e.currentTarget.style.display = 'none'; }}
-                      />
-                    )}
-                    <span className="league-pill-text">
-                      {competition.shortName}
-                    </span>
+                    {competition.shortName}
                   </Link>
                 )}
 
@@ -204,13 +177,7 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
           </span>
         </div>
 
-        {fixtureData.homeScore !== undefined && fixtureData.awayScore !== undefined ? (
-          <div className="score-display">
-            {fixtureData.homeScore} - {fixtureData.awayScore}
-          </div>
-        ) : (
-          <div className="vs-divider">vs</div>
-        )}
+        <div className="vs-divider">vs</div>
 
         <div className="team-container away-team">
           <span className={`team-name ${isMinimized ? 'minimized' : ''}`}>
@@ -242,8 +209,8 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
         </div>
       )}
 
-      {/* Broadcaster Info - Hidden in minimized view or when hideBroadcaster is true */}
-      {!isMinimized && !hideBroadcaster && (
+      {/* Broadcaster Info - Hidden in minimized view */}
+      {!isMinimized && (
         <div className="broadcaster-info">
           {fixtureData.isBlackout ? (
             <span className="broadcaster-badge blackout">🚫 No UK Broadcast</span>
@@ -273,6 +240,15 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
           Info
         </Link>
       )}
+
+      {/* Show "No UK Broadcast" only for explicitly blackout games */}
+      {showViewButton && !fixtureData.shouldCreatePage && (
+        <span className="view-button disabled" title="Not available for this competition">
+          Not Available
+        </span>
+      )}
+
+      {/* Removed blackout badge - only show "No UK Broadcast" in broadcaster section */}
 
       {/* Matchweek moved to time column for withTime variant */}
     </div>
@@ -310,28 +286,6 @@ const fixtureCardStyles = `
     gap: 4px;
   }
 
-  /* Mobile optimizations for time column */
-  @media (max-width: 640px) {
-    .time-column {
-      min-width: 50px;
-      padding-right: 6px;
-      gap: 2px;
-    }
-
-    .kickoff-time {
-      font-size: 12px;
-    }
-
-    .league-pill {
-      font-size: 10px;
-      padding: 1px 4px;
-    }
-
-    .matchweek-pill {
-      font-size: 9px;
-    }
-  }
-
   .kickoff-time {
     font-size: 13px;
     font-weight: 600;
@@ -348,7 +302,7 @@ const fixtureCardStyles = `
   }
 
   .league-pill {
-    font-size: clamp(11px, 2vw, 12px); /* Increased from 9px for better readability */
+    font-size: 9px;
     font-weight: 700;
     padding: 2px 6px;
     border-radius: 8px;
@@ -367,25 +321,13 @@ const fixtureCardStyles = `
   }
 
   .matchweek-pill {
-    font-size: clamp(10px, 2vw, 11px); /* Increased from 8px for better readability */
+    font-size: 8px;
     font-weight: 600;
-    color: #64748b; /* Darkened from #6b7280 for better contrast */
+    color: #6b7280;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     text-align: center;
     line-height: 1;
-  }
-
-  .score-display {
-    background: #e5e7eb;
-    color: #1f2937;
-    padding: 6px 12px;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: 600;
-    white-space: nowrap;
-    min-width: 60px;
-    text-align: center;
   }
 
   .broadcaster-info {
@@ -452,34 +394,6 @@ const fixtureCardStyles = `
 
     .fixture-card.with-time {
       grid-template-columns: auto 1fr auto;
-      gap: 8px;
-      padding: 10px 8px;
-    }
-
-    .fixture-card.with-time .teams-section {
-      gap: 6px;
-    }
-
-    .fixture-card.with-time .team-container {
-      gap: 3px;
-    }
-
-    .fixture-card.with-time .team-name {
-      font-size: 13px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .fixture-card.with-time .vs-divider {
-      font-size: 11px;
-      min-width: 16px;
-    }
-
-    .score-display {
-      font-size: 13px;
-      padding: 4px 8px;
-      min-width: 50px;
     }
   }
 `;
