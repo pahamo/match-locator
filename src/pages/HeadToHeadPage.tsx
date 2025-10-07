@@ -28,6 +28,7 @@ const HeadToHeadPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [shouldRedirect, setShouldRedirect] = useState<string | null>(null);
+  const [pathname, setPathname] = useState<string>('');
 
 
   const loadH2HData = useCallback(async () => {
@@ -98,10 +99,12 @@ const HeadToHeadPage: React.FC = () => {
           return;
         }
 
-        // Extract team data from first fixture
+        // Extract team data from first fixture (assign to outer scope variables)
         const sampleFixture = nextFixtureData || fixturesData[0];
-        team1Data = sampleFixture.home;
-        team2Data = sampleFixture.away;
+        if (sampleFixture) {
+          team1Data = sampleFixture.home;
+          team2Data = sampleFixture.away;
+        }
       }
 
       // Set all data
@@ -127,17 +130,20 @@ const HeadToHeadPage: React.FC = () => {
       const upcomingCount = fixturesData.filter(f => new Date(f.kickoff_utc) > new Date()).length;
       const completedCount = fixturesData.filter(f => new Date(f.kickoff_utc) <= new Date()).length;
 
-      const meta = generateH2HMeta(team1Data.name, team2Data.name, fixturesData.length);
+      // Only generate meta if we have team data
+      if (team1Data && team2Data) {
+        const meta = generateH2HMeta(team1Data.name, team2Data.name, fixturesData.length);
 
-      // Enhanced meta description with more context
-      const enhancedDescription = nextFixtureData
-        ? `${meta.description} Next match: ${new Date(nextFixtureData.kickoff_utc).toLocaleDateString()}. ${upcomingCount} upcoming fixtures, ${completedCount} completed meetings.`
-        : `${meta.description} ${upcomingCount} upcoming fixtures, ${completedCount} completed meetings this season.`;
+        // Enhanced meta description with more context
+        const enhancedDescription = nextFixtureData
+          ? `${meta.description} Next match: ${new Date(nextFixtureData.kickoff_utc).toLocaleDateString()}. ${upcomingCount} upcoming fixtures, ${completedCount} completed meetings.`
+          : `${meta.description} ${upcomingCount} upcoming fixtures, ${completedCount} completed meetings this season.`;
 
-      updateDocumentMeta({
-        ...meta,
-        description: enhancedDescription
-      });
+        updateDocumentMeta({
+          ...meta,
+          description: enhancedDescription
+        });
+      }
 
     } catch (err) {
       console.error('HeadToHeadPage: Failed to load H2H data:', err);
@@ -146,6 +152,18 @@ const HeadToHeadPage: React.FC = () => {
       setLoading(false);
     }
   }, [slug]);
+
+  // Effect to store pathname on mount (prevents hydration issues)
+  useEffect(() => {
+    setPathname(window.location.pathname);
+  }, []);
+
+  // Effect to handle redirects (prevents render-time side effects)
+  useEffect(() => {
+    if (shouldRedirect) {
+      window.location.replace(shouldRedirect);
+    }
+  }, [shouldRedirect]);
 
   // Effect to handle initial mount and slug changes
   useEffect(() => {
@@ -158,9 +176,8 @@ const HeadToHeadPage: React.FC = () => {
     loadH2HData();
   }, [slug, loadH2HData]);
 
-  // Handle redirect to SEO-friendly URL
+  // Handle redirect to SEO-friendly URL (redirect happens in useEffect)
   if (shouldRedirect) {
-    window.location.replace(shouldRedirect);
     return (
       <div className="h2h-page">
         <Header />
@@ -179,7 +196,7 @@ const HeadToHeadPage: React.FC = () => {
     return (
       <div className="h2h-page">
         <Header />
-        <Breadcrumbs items={generateBreadcrumbs(window.location.pathname)} />
+        <Breadcrumbs items={generateBreadcrumbs(pathname)} />
 
         <main style={{ minHeight: '60vh' }}>
           <div className="wrap">
@@ -227,7 +244,7 @@ const HeadToHeadPage: React.FC = () => {
     return (
       <div className="h2h-page">
         <Header />
-        <Breadcrumbs items={generateBreadcrumbs(window.location.pathname)} />
+        <Breadcrumbs items={generateBreadcrumbs(pathname)} />
 
         <main>
           <div className="wrap">
@@ -284,7 +301,7 @@ const HeadToHeadPage: React.FC = () => {
 
       <main style={{ minHeight: '60vh', background: 'white' }}>
         <div className="wrap">
-          <Breadcrumbs items={generateBreadcrumbs(window.location.pathname, {
+          <Breadcrumbs items={generateBreadcrumbs(pathname, {
             matchTitle: `${formatTeamNameShort(team1.name)} vs ${formatTeamNameShort(team2.name)}`
           })} />
 
