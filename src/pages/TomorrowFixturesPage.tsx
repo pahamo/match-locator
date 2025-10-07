@@ -4,7 +4,6 @@ import Header from '../components/Header';
 import Breadcrumbs from '../components/Breadcrumbs';
 import StructuredData from '../components/StructuredData';
 import { FixtureCard } from '../design-system';
-import CountdownTimer from '../components/CountdownTimer';
 import { getFixturesByDateRange } from '../services/supabase';
 import { getTomorrowUTCRange, getFormattedDateForSEO, getUKDate, getTimeUntilMidnight } from '../utils/dateRange';
 import { updateDocumentMeta } from '../utils/seo';
