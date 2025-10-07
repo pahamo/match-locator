@@ -12,10 +12,12 @@ import { generateCompetitionMeta, updateDocumentMeta } from '../utils/seo';
 import { generateBreadcrumbs } from '../utils/breadcrumbs';
 import LeagueStandings from '../components/LeagueStandings';
 import MatchdaySection from '../components/MatchdaySection';
+import { useIsMobile } from '../hooks/useMediaQuery';
 
 const CompetitionPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   const [competition, setCompetition] = useState<Competition | null>(null);
   const [fixtures, setFixtures] = useState<SimpleFixture[]>([]);
@@ -141,28 +143,30 @@ const CompetitionPage: React.FC = () => {
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            gap: '20px',
+            justifyContent: isMobile ? 'flex-start' : 'center',
+            gap: isMobile ? '12px' : '20px',
             marginBottom: '0.5rem',
-            flexWrap: 'wrap'
+            flexWrap: 'nowrap'
           }}>
             {getCompetitionLogo(competition.slug) && (
               <img
                 src={getCompetitionLogo(competition.slug)!}
                 alt={`${competition.name} logo`}
                 style={{
-                  height: '60px',
+                  height: isMobile ? '40px' : '60px',
                   width: 'auto',
-                  maxWidth: '120px',
-                  objectFit: 'contain'
+                  maxWidth: isMobile ? '60px' : '120px',
+                  objectFit: 'contain',
+                  flexShrink: 0
                 }}
               />
             )}
             <h1 style={{
-              fontSize: '2.5rem',
+              fontSize: isMobile ? '1.5rem' : '2.5rem',
               fontWeight: 'bold',
               margin: 0,
-              textAlign: 'center'
+              textAlign: isMobile ? 'left' : 'center',
+              lineHeight: 1.2
             }}>
               {competition.name}
             </h1>
@@ -183,15 +187,70 @@ const CompetitionPage: React.FC = () => {
           </p>
         </div>
 
+        {/* Jump-to Navigation (Mobile Only) */}
+        {isMobile && (
+          <nav
+            aria-label="Page sections"
+            style={{
+              display: 'flex',
+              gap: '8px',
+              marginBottom: '1.5rem',
+              padding: '12px',
+              backgroundColor: '#f9fafb',
+              borderRadius: '8px',
+              border: '1px solid #e5e7eb',
+              overflowX: 'auto',
+              WebkitOverflowScrolling: 'touch'
+            }}
+          >
+            <a
+              href="#fixtures"
+              style={{
+                padding: '8px 16px',
+                backgroundColor: '#6366f1',
+                color: 'white',
+                textDecoration: 'none',
+                borderRadius: '6px',
+                fontSize: '14px',
+                fontWeight: '500',
+                whiteSpace: 'nowrap',
+                minHeight: '44px',
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            >
+              📅 Fixtures
+            </a>
+            <a
+              href="#standings"
+              style={{
+                padding: '8px 16px',
+                backgroundColor: '#6366f1',
+                color: 'white',
+                textDecoration: 'none',
+                borderRadius: '6px',
+                fontSize: '14px',
+                fontWeight: '500',
+                whiteSpace: 'nowrap',
+                minHeight: '44px',
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            >
+              📊 {slug && getCompetitionConfig(slug)?.seasonId ? 'Table' : 'Teams'}
+            </a>
+          </nav>
+        )}
+
         {/* 2-Column Layout: Fixtures + Standings */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
           gap: '1.5rem',
           marginBottom: '2rem'
         }} className="competition-content-grid">
           {/* Left Column: Matchday Section */}
-          <div>
+          <div id="fixtures" style={{ scrollMarginTop: '80px' }}>
             <MatchdaySection
               fixtures={fixtures}
               competitionName={competition.name}
@@ -199,7 +258,7 @@ const CompetitionPage: React.FC = () => {
           </div>
 
           {/* Right Column: Standings or Teams List */}
-          <div>
+          <div id="standings" style={{ scrollMarginTop: '80px' }}>
             {slug && getCompetitionConfig(slug)?.seasonId ? (
               <LeagueStandings
                 seasonId={getCompetitionConfig(slug)!.seasonId!}
