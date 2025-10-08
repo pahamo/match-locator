@@ -229,7 +229,7 @@ async function syncCompetitionFixtures(competitionId, sportmonksLeagueId, compet
 
       try {
         const response = await makeRequest(`/fixtures/date/${dateStr}`, {
-          include: 'participants;tvstations;round;scores;state'
+          include: 'participants;tvstations.tvstation;round;scores;state'
         });
 
         const dayFixtures = (response.data || []).filter(f => f.league_id === sportmonksLeagueId);
@@ -356,10 +356,10 @@ async function syncCompetitionFixtures(competitionId, sportmonksLeagueId, compet
           }
         }
 
-        // Sync TV stations if enabled
+        // Sync TV stations if enabled - use tvstations from fixture object (already included)
         const showTVStations = process.env.REACT_APP_FF_SPORTMONKS_TV_STATIONS === 'true';
-        if (showTVStations) {
-          await syncFixtureTVStations(fixtureDbId, fixture.id, flags);
+        if (showTVStations && fixture.tvstations) {
+          await syncFixtureTVStations(fixtureDbId, fixture.tvstations, flags);
         }
 
         // Small delay for rate limiting
@@ -417,23 +417,27 @@ function mapBroadcasterToProvider(stationName) {
   return null; // No provider match
 }
 
-// Sync TV stations for a fixture
-async function syncFixtureTVStations(fixtureDbId, sportmonksFixtureId, flags) {
+// Sync TV stations for a fixture - uses tvstations array from fixture object
+// This contains ONLY the actual broadcasters for this specific match
+async function syncFixtureTVStations(fixtureDbId, tvStations, flags) {
   try {
-    const response = await makeRequest(`/tv-stations/fixtures/${sportmonksFixtureId}`);
-    const tvStations = response.data || [];
-
+    // tvStations is already filtered to this specific match by Sports Monks
     for (const station of tvStations) {
-      // Phase 1: UK broadcasters only
-      if (!isUKBroadcaster(station)) {
+      // Skip if tvstation details not included
+      if (!station.tvstation) {
         continue;
       }
 
-      const providerId = mapBroadcasterToProvider(station.name);
+      // Phase 1: UK broadcasters only
+      if (!isUKBroadcaster(station.tvstation)) {
+        continue;
+      }
+
+      const providerId = mapBroadcasterToProvider(station.tvstation.name);
 
       if (flags.testMode) {
         if (options.verbose) {
-          console.log(`      [TEST MODE] Would create broadcast: ${station.name} (${station.type}) [UK]`);
+          console.log(`      [TEST MODE] Would create broadcast: ${station.tvstation.name} (${station.tvstation.type}) [UK]`);
         }
         continue;
       }
@@ -443,16 +447,16 @@ async function syncFixtureTVStations(fixtureDbId, sportmonksFixtureId, flags) {
         .from('broadcasts')
         .select('id')
         .eq('fixture_id', fixtureDbId)
-        .eq('sportmonks_tv_station_id', station.id)
+        .eq('sportmonks_tv_station_id', station.tvstation_id)
         .single();
 
       const broadcastData = {
         fixture_id: fixtureDbId,
         provider_id: providerId,
-        channel_name: station.name,
+        channel_name: station.tvstation.name,
         country_code: 'GBR',
-        broadcaster_type: station.type,
-        sportmonks_tv_station_id: station.id,
+        broadcaster_type: station.tvstation.type,
+        sportmonks_tv_station_id: station.tvstation_id,
         data_source: 'sportmonks',
         last_synced_at: new Date().toISOString()
       };
@@ -470,7 +474,7 @@ async function syncFixtureTVStations(fixtureDbId, sportmonksFixtureId, flags) {
           .insert(broadcastData);
 
         if (options.verbose) {
-          console.log(`      📺 Added broadcast: ${station.name} (${station.type})`);
+          console.log(`      📺 Added broadcast: ${station.tvstation.name} (${station.tvstation.type})`);
         }
       }
     }

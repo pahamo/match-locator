@@ -14,6 +14,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, title, onLogout }) 
     { path: '/admin', label: 'Dashboard', icon: '📊' },
     { path: '/admin/teams', label: 'Teams', icon: '⚽' },
     { path: '/admin/matches', label: 'Matches', icon: '🏆' },
+    { path: '/admin/broadcasters', label: 'Broadcasters', icon: '📺' },
     { path: '/admin/competitions', label: 'Competitions', icon: '🏟️' },
     { path: '/admin/redirects', label: 'Redirects', icon: '🔀' },
   ];
