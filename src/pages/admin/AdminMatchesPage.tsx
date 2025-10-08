@@ -17,10 +17,10 @@ interface FixtureDebugRow {
 }
 
 interface BroadcastRecord {
-  provider_id: number | null;
+  sportmonks_tv_station_id: number;
   channel_name: string;
   country_code: string | null;
-  provider_name?: string;
+  broadcaster_type: string;
 }
 
 const AdminPage: React.FC = () => {
@@ -78,22 +78,14 @@ const AdminPage: React.FC = () => {
 
       setFixtures(filteredFixtures);
 
-      // Load all broadcasts for these fixtures
+      // Load all broadcasts for these fixtures (raw API data)
       if (filteredFixtures.length > 0) {
         const fixtureIds = filteredFixtures.map((f: FixtureDebugRow) => f.id);
         const { data: broadcastsData } = await supabase
           .from('broadcasts')
-          .select('fixture_id, provider_id, channel_name, country_code')
-          .in('fixture_id', fixtureIds);
-
-        // Get provider names
-        const providerIds = Array.from(new Set(broadcastsData?.map((b: any) => b.provider_id).filter(Boolean) || []));
-        const { data: providersData } = await supabase
-          .from('providers')
-          .select('id, name')
-          .in('id', providerIds);
-
-        const providerMap = new Map(providersData?.map((p: any) => [p.id, p.name]) || []);
+          .select('fixture_id, sportmonks_tv_station_id, channel_name, country_code, broadcaster_type')
+          .in('fixture_id', fixtureIds)
+          .order('channel_name');  // Sort alphabetically
 
         // Group broadcasts by fixture
         const broadcastsByFixture: Record<number, BroadcastRecord[]> = {};
@@ -102,10 +94,10 @@ const AdminPage: React.FC = () => {
             broadcastsByFixture[b.fixture_id] = [];
           }
           broadcastsByFixture[b.fixture_id].push({
-            provider_id: b.provider_id,
+            sportmonks_tv_station_id: b.sportmonks_tv_station_id,
             channel_name: b.channel_name,
             country_code: b.country_code,
-            provider_name: b.provider_id ? (providerMap.get(b.provider_id) as string | undefined) : undefined
+            broadcaster_type: b.broadcaster_type
           });
         });
 
@@ -246,8 +238,8 @@ const AdminPage: React.FC = () => {
                   <th style={{ padding: '12px 8px', textAlign: 'left' }}>Competition</th>
                   <th style={{ padding: '12px 8px', textAlign: 'center' }}>MW</th>
                   <th style={{ padding: '12px 8px', textAlign: 'center' }}>Score</th>
-                  <th style={{ padding: '12px 8px', textAlign: 'left' }}>Broadcaster (View)</th>
-                  <th style={{ padding: '12px 8px', textAlign: 'left' }}>All Broadcasts (DB)</th>
+                  <th style={{ padding: '12px 8px', textAlign: 'left' }}>Broadcaster (View Selection)</th>
+                  <th style={{ padding: '12px 8px', textAlign: 'left' }}>All Channels (SportMonks API)</th>
                 </tr>
               </thead>
               <tbody>
@@ -308,16 +300,9 @@ const AdminPage: React.FC = () => {
                             {fixturebroadcasts.map((b, idx) => (
                               <div key={idx} style={{ marginBottom: '4px' }}>
                                 <strong>{b.channel_name}</strong>
-                                {b.provider_name && (
-                                  <span style={{ color: '#666', marginLeft: '6px' }}>
-                                    [{b.provider_name}]
-                                  </span>
-                                )}
-                                {!b.provider_name && b.provider_id === null && (
-                                  <span style={{ color: '#f59e0b', marginLeft: '6px' }}>
-                                    [UNMAPPED]
-                                  </span>
-                                )}
+                                <span style={{ color: '#666', marginLeft: '6px', fontSize: '10px' }}>
+                                  (API ID: {b.sportmonks_tv_station_id})
+                                </span>
                               </div>
                             ))}
                           </div>
