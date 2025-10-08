@@ -13,7 +13,17 @@ ALTER TABLE broadcasts DROP CONSTRAINT IF EXISTS broadcasts_fixture_id_provider_
 
 -- Step 2: Add constraint on API's natural key
 -- Prevents duplicate TV stations per fixture
-ALTER TABLE broadcasts ADD CONSTRAINT IF NOT EXISTS broadcasts_fixture_sportmonks_unique
+-- First check if it exists, drop if present, then create
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'broadcasts_fixture_sportmonks_unique'
+  ) THEN
+    ALTER TABLE broadcasts DROP CONSTRAINT broadcasts_fixture_sportmonks_unique;
+  END IF;
+END $$;
+
+ALTER TABLE broadcasts ADD CONSTRAINT broadcasts_fixture_sportmonks_unique
   UNIQUE (fixture_id, sportmonks_tv_station_id);
 
 -- Step 3: Make provider_id nullable (it's deprecated now)
