@@ -49,11 +49,12 @@ SELECT
   at.crest_url as away_crest,
   -- Select first UK broadcaster alphabetically by channel name
   -- Priority: UK channels only, alphabetically sorted
+  -- Note: Old data uses 'GBR', new data uses 'GB'
   (
     SELECT b.channel_name
     FROM broadcasts b
     WHERE b.fixture_id = f.id
-      AND b.country_code = 'GB'  -- UK only
+      AND (b.country_code = 'GB' OR b.country_code = 'GBR')  -- UK only (both codes)
     ORDER BY b.channel_name ASC
     LIMIT 1
   ) AS broadcaster,
@@ -62,7 +63,7 @@ SELECT
     SELECT b.sportmonks_tv_station_id
     FROM broadcasts b
     WHERE b.fixture_id = f.id
-      AND b.country_code = 'GB'
+      AND (b.country_code = 'GB' OR b.country_code = 'GBR')
     ORDER BY b.channel_name ASC
     LIMIT 1
   ) AS broadcaster_id
