@@ -377,32 +377,16 @@ async function syncCompetitionFixtures(competitionId, sportmonksLeagueId, compet
   }
 }
 
-// Detect if a broadcaster is UK-based
-function isUKBroadcaster(station) {
-  const name = station.name.toLowerCase();
-
-  // Exclude non-UK Sky channels
-  if (name.includes('sky') && (
-      name.includes('italia') ||
-      name.includes('austria') ||
-      name.includes('deutschland') ||
-      name.includes('germany') ||
-      name.includes('bundesliga') ||  // German league
-      name.includes('sport uno')
-  )) {
-    return false;
-  }
-
-  // UK broadcaster keywords
-  const ukKeywords = [
-    'sky', 'tnt', 'bbc', 'itv', 'amazon', 'prime',
-    'bt sport', 'premier sports', 'uk', 'british',
-    'channel 4', 'channel 5', 'radio 5', 'talksport'
-  ];
-
-  return ukKeywords.some(keyword => name.includes(keyword)) ||
-         name.includes('united kingdom') ||
-         name.includes('england');
+// Check if a TV station broadcast is for UK/Ireland
+// Uses country_id from the API's pivot table (fixture_tvstation relationship)
+// UK/Ireland share broadcast rights, so we include both:
+//   455 = Republic of Ireland (Sky Sports Main Event, TNT Sports, Amazon Prime, etc.)
+//   462 = England (TNT Sports, Amazon Prime, etc.)
+function isUKBroadcast(station) {
+  // station here is the pivot record: { id, fixture_id, tvstation_id, country_id, tvstation: {...} }
+  // The country_id tells us which country this broadcast is FOR
+  const UK_IRELAND_COUNTRY_IDS = [455, 462];
+  return UK_IRELAND_COUNTRY_IDS.includes(station.country_id);
 }
 
 // Map broadcaster to provider (network level)
@@ -431,8 +415,9 @@ async function syncFixtureTVStations(fixtureDbId, tvStations, flags) {
         continue;
       }
 
-      // Phase 1: UK broadcasters only (TODO: Remove this filter when supporting international)
-      if (!isUKBroadcaster(station.tvstation)) {
+      // Filter to UK broadcasts only (country_id 455)
+      // TODO: When supporting international, parameterize country_id or remove filter
+      if (!isUKBroadcast(station)) {
         continue;
       }
 
@@ -456,7 +441,8 @@ async function syncFixtureTVStations(fixtureDbId, tvStations, flags) {
         fixture_id: fixtureDbId,
         provider_id: null,  // Deprecated - we use API data directly now
         channel_name: station.tvstation.name,  // Raw channel name from API
-        country_code: 'GB',  // UK only for now
+        country_id: station.country_id,  // Store API's country_id (455=Ireland, 462=England)
+        country_code: station.country_id === 455 ? 'IE' : 'EN',  // ISO2 code for compatibility
         broadcaster_type: station.tvstation.type,
         sportmonks_tv_station_id: station.tvstation_id,  // API's unique ID
         data_source: 'sportmonks',
