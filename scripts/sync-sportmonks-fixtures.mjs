@@ -387,6 +387,7 @@ function isUKBroadcaster(station) {
       name.includes('austria') ||
       name.includes('deutschland') ||
       name.includes('germany') ||
+      name.includes('bundesliga') ||  // German league
       name.includes('sport uno')
   )) {
     return false;
@@ -409,7 +410,9 @@ function mapBroadcasterToProvider(stationName) {
   const name = stationName.toLowerCase();
 
   // Provider mappings (network level)
-  if (name.includes('sky sports') || (name.includes('sky') && name.includes('go'))) return 1; // Sky Sports
+  // Note: isUKBroadcaster already filtered out non-UK Sky channels (Italia, Deutschland, etc.)
+  // So any "sky" channel that reaches this point is UK Sky Sports
+  if (name.includes('sky')) return 1; // Sky Sports (includes Sky Go, Sky Ultra HD, Sky+, Skylink, etc.)
   if (name.includes('tnt') || name.includes('bt sport')) return 2; // TNT Sports
   if (name.includes('bbc')) return 3; // BBC
   if (name.includes('amazon') || name.includes('prime')) return 4; // Amazon Prime
