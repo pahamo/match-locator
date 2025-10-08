@@ -431,12 +431,10 @@ async function syncFixtureTVStations(fixtureDbId, tvStations, flags) {
         continue;
       }
 
-      // Phase 1: UK broadcasters only
+      // Phase 1: UK broadcasters only (TODO: Remove this filter when supporting international)
       if (!isUKBroadcaster(station.tvstation)) {
         continue;
       }
-
-      const providerId = mapBroadcasterToProvider(station.tvstation.name);
 
       if (flags.testMode) {
         if (options.verbose) {
@@ -445,7 +443,7 @@ async function syncFixtureTVStations(fixtureDbId, tvStations, flags) {
         continue;
       }
 
-      // Check if broadcast already exists
+      // Check if broadcast already exists (by SportMonks TV station ID - the natural key)
       const { data: existingBroadcast } = await supabase
         .from('broadcasts')
         .select('id')
@@ -453,13 +451,14 @@ async function syncFixtureTVStations(fixtureDbId, tvStations, flags) {
         .eq('sportmonks_tv_station_id', station.tvstation_id)
         .single();
 
+      // Store raw API data without manipulation
       const broadcastData = {
         fixture_id: fixtureDbId,
-        provider_id: providerId,
-        channel_name: station.tvstation.name,
-        country_code: 'GBR',
+        provider_id: null,  // Deprecated - we use API data directly now
+        channel_name: station.tvstation.name,  // Raw channel name from API
+        country_code: 'GB',  // UK only for now
         broadcaster_type: station.tvstation.type,
-        sportmonks_tv_station_id: station.tvstation_id,
+        sportmonks_tv_station_id: station.tvstation_id,  // API's unique ID
         data_source: 'sportmonks',
         last_synced_at: new Date().toISOString()
       };
