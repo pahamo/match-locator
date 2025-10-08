@@ -440,8 +440,8 @@ async function syncFixtureTVStations(fixtureDbId, tvStations, flags) {
         fixture_id: fixtureDbId,
         provider_id: null,  // Deprecated - we use API data directly now
         channel_name: station.tvstation.name,  // Raw channel name from API
-        country_id: station.country_id,  // Store API's country_id (462=England)
-        country_code: 'EN',  // England only
+        country_id: null,  // Not using FK to countries table
+        country_code: 'EN',  // England (ISO2 code)
         broadcaster_type: station.tvstation.type,
         sportmonks_tv_station_id: station.tvstation_id,  // API's unique ID
         data_source: 'sportmonks',
