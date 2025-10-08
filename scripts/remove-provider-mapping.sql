@@ -57,14 +57,14 @@ SELECT
   at.name as away_team,
   at.slug as away_team_slug,
   at.crest_url as away_crest,
-  -- Select first UK/Ireland broadcaster alphabetically by channel name
-  -- UK/Ireland share broadcast rights
-  -- Country codes: IE (Ireland, 455), EN (England, 462), GB/GBR (legacy)
+  -- Select first England broadcaster alphabetically by channel name
+  -- Country codes: EN (England, 462), GB/GBR (legacy)
+  -- Note: Ireland (IE, 455) has different broadcasters, not included
   (
     SELECT b.channel_name
     FROM broadcasts b
     WHERE b.fixture_id = f.id
-      AND (b.country_code IN ('IE', 'EN', 'GB', 'GBR'))  -- UK/Ireland
+      AND (b.country_code IN ('EN', 'GB', 'GBR'))  -- England only
     ORDER BY b.channel_name ASC
     LIMIT 1
   ) AS broadcaster,
@@ -73,7 +73,7 @@ SELECT
     SELECT b.sportmonks_tv_station_id
     FROM broadcasts b
     WHERE b.fixture_id = f.id
-      AND (b.country_code IN ('IE', 'EN', 'GB', 'GBR'))
+      AND (b.country_code IN ('EN', 'GB', 'GBR'))
     ORDER BY b.channel_name ASC
     LIMIT 1
   ) AS broadcaster_id

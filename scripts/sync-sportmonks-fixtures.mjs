@@ -377,16 +377,15 @@ async function syncCompetitionFixtures(competitionId, sportmonksLeagueId, compet
   }
 }
 
-// Check if a TV station broadcast is for UK/Ireland
+// Check if a TV station broadcast is for England (UK)
 // Uses country_id from the API's pivot table (fixture_tvstation relationship)
-// UK/Ireland share broadcast rights, so we include both:
-//   455 = Republic of Ireland (Sky Sports Main Event, TNT Sports, Amazon Prime, etc.)
-//   462 = England (TNT Sports, Amazon Prime, etc.)
+// 462 = England (TNT Sports, Discovery+, Amazon Prime, etc.)
+// Note: Ireland (455) has different broadcasters (Sky Sports), not included
 function isUKBroadcast(station) {
   // station here is the pivot record: { id, fixture_id, tvstation_id, country_id, tvstation: {...} }
   // The country_id tells us which country this broadcast is FOR
-  const UK_IRELAND_COUNTRY_IDS = [455, 462];
-  return UK_IRELAND_COUNTRY_IDS.includes(station.country_id);
+  const ENGLAND_COUNTRY_ID = 462;
+  return station.country_id === ENGLAND_COUNTRY_ID;
 }
 
 // Map broadcaster to provider (network level)
@@ -441,8 +440,8 @@ async function syncFixtureTVStations(fixtureDbId, tvStations, flags) {
         fixture_id: fixtureDbId,
         provider_id: null,  // Deprecated - we use API data directly now
         channel_name: station.tvstation.name,  // Raw channel name from API
-        country_id: station.country_id,  // Store API's country_id (455=Ireland, 462=England)
-        country_code: station.country_id === 455 ? 'IE' : 'EN',  // ISO2 code for compatibility
+        country_id: station.country_id,  // Store API's country_id (462=England)
+        country_code: 'EN',  // England only
         broadcaster_type: station.tvstation.type,
         sportmonks_tv_station_id: station.tvstation_id,  // API's unique ID
         data_source: 'sportmonks',
