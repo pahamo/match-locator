@@ -389,21 +389,6 @@ function isUKBroadcast(station) {
   return station.country_id === ENGLAND_COUNTRY_ID;
 }
 
-// Map broadcaster to provider (network level)
-function mapBroadcasterToProvider(stationName) {
-  const name = stationName.toLowerCase();
-
-  // Provider mappings (network level)
-  // Note: isUKBroadcaster already filtered out non-UK Sky channels (Italia, Deutschland, etc.)
-  // So any "sky" channel that reaches this point is UK Sky Sports
-  if (name.includes('sky')) return 1; // Sky Sports (includes Sky Go, Sky Ultra HD, Sky+, Skylink, etc.)
-  if (name.includes('tnt') || name.includes('bt sport')) return 2; // TNT Sports
-  if (name.includes('bbc')) return 3; // BBC
-  if (name.includes('amazon') || name.includes('prime')) return 4; // Amazon Prime
-
-  return null; // No provider match
-}
-
 // Sync TV stations for a fixture - uses tvstations array from fixture object
 // This contains ONLY the actual broadcasters for this specific match
 async function syncFixtureTVStations(fixtureDbId, tvStations, flags) {
