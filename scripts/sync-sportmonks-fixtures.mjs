@@ -287,8 +287,9 @@ async function syncCompetitionFixtures(competitionId, sportmonksLeagueId, compet
           .eq('sportmonks_fixture_id', fixture.id)
           .single();
 
-        // Extract matchday from round data (round.name is usually the matchweek number)
-        const matchday = fixture.round?.name ? parseInt(fixture.round.name, 10) : null;
+        // Store API's round data directly (don't derive matchday)
+        // Frontend will use round.name to display "Matchweek X"
+        const roundData = fixture.round || null;
 
         // Extract scores from the scores array - find CURRENT scores for home and away
         const currentScores = fixture.scores?.filter(s => s.description === 'CURRENT') || [];
@@ -304,7 +305,7 @@ async function syncCompetitionFixtures(competitionId, sportmonksLeagueId, compet
           home_team_id: homeTeamId,
           away_team_id: awayTeamId,
           competition_id: competitionId,
-          matchday: matchday,
+          round: roundData,  // Store full round object from API
           home_score: finalHomeScore,
           away_score: finalAwayScore,
           status: fixture.state?.state || null,
