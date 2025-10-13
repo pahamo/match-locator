@@ -156,7 +156,7 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
     let query = supabase
       .from('fixtures_with_teams')
       .select(`
-        id,matchday,utc_kickoff,venue,status,competition_id,stage,round,
+        id,utc_kickoff,venue,status,competition_id,stage,round,
         home_team_id,home_team,home_slug,home_crest,home_score,
         away_team_id,away_team,away_slug,away_crest,away_score,
         broadcaster,broadcaster_id
