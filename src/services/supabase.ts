@@ -157,8 +157,8 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
       .from('fixtures_with_teams')
       .select(`
         id,utc_kickoff,venue,status,competition_id,stage,round,
-        home_team_id,home_team,home_slug,home_crest,home_score,
-        away_team_id,away_team,away_slug,away_crest,away_score,
+        home_team_id,home_team,home_slug:home_team_slug,home_crest,home_score,
+        away_team_id,away_team,away_slug:away_team_slug,away_crest,away_score,
         broadcaster,broadcaster_id
       `)
       .order('utc_kickoff', { ascending: order === 'asc' })
@@ -240,8 +240,8 @@ export async function getFixtureById(id: number): Promise<Fixture | undefined> {
       .from('fixtures_with_teams')
       .select(`
         id,utc_kickoff,venue,status,competition_id,stage,round,
-        home_team_id,home_team,home_slug,home_crest,home_score,
-        away_team_id,away_team,away_slug,away_crest,away_score,
+        home_team_id,home_team,home_slug:home_team_slug,home_crest,home_score,
+        away_team_id,away_team,away_slug:away_team_slug,away_crest,away_score,
         broadcaster,broadcaster_id
       `)
       .eq('id', id)
@@ -293,8 +293,8 @@ export async function getFixtureByTeamsAndDate(homeTeam: string, awayTeam: strin
       .from('fixtures_with_teams')
       .select(`
         id,utc_kickoff,venue,status,competition_id,stage,round,
-        home_team_id,home_team,home_slug,home_crest,home_score,
-        away_team_id,away_team,away_slug,away_crest,away_score,
+        home_team_id,home_team,home_slug:home_team_slug,home_crest,home_score,
+        away_team_id,away_team,away_slug:away_team_slug,away_crest,away_score,
         broadcaster,broadcaster_id
       `)
       .gte('utc_kickoff', `${searchDate}T00:00:00.000Z`)
@@ -374,8 +374,8 @@ export async function getAdminFixtures(competitionId: number = 1): Promise<Admin
       .from('fixtures_with_teams')
       .select(`
         id,utc_kickoff,venue,status,competition_id,stage,round,
-        home_team_id,home_team,home_slug,home_crest,home_score,
-        away_team_id,away_team,away_slug,away_crest,away_score,
+        home_team_id,home_team,home_slug:home_team_slug,home_crest,home_score,
+        away_team_id,away_team,away_slug:away_team_slug,away_crest,away_score,
         broadcaster,broadcaster_id
       `)
       .eq('competition_id', competitionId)
@@ -573,8 +573,8 @@ export async function getFixturesForDay(date: string, competitionIds?: number[])
       .from('fixtures_with_teams')
       .select(`
         id,utc_kickoff,venue,status,competition_id,stage,round,
-        home_team_id,home_team,home_slug,home_crest,home_score,
-        away_team_id,away_team,away_slug,away_crest,away_score,
+        home_team_id,home_team,home_slug:home_team_slug,home_crest,home_score,
+        away_team_id,away_team,away_slug:away_team_slug,away_crest,away_score,
         broadcaster,broadcaster_id
       `)
       .gte('utc_kickoff', startOfDay.toISOString())
@@ -647,7 +647,7 @@ export async function getHeadToHeadFixtures(teamSlug1: string, teamSlug2: string
     const { data: fixtureRows, error: fixturesError } = await supabase
       .from('fixtures_with_teams')
       .select('*')
-      .or(`and(home_slug.eq.${teamSlug1},away_slug.eq.${teamSlug2}),and(home_slug.eq.${teamSlug2},away_slug.eq.${teamSlug1})`)
+      .or(`and(home_team_slug.eq.${teamSlug1},away_team_slug.eq.${teamSlug2}),and(home_team_slug.eq.${teamSlug2},away_team_slug.eq.${teamSlug1})`)
       .order('utc_kickoff', { ascending: false });
 
     if (fixturesError) {
@@ -714,7 +714,7 @@ export async function getNextHeadToHeadFixture(teamSlug1: string, teamSlug2: str
     const { data: fixtureRows, error: fixturesError } = await supabase
       .from('fixtures_with_teams')
       .select('*')
-      .or(`and(home_slug.eq.${teamSlug1},away_slug.eq.${teamSlug2}),and(home_slug.eq.${teamSlug2},away_slug.eq.${teamSlug1})`)
+      .or(`and(home_team_slug.eq.${teamSlug1},away_team_slug.eq.${teamSlug2}),and(home_team_slug.eq.${teamSlug2},away_team_slug.eq.${teamSlug1})`)
       .gte('utc_kickoff', now)
       .order('utc_kickoff', { ascending: true })
       .limit(1);
@@ -771,7 +771,7 @@ export async function getLiveOrNextHeadToHeadFixture(teamSlug1: string, teamSlug
     const { data: liveFixtures, error: liveError } = await supabase
       .from('fixtures_with_teams')
       .select('*')
-      .or(`and(home_slug.eq.${teamSlug1},away_slug.eq.${teamSlug2}),and(home_slug.eq.${teamSlug2},away_slug.eq.${teamSlug1})`)
+      .or(`and(home_team_slug.eq.${teamSlug1},away_team_slug.eq.${teamSlug2}),and(home_team_slug.eq.${teamSlug2},away_team_slug.eq.${teamSlug1})`)
       .gte('utc_kickoff', threeHoursAgo)
       .lte('utc_kickoff', nowIso)
       .order('utc_kickoff', { ascending: false })
