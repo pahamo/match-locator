@@ -360,7 +360,7 @@ async function syncCompetitionFixtures(competitionId, sportmonksLeagueId, compet
         // Sync TV stations if enabled - use tvstations from fixture object (already included)
         const showTVStations = process.env.REACT_APP_FF_SPORTMONKS_TV_STATIONS === 'true';
         if (showTVStations && fixture.tvstations) {
-          await syncFixtureTVStations(fixtureDbId, fixture.tvstations, flags);
+          await syncFixtureTVStations(fixtureDbId, competitionId, fixture.tvstations, flags);
         }
 
         // Small delay for rate limiting
@@ -378,21 +378,47 @@ async function syncCompetitionFixtures(competitionId, sportmonksLeagueId, compet
   }
 }
 
-// Check if a TV station broadcast is for England (UK)
-// Uses country_id from the API's pivot table (fixture_tvstation relationship)
-// 462 = England (TNT Sports, Discovery+, Amazon Prime, etc.)
-// Note: Ireland (455) has different broadcasters (Sky Sports), not included
-function isUKBroadcast(station) {
+// Check if a TV station broadcast should be included
+// Filters by country and competition-specific rules
+function shouldIncludeBroadcast(station, competitionId) {
   // station here is the pivot record: { id, fixture_id, tvstation_id, country_id, tvstation: {...} }
-  // The country_id tells us which country this broadcast is FOR
   const ENGLAND_COUNTRY_ID = 462;
-  return station.country_id === ENGLAND_COUNTRY_ID;
+  const PREMIER_LEAGUE_COMPETITION_ID = 1; // Our database competition ID
+
+  // Only England broadcasts (462)
+  // Note: Ireland (455) has different broadcasters, not included
+  if (station.country_id !== ENGLAND_COUNTRY_ID) {
+    return false;
+  }
+
+  // Filter out Amazon Prime for Premier League
+  // Amazon has NO Premier League rights this season (2024-25)
+  // They have some Champions League rights, so only filter for PL
+  const channelName = station.tvstation?.name || '';
+  if (competitionId === PREMIER_LEAGUE_COMPETITION_ID &&
+      channelName.toLowerCase().includes('amazon')) {
+    if (options.verbose) {
+      console.log(`      ⚠️  Filtering out ${channelName} for PL (no rights this season)`);
+    }
+    return false;
+  }
+
+  return true;
 }
 
 // Sync TV stations for a fixture - uses tvstations array from fixture object
 // This contains ONLY the actual broadcasters for this specific match
-async function syncFixtureTVStations(fixtureDbId, tvStations, flags) {
+async function syncFixtureTVStations(fixtureDbId, competitionId, tvStations, flags) {
   try {
+    // Delete all existing broadcasts for this fixture first
+    // This ensures we remove broadcasts that are no longer valid (e.g., Amazon Prime for PL)
+    if (!flags.testMode) {
+      await supabase
+        .from('broadcasts')
+        .delete()
+        .eq('fixture_id', fixtureDbId);
+    }
+
     // tvStations is already filtered to this specific match by Sports Monks
     for (const station of tvStations) {
       // Skip if tvstation details not included
@@ -400,9 +426,9 @@ async function syncFixtureTVStations(fixtureDbId, tvStations, flags) {
         continue;
       }
 
-      // Filter to UK broadcasts only (country_id 455)
-      // TODO: When supporting international, parameterize country_id or remove filter
-      if (!isUKBroadcast(station)) {
+      // Filter by country and competition-specific rules
+      // (e.g., England only, Amazon Prime excluded for PL)
+      if (!shouldIncludeBroadcast(station, competitionId)) {
         continue;
       }
 
@@ -413,15 +439,8 @@ async function syncFixtureTVStations(fixtureDbId, tvStations, flags) {
         continue;
       }
 
-      // Check if broadcast already exists (by SportMonks TV station ID - the natural key)
-      const { data: existingBroadcast } = await supabase
-        .from('broadcasts')
-        .select('id')
-        .eq('fixture_id', fixtureDbId)
-        .eq('sportmonks_tv_station_id', station.tvstation_id)
-        .single();
-
       // Store raw API data without manipulation
+      // Since we deleted all existing broadcasts above, we just insert fresh ones
       const broadcastData = {
         fixture_id: fixtureDbId,
         provider_id: null,  // Deprecated - we use API data directly now
@@ -434,21 +453,13 @@ async function syncFixtureTVStations(fixtureDbId, tvStations, flags) {
         last_synced_at: new Date().toISOString()
       };
 
-      if (existingBroadcast) {
-        // Update existing broadcast
-        await supabase
-          .from('broadcasts')
-          .update(broadcastData)
-          .eq('id', existingBroadcast.id);
-      } else {
-        // Create new broadcast
-        await supabase
-          .from('broadcasts')
-          .insert(broadcastData);
+      // Insert new broadcast
+      await supabase
+        .from('broadcasts')
+        .insert(broadcastData);
 
-        if (options.verbose) {
-          console.log(`      📺 Added broadcast: ${station.tvstation.name} (${station.tvstation.type})`);
-        }
+      if (options.verbose) {
+        console.log(`      📺 Added broadcast: ${station.tvstation.name} (${station.tvstation.type})`);
       }
     }
   } catch (error) {

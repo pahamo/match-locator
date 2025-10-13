@@ -10,6 +10,7 @@ import { COMPETITION_CONFIGS } from '../../config/competitions';
 import OptimizedImage from '../../components/OptimizedImage';
 import { SkyAffiliateLink } from '../../components/affiliate/AffiliateLink';
 import { buildH2HUrl } from '../../utils/urlBuilder';
+import { getRoundNumber } from '../../utils/fixtures';
 
 
 export interface FixtureCardProps {
@@ -52,7 +53,7 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
       awayCrest: fixture.away_crest,
       broadcaster: fixture.broadcaster,
       isBlackout: fixture.isBlackout || false,
-      matchweek: fixture.matchweek,
+      matchweek: getRoundNumber(fixture),
       url: urlResult?.url || null,
       urlStrategy: urlResult?.strategy,  // Track which strategy used (for monitoring)
       shouldCreatePage: shouldCreatePage
@@ -72,7 +73,7 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
       awayCrest: fixture.away.crest,
       broadcaster: broadcasterName,
       isBlackout: isBlackout,
-      matchweek: fixture.matchweek,
+      matchweek: getRoundNumber(fixture),
       url: urlResult?.url || null,
       urlStrategy: urlResult?.strategy,  // Track which strategy used (for monitoring)
       shouldCreatePage: shouldCreatePage
@@ -147,7 +148,7 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
                 )}
 
                 {/* Matchweek */}
-                {showMatchweek && fixtureData.matchweek && (
+                {showMatchweek && fixtureData.matchweek !== null && (
                   <div className="matchweek-pill">
                     {fixtureData.matchweek}
                   </div>

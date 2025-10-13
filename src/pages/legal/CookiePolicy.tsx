@@ -31,7 +31,7 @@ const CookiePolicy: React.FC = () => {
         <ul>
           <li>Session cookies (if used): expire when you close the browser; essential operation.</li>
           <li>Preference cookies (if used): remember choices (e.g., selected team).</li>
-          <li>Plausible analytics: cookie‑less; only aggregate counters are retained. Retention: <strong>[TODO]</strong>.</li>
+          <li>Plausible analytics: cookie‑less; only aggregate counters are retained. Retention: <strong>365 days</strong>.</li>
         </ul>
       </section>
       <section id="choices">

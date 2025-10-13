@@ -47,9 +47,10 @@ const ChampionsLeagueGroupStagePage: React.FC = () => {
         });
 
 
-        // Show all fixtures for now - don't filter by stage since we need to see what's available
-        // TODO: Re-enable stage filtering once we know the correct stage names in the data
-        const relevantFixtures = fixturesData; // Remove stage filtering temporarily
+        // Show all fixtures - the new Champions League format (2024/25 onwards) uses a single
+        // league phase instead of groups, so no stage filtering is needed. The 'stage' and 'round'
+        // fields are not populated in our data source for UCL fixtures.
+        const relevantFixtures = fixturesData;
 
 
         setFixtures(relevantFixtures);

@@ -297,6 +297,31 @@ const HeadToHeadPage: React.FC = () => {
   return (
     <div className="h2h-page">
       {nextFixture && <StructuredData type="match" data={nextFixture} />}
+      <StructuredData
+        type="faq"
+        data={[
+          {
+            question: `When is the next ${formatTeamNameShort(team1.name)} vs ${formatTeamNameShort(team2.name)} match?`,
+            answer: nextFixture
+              ? `The next ${formatTeamNameShort(team1.name)} vs ${formatTeamNameShort(team2.name)} match is scheduled for ${new Date(nextFixture.kickoff_utc).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} at ${new Date(nextFixture.kickoff_utc).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}. ${nextFixture.broadcaster ? `The match will be broadcast on ${nextFixture.broadcaster}.` : 'Broadcaster information will be announced closer to the match date.'}`
+              : `There are currently no upcoming ${formatTeamNameShort(team1.name)} vs ${formatTeamNameShort(team2.name)} fixtures scheduled. Check back for updates on future matches between these teams.`
+          },
+          {
+            question: `Where can I watch ${formatTeamNameShort(team1.name)} vs ${formatTeamNameShort(team2.name)}?`,
+            answer: nextFixture?.broadcaster
+              ? `${formatTeamNameShort(team1.name)} vs ${formatTeamNameShort(team2.name)} will be shown on ${nextFixture.broadcaster} in the UK. Check our TV schedule above for full broadcast details and kick-off times.`
+              : `${formatTeamNameShort(team1.name)} vs ${formatTeamNameShort(team2.name)} matches are typically broadcast on Sky Sports, TNT Sports, BBC, or Amazon Prime Video in the UK. Broadcaster information is announced closer to the match date.`
+          },
+          {
+            question: `What is the head-to-head record between ${formatTeamNameShort(team1.name)} and ${formatTeamNameShort(team2.name)}?`,
+            answer: `In their last ${fixtures.length} meetings, ${formatTeamNameShort(team1.name)} won ${h2hStats.team1Wins} ${h2hStats.team1Wins === 1 ? 'match' : 'matches'}, ${formatTeamNameShort(team2.name)} won ${h2hStats.team2Wins} ${h2hStats.team2Wins === 1 ? 'match' : 'matches'}, and ${h2hStats.draws} ${h2hStats.draws === 1 ? 'match ended' : 'matches ended'} in a draw. View the complete head-to-head statistics and match history above.`
+          },
+          {
+            question: `How many times have ${formatTeamNameShort(team1.name)} and ${formatTeamNameShort(team2.name)} played each other?`,
+            answer: `${formatTeamNameShort(team1.name)} and ${formatTeamNameShort(team2.name)} have played ${fixtures.length} ${fixtures.length === 1 ? 'time' : 'times'} in recent competitions. ${upcomingFixtures.length > 0 ? `There ${upcomingFixtures.length === 1 ? 'is' : 'are'} ${upcomingFixtures.length} upcoming ${upcomingFixtures.length === 1 ? 'fixture' : 'fixtures'} scheduled between these teams.` : 'Check back for future fixtures between these teams.'}`
+          }
+        ]}
+      />
       <Header />
 
       <main style={{ minHeight: '60vh', background: 'white' }}>

@@ -15,13 +15,13 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 interface FixtureRow {
   id: number;
-  matchday?: number | null;
+  // matchday removed - derive from round.name using getMatchweek() helper
   utc_kickoff: string;
   venue?: string | null;
   status?: string;
   competition_id?: number;
-  stage?: string | null;
-  round?: string | null;
+  stage?: any; // jsonb from database (API stage object)
+  round?: any; // jsonb from database (API round object)
   home_team_id: number;
   home_team: string;
   home_slug: string; // Consolidated slug field
@@ -32,6 +32,8 @@ interface FixtureRow {
   away_slug: string; // Consolidated slug field
   away_crest?: string | null;
   away_score?: number | null;
+  broadcaster?: string | null; // Broadcaster name from view
+  broadcaster_id?: number | null; // Broadcaster provider ID from view
 }
 
 interface BroadcastRow {
@@ -43,7 +45,6 @@ interface BroadcastRow {
 
 function mapFixtureRow(row: FixtureRow, providersByFixture: Record<number, Provider[]> = {}): Fixture {
   const kickoffIso = row.utc_kickoff;
-  const mw = row.matchday ?? null;
   const home: Team = {
     id: row.home_team_id,
     name: row.home_team,
@@ -71,7 +72,7 @@ function mapFixtureRow(row: FixtureRow, providersByFixture: Record<number, Provi
     sport: 'football',
     competition: mapCompetitionIdToSlug(row.competition_id || 0),
     competition_id: row.competition_id,
-    matchweek: mw,
+    // matchweek removed - use getMatchweek(fixture) helper to derive from round.name
     kickoff_utc: kickoffIso,
     venue: row.venue ?? null,
     home,
@@ -82,8 +83,10 @@ function mapFixtureRow(row: FixtureRow, providersByFixture: Record<number, Provi
       reason: isBlackout ? 'No UK broadcaster announced' : null
     },
     status: row.status || 'scheduled',
-    stage: row.stage ?? undefined,
-    round: row.round ?? undefined,
+    broadcaster: row.broadcaster ?? undefined, // From database view
+    broadcaster_id: row.broadcaster_id ?? undefined, // From database view
+    stage: row.stage ?? undefined, // Pass through jsonb object from API
+    round: row.round ?? undefined, // Pass through jsonb object from API
     score,
   };
 }
@@ -155,7 +158,8 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
       .select(`
         id,matchday,utc_kickoff,venue,status,competition_id,stage,round,
         home_team_id,home_team,home_slug,home_crest,home_score,
-        away_team_id,away_team,away_slug,away_crest,away_score
+        away_team_id,away_team,away_slug,away_crest,away_score,
+        broadcaster,broadcaster_id
       `)
       .order('utc_kickoff', { ascending: order === 'asc' })
       .limit(limit);
@@ -179,12 +183,12 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
     }
 
     const { data: rows, error } = await query;
-    
+
     if (error) {
       console.warn('[Supabase] getFixtures error', error);
       return [];
     }
-    
+
     if (!rows || !rows.length) return [];
 
     // Enrich providers in a second step
@@ -237,7 +241,8 @@ export async function getFixtureById(id: number): Promise<Fixture | undefined> {
       .select(`
         id,matchday,utc_kickoff,venue,status,competition_id,stage,round,
         home_team_id,home_team,home_slug,home_crest,home_score,
-        away_team_id,away_team,away_slug,away_crest,away_score
+        away_team_id,away_team,away_slug,away_crest,away_score,
+        broadcaster,broadcaster_id
       `)
       .eq('id', id)
       .limit(1);
@@ -288,8 +293,9 @@ export async function getFixtureByTeamsAndDate(homeTeam: string, awayTeam: strin
       .from('fixtures_with_teams')
       .select(`
         id,matchday,utc_kickoff,venue,status,competition_id,stage,round,
-        home_team_id,home_team,home_slug,home_crest,
-        away_team_id,away_team,away_slug,away_crest
+        home_team_id,home_team,home_slug,home_crest,home_score,
+        away_team_id,away_team,away_slug,away_crest,away_score,
+        broadcaster,broadcaster_id
       `)
       .gte('utc_kickoff', `${searchDate}T00:00:00.000Z`)
       .lt('utc_kickoff', `${searchDate}T23:59:59.999Z`)
@@ -369,7 +375,8 @@ export async function getAdminFixtures(competitionId: number = 1): Promise<Admin
       .select(`
         id,matchday,utc_kickoff,venue,status,competition_id,stage,round,
         home_team_id,home_team,home_slug,home_crest,home_score,
-        away_team_id,away_team,away_slug,away_crest,away_score
+        away_team_id,away_team,away_slug,away_crest,away_score,
+        broadcaster,broadcaster_id
       `)
       .eq('competition_id', competitionId)
       .gte('utc_kickoff', currentSeasonStart)
@@ -567,7 +574,8 @@ export async function getFixturesForDay(date: string, competitionIds?: number[])
       .select(`
         id,matchday,utc_kickoff,venue,status,competition_id,stage,round,
         home_team_id,home_team,home_slug,home_crest,home_score,
-        away_team_id,away_team,away_slug,away_crest,away_score
+        away_team_id,away_team,away_slug,away_crest,away_score,
+        broadcaster,broadcaster_id
       `)
       .gte('utc_kickoff', startOfDay.toISOString())
       .lte('utc_kickoff', endOfDay.toISOString())

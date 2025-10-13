@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../services/supabase';
 import Header from '../../components/Header';
+import { getRoundNumber } from '../../utils/fixtures';
 
 interface FixtureDebugRow {
   id: number;
@@ -8,7 +9,7 @@ interface FixtureDebugRow {
   home_team: string;
   away_team: string;
   competition_id: number;
-  matchday: number | null;
+  round: any;  // jsonb from database (API round object)
   status: string;
   home_score: number | null;
   away_score: number | null;
@@ -44,7 +45,7 @@ const AdminPage: React.FC = () => {
       // Build query
       let query = supabase
         .from('fixtures_with_teams')
-        .select('id, utc_kickoff, home_team, away_team, competition_id, matchday, status, home_score, away_score, broadcaster, broadcaster_id')
+        .select('id, utc_kickoff, home_team, away_team, competition_id, round, status, home_score, away_score, broadcaster, broadcaster_id')
         .order('utc_kickoff', { ascending: true });
 
       if (competitionFilter) {
@@ -52,7 +53,8 @@ const AdminPage: React.FC = () => {
       }
 
       if (matchweekFilter) {
-        query = query.eq('matchday', parseInt(matchweekFilter));
+        // Filter by round.name (jsonb query)
+        query = query.eq('round->>name', matchweekFilter);
       }
 
       if (dateFrom) {
@@ -260,7 +262,7 @@ const AdminPage: React.FC = () => {
                         {getCompetitionName(fixture.competition_id)}
                       </td>
                       <td style={{ padding: '12px 8px', textAlign: 'center' }}>
-                        {fixture.matchday || '-'}
+                        {getRoundNumber(fixture as any) || '-'}
                       </td>
                       <td style={{ padding: '12px 8px', textAlign: 'center' }}>
                         {hasScore ? `${fixture.home_score} - ${fixture.away_score}` : '-'}

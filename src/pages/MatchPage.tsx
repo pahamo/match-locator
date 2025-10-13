@@ -11,6 +11,7 @@ import { generateBreadcrumbs } from '../utils/breadcrumbs';
 import AffiliateDisclosure, { withAffiliateAriaLabel } from '../components/legal/AffiliateDisclosure';
 import { getTeamUrlSlug } from '../utils/slugUtils';
 import { LiveMatchesTicker } from '../components/LiveMatchesTicker';
+import { getRoundNumber } from '../utils/fixtures';
 
 const MatchPage: React.FC = () => {
   const { matchSlug, matchId, id } = useParams<{ matchSlug?: string; matchId?: string; id?: string }>();
@@ -224,9 +225,9 @@ const MatchPage: React.FC = () => {
             )}
 
             {/* Matchweek */}
-            {fixture.matchweek && (
+            {getRoundNumber(fixture) !== null && (
               <div style={{ marginBottom: '16px', fontSize: '0.9rem', color: 'var(--color-muted)' }}>
-                Matchweek {fixture.matchweek}
+                Matchweek {getRoundNumber(fixture)}
               </div>
             )}
 

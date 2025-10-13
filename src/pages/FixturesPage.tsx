@@ -12,6 +12,7 @@ import { generateBreadcrumbs } from '../utils/breadcrumbs';
 import { getMatchStatus } from '../utils/matchStatus';
 import { formatDateOnly } from '../utils/dateFormat';
 import { TimezoneIndicator } from '../components/TimezoneIndicator';
+import { getMatchweek } from '../utils/fixtures';
 
 type FilterTeam = '' | string;
 type FilterMatchweek = '' | string;
@@ -84,7 +85,7 @@ const FixturesPage: React.FC = () => {
 
     if (matchweekFilter) {
       const week = parseInt(matchweekFilter);
-      filtered = filtered.filter(f => f.matchweek === week);
+      filtered = filtered.filter(f => getMatchweek(f) === week);
     }
 
     if (competitionFilter) {
@@ -148,7 +149,8 @@ const FixturesPage: React.FC = () => {
   const getMatchweekOptions = () => {
     const weeks = new Set<number>();
     fixtures.forEach(f => {
-      if (f.matchweek) weeks.add(f.matchweek);
+      const mw = getMatchweek(f);
+      if (mw !== null) weeks.add(mw);
     });
     return Array.from(weeks).sort((a, b) => a - b);
   };

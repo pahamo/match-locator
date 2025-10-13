@@ -3,6 +3,7 @@ import type { SimpleFixture } from '../types';
 import FixtureCard from '../design-system/components/FixtureCard';
 import { Card, CardHeader, CardContent, CardTitle } from '../design-system/components/Card';
 import Flex from '../design-system/components/Layout/Flex';
+import { getMatchweek } from '../utils/fixtures';
 
 interface MatchdaySectionProps {
   fixtures: SimpleFixture[];
@@ -57,15 +58,15 @@ const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competition
       .sort((a, b) => new Date(b.kickoff_utc).getTime() - new Date(a.kickoff_utc).getTime());
 
     // Get the current matchday from the first upcoming fixture
-    const currentMatchday = upcomingList[0]?.matchweek;
+    const currentMatchday = upcomingList[0] ? getMatchweek(upcomingList[0]) : null;
 
     let upcoming: SimpleFixture[];
     let past: SimpleFixture[];
 
-    if (currentMatchday) {
+    if (currentMatchday !== null) {
       // If we have matchday data, show ALL fixtures from that matchday
-      upcoming = upcomingList.filter(f => f.matchweek === currentMatchday);
-      past = pastList.filter(f => f.matchweek === currentMatchday);
+      upcoming = upcomingList.filter(f => getMatchweek(f) === currentMatchday);
+      past = pastList.filter(f => getMatchweek(f) === currentMatchday);
     } else {
       // No matchday data - group by date instead
       // Get the date of the next upcoming fixture
@@ -111,10 +112,10 @@ const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competition
   // Generate title, metadata, and description based on active tab
   const getTitleData = () => {
     if (activeTab === 'upcoming' && upcomingFixtures.length > 0) {
-      const matchweek = upcomingFixtures[0]?.matchweek;
+      const matchweek = upcomingFixtures[0] ? getMatchweek(upcomingFixtures[0]) : null;
       const dateRange = formatDateRange(upcomingFixtures);
 
-      if (matchweek) {
+      if (matchweek !== null) {
         return {
           title: `Matchday ${matchweek} Fixtures`,
           metadata: dateRange,
@@ -129,10 +130,10 @@ const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competition
     }
 
     if (activeTab === 'latest' && latestResults.length > 0) {
-      const matchweek = latestResults[0]?.matchweek;
+      const matchweek = latestResults[0] ? getMatchweek(latestResults[0]) : null;
       const dateRange = formatDateRange(latestResults);
 
-      if (matchweek) {
+      if (matchweek !== null) {
         return {
           title: `Matchday ${matchweek} Results`,
           metadata: dateRange,

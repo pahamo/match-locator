@@ -10,6 +10,7 @@ import { COMPETITION_CONFIGS } from '../../config/competitions';
 import OptimizedImage from '../../components/OptimizedImage';
 import { SkyAffiliateLink } from '../../components/affiliate/AffiliateLink';
 import { buildH2HUrl } from '../../utils/urlBuilder';
+import { getRoundNumber } from '../../utils/fixtures';
 
 // Helper function to get relative day label
 const getRelativeDayLabel = (dateString: string): string => {
@@ -88,7 +89,7 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
       awayCrest: fixture.away_crest,
       broadcaster: fixture.broadcaster,
       isBlackout: fixture.isBlackout || false,
-      matchweek: fixture.matchweek,
+      matchweek: getRoundNumber(fixture),
       url: urlResult?.url || null,
       urlStrategy: urlResult?.strategy,  // Track which strategy used (for monitoring)
       shouldCreatePage: shouldCreatePage,
@@ -97,8 +98,9 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
       status: fixture.status
     };
   } else {
+    // Prefer broadcaster from database view, fallback to providers_uk for legacy support
     const hasProviders = fixture.providers_uk && fixture.providers_uk.length > 0;
-    const broadcasterName = hasProviders ? fixture.providers_uk[0].name : undefined;
+    const broadcasterName = fixture.broadcaster || (hasProviders ? fixture.providers_uk[0].name : undefined);
     const isBlackout = fixture.blackout?.is_blackout || false;
 
     // Smart URL builder: Direct SEO URL (best) → Fixture ID fallback (robust)
@@ -111,7 +113,7 @@ const getFixtureData = (fixture: SimpleFixture | Fixture) => {
       awayCrest: fixture.away.crest,
       broadcaster: broadcasterName,
       isBlackout: isBlackout,
-      matchweek: fixture.matchweek,
+      matchweek: getRoundNumber(fixture),
       url: urlResult?.url || null,
       urlStrategy: urlResult?.strategy,  // Track which strategy used (for monitoring)
       shouldCreatePage: shouldCreatePage,
@@ -223,7 +225,7 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
                 )}
 
                 {/* Matchweek */}
-                {showMatchweek && fixtureData.matchweek && (
+                {showMatchweek && fixtureData.matchweek !== null && (
                   <div className="matchweek-pill">
                     {fixtureData.matchweek}
                   </div>

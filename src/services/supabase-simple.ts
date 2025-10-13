@@ -1,5 +1,6 @@
 import { supabase } from './supabase';
 import type { SimpleFixture, Competition } from '../types';
+import { getRoundNumber } from '../utils/fixtures';
 
 // Alias for backward compatibility
 export type SimpleCompetition = Competition;
@@ -25,7 +26,7 @@ export async function getSimpleFixtures(competitionId?: number): Promise<SimpleF
 
     let query = supabase
       .from('fixtures_with_teams')
-      .select('id, utc_kickoff, home_team_id, away_team_id, home_team, away_team, home_crest, away_crest, matchday, competition_id, stage, round, status, home_score, away_score')
+      .select('id, utc_kickoff, home_team_id, away_team_id, home_team, away_team, home_slug, away_slug, home_crest, away_crest, competition_id, stage, round, status, home_score, away_score, broadcaster, broadcaster_id')
       .gte('utc_kickoff', seasonStartIso)
       .order('utc_kickoff', { ascending: true });
 
@@ -66,29 +67,36 @@ export async function getSimpleFixtures(competitionId?: number): Promise<SimpleF
 
     // Step 4: Map to simple format
     return validFixtures.map((fixture: any) => {
+      // Prefer broadcaster from database view (already joined)
+      const broadcasterFromView = fixture.broadcaster;
+      const broadcasterIdFromView = fixture.broadcaster_id;
+
+      // Fallback to legacy broadcast lookup if view doesn't have broadcaster
       const broadcast = broadcastLookup[fixture.id];
-      const providerId = broadcast?.providerId;
+      const providerId = broadcasterIdFromView || broadcast?.providerId;
       const channelName = broadcast?.channelName;
       const isBlackout = providerId === 999;
 
-      // Use specific channel name if available, otherwise fall back to provider name
+      // Use broadcaster from view if available, otherwise fall back to channel name or provider lookup
       const broadcasterDisplay = isBlackout
         ? undefined
-        : channelName || SIMPLE_BROADCASTERS.find(b => b.id === providerId)?.name || undefined;
+        : broadcasterFromView || channelName || SIMPLE_BROADCASTERS.find(b => b.id === providerId)?.name || undefined;
 
       return {
         id: fixture.id,
         kickoff_utc: fixture.utc_kickoff,
         home_team: fixture.home_team || 'Unknown',
         away_team: fixture.away_team || 'Unknown',
+        home_slug: fixture.home_slug || undefined,
+        away_slug: fixture.away_slug || undefined,
         home_crest: fixture.home_crest || undefined,
         away_crest: fixture.away_crest || undefined,
-        matchweek: fixture.matchday || undefined,
+        round: fixture.round || undefined,  // Store round object from API
+        matchweek: fixture.round?.name ? parseInt(fixture.round.name, 10) : undefined,  // Backwards compatibility: calculate from round.name
         providerId: providerId || undefined,
         isBlackout: isBlackout,
         competition_id: fixture.competition_id || undefined,
         stage: fixture.stage || undefined,
-        round: fixture.round || undefined,
         broadcaster: broadcasterDisplay,
         home_score: fixture.home_score ?? undefined,
         away_score: fixture.away_score ?? undefined,
