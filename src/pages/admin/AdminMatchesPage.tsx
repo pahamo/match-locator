@@ -31,7 +31,7 @@ const AdminPage: React.FC = () => {
   const [competitionFilter, setCompetitionFilter] = useState<string>('1'); // Default to Premier League
   const [matchweekFilter, setMatchweekFilter] = useState<string>('');
   const [broadcasterFilter, setBroadcasterFilter] = useState<string>('all'); // all | with | without
-  const [dateFrom, setDateFrom] = useState<string>('2024-08-01');
+  const [dateFrom, setDateFrom] = useState<string>('2025-08-01');
   const [dateTo, setDateTo] = useState<string>('');
 
   useEffect(() => {
