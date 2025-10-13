@@ -239,7 +239,7 @@ export async function getFixtureById(id: number): Promise<Fixture | undefined> {
     const { data: rows, error } = await supabase
       .from('fixtures_with_teams')
       .select(`
-        id,matchday,utc_kickoff,venue,status,competition_id,stage,round,
+        id,utc_kickoff,venue,status,competition_id,stage,round,
         home_team_id,home_team,home_slug,home_crest,home_score,
         away_team_id,away_team,away_slug,away_crest,away_score,
         broadcaster,broadcaster_id
@@ -292,7 +292,7 @@ export async function getFixtureByTeamsAndDate(homeTeam: string, awayTeam: strin
     const { data: rows, error } = await supabase
       .from('fixtures_with_teams')
       .select(`
-        id,matchday,utc_kickoff,venue,status,competition_id,stage,round,
+        id,utc_kickoff,venue,status,competition_id,stage,round,
         home_team_id,home_team,home_slug,home_crest,home_score,
         away_team_id,away_team,away_slug,away_crest,away_score,
         broadcaster,broadcaster_id
@@ -373,7 +373,7 @@ export async function getAdminFixtures(competitionId: number = 1): Promise<Admin
     const { data: rows, error } = await supabase
       .from('fixtures_with_teams')
       .select(`
-        id,matchday,utc_kickoff,venue,status,competition_id,stage,round,
+        id,utc_kickoff,venue,status,competition_id,stage,round,
         home_team_id,home_team,home_slug,home_crest,home_score,
         away_team_id,away_team,away_slug,away_crest,away_score,
         broadcaster,broadcaster_id
@@ -572,7 +572,7 @@ export async function getFixturesForDay(date: string, competitionIds?: number[])
     let query = supabase
       .from('fixtures_with_teams')
       .select(`
-        id,matchday,utc_kickoff,venue,status,competition_id,stage,round,
+        id,utc_kickoff,venue,status,competition_id,stage,round,
         home_team_id,home_team,home_slug,home_crest,home_score,
         away_team_id,away_team,away_slug,away_crest,away_score,
         broadcaster,broadcaster_id
