@@ -1,0 +1,76 @@
+name: Sync Fixtures from SportMonks
+
+on:
+  schedule:
+    # Run every Monday at 2 AM UTC
+    - cron: '0 2 * * 1'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  sync-fixtures:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Sync Premier League fixtures
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SPORTMONKS_TOKEN: ${{ secrets.SPORTMONKS_TOKEN }}
+        run: |
+          node scripts/sync-sportmonks-fixtures.mjs \
+            --competition-id=1 \
+            --date-from=2025-08-01 \
+            --date-to=2026-05-31 \
+            --verbose
+
+      - name: Sync Champions League fixtures
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SPORTMONKS_TOKEN: ${{ secrets.SPORTMONKS_TOKEN }}
+        run: |
+          node scripts/sync-sportmonks-fixtures.mjs \
+            --competition-id=2 \
+            --date-from=2025-08-01 \
+            --date-to=2026-05-31 \
+            --verbose
+
+      - name: Sync FA Cup fixtures
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SPORTMONKS_TOKEN: ${{ secrets.SPORTMONKS_TOKEN }}
+        run: |
+          node scripts/sync-sportmonks-fixtures.mjs \
+            --competition-id=3 \
+            --date-from=2025-08-01 \
+            --date-to=2026-05-31 \
+            --verbose
+
+      - name: Sync EFL Cup fixtures
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SPORTMONKS_TOKEN: ${{ secrets.SPORTMONKS_TOKEN }}
+        run: |
+          node scripts/sync-sportmonks-fixtures.mjs \
+            --competition-id=4 \
+            --date-from=2025-08-01 \
+            --date-to=2026-05-31 \
+            --verbose
+
+      - name: Notify on failure
+        if: failure()
+        run: echo "Fixture sync failed. Check logs for details."

@@ -263,6 +263,21 @@ const CompetitionPage: React.FC = () => {
           </nav>
         )}
 
+        {/* Info Notice */}
+        {fixtures.length > 0 && (
+          <div style={{
+            backgroundColor: '#eff6ff',
+            border: '1px solid #bfdbfe',
+            borderRadius: '8px',
+            padding: '12px 16px',
+            marginBottom: '1.5rem',
+            fontSize: '0.875rem',
+            color: '#1e40af'
+          }}>
+            <strong>ℹ️ Data Updates:</strong> Fixture schedules and TV broadcast assignments are automatically synced weekly from official sources. New fixtures and broadcaster selections are added as soon as they're announced.
+          </div>
+        )}
+
         {/* 2-Column Layout: Fixtures + Standings */}
         <div style={{
           display: 'grid',
