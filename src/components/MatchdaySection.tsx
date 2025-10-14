@@ -64,16 +64,8 @@ const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competition
     let past: SimpleFixture[];
 
     if (currentMatchday !== null) {
-      // Show fixtures from current matchweek + next matchweek (or at least 15 fixtures)
-      const currentAndNextMatchweek = upcomingList.filter(f => {
-        const mw = getMatchweek(f);
-        return mw === currentMatchday || mw === currentMatchday + 1;
-      });
-
-      // Take at least 15 fixtures, or all from current+next matchweek
-      upcoming = currentAndNextMatchweek.length >= 15
-        ? currentAndNextMatchweek
-        : upcomingList.slice(0, 15);
+      // Show fixtures from ONLY the current matchweek (not multiple)
+      upcoming = upcomingList.filter(f => getMatchweek(f) === currentMatchday);
 
       // For results, show the most recent completed matchweek
       // Find the most recent matchweek that has at least 1 completed game
@@ -118,24 +110,14 @@ const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competition
   // Generate title, metadata, and description based on active tab
   const getTitleData = () => {
     if (activeTab === 'upcoming' && upcomingFixtures.length > 0) {
-      const firstMatchweek = getMatchweek(upcomingFixtures[0]);
-      const lastMatchweek = getMatchweek(upcomingFixtures[upcomingFixtures.length - 1]);
+      const matchweek = getMatchweek(upcomingFixtures[0]);
       const dateRange = formatDateRange(upcomingFixtures);
 
-      if (firstMatchweek !== null && lastMatchweek !== null) {
-        // If showing multiple matchweeks
-        if (firstMatchweek !== lastMatchweek) {
-          return {
-            title: `Matchdays ${firstMatchweek}-${lastMatchweek} Fixtures`,
-            metadata: dateRange,
-            description: `View ${upcomingFixtures.length} upcoming ${competitionName} fixtures from Matchdays ${firstMatchweek} to ${lastMatchweek}. Check kick-off times, TV broadcast channels, and where to watch every match live in the UK.`
-          };
-        }
-        // Single matchweek
+      if (matchweek !== null) {
         return {
-          title: `Matchday ${firstMatchweek} Fixtures`,
+          title: `Matchday ${matchweek} Fixtures`,
           metadata: dateRange,
-          description: `View all ${upcomingFixtures.length} upcoming ${competitionName} fixtures for Matchday ${firstMatchweek}. Check kick-off times, TV broadcast channels, and where to watch every match live in the UK.`
+          description: `View ${upcomingFixtures.length} upcoming ${competitionName} fixtures for Matchday ${matchweek}. Check kick-off times, TV broadcast channels, and where to watch every match live in the UK.`
         };
       }
       return {
