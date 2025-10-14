@@ -64,14 +64,16 @@ const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competition
     let past: SimpleFixture[];
 
     if (currentMatchday !== null) {
-      // Show fixtures from current matchweek + next matchweek
+      // Show fixtures from current matchweek + next matchweek (or at least 15 fixtures)
       const currentAndNextMatchweek = upcomingList.filter(f => {
         const mw = getMatchweek(f);
         return mw === currentMatchday || mw === currentMatchday + 1;
       });
 
-      // Show current + next matchweek fixtures (don't force a minimum count)
-      upcoming = currentAndNextMatchweek;
+      // Take at least 15 fixtures, or all from current+next matchweek
+      upcoming = currentAndNextMatchweek.length >= 15
+        ? currentAndNextMatchweek
+        : upcomingList.slice(0, 15);
 
       // For results, show the most recent completed matchweek
       // Find the most recent matchweek that has at least 1 completed game
