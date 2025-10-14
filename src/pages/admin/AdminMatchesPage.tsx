@@ -29,14 +29,14 @@ const AdminPage: React.FC = () => {
   const [broadcasts, setBroadcasts] = useState<Record<number, BroadcastRecord[]>>({});
   const [loading, setLoading] = useState(true);
   const [competitionFilter, setCompetitionFilter] = useState<string>('1'); // Default to Premier League
-  const [matchweekFilter, setMatchweekFilter] = useState<string>('');
+  const [roundFilter, setRoundFilter] = useState<string>('');
   const [broadcasterFilter, setBroadcasterFilter] = useState<string>('all'); // all | with | without
   const [dateFrom, setDateFrom] = useState<string>('2025-08-01');
   const [dateTo, setDateTo] = useState<string>('');
 
   useEffect(() => {
     loadFixtures();
-  }, [competitionFilter, matchweekFilter, broadcasterFilter, dateFrom, dateTo]);
+  }, [competitionFilter, roundFilter, broadcasterFilter, dateFrom, dateTo]);
 
   const loadFixtures = async () => {
     try {
@@ -52,9 +52,9 @@ const AdminPage: React.FC = () => {
         query = query.eq('competition_id', parseInt(competitionFilter));
       }
 
-      if (matchweekFilter) {
+      if (roundFilter) {
         // Filter by round.name (jsonb query)
-        query = query.eq('round->>name', matchweekFilter);
+        query = query.eq('round->>name', roundFilter);
       }
 
       if (dateFrom) {
@@ -168,12 +168,12 @@ const AdminPage: React.FC = () => {
           </div>
 
           <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', fontSize: '14px' }}>Matchweek</label>
+            <label style={{ display: 'block', marginBottom: '4px', fontWeight: 'bold', fontSize: '14px' }}>Round</label>
             <input
               type="number"
-              value={matchweekFilter}
-              onChange={(e) => setMatchweekFilter(e.target.value)}
-              placeholder="All matchweeks"
+              value={roundFilter}
+              onChange={(e) => setRoundFilter(e.target.value)}
+              placeholder="All rounds"
               style={{ width: '100%', padding: '8px', fontSize: '14px' }}
             />
           </div>
@@ -238,7 +238,7 @@ const AdminPage: React.FC = () => {
                   <th style={{ padding: '12px 8px', textAlign: 'left' }}>Date</th>
                   <th style={{ padding: '12px 8px', textAlign: 'left' }}>Match</th>
                   <th style={{ padding: '12px 8px', textAlign: 'left' }}>Competition</th>
-                  <th style={{ padding: '12px 8px', textAlign: 'center' }}>MW</th>
+                  <th style={{ padding: '12px 8px', textAlign: 'center' }}>Round</th>
                   <th style={{ padding: '12px 8px', textAlign: 'center' }}>Score</th>
                   <th style={{ padding: '12px 8px', textAlign: 'left' }}>Broadcaster (View Selection)</th>
                   <th style={{ padding: '12px 8px', textAlign: 'left' }}>All Channels (SportMonks API)</th>
