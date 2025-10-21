@@ -270,7 +270,7 @@ const ClubPage: React.FC = () => {
 
                 <CardContent size="default">
                   <Stack space="md">
-                    {getBroadcasterName(nextMatch) && (
+                    {nextMatch && getBroadcasterName(nextMatch) && (
                       <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
                         <p className="font-semibold text-blue-900 dark:text-blue-100">
                           🎯 Next Match: Watch on <span className="font-bold">{getBroadcasterName(nextMatch)}</span>
