@@ -83,13 +83,13 @@ jobs:
             --date-to=2026-05-31 \
             --verbose
 
-      - name: Sync upcoming PL broadcaster data
+      - name: Sync upcoming broadcaster data (all competitions)
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           SPORTMONKS_TOKEN: ${{ secrets.SPORTMONKS_TOKEN }}
         run: |
-          node scripts/sync-upcoming-pl.mjs
+          node scripts/sync-upcoming-broadcasters.mjs
 
       - name: Notify on failure
         if: failure()

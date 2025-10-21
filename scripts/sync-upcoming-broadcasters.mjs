@@ -1,3 +1,37 @@
+/**
+ * Sync UK Broadcaster Data for Upcoming Fixtures
+ *
+ * Purpose:
+ *   Fetches UK broadcaster data from SportMonks API and syncs to the database
+ *   for upcoming fixtures. Works across all competitions (Premier League,
+ *   Champions League, FA Cup, etc.).
+ *
+ * Usage:
+ *   # Sync specific competition
+ *   node scripts/sync-upcoming-broadcasters.mjs --competition-id=2
+ *
+ *   # Sync all active competitions
+ *   node scripts/sync-upcoming-broadcasters.mjs
+ *
+ * What it syncs:
+ *   - UK TV broadcasters only (country_id: 11, 455, 462)
+ *   - Filters out Irish ROI-specific channels
+ *   - Only upcoming fixtures (not past matches)
+ *   - Skips fixtures that already have broadcaster data
+ *
+ * What it does NOT sync:
+ *   - Fixture dates, scores, teams (use sync-sportmonks-fixtures.mjs)
+ *   - Past fixtures (only upcoming)
+ *
+ * When to use:
+ *   - Broadcaster announcements are released for upcoming matches
+ *   - Quick update for next few weeks of fixtures
+ *   - After running sync-sportmonks-fixtures.mjs to add broadcaster data
+ *
+ * Data source:
+ *   SportMonks Football API - TV Stations endpoint
+ */
+
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
 

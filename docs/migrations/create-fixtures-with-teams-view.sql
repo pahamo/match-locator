@@ -1,5 +1,15 @@
--- Add 3pm Saturday blackout rule to fixtures_with_teams view
--- Premier League matches at 3pm on Saturdays are not shown on UK TV
+-- Create fixtures_with_teams view
+--
+-- This view combines fixture data with team details and broadcaster selection logic.
+--
+-- Features:
+-- 1. Joins fixtures with home/away team details (name, slug, crest)
+-- 2. Selects UK broadcasters with priority ordering (TNT Sports > Discovery+ > Others)
+-- 3. Filters out Irish ROI-specific channels
+-- 4. Filters out Amazon Prime (no PL or UCL rights this season)
+-- 5. Applies 3pm Saturday blackout for Premier League only
+--
+-- Usage: Execute this SQL to create or update the view
 
 DROP VIEW IF EXISTS fixtures_with_teams CASCADE;
 
