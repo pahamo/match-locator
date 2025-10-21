@@ -141,44 +141,17 @@ for (const competitionId of competitionIds) {
 
       const tvStations = json.data.tvstations || [];
 
-      // Filter for UK broadcasts
-      // Strategy: Use both country_id AND broadcaster name recognition
-      // because SportMonks often miscategorizes broadcaster country IDs
+      // Filter for UK broadcasts using ONLY API data
+      // Trust country_id from API, filter out obvious non-UK names
       const ukStations = tvStations.filter(ts => {
         if (!ts.tvstation) return false;
 
-        const channelName = ts.tvstation.name || '';
-
-        // Known UK broadcasters - include these regardless of country_id
-        // because SportMonks often has wrong country IDs
-        const ukBroadcasters = [
-          'TNT Sports', 'BT Sport', // Champions League/Europa League
-          'Sky Sports', 'Sky Go', // Premier League
-          'BBC', 'ITV', // FA Cup, international
-          'Discovery+', 'Discover+', // TNT Sports streaming
-          'Amazon Prime Video UK', // Some matches
-          'ITVX', 'BBC iPlayer', // Streaming
-          'Channel 4', 'Channel 5' // Occasional matches
-        ];
-
-        const isKnownUKBroadcaster = ukBroadcasters.some(name =>
-          channelName.includes(name)
-        );
-
-        // If it's a known UK broadcaster, include it
-        if (isKnownUKBroadcaster) {
-          // But still filter out Irish ROI variants
-          if (channelName.includes('ROI')) {
-            return false;
-          }
-          return true;
-        }
-
-        // Otherwise, fall back to country_id filtering
         // Include England (462), Ireland (455), and UK (11) country IDs
         if (![11, 455, 462].includes(ts.country_id)) {
           return false;
         }
+
+        const channelName = ts.tvstation.name || '';
 
         // Filter out Irish-specific channels (have "ROI" in name)
         if (channelName.includes('ROI')) {
