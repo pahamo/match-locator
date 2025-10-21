@@ -4,6 +4,7 @@ import FixtureCard from '../design-system/components/FixtureCard';
 import { Card, CardHeader, CardContent, CardTitle } from '../design-system/components/Card';
 import Flex from '../design-system/components/Layout/Flex';
 import { getMatchweek } from '../utils/fixtures';
+import { getMatchStatus } from '../utils/matchStatus';
 
 interface MatchdaySectionProps {
   fixtures: SimpleFixture[];
@@ -44,48 +45,62 @@ const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competition
     return `${formatDate(minDate)} - ${formatDate(maxDate)}`;
   };
 
-  const { upcomingFixtures, latestResults } = useMemo(() => {
-    const now = new Date();
+  const { liveFixtures, upcomingFixtures, latestResults } = useMemo(() => {
+    // Classify fixtures by match status
+    const liveList: SimpleFixture[] = [];
+    const upcomingList: SimpleFixture[] = [];
+    const finishedList: SimpleFixture[] = [];
 
-    // Get ALL upcoming fixtures sorted by date
-    const upcomingList = fixtures
-      .filter(f => new Date(f.kickoff_utc) >= now)
-      .sort((a, b) => new Date(a.kickoff_utc).getTime() - new Date(b.kickoff_utc).getTime());
+    fixtures.forEach(f => {
+      const status = getMatchStatus(f.kickoff_utc);
+      if (status.status === 'live') {
+        liveList.push(f);
+      } else if (status.status === 'finished') {
+        finishedList.push(f);
+      } else {
+        // 'upcoming' or 'upNext'
+        upcomingList.push(f);
+      }
+    });
 
-    // Get ALL completed fixtures sorted by date (most recent first)
-    const pastList = fixtures
-      .filter(f => new Date(f.kickoff_utc) < now)
-      .sort((a, b) => new Date(b.kickoff_utc).getTime() - new Date(a.kickoff_utc).getTime());
+    // Sort each list
+    liveList.sort((a, b) => new Date(a.kickoff_utc).getTime() - new Date(b.kickoff_utc).getTime());
+    upcomingList.sort((a, b) => new Date(a.kickoff_utc).getTime() - new Date(b.kickoff_utc).getTime());
+    finishedList.sort((a, b) => new Date(b.kickoff_utc).getTime() - new Date(a.kickoff_utc).getTime());
 
-    // Get the current matchday from the first upcoming fixture
-    const currentMatchday = upcomingList[0] ? getMatchweek(upcomingList[0]) : null;
+    // Get the current matchday from live or upcoming fixtures
+    const currentMatchday = (liveList[0] ? getMatchweek(liveList[0]) : null)
+                         || (upcomingList[0] ? getMatchweek(upcomingList[0]) : null);
 
+    let live: SimpleFixture[];
     let upcoming: SimpleFixture[];
-    let past: SimpleFixture[];
+    let finished: SimpleFixture[];
 
     if (currentMatchday !== null) {
       // Show fixtures from ONLY the current matchweek (not multiple)
+      live = liveList.filter(f => getMatchweek(f) === currentMatchday);
       upcoming = upcomingList.filter(f => getMatchweek(f) === currentMatchday);
 
       // For results, show the most recent completed matchweek
-      // Find the most recent matchweek that has at least 1 completed game
-      const latestCompletedMatchweek = pastList[0] ? getMatchweek(pastList[0]) : null;
+      const latestCompletedMatchweek = finishedList[0] ? getMatchweek(finishedList[0]) : null;
 
       if (latestCompletedMatchweek !== null) {
         // Show all fixtures from that matchweek
-        past = pastList.filter(f => getMatchweek(f) === latestCompletedMatchweek);
+        finished = finishedList.filter(f => getMatchweek(f) === latestCompletedMatchweek);
       } else {
-        past = [];
+        finished = [];
       }
     } else {
-      // No matchday data - show next 15 upcoming and last 15 past
+      // No matchday data - show all live, next 15 upcoming, last 15 finished
+      live = liveList;
       upcoming = upcomingList.slice(0, 15);
-      past = pastList.slice(0, 15);
+      finished = finishedList.slice(0, 15);
     }
 
     return {
+      liveFixtures: live,
       upcomingFixtures: upcoming,
-      latestResults: past
+      latestResults: finished
     };
   }, [fixtures]);
 
@@ -109,21 +124,29 @@ const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competition
 
   // Generate title, metadata, and description based on active tab
   const getTitleData = () => {
-    if (activeTab === 'upcoming' && upcomingFixtures.length > 0) {
-      const matchweek = getMatchweek(upcomingFixtures[0]);
-      const dateRange = formatDateRange(upcomingFixtures);
+    const totalLiveAndUpcoming = liveFixtures.length + upcomingFixtures.length;
+
+    if (activeTab === 'upcoming' && totalLiveAndUpcoming > 0) {
+      // Use matchweek from live or upcoming fixtures
+      const firstFixture = liveFixtures[0] || upcomingFixtures[0];
+      const matchweek = getMatchweek(firstFixture);
+      const dateRange = formatDateRange([...liveFixtures, ...upcomingFixtures]);
 
       if (matchweek !== null) {
         return {
           title: `Matchday ${matchweek} Fixtures`,
           metadata: dateRange,
-          description: `View ${upcomingFixtures.length} upcoming ${competitionName} fixtures for Matchday ${matchweek}. Check kick-off times, TV broadcast channels, and where to watch every match live in the UK.`
+          description: liveFixtures.length > 0
+            ? `${liveFixtures.length} live ${liveFixtures.length === 1 ? 'match' : 'matches'} and ${upcomingFixtures.length} upcoming ${competitionName} ${upcomingFixtures.length === 1 ? 'fixture' : 'fixtures'} for Matchday ${matchweek}. Check kick-off times, TV broadcast channels, and where to watch every match live in the UK.`
+            : `View ${upcomingFixtures.length} upcoming ${competitionName} fixtures for Matchday ${matchweek}. Check kick-off times, TV broadcast channels, and where to watch every match live in the UK.`
         };
       }
       return {
-        title: `Upcoming Matches`,
+        title: liveFixtures.length > 0 ? `Live & Upcoming Matches` : `Upcoming Matches`,
         metadata: dateRange,
-        description: `View ${upcomingFixtures.length} upcoming ${competitionName} fixtures. Check kick-off times, TV broadcast channels, and where to watch every match live in the UK.`
+        description: liveFixtures.length > 0
+          ? `${liveFixtures.length} live ${liveFixtures.length === 1 ? 'match' : 'matches'} and ${upcomingFixtures.length} upcoming ${competitionName} ${upcomingFixtures.length === 1 ? 'fixture' : 'fixtures'}. Check kick-off times, TV broadcast channels, and where to watch every match live in the UK.`
+          : `View ${upcomingFixtures.length} upcoming ${competitionName} fixtures. Check kick-off times, TV broadcast channels, and where to watch every match live in the UK.`
       };
     }
 
@@ -188,7 +211,7 @@ const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competition
             onClick={() => setActiveTab('upcoming')}
             style={tabButtonStyle(activeTab === 'upcoming')}
           >
-            Upcoming ({upcomingFixtures.length})
+            {liveFixtures.length > 0 ? 'Live & Upcoming' : 'Upcoming'} ({liveFixtures.length + upcomingFixtures.length})
           </button>
           <button
             onClick={() => setActiveTab('latest')}
@@ -199,25 +222,76 @@ const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competition
         </div>
       </CardHeader>
       <CardContent>
-        <Flex direction="column" gap="sm">
-          {activeTab === 'upcoming' && upcomingFixtures.map((fixture) => (
-            <FixtureCard
-              key={fixture.id}
-              fixture={fixture}
-              variant="withTimeNoCompetition"
-              showMatchweek={false}
-            />
-          ))}
-          {activeTab === 'latest' && latestResults.map((fixture) => (
-            <FixtureCard
-              key={fixture.id}
-              fixture={fixture}
-              variant="withTimeNoCompetition"
-              showMatchweek={false}
-              hideBroadcaster={true}
-            />
-          ))}
-        </Flex>
+        {activeTab === 'upcoming' && (
+          <Flex direction="column" gap="sm">
+            {/* Live matches section */}
+            {liveFixtures.length > 0 && (
+              <>
+                <div style={{
+                  fontSize: '0.875rem',
+                  fontWeight: '600',
+                  color: '#ef4444',
+                  marginBottom: '0.5rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}>
+                  🔴 LIVE NOW ({liveFixtures.length})
+                </div>
+                {liveFixtures.map((fixture) => (
+                  <FixtureCard
+                    key={fixture.id}
+                    fixture={fixture}
+                    variant="withTimeNoCompetition"
+                    showMatchweek={false}
+                  />
+                ))}
+
+                {/* Divider between live and upcoming */}
+                {upcomingFixtures.length > 0 && (
+                  <div style={{
+                    borderTop: '1px solid #e5e7eb',
+                    margin: '1rem 0',
+                    paddingTop: '1rem'
+                  }}>
+                    <div style={{
+                      fontSize: '0.875rem',
+                      fontWeight: '600',
+                      color: '#6b7280',
+                      marginBottom: '0.5rem'
+                    }}>
+                      Upcoming ({upcomingFixtures.length})
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* Upcoming matches */}
+            {upcomingFixtures.map((fixture) => (
+              <FixtureCard
+                key={fixture.id}
+                fixture={fixture}
+                variant="withTimeNoCompetition"
+                showMatchweek={false}
+              />
+            ))}
+          </Flex>
+        )}
+
+        {activeTab === 'latest' && (
+          <Flex direction="column" gap="sm">
+            {latestResults.map((fixture) => (
+              <FixtureCard
+                key={fixture.id}
+                fixture={fixture}
+                variant="withTimeNoCompetition"
+                showMatchweek={false}
+                hideBroadcaster={true}
+              />
+            ))}
+          </Flex>
+        )}
       </CardContent>
     </Card>
   );
