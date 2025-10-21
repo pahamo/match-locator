@@ -24,12 +24,14 @@ interface FixtureRow {
   round?: any; // jsonb from database (API round object)
   home_team_id: number;
   home_team: string;
-  home_slug: string; // Consolidated slug field
+  home_team_slug: string; // Actual column name from view
+  home_slug?: string; // Legacy fallback
   home_crest?: string | null;
   home_score?: number | null;
   away_team_id: number;
   away_team: string;
-  away_slug: string; // Consolidated slug field
+  away_team_slug: string; // Actual column name from view
+  away_slug?: string; // Legacy fallback
   away_crest?: string | null;
   away_score?: number | null;
   broadcaster?: string | null; // Broadcaster name from view
@@ -48,13 +50,13 @@ function mapFixtureRow(row: FixtureRow, providersByFixture: Record<number, Provi
   const home: Team = {
     id: row.home_team_id,
     name: row.home_team,
-    slug: row.home_slug, // Consolidated slug field
+    slug: row.home_team_slug || row.home_slug || '', // Use actual column name with fallback
     crest: row.home_crest || null,
   };
   const away: Team = {
     id: row.away_team_id,
     name: row.away_team,
-    slug: row.away_slug, // Consolidated slug field
+    slug: row.away_team_slug || row.away_slug || '', // Use actual column name with fallback
     crest: row.away_crest || null,
   };
   const providers = providersByFixture[row.id] || [];
