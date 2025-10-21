@@ -159,8 +159,8 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
       .from('fixtures_with_teams')
       .select(`
         id,utc_kickoff,venue,status,competition_id,stage,round,
-        home_team_id,home_team,home_slug:home_team_slug,home_crest,home_score,
-        away_team_id,away_team,away_slug:away_team_slug,away_crest,away_score,
+        home_team_id,home_team,home_team_slug,home_crest,home_score,
+        away_team_id,away_team,away_team_slug,away_crest,away_score,
         broadcaster,broadcaster_id
       `)
       .order('utc_kickoff', { ascending: order === 'asc' })
@@ -242,8 +242,8 @@ export async function getFixtureById(id: number): Promise<Fixture | undefined> {
       .from('fixtures_with_teams')
       .select(`
         id,utc_kickoff,venue,status,competition_id,stage,round,
-        home_team_id,home_team,home_slug:home_team_slug,home_crest,home_score,
-        away_team_id,away_team,away_slug:away_team_slug,away_crest,away_score,
+        home_team_id,home_team,home_team_slug,home_crest,home_score,
+        away_team_id,away_team,away_team_slug,away_crest,away_score,
         broadcaster,broadcaster_id
       `)
       .eq('id', id)
@@ -295,8 +295,8 @@ export async function getFixtureByTeamsAndDate(homeTeam: string, awayTeam: strin
       .from('fixtures_with_teams')
       .select(`
         id,utc_kickoff,venue,status,competition_id,stage,round,
-        home_team_id,home_team,home_slug:home_team_slug,home_crest,home_score,
-        away_team_id,away_team,away_slug:away_team_slug,away_crest,away_score,
+        home_team_id,home_team,home_team_slug,home_crest,home_score,
+        away_team_id,away_team,away_team_slug,away_crest,away_score,
         broadcaster,broadcaster_id
       `)
       .gte('utc_kickoff', `${searchDate}T00:00:00.000Z`)
@@ -376,8 +376,8 @@ export async function getAdminFixtures(competitionId: number = 1): Promise<Admin
       .from('fixtures_with_teams')
       .select(`
         id,utc_kickoff,venue,status,competition_id,stage,round,
-        home_team_id,home_team,home_slug:home_team_slug,home_crest,home_score,
-        away_team_id,away_team,away_slug:away_team_slug,away_crest,away_score,
+        home_team_id,home_team,home_team_slug,home_crest,home_score,
+        away_team_id,away_team,away_team_slug,away_crest,away_score,
         broadcaster,broadcaster_id
       `)
       .eq('competition_id', competitionId)
@@ -575,8 +575,8 @@ export async function getFixturesForDay(date: string, competitionIds?: number[])
       .from('fixtures_with_teams')
       .select(`
         id,utc_kickoff,venue,status,competition_id,stage,round,
-        home_team_id,home_team,home_slug:home_team_slug,home_crest,home_score,
-        away_team_id,away_team,away_slug:away_team_slug,away_crest,away_score,
+        home_team_id,home_team,home_team_slug,home_crest,home_score,
+        away_team_id,away_team,away_team_slug,away_crest,away_score,
         broadcaster,broadcaster_id
       `)
       .gte('utc_kickoff', startOfDay.toISOString())
