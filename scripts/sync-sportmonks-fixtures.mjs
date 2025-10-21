@@ -316,13 +316,15 @@ async function syncCompetitionFixtures(competitionId, sportmonksLeagueId, compet
         const roundData = fixture.round || null;
 
         // Extract scores from the scores array - find CURRENT scores for home and away
+        // Only store scores if match has started (status is NOT 'NS')
+        const fixtureStatus = fixture.state?.state || null;
         const currentScores = fixture.scores?.filter(s => s.description === 'CURRENT') || [];
         const homeScore = currentScores.find(s => s.score?.participant === 'home')?.score?.goals;
         const awayScore = currentScores.find(s => s.score?.participant === 'away')?.score?.goals;
 
-        // Use the scores if found, otherwise null
-        const finalHomeScore = homeScore !== undefined ? homeScore : null;
-        const finalAwayScore = awayScore !== undefined ? awayScore : null;
+        // Use the scores only if found AND match has started (status is not NS)
+        const finalHomeScore = (homeScore !== undefined && fixtureStatus !== 'NS') ? homeScore : null;
+        const finalAwayScore = (awayScore !== undefined && fixtureStatus !== 'NS') ? awayScore : null;
 
         const fixtureData = {
           utc_kickoff: fixture.starting_at,
@@ -332,7 +334,7 @@ async function syncCompetitionFixtures(competitionId, sportmonksLeagueId, compet
           round: roundData,  // Store full round object from API
           home_score: finalHomeScore,
           away_score: finalAwayScore,
-          status: fixture.state?.state || null,
+          status: fixtureStatus,
           sportmonks_fixture_id: fixture.id,
           data_source: 'sportmonks',
           last_synced_at: new Date().toISOString(),
