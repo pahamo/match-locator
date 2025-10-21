@@ -16,12 +16,12 @@
  * What it syncs:
  *   - UK TV broadcasters only (country_id: 11, 455, 462)
  *   - Filters out Irish ROI-specific channels
- *   - Only upcoming fixtures (not past matches)
+ *   - Upcoming fixtures and matches currently being played (last 3 hours)
  *   - Skips fixtures that already have broadcaster data
  *
  * What it does NOT sync:
  *   - Fixture dates, scores, teams (use sync-sportmonks-fixtures.mjs)
- *   - Past fixtures (only upcoming)
+ *   - Past fixtures (older than 3 hours)
  *
  * When to use:
  *   - Broadcaster announcements are released for upcoming matches
@@ -85,12 +85,13 @@ for (const competitionId of competitionIds) {
   console.log(`📺 ${compName} (ID: ${competitionId})`);
   console.log('='.repeat(60));
 
-  // Get all upcoming fixtures for this competition that need broadcaster data
+  // Get fixtures from last 3 hours onwards (includes matches currently being played)
+  const threeHoursAgo = new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString();
   const { data: fixtures, error: fixturesError } = await supabase
     .from('fixtures')
     .select('id, sportmonks_fixture_id, home_team_id, away_team_id, utc_kickoff, round')
     .eq('competition_id', competitionId)
-    .gte('utc_kickoff', new Date().toISOString())
+    .gte('utc_kickoff', threeHoursAgo)
     .not('sportmonks_fixture_id', 'is', null)
     .order('utc_kickoff')
     .limit(50);
@@ -101,7 +102,7 @@ for (const competitionId of competitionIds) {
     continue;
   }
 
-  console.log(`\nFound ${fixtures.length} upcoming fixtures\n`);
+  console.log(`\nFound ${fixtures.length} fixtures (upcoming + currently playing)\n`);
 
   let synced = 0;
   let skipped = 0;
