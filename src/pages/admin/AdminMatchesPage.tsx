@@ -117,10 +117,14 @@ const AdminPage: React.FC = () => {
     const comps: Record<number, string> = {
       1: 'Premier League',
       2: 'Champions League',
-      3: 'FA Cup',
-      4: 'EFL Cup',
-      5: 'Europa League',
-      6: 'Conference League',
+      3: 'Bundesliga',
+      4: 'La Liga',
+      5: 'Serie A',
+      6: 'Ligue 1',
+      7: 'Liga Portugal',
+      8: 'Eredivisie',
+      9: 'Championship',
+      11: 'Europa League',
     };
     return comps[id] || `Competition ${id}`;
   };
@@ -162,8 +166,14 @@ const AdminPage: React.FC = () => {
               <option value="">All Competitions</option>
               <option value="1">Premier League</option>
               <option value="2">Champions League</option>
-              <option value="3">FA Cup</option>
-              <option value="4">EFL Cup</option>
+              <option value="11">Europa League</option>
+              <option value="9">Championship</option>
+              <option value="3">Bundesliga</option>
+              <option value="4">La Liga</option>
+              <option value="5">Serie A</option>
+              <option value="6">Ligue 1</option>
+              <option value="7">Liga Portugal</option>
+              <option value="8">Eredivisie</option>
             </select>
           </div>
 
