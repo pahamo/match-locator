@@ -255,7 +255,7 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
           </span>
         </div>
 
-        {fixtureData.homeScore !== undefined && fixtureData.awayScore !== undefined ? (
+        {fixtureData.homeScore !== undefined && fixtureData.awayScore !== undefined && fixtureData.status !== 'NS' ? (
           <div className="score-display">
             {fixtureData.homeScore} - {fixtureData.awayScore}
           </div>
