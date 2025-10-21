@@ -152,9 +152,28 @@ for (const competitionId of competitionIds) {
           return false;
         }
 
+        const channelName = ts.tvstation.name || '';
+
         // Filter out Irish-specific channels (have "ROI" in name)
-        if (ts.tvstation.name && ts.tvstation.name.includes('ROI')) {
+        if (channelName.includes('ROI')) {
           return false;
+        }
+
+        // Filter out non-UK international channels by name
+        // These channels are sometimes miscategorized under UK country IDs
+        const nonUKKeywords = [
+          'Germany', 'France', 'Spain', 'Italy', 'Portugal',
+          'Netherlands', 'Belgium', 'Austria', 'Switzerland',
+          'Poland', 'Turkey', 'Greece', 'Denmark', 'Sweden',
+          'Norway', 'Finland', 'Czech', 'Hungary', 'Russia',
+          'Ukraine', 'Romania', 'Serbia', 'Croatia', 'Bulgaria',
+          'Arabic', 'MENA', 'Asia', 'Africa', 'Latin America'
+        ];
+
+        for (const keyword of nonUKKeywords) {
+          if (channelName.includes(keyword)) {
+            return false;
+          }
         }
 
         return true;
