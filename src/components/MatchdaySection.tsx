@@ -36,12 +36,13 @@ const groupFixturesByDate = (fixtures: SimpleFixture[]) => {
 
     if (dateOnly.getTime() === todayOnly.getTime()) {
       dateKey = 'today';
-      dateLabel = `Today, ${date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`;
+      dateLabel = 'Today';
     } else if (dateOnly.getTime() === tomorrowOnly.getTime()) {
       dateKey = 'tomorrow';
-      dateLabel = `Tomorrow, ${date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`;
+      dateLabel = 'Tomorrow';
     } else {
       dateKey = dateOnly.toISOString();
+      // For other dates, show day name and date (e.g., "Wednesday, 23 Oct")
       dateLabel = date.toLocaleDateString('en-GB', {
         weekday: 'long',
         day: 'numeric',

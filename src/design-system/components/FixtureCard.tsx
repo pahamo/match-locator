@@ -140,14 +140,25 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
   const matchStatus = React.useMemo(() => getMatchStatus(fixture.kickoff_utc), [fixture.kickoff_utc]);
   const statusStyles = React.useMemo(() => getMatchStatusStyles(matchStatus), [matchStatus]);
 
-  // If this card is in a live group, disable individual live styling
-  const actualStatusStyles = isInLiveGroup && matchStatus.status === 'live'
-    ? { card: {}, badge: statusStyles.badge } // Keep badge but remove card styling
-    : statusStyles;
   const fixtureData = React.useMemo(() => getFixtureData(fixture), [fixture]);
   const isMinimized = variant === 'minimized';
   const isWithTime = variant === 'withTime' || variant === 'withTimeNoCompetition';
   const showCompetitionBadge = variant === 'withTime'; // Only show competition badge for 'withTime', not 'withTimeNoCompetition'
+
+  // Compact live styling for grouped date lists
+  const isLive = matchStatus.status === 'live';
+  const useCompactLiveStyle = isLive && hideDayLabel;
+
+  // If this card is in a live group OR using compact style, modify styling
+  const actualStatusStyles = (isInLiveGroup && isLive) || useCompactLiveStyle
+    ? {
+        card: useCompactLiveStyle ? {
+          borderLeft: '3px solid #ef4444',
+          backgroundColor: 'rgba(239, 68, 68, 0.03)'
+        } : {},
+        badge: null // Hide large badge in compact mode
+      }
+    : statusStyles;
 
   // Generate CSS class names instead of inline styles
   const getCardClasses = () => {
@@ -185,9 +196,25 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
             </div>
           )}
 
-          {/* Time */}
-          <div className="kickoff-time">
-            {formatTime(fixture.kickoff_utc)}
+          {/* Time with optional inline LIVE indicator */}
+          <div className="kickoff-time" style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '4px',
+            flexWrap: 'wrap'
+          }}>
+            <span>{formatTime(fixture.kickoff_utc)}</span>
+            {useCompactLiveStyle && (
+              <span style={{
+                fontSize: '10px',
+                fontWeight: '700',
+                color: '#ef4444',
+                letterSpacing: '0.5px'
+              }}>
+                LIVE
+              </span>
+            )}
           </div>
 
           {(() => {
@@ -285,13 +312,13 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
         </div>
       </div>
       
-      {/* Live indicator dot */}
-      {matchStatus.status === 'live' && (
+      {/* Live indicator dot - hidden in compact mode */}
+      {isLive && !useCompactLiveStyle && (
         <div className={`live-indicator ${isMinimized ? 'minimized' : ''} live-pulse`} />
       )}
 
-      {/* Match Status Badge - hidden in minimized view and when in live group */}
-      {!isMinimized && !isInLiveGroup && actualStatusStyles.badge && matchStatus.status === 'live' && (
+      {/* Match Status Badge - hidden in minimized view, live group, and compact mode */}
+      {!isMinimized && !isInLiveGroup && !useCompactLiveStyle && actualStatusStyles.badge && isLive && (
         <div className="live-badge" style={actualStatusStyles.badge}>
           🔴 LIVE
         </div>
