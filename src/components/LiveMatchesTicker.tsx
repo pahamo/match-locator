@@ -82,9 +82,9 @@ export const LiveMatchesTicker: React.FC<LiveMatchesTickerProps> = ({
                   hour12: false
                 })}
               </span>
-              {fixture.providers_uk?.[0] && (
+              {(fixture.broadcaster || fixture.providers_uk?.[0]) && (
                 <span className="ml-3 text-xs bg-white/20 px-2 py-1 rounded text-white">
-                  {fixture.providers_uk[0].name}
+                  {fixture.broadcaster || fixture.providers_uk[0].name}
                 </span>
               )}
               <span className="mx-6 text-blue-300">•</span>

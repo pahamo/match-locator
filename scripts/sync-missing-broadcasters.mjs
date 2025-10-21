@@ -9,14 +9,19 @@ const SPORTMONKS_TOKEN = process.env.SPORTMONKS_TOKEN;
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
-console.log('🔄 Syncing missing broadcaster data for MW7 and MW8...\n');
+// Accept competition ID as argument (default to PL)
+const compId = process.argv[2] ? parseInt(process.argv[2]) : 1;
+const compNames = { 1: 'Premier League', 2: 'Champions League', 11: 'Europa League' };
 
-// Get all MW7 and MW8 fixtures
+console.log(`🔄 Syncing missing broadcaster data for ${compNames[compId] || 'Competition ' + compId}...\n`);
+
+// Get all fixtures in October
 const { data: fixturesNeedingBroadcasts } = await supabase
   .from('fixtures')
   .select('id, sportmonks_fixture_id, competition_id')
-  .eq('competition_id', 1)
-  .in('round->>name', ['7', '8']);
+  .eq('competition_id', compId)
+  .gte('utc_kickoff', '2025-10-01')
+  .lt('utc_kickoff', '2025-11-01');
 
 console.log(`Found ${fixturesNeedingBroadcasts.length} fixtures to check\n`);
 

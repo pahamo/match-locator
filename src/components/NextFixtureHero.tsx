@@ -308,7 +308,10 @@ const NextFixtureHero: React.FC<NextFixtureHeroProps> = ({
                 fontSize: '1.125rem',
                 fontWeight: '600'
               }}>
-                {fixture.providers_uk.length > 0 ? (
+                {/* Prefer broadcaster from database view, fallback to providers_uk for legacy support */}
+                {fixture.broadcaster ? (
+                  <span>📺 {fixture.broadcaster}</span>
+                ) : fixture.providers_uk.length > 0 ? (
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '4px' }}>
                     {getBroadcasterIcons().map((icon, index) => (
                       <span key={index}>{icon}</span>

@@ -110,14 +110,15 @@ const StructuredData: React.FC<StructuredDataProps> = ({ type, data, dateModifie
       }
     };
 
-    // Get broadcaster info
+    // Get broadcaster info (prefer fixture.broadcaster, fallback to providers_uk for legacy support)
     const getBroadcaster = () => {
       if (isSimpleFixture) {
         return fixture.broadcaster || 'Match Locator';
       } else {
-        return (fixture.providers_uk && fixture.providers_uk.length > 0)
-          ? fixture.providers_uk[0].name
-          : 'Match Locator';
+        // For Fixture type: prefer broadcaster, fallback to providers_uk
+        return fixture.broadcaster ||
+               (fixture.providers_uk && fixture.providers_uk.length > 0 ? fixture.providers_uk[0].name : null) ||
+               'Match Locator';
       }
     };
 

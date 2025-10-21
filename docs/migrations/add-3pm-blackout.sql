@@ -37,7 +37,9 @@ SELECT
     SELECT b.channel_name
     FROM broadcasts b
     WHERE b.fixture_id = f.id
-      AND b.country_code IN ('EN', 'GB', 'GBR')  -- England only
+      AND b.country_code IN ('EN', 'GB', 'GBR')  -- UK only
+      -- Filter out Irish (ROI) broadcasters
+      AND b.channel_name NOT ILIKE '%ROI%'
       -- Filter out Amazon Prime for Premier League (no PL rights this season)
       AND NOT (f.competition_id = 1 AND b.channel_name ILIKE '%amazon%')
       -- Apply 3pm Saturday blackout for Premier League
@@ -64,6 +66,8 @@ SELECT
     FROM broadcasts b
     WHERE b.fixture_id = f.id
       AND b.country_code IN ('EN', 'GB', 'GBR')
+      -- Filter out Irish (ROI) broadcasters
+      AND b.channel_name NOT ILIKE '%ROI%'
       AND NOT (f.competition_id = 1 AND b.channel_name ILIKE '%amazon%')
       -- Apply 3pm Saturday blackout
       AND NOT (

@@ -116,19 +116,28 @@ const ClubPage: React.FC = () => {
 
     const teamName = formatTeamNameShort(team.name);
     const opponentName = nextMatch ? formatTeamNameShort(nextMatch.home.slug === teamSlug ? nextMatch.away.name : nextMatch.home.name) : '';
+
+    // Get broadcaster name (prefer fixture.broadcaster, fallback to providers_uk for legacy support)
+    const getBroadcasterName = (match: typeof nextMatch) => {
+      if (!match) return null;
+      return match.broadcaster || match.providers_uk?.[0]?.name || null;
+    };
+
+    const broadcasterName = getBroadcasterName(nextMatch);
+
     const nextMatchAnswer = nextMatch
-      ? `${teamName}'s next match is ${formatTeamNameShort(nextMatch.home.name)} vs ${formatTeamNameShort(nextMatch.away.name)} on ${new Date(nextMatch.kickoff_utc).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} at ${new Date(nextMatch.kickoff_utc).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })}${nextMatch.providers_uk?.[0] ? ` on ${nextMatch.providers_uk[0].name}` : ' (TV channel TBC)'}.`
+      ? `${teamName}'s next match is ${formatTeamNameShort(nextMatch.home.name)} vs ${formatTeamNameShort(nextMatch.away.name)} on ${new Date(nextMatch.kickoff_utc).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} at ${new Date(nextMatch.kickoff_utc).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })}${broadcasterName ? ` on ${broadcasterName}` : ' (TV channel TBC)'}.`
       : `${teamName} has no upcoming fixtures scheduled at this time. Check back soon for updated match schedules.`;
 
-    const channelAnswer = nextMatch?.providers_uk?.[0]
-      ? `${teamName}'s next match is on ${nextMatch.providers_uk[0].name}. You can watch it ${nextMatch.providers_uk[0].name === 'Sky Sports' ? 'with a Sky Sports subscription' : nextMatch.providers_uk[0].name === 'TNT Sports' ? 'with a TNT Sports subscription' : 'via their streaming service'}.`
+    const channelAnswer = broadcasterName
+      ? `${teamName}'s next match is on ${broadcasterName}. You can watch it ${broadcasterName === 'Sky Sports' ? 'with a Sky Sports subscription' : broadcasterName === 'TNT Sports' ? 'with a TNT Sports subscription' : 'via their streaming service'}.`
       : `${teamName}'s next match TV channel has not been confirmed yet. Check back closer to match day for broadcast details.`;
 
     return [
       {
         question: `What time is ${teamName} playing today?`,
         answer: nextMatch && new Date(nextMatch.kickoff_utc).toDateString() === new Date().toDateString()
-          ? `${teamName} is playing today at ${new Date(nextMatch.kickoff_utc).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })} UK time against ${opponentName}${nextMatch.providers_uk?.[0] ? ` on ${nextMatch.providers_uk[0].name}` : ''}.`
+          ? `${teamName} is playing today at ${new Date(nextMatch.kickoff_utc).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })} UK time against ${opponentName}${broadcasterName ? ` on ${broadcasterName}` : ''}.`
           : `${teamName} is not playing today. Their next match is ${nextMatch ? `on ${new Date(nextMatch.kickoff_utc).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}` : 'to be confirmed'}.`
       },
       {
@@ -221,10 +230,10 @@ const ClubPage: React.FC = () => {
                         <span>{new Date(nextMatch.kickoff_utc).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })} UK Time</span>
                       </Flex>
 
-                      {nextMatch.providers_uk?.[0] && (
+                      {getBroadcasterName(nextMatch) && (
                         <Flex align="center" gap="sm">
                           <span className="text-xl">📺</span>
-                          <span className="font-semibold">{nextMatch.providers_uk[0].name}</span>
+                          <span className="font-semibold">{getBroadcasterName(nextMatch)}</span>
                         </Flex>
                       )}
 
@@ -261,10 +270,10 @@ const ClubPage: React.FC = () => {
 
                 <CardContent size="default">
                   <Stack space="md">
-                    {nextMatch?.providers_uk?.[0] && (
+                    {getBroadcasterName(nextMatch) && (
                       <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
                         <p className="font-semibold text-blue-900 dark:text-blue-100">
-                          🎯 Next Match: Watch on <span className="font-bold">{nextMatch.providers_uk[0].name}</span>
+                          🎯 Next Match: Watch on <span className="font-bold">{getBroadcasterName(nextMatch)}</span>
                         </p>
                         <p className="text-sm mt-1 text-blue-800 dark:text-blue-200">
                           {nextMatch.home.name} vs {nextMatch.away.name} • {new Date(nextMatch.kickoff_utc).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
