@@ -40,8 +40,8 @@ SELECT
       AND b.country_code IN ('EN', 'GB', 'GBR')  -- UK only
       -- Filter out Irish (ROI) broadcasters
       AND b.channel_name NOT ILIKE '%ROI%'
-      -- Filter out Amazon Prime for Premier League (no PL rights this season)
-      AND NOT (f.competition_id = 1 AND b.channel_name ILIKE '%amazon%')
+      -- Filter out Amazon Prime (no PL or UCL rights this season)
+      AND b.channel_name NOT ILIKE '%amazon%'
       -- Apply 3pm Saturday blackout for Premier League
       -- 3pm UK time = 14:00 UTC (BST in summer) or 15:00 UTC (GMT in winter)
       AND NOT (
@@ -68,7 +68,8 @@ SELECT
       AND b.country_code IN ('EN', 'GB', 'GBR')
       -- Filter out Irish (ROI) broadcasters
       AND b.channel_name NOT ILIKE '%ROI%'
-      AND NOT (f.competition_id = 1 AND b.channel_name ILIKE '%amazon%')
+      -- Filter out Amazon Prime (no PL or UCL rights this season)
+      AND b.channel_name NOT ILIKE '%amazon%'
       -- Apply 3pm Saturday blackout
       AND NOT (
         f.competition_id = 1
