@@ -110,18 +110,18 @@ const ClubPage: React.FC = () => {
     return competition?.name;
   }, [team]);
 
+  // Get broadcaster name (prefer fixture.broadcaster, fallback to providers_uk for legacy support)
+  const getBroadcasterName = (match: typeof nextMatch) => {
+    if (!match) return null;
+    return match.broadcaster || match.providers_uk?.[0]?.name || null;
+  };
+
   // Generate dynamic FAQ data based on team and fixtures
   const faqData = useMemo(() => {
     if (!team) return [];
 
     const teamName = formatTeamNameShort(team.name);
     const opponentName = nextMatch ? formatTeamNameShort(nextMatch.home.slug === teamSlug ? nextMatch.away.name : nextMatch.home.name) : '';
-
-    // Get broadcaster name (prefer fixture.broadcaster, fallback to providers_uk for legacy support)
-    const getBroadcasterName = (match: typeof nextMatch) => {
-      if (!match) return null;
-      return match.broadcaster || match.providers_uk?.[0]?.name || null;
-    };
 
     const broadcasterName = getBroadcasterName(nextMatch);
 
