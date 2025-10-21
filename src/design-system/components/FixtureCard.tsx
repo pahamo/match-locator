@@ -58,6 +58,7 @@ export interface FixtureCardProps {
   groupPosition?: 'single' | 'first' | 'middle' | 'last';
   isInLiveGroup?: boolean; // New prop to disable individual live styling when in a live group
   hideBroadcaster?: boolean; // Hide broadcaster info (e.g., for completed matches)
+  hideDayLabel?: boolean; // Hide day label in time column (for grouped displays)
 }
 
 // Helper functions to work with both fixture types
@@ -133,7 +134,8 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
   style = {},
   groupPosition = 'single',
   isInLiveGroup = false,
-  hideBroadcaster = false
+  hideBroadcaster = false,
+  hideDayLabel = false
 }) => {
   const matchStatus = React.useMemo(() => getMatchStatus(fixture.kickoff_utc), [fixture.kickoff_utc]);
   const statusStyles = React.useMemo(() => getMatchStatusStyles(matchStatus), [matchStatus]);
@@ -169,17 +171,19 @@ const FixtureCard: React.FC<FixtureCardProps> = React.memo(({
       {/* Time Column - only for withTime variant */}
       {isWithTime && (
         <div className="time-column">
-          {/* Day Label */}
-          <div style={{
-            fontSize: '11px',
-            fontWeight: '600',
-            color: '#6b7280',
-            textAlign: 'center',
-            lineHeight: 1,
-            marginBottom: '2px'
-          }}>
-            {getRelativeDayLabel(fixture.kickoff_utc)}
-          </div>
+          {/* Day Label - Hidden when part of date-grouped list */}
+          {!hideDayLabel && (
+            <div style={{
+              fontSize: '11px',
+              fontWeight: '600',
+              color: '#6b7280',
+              textAlign: 'center',
+              lineHeight: 1,
+              marginBottom: '2px'
+            }}>
+              {getRelativeDayLabel(fixture.kickoff_utc)}
+            </div>
+          )}
 
           {/* Time */}
           <div className="kickoff-time">

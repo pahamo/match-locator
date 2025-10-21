@@ -14,6 +14,58 @@ interface MatchdaySectionProps {
 type TabType = 'upcoming' | 'latest';
 
 /**
+ * Group fixtures by date for compact display
+ */
+const groupFixturesByDate = (fixtures: SimpleFixture[]) => {
+  const groups = new Map<string, { label: string; fixtures: SimpleFixture[] }>();
+
+  fixtures.forEach(fixture => {
+    const date = new Date(fixture.kickoff_utc);
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    // Reset time for comparison
+    const resetTime = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    const dateOnly = resetTime(date);
+    const todayOnly = resetTime(today);
+    const tomorrowOnly = resetTime(tomorrow);
+
+    let dateKey: string;
+    let dateLabel: string;
+
+    if (dateOnly.getTime() === todayOnly.getTime()) {
+      dateKey = 'today';
+      dateLabel = `Today, ${date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`;
+    } else if (dateOnly.getTime() === tomorrowOnly.getTime()) {
+      dateKey = 'tomorrow';
+      dateLabel = `Tomorrow, ${date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}`;
+    } else {
+      dateKey = dateOnly.toISOString();
+      dateLabel = date.toLocaleDateString('en-GB', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'short'
+      });
+    }
+
+    if (!groups.has(dateKey)) {
+      groups.set(dateKey, { label: dateLabel, fixtures: [] });
+    }
+    groups.get(dateKey)!.fixtures.push(fixture);
+  });
+
+  // Sort fixtures within each group by time
+  groups.forEach(group => {
+    group.fixtures.sort((a, b) =>
+      new Date(a.kickoff_utc).getTime() - new Date(b.kickoff_utc).getTime()
+    );
+  });
+
+  return Array.from(groups.values());
+};
+
+/**
  * Component that displays upcoming and latest fixtures with tabs
  * Shows all fixtures from current matchday or date grouping
  */
@@ -223,7 +275,7 @@ const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competition
       </CardHeader>
       <CardContent>
         {activeTab === 'upcoming' && (
-          <Flex direction="column" gap="sm">
+          <div>
             {/* Live matches section */}
             {liveFixtures.length > 0 && (
               <>
@@ -231,34 +283,55 @@ const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competition
                   fontSize: '0.875rem',
                   fontWeight: '600',
                   color: '#ef4444',
-                  marginBottom: '0.5rem',
+                  marginBottom: '0.75rem',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px'
                 }}>
                   🔴 LIVE NOW ({liveFixtures.length})
                 </div>
-                {liveFixtures.map((fixture) => (
-                  <FixtureCard
-                    key={fixture.id}
-                    fixture={fixture}
-                    variant="withTimeNoCompetition"
-                    showMatchweek={false}
-                  />
+
+                {/* Group live fixtures by date */}
+                {groupFixturesByDate(liveFixtures).map((group, groupIndex) => (
+                  <div key={groupIndex} style={{ marginBottom: '1.5rem' }}>
+                    {/* Date header */}
+                    <div style={{
+                      fontSize: '0.8125rem',
+                      fontWeight: '600',
+                      color: '#374151',
+                      marginBottom: '0.5rem',
+                      paddingLeft: '4px'
+                    }}>
+                      {group.label}
+                    </div>
+
+                    {/* Fixtures for this date */}
+                    <Flex direction="column" gap="sm">
+                      {group.fixtures.map((fixture) => (
+                        <FixtureCard
+                          key={fixture.id}
+                          fixture={fixture}
+                          variant="withTimeNoCompetition"
+                          showMatchweek={false}
+                          hideDayLabel={true}
+                        />
+                      ))}
+                    </Flex>
+                  </div>
                 ))}
 
                 {/* Divider between live and upcoming */}
                 {upcomingFixtures.length > 0 && (
                   <div style={{
                     borderTop: '1px solid #e5e7eb',
-                    margin: '1rem 0',
+                    margin: '1.5rem 0',
                     paddingTop: '1rem'
                   }}>
                     <div style={{
                       fontSize: '0.875rem',
                       fontWeight: '600',
                       color: '#6b7280',
-                      marginBottom: '0.5rem'
+                      marginBottom: '0.75rem'
                     }}>
                       Upcoming ({upcomingFixtures.length})
                     </div>
@@ -267,30 +340,69 @@ const MatchdaySection: React.FC<MatchdaySectionProps> = ({ fixtures, competition
               </>
             )}
 
-            {/* Upcoming matches */}
-            {upcomingFixtures.map((fixture) => (
-              <FixtureCard
-                key={fixture.id}
-                fixture={fixture}
-                variant="withTimeNoCompetition"
-                showMatchweek={false}
-              />
+            {/* Upcoming matches grouped by date */}
+            {upcomingFixtures.length > 0 && groupFixturesByDate(upcomingFixtures).map((group, groupIndex) => (
+              <div key={groupIndex} style={{ marginBottom: '1.5rem' }}>
+                {/* Date header */}
+                <div style={{
+                  fontSize: '0.8125rem',
+                  fontWeight: '600',
+                  color: '#374151',
+                  marginBottom: '0.5rem',
+                  paddingLeft: '4px'
+                }}>
+                  {group.label}
+                </div>
+
+                {/* Fixtures for this date */}
+                <Flex direction="column" gap="sm">
+                  {group.fixtures.map((fixture) => (
+                    <FixtureCard
+                      key={fixture.id}
+                      fixture={fixture}
+                      variant="withTimeNoCompetition"
+                      showMatchweek={false}
+                      hideDayLabel={true}
+                    />
+                  ))}
+                </Flex>
+              </div>
             ))}
-          </Flex>
+          </div>
         )}
 
         {activeTab === 'latest' && (
-          <Flex direction="column" gap="sm">
-            {latestResults.map((fixture) => (
-              <FixtureCard
-                key={fixture.id}
-                fixture={fixture}
-                variant="withTimeNoCompetition"
-                showMatchweek={false}
-                hideBroadcaster={true}
-              />
+          <div>
+            {/* Results grouped by date */}
+            {groupFixturesByDate(latestResults).map((group, groupIndex) => (
+              <div key={groupIndex} style={{ marginBottom: '1.5rem' }}>
+                {/* Date header */}
+                <div style={{
+                  fontSize: '0.8125rem',
+                  fontWeight: '600',
+                  color: '#374151',
+                  marginBottom: '0.5rem',
+                  paddingLeft: '4px'
+                }}>
+                  {group.label}
+                </div>
+
+                {/* Fixtures for this date */}
+                <Flex direction="column" gap="sm">
+                  {group.fixtures.map((fixture) => (
+                    <FixtureCard
+                      key={fixture.id}
+                      fixture={fixture}
+                      variant="withTimeNoCompetition"
+                      showMatchweek={false}
+                      hideBroadcaster={true}
+                      hideDayLabel={true}
+                    />
+                  ))}
+                </Flex>
+              </div>
             ))}
-          </Flex>
+          </div>
         )}
       </CardContent>
     </Card>
