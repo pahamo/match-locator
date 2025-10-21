@@ -217,35 +217,59 @@ async function syncCompetitionFixtures(competitionId, sportmonksLeagueId, compet
   console.log(`\n📅 Syncing ${competitionName} (Competition ${competitionId}, Sports Monks ${sportmonksLeagueId})...`);
 
   try {
-    // Fetch fixtures from Sports Monks using date iteration
-    // This works better with limited subscriptions than /fixtures/between
-    const startDate = new Date(options.dateFrom);
-    const endDate = new Date(options.dateTo);
+    // NEW APPROACH: Fetch fixtures by SEASON and ROUNDS instead of dates
+    // This ensures we get ALL fixtures regardless of their dates
+
+    // Step 1: Get the current season for this league
+    const leagueResponse = await makeRequest(`/leagues/${sportmonksLeagueId}`, {
+      include: 'seasons'
+    });
+
+    if (!leagueResponse.data || !leagueResponse.data.seasons) {
+      console.log(`   ⚠️  No seasons found for league ${sportmonksLeagueId}`);
+      return;
+    }
+
+    // Get the most recent season (last in array)
+    const currentSeason = leagueResponse.data.seasons[leagueResponse.data.seasons.length - 1];
+    console.log(`   Season: ${currentSeason.name} (ID: ${currentSeason.id})`);
+    stats.apiCalls++;
+
+    // Step 2: Get all rounds for this season
+    const seasonResponse = await makeRequest(`/seasons/${currentSeason.id}`, {
+      include: 'rounds'
+    });
+
+    if (!seasonResponse.data || !seasonResponse.data.rounds) {
+      console.log(`   ⚠️  No rounds found for season ${currentSeason.id}`);
+      return;
+    }
+
+    const rounds = seasonResponse.data.rounds;
+    console.log(`   Found ${rounds.length} rounds`);
+    stats.apiCalls++;
+
     let allLeagueFixtures = [];
 
-    // Iterate through dates
-    for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
-      const dateStr = d.toISOString().split('T')[0];
-
+    // Step 3: Fetch fixtures for each round
+    for (const round of rounds) {
       try {
-        const response = await makeRequest(`/fixtures/date/${dateStr}`, {
-          include: 'participants;tvstations.tvstation;round;scores;state'
+        const roundResponse = await makeRequest(`/rounds/${round.id}`, {
+          include: 'fixtures.participants;fixtures.tvstations.tvstation;fixtures.scores;fixtures.state'
         });
 
-        const dayFixtures = (response.data || []).filter(f => f.league_id === sportmonksLeagueId);
-        allLeagueFixtures = allLeagueFixtures.concat(dayFixtures);
+        if (roundResponse.data && roundResponse.data.fixtures) {
+          const roundFixtures = roundResponse.data.fixtures;
+          allLeagueFixtures = allLeagueFixtures.concat(roundFixtures);
 
-        if (dayFixtures.length > 0) {
-          console.log(`   ${dateStr}: ${dayFixtures.length} fixtures`);
+          console.log(`   Round ${round.name}: ${roundFixtures.length} fixtures`);
         }
 
         stats.apiCalls++;
-
-        // Rate limit: 200ms between requests
         await new Promise(resolve => setTimeout(resolve, 200));
       } catch (err) {
         if (options.verbose) {
-          console.log(`   Error on ${dateStr}:`, err.message);
+          console.log(`   Error fetching round ${round.id}:`, err.message);
         }
       }
     }
@@ -383,11 +407,18 @@ async function syncCompetitionFixtures(competitionId, sportmonksLeagueId, compet
 function shouldIncludeBroadcast(station, competitionId) {
   // station here is the pivot record: { id, fixture_id, tvstation_id, country_id, tvstation: {...} }
   const ENGLAND_COUNTRY_ID = 462;
+  const IRELAND_COUNTRY_ID = 455;
   const PREMIER_LEAGUE_COMPETITION_ID = 1; // Our database competition ID
 
-  // Only England broadcasts (462)
-  // Note: Ireland (455) has different broadcasters, not included
-  if (station.country_id !== ENGLAND_COUNTRY_ID) {
+  // Include England (462) and Ireland (455) - Sky Sports UK is labeled as 455 by SportMonks
+  // But filter out Irish-specific channels (have "ROI" in name)
+  if (![ENGLAND_COUNTRY_ID, IRELAND_COUNTRY_ID, 11].includes(station.country_id)) {
+    return false;
+  }
+
+  // Filter out Irish-specific channels (e.g., "Premier Sports ROI 1")
+  const channelName = station.tvstation?.name || '';
+  if (channelName.includes('ROI')) {
     return false;
   }
 
