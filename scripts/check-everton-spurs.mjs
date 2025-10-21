@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-const TOKEN = process.env.SPORTMONKS_TOKEN || 'lNX5lqJtQo2FSsKfM4PvDzhgkS4AkGLkjRtYZWjNmSZvdGHJxxtD0HyHoazs';
+const TOKEN = process.env.SPORTMONKS_TOKEN;
 
 const response = await fetch(
   `https://api.sportmonks.com/v3/football/fixtures/19427541?api_token=${TOKEN}&include=tvstations.tvstation;participants`

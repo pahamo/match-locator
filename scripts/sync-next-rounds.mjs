@@ -8,7 +8,7 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY
 );
 
-const TOKEN = process.env.SPORTMONKS_TOKEN || 'lNX5lqJtQo2FSsKfM4PvDzhgkS4AkGLkjRtYZWjNmSZvdGHJxxtD0HyHoazs';
+const TOKEN = process.env.SPORTMONKS_TOKEN;
 const PL_LEAGUE_ID = 8;
 const SEASON_ID = 25583;
 const PL_COMPETITION_ID = 1;

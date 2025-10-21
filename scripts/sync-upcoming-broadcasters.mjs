@@ -42,7 +42,7 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_KEY
 );
 
-const SPORTMONKS_TOKEN = process.env.SPORTMONKS_TOKEN || 'lNX5lqJtQo2FSsKfM4PvDzhgkS4AkGLkjRtYZWjNmSZvdGHJxxtD0HyHoazs';
+const SPORTMONKS_TOKEN = process.env.SPORTMONKS_TOKEN;
 
 // Parse command line args
 const args = process.argv.slice(2);

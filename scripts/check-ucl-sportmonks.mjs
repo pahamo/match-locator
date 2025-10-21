@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-const TOKEN = process.env.SPORTMONKS_TOKEN || 'lNX5lqJtQo2FSsKfM4PvDzhgkS4AkGLkjRtYZWjNmSZvdGHJxxtD0HyHoazs';
+const TOKEN = process.env.SPORTMONKS_TOKEN;
 
 // Arsenal vs Atletico: 19568463
 // Villarreal vs Man City: 19568598

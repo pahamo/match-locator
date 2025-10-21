@@ -46,7 +46,7 @@ Object.keys(byRound).forEach(round => {
 // Check what SportMonks has for MW9
 console.log('📡 Checking SportMonks API for MW9...\n');
 
-const SPORTMONKS_TOKEN = process.env.SPORTMONKS_TOKEN || 'lNX5lqJtQo2FSsKfM4PvDzhgkS4AkGLkjRtYZWjNmSZvdGHJxxtD0HyHoazs';
+const SPORTMONKS_TOKEN = process.env.SPORTMONKS_TOKEN;
 
 // Get round info
 const roundResponse = await fetch(`https://api.sportmonks.com/v3/football/rounds/372199?api_token=${SPORTMONKS_TOKEN}&include=fixtures.participants`);

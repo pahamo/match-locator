@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-const TOKEN = process.env.SPORTMONKS_TOKEN || 'lNX5lqJtQo2FSsKfM4PvDzhgkS4AkGLkjRtYZWjNmSZvdGHJxxtD0HyHoazs';
+const TOKEN = process.env.SPORTMONKS_TOKEN;
 const PL_LEAGUE_ID = 8;
 
 console.log('🔍 Analyzing SportMonks Premier League structure...\n');

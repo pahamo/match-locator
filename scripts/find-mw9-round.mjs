@@ -17,7 +17,7 @@ const { data: mapping } = await supabase
 
 console.log('Premier League SportMonks ID:', mapping.sportmonks_league_id);
 
-const SPORTMONKS_TOKEN = process.env.SPORTMONKS_TOKEN || 'lNX5lqJtQo2FSsKfM4PvDzhgkS4AkGLkjRtYZWjNmSZvdGHJxxtD0HyHoazs';
+const SPORTMONKS_TOKEN = process.env.SPORTMONKS_TOKEN;
 
 // Get fixtures for Oct 24-26
 const dates = ['2025-10-24', '2025-10-25', '2025-10-26'];
