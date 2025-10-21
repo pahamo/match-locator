@@ -28,6 +28,9 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           SPORTMONKS_TOKEN: ${{ secrets.SPORTMONKS_TOKEN }}
+          REACT_APP_FF_USE_SPORTMONKS: 'true'
+          REACT_APP_FF_SPORTMONKS_ENABLE_SYNC: 'true'
+          REACT_APP_FF_SPORTMONKS_TV_STATIONS: 'true'
         run: |
           node scripts/sync-sportmonks-fixtures.mjs \
             --competition-id=1 \
@@ -40,6 +43,9 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           SPORTMONKS_TOKEN: ${{ secrets.SPORTMONKS_TOKEN }}
+          REACT_APP_FF_USE_SPORTMONKS: 'true'
+          REACT_APP_FF_SPORTMONKS_ENABLE_SYNC: 'true'
+          REACT_APP_FF_SPORTMONKS_TV_STATIONS: 'true'
         run: |
           node scripts/sync-sportmonks-fixtures.mjs \
             --competition-id=2 \
@@ -52,6 +58,9 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           SPORTMONKS_TOKEN: ${{ secrets.SPORTMONKS_TOKEN }}
+          REACT_APP_FF_USE_SPORTMONKS: 'true'
+          REACT_APP_FF_SPORTMONKS_ENABLE_SYNC: 'true'
+          REACT_APP_FF_SPORTMONKS_TV_STATIONS: 'true'
         run: |
           node scripts/sync-sportmonks-fixtures.mjs \
             --competition-id=3 \
@@ -64,12 +73,23 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
           SPORTMONKS_TOKEN: ${{ secrets.SPORTMONKS_TOKEN }}
+          REACT_APP_FF_USE_SPORTMONKS: 'true'
+          REACT_APP_FF_SPORTMONKS_ENABLE_SYNC: 'true'
+          REACT_APP_FF_SPORTMONKS_TV_STATIONS: 'true'
         run: |
           node scripts/sync-sportmonks-fixtures.mjs \
             --competition-id=4 \
             --date-from=2025-08-01 \
             --date-to=2026-05-31 \
             --verbose
+
+      - name: Sync upcoming PL broadcaster data
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SPORTMONKS_TOKEN: ${{ secrets.SPORTMONKS_TOKEN }}
+        run: |
+          node scripts/sync-upcoming-pl.mjs
 
       - name: Notify on failure
         if: failure()
