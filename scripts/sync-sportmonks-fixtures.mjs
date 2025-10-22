@@ -427,7 +427,6 @@ function shouldIncludeBroadcast(station, competitionId) {
   // Filter out Amazon Prime for Premier League
   // Amazon has NO Premier League rights this season (2024-25)
   // They have some Champions League rights, so only filter for PL
-  const channelName = station.tvstation?.name || '';
   if (competitionId === PREMIER_LEAGUE_COMPETITION_ID &&
       channelName.toLowerCase().includes('amazon')) {
     if (options.verbose) {
