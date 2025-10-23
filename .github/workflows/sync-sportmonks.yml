@@ -44,10 +44,10 @@ jobs:
         run: |
           if [ -n "${{ github.event.inputs.date_from }}" ] && [ -n "${{ github.event.inputs.date_to }}" ]; then
             # Manual run with custom dates
-            node scripts/sync-sportmonks-fixtures.mjs --date-from="${{ github.event.inputs.date_from }}" --date-to="${{ github.event.inputs.date_to }}"
+            node scripts/production/sync-sportmonks-fixtures.mjs --date-from="${{ github.event.inputs.date_from }}" --date-to="${{ github.event.inputs.date_to }}"
           else
             # Default: sync today to +30 days
-            node scripts/sync-sportmonks-fixtures.mjs
+            node scripts/production/sync-sportmonks-fixtures.mjs
           fi
 
       - name: Report sync status

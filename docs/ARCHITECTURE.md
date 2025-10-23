@@ -89,6 +89,29 @@ src/
 │   ├── index.ts        # Core types
 │   └── supabase.ts     # Database types
 └── App.tsx            # Root application component
+
+scripts/                # Build and data management scripts
+├── production/         # ⚠️ CRITICAL - Used in GitHub Actions
+│   ├── sync-sportmonks-fixtures.mjs # Main fixture sync (scheduled)
+│   ├── sync-upcoming-broadcasters.mjs # Broadcaster sync
+│   └── README.md       # Production script documentation
+├── sync/               # Manual sync tools
+│   ├── sync-pl-by-rounds.mjs # Premier League round-by-round sync
+│   ├── sync-next-rounds.mjs  # Upcoming rounds sync
+│   └── ...            # Other sync utilities
+├── diagnostics/        # Debugging and verification scripts
+│   ├── check-*.mjs     # Data verification scripts
+│   ├── test-*.mjs      # API testing scripts
+│   └── README.md       # Diagnostic tools guide
+├── maintenance/        # Cleanup and maintenance scripts
+│   ├── cleanup-*.mjs   # Data cleanup scripts
+│   └── ...
+├── archive-2025-10-08/ # Archived scripts (pre-Oct 8, 2025)
+├── archive-legacy-20251002/ # Legacy SoccersAPI scripts
+├── config/             # Shared configuration
+├── health/             # Health check scripts
+├── utils/              # Shared script utilities
+└── verification/       # Data verification tools
 ```
 
 ### Key Architectural Principles
@@ -98,6 +121,7 @@ src/
 3. **Type Safety**: Comprehensive TypeScript coverage
 4. **Performance**: Optimized queries and lazy loading
 5. **Maintainability**: Consistent patterns and conventions
+6. **Script Organization**: Production vs development scripts clearly separated
 
 ---
 
