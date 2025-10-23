@@ -133,8 +133,6 @@ const SmartFixtureRouter: React.FC = () => {
   // Handle legacy match URL redirects
   useEffect(() => {
     if (slug && (location.pathname.startsWith('/matches/') || location.pathname.startsWith('/match/'))) {
-      console.log('Legacy match URL detected:', location.pathname);
-
       // Try to extract teams from the legacy URL
       const teams = extractTeamsFromLegacyUrl(slug);
 
@@ -143,7 +141,6 @@ const SmartFixtureRouter: React.FC = () => {
         const h2hSlug = generateCanonicalH2HSlug(teams.team1, teams.team2);
         const newUrl = `/h2h/${h2hSlug}`;
 
-        console.log(`Redirecting ${location.pathname} -> ${newUrl}`);
         setRedirectTo(newUrl);
       } else {
         console.warn('Could not extract teams from legacy URL:', slug);

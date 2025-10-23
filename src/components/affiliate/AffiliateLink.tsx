@@ -107,9 +107,6 @@ export const AffiliateLink: React.FC<AffiliateLinkProps> = ({
             tracking_id: trackingId || 'unknown'
           });
         }
-
-        // Console logging for development
-        console.log(`[Affiliate] Click tracked: ${partner} -> ${href}`, clickData);
       } catch (error) {
         console.warn('[Affiliate] Tracking failed:', error);
       }

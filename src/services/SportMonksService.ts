@@ -204,7 +204,6 @@ class SportMonksServiceClass {
     if (now >= this.hourlyResetTime) {
       this.requestsThisHour = 0;
       this.hourlyResetTime = now + 3600000;
-      console.log('[SportMonks] Hourly rate limit reset');
     }
 
     // Check if we've hit the hourly limit
@@ -254,8 +253,6 @@ class SportMonksServiceClass {
       this.requestCount++;
       this.requestsThisHour++;
 
-      console.log(`[SportMonks] Request #${this.requestCount} (${this.requestsThisHour}/3000 this hour): ${endpoint}`);
-
       const response = await fetch(url.toString(), {
         method: 'GET',
         headers: {
@@ -271,11 +268,6 @@ class SportMonksServiceClass {
 
       const data: SportMonksResponse<T> = await response.json();
 
-      // Log rate limit info if available
-      if (data.rate_limit) {
-        console.log(`[SportMonks] Rate limit: ${data.rate_limit.remaining} remaining, resets in ${data.rate_limit.resets_in_seconds}s`);
-      }
-
       return data;
 
     } catch (error) {
@@ -290,7 +282,6 @@ class SportMonksServiceClass {
   private getFromCache<T>(key: string): T | null {
     const cached = this.cache.get(key);
     if (cached && (Date.now() - cached.timestamp) < this.cacheTimeout) {
-      console.log(`[SportMonks] Cache hit: ${key}`);
       return cached.data;
     }
     return null;
@@ -311,16 +302,12 @@ class SportMonksServiceClass {
    */
   async testConnection(): Promise<boolean> {
     try {
-      console.log('[SportMonks] Testing connection...');
-
       // Simple leagues request to verify auth
       const response = await this.makeRequest<any[]>('/leagues', {
         include: 'country'
       });
 
       if (response.data) {
-        console.log('[SportMonks] ✅ Connection successful!');
-        console.log(`[SportMonks] Found ${response.data.length} leagues`);
         return true;
       }
 
@@ -501,7 +488,6 @@ class SportMonksServiceClass {
    */
   clearCache(): void {
     this.cache.clear();
-    console.log('[SportMonks] Cache cleared');
   }
 }
 
