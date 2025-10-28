@@ -169,6 +169,21 @@ export const COMPETITION_CONFIGS: Record<string, CompetitionConfig> = {
     seasonId: 25582 // 2025/26 season
   },
 
+  'carabao-cup': {
+    id: 12,
+    slug: 'carabao-cup',
+    name: 'Carabao Cup',
+    shortName: 'EFL',
+    logo: 'https://cdn.sportmonks.com/images/soccer/leagues/27/27.png',
+    icon: '🏆',
+    description: 'The EFL Cup, also known as the Carabao Cup, is England\'s secondary domestic cup competition.',
+    colors: {
+      primary: '#00a650',
+      secondary: '#ffffff'
+    },
+    seasonId: 25654 // 2025/26 season
+  },
+
   // Legacy competitions for backward compatibility
   'fa-cup': {
     id: 10,
