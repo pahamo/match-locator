@@ -170,8 +170,8 @@ const ClubsPage: React.FC = () => {
                     <ClubCard
                       key={team.id}
                       team={team}
-                      variant={competition.slug === 'champions-league' ? 'ucl' : 'compact'}
-                      showBadge={competition.slug === 'champions-league'}
+                      variant="compact"
+                      showBadge={false}
                     />
                   ))}
                 </div>

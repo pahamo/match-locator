@@ -96,7 +96,7 @@ header {
 }
 
 .wrap {
-  max-width: 920px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: clamp(16px, 4vw, 20px);
 }
