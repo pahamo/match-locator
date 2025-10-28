@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { getTeams } from '../services/supabase';
+import React, { useState, useEffect, useCallback } from 'react';
 import type { Team } from '../types';
 import { usePublicCompetitions } from '../hooks/useCompetitions';
 import Header from '../components/Header';
@@ -8,37 +7,35 @@ import { ClubCard } from '../design-system';
 import { generateClubsMeta, updateDocumentMeta } from '../utils/seo';
 import { getCompetitionLogo, getCompetitionIcon } from '../config/competitions';
 import { generateBreadcrumbs } from '../utils/breadcrumbs';
+import { getTeamsInCompetition } from '../utils/teamCompetitions';
 
 const ClubsPage: React.FC = () => {
-  const [teams, setTeams] = useState<Team[]>([]);
+  const [teamsByCompetition, setTeamsByCompetition] = useState<Record<number, Team[]>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Load competitions dynamically
   const { competitions, loading: competitionsLoading } = usePublicCompetitions();
 
-  // Group teams by competition
-  const teamsByCompetition = teams.reduce((acc, team) => {
-    const competitionId = team.competition_id;
-    if (competitionId && !acc[competitionId]) {
-      acc[competitionId] = [];
-    }
-    if (competitionId) {
-      acc[competitionId].push(team);
-    }
-    return acc;
-  }, {} as Record<number, Team[]>);
-
-  useEffect(() => {
-    loadTeams();
-  }, []);
-
-  const loadTeams = async () => {
+  const loadTeams = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-      const teamsData = await getTeams();
-      setTeams(teamsData);
+
+      // Load teams for each competition based on fixtures (past 3 months + future)
+      const teamsByComp: Record<number, Team[]> = {};
+
+      await Promise.all(
+        competitions.map(async (competition) => {
+          const teams = await getTeamsInCompetition(competition.id, {
+            pastMonths: 3, // Current season
+            includeMetadata: false
+          });
+          teamsByComp[competition.id] = teams;
+        })
+      );
+
+      setTeamsByCompetition(teamsByComp);
 
       // Update SEO meta tags for clubs page
       const meta = generateClubsMeta();
@@ -49,7 +46,13 @@ const ClubsPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [competitions]);
+
+  useEffect(() => {
+    if (competitions.length > 0 && !competitionsLoading) {
+      loadTeams();
+    }
+  }, [competitions, competitionsLoading, loadTeams]);
 
   if (loading || competitionsLoading) {
     return (

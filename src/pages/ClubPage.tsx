@@ -1,24 +1,27 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { getFixtures } from '../services/supabase';
 import type { Fixture } from '../types';
 import Header from '../components/Header';
 import Breadcrumbs from '../components/Breadcrumbs';
 import { generateTeamMeta, updateDocumentMeta, formatTeamNameShort } from '../utils/seo';
-import { FixtureCard } from '../design-system';
-import { teamMatchesSlug } from '../utils/slugUtils';
 import StructuredData from '../components/StructuredData';
-import { getMatchStatus } from '../utils/matchStatus';
 import { Card, CardHeader, CardTitle, CardContent } from '../design-system/components/Card';
 import Flex from '../design-system/components/Layout/Flex';
 import Stack from '../design-system/components/Layout/Stack';
-import { CompetitionBadge } from '../components/CompetitionBadge';
 import { RelatedTeamsSection } from '../components/RelatedTeamsSection';
-import { LiveMatchesTicker } from '../components/LiveMatchesTicker';
 import { getAllCompetitionConfigs } from '../config/competitions';
 import { generateBreadcrumbs } from '../utils/breadcrumbs';
 import { FreshnessIndicator, PageUpdateTimestamp } from '../components/FreshnessIndicator';
 import { getMostRecentFixtureUpdate } from '../utils/contentFreshness';
+
+// New enhanced components and hooks
+import { useTeamMetadata, useTeamFixtures } from '../hooks/useTeamData';
+import TeamHeader from '../components/TeamHeader';
+import EnhancedNextMatch from '../components/EnhancedNextMatch';
+import TeamStatsCard from '../components/TeamStatsCard';
+import CompetitionFixturesSection from '../components/CompetitionFixturesSection';
+import { generateExpandedTeamFAQ, generateMultipleSportsEvents } from '../utils/structuredDataHelpers';
 
 const ClubPage: React.FC = () => {
   const { slug, clubId } = useParams<{ slug?: string; clubId?: string }>();
@@ -27,50 +30,26 @@ const ClubPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-
+  // Fetch fixtures (includes past 4 months + all future)
   useEffect(() => {
     let ignore = false;
     const load = async () => {
       try {
         setLoading(true);
         setError(null);
-        const data = await getFixtures({ 
-          teamSlug: teamSlug, 
-          dateFrom: new Date().toISOString(),
-          limit: 500, 
-          order: 'asc' 
+
+        // Fetch from 4 months ago to get current season results
+        const fourMonthsAgo = new Date();
+        fourMonthsAgo.setMonth(fourMonthsAgo.getMonth() - 4);
+
+        const data = await getFixtures({
+          teamSlug: teamSlug,
+          dateFrom: fourMonthsAgo.toISOString(),
+          limit: 500,
+          order: 'asc'
         });
         if (!ignore) {
           setFixtures(data);
-          
-          // Update SEO meta tags for team page once we have team data
-          if (data.length > 0) {
-            const firstFixture = data[0];
-            const teamData = firstFixture.home.slug === teamSlug ? firstFixture.home : firstFixture.away;
-
-            // Find next upcoming match for meta description
-            const upcomingMatch = data.find(fx => {
-              const status = getMatchStatus(fx.kickoff_utc).status;
-              return status === 'upcoming' || status === 'upNext';
-            });
-
-            // Prepare next match info for meta
-            const nextMatchInfo = upcomingMatch ? {
-              opponent: formatTeamNameShort(
-                upcomingMatch.home.slug === teamSlug
-                  ? upcomingMatch.away.name
-                  : upcomingMatch.home.name
-              ),
-              date: new Date(upcomingMatch.kickoff_utc).toLocaleDateString('en-GB', {
-                day: 'numeric',
-                month: 'short'
-              }),
-              channel: upcomingMatch.providers_uk?.[0]?.name
-            } : undefined;
-
-            const meta = generateTeamMeta(teamData, data.length, nextMatchInfo);
-            updateDocumentMeta(meta);
-          }
         }
       } catch (e) {
         if (!ignore) setError('Failed to load team fixtures. Please try again later.');
@@ -79,118 +58,164 @@ const ClubPage: React.FC = () => {
       }
     };
     if (teamSlug) load();
-    return () => { ignore = true; };
+    return () => {
+      ignore = true;
+    };
   }, [teamSlug]);
 
+  // Extract team metadata using new hook
+  const teamMetadata = useTeamMetadata(fixtures, teamSlug);
 
-  const team = useMemo(() => {
-    if (!fixtures.length) return undefined;
-    const first = fixtures[0];
-    if (!first) return undefined;
+  // Process fixtures data using new hook
+  const fixturesData = useTeamFixtures(fixtures);
 
-    // Check if either team matches the current slug
-    if (teamMatchesSlug(first.home, teamSlug)) return first.home;
-    if (teamMatchesSlug(first.away, teamSlug)) return first.away;
-    return undefined;
-  }, [fixtures, teamSlug]);
-
-  // Get next match (first upcoming fixture)
-  const nextMatch = useMemo(() => {
-    return fixtures.find(fx => {
-      const status = getMatchStatus(fx.kickoff_utc).status;
-      return status === 'upcoming' || status === 'upNext';
-    });
-  }, [fixtures]);
-
-  // Get competition name for the team
+  // Get competition name for primary competition
   const competitionName = useMemo(() => {
-    if (!team?.competition_id) return undefined;
+    if (!teamMetadata?.team.competition_id) return undefined;
     const allCompetitions = getAllCompetitionConfigs();
-    const competition = allCompetitions.find(c => c.id === team.competition_id);
+    const competition = allCompetitions.find(c => c.id === teamMetadata.team.competition_id);
     return competition?.name;
-  }, [team]);
+  }, [teamMetadata]);
 
-  // Get broadcaster name (prefer fixture.broadcaster, fallback to providers_uk for legacy support)
-  const getBroadcasterName = (match: typeof nextMatch) => {
+  // Get broadcaster name helper
+  const getBroadcasterName = useCallback((match: Fixture | undefined) => {
     if (!match) return null;
     return match.broadcaster || match.providers_uk?.[0]?.name || null;
-  };
+  }, []);
 
-  // Generate dynamic FAQ data based on team and fixtures
+  // Generate enhanced FAQ data with 8-10 questions
   const faqData = useMemo(() => {
-    if (!team) return [];
+    if (!teamMetadata) return [];
 
-    const teamName = formatTeamNameShort(team.name);
-    const opponentName = nextMatch ? formatTeamNameShort(nextMatch.home.slug === teamSlug ? nextMatch.away.name : nextMatch.home.name) : '';
+    const competitions = fixturesData.competitionGroups.map(g => g.competition.name);
 
-    const broadcasterName = getBroadcasterName(nextMatch);
+    return generateExpandedTeamFAQ(
+      teamMetadata.team,
+      fixturesData.nextMatch,
+      fixturesData.broadcastCoverage.total,
+      competitions
+    );
+  }, [teamMetadata, fixturesData]);
 
-    const nextMatchAnswer = nextMatch
-      ? `${teamName}'s next match is ${formatTeamNameShort(nextMatch.home.name)} vs ${formatTeamNameShort(nextMatch.away.name)} on ${new Date(nextMatch.kickoff_utc).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} at ${new Date(nextMatch.kickoff_utc).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })}${broadcasterName ? ` on ${broadcasterName}` : ' (TV channel TBC)'}.`
-      : `${teamName} has no upcoming fixtures scheduled at this time. Check back soon for updated match schedules.`;
+  // Update SEO meta tags with enhanced options
+  useEffect(() => {
+    if (!teamMetadata) return;
 
-    const channelAnswer = broadcasterName
-      ? `${teamName}'s next match is on ${broadcasterName}. You can watch it ${broadcasterName === 'Sky Sports' ? 'with a Sky Sports subscription' : broadcasterName === 'TNT Sports' ? 'with a TNT Sports subscription' : 'via their streaming service'}.`
-      : `${teamName}'s next match TV channel has not been confirmed yet. Check back closer to match day for broadcast details.`;
+    const nextMatchInfo = fixturesData.nextMatch
+      ? {
+          opponent: formatTeamNameShort(
+            fixturesData.nextMatch.home.slug === teamSlug
+              ? fixturesData.nextMatch.away.name
+              : fixturesData.nextMatch.home.name
+          ),
+          date: new Date(fixturesData.nextMatch.kickoff_utc).toLocaleDateString('en-GB', {
+            day: 'numeric',
+            month: 'short'
+          }),
+          channel: getBroadcasterName(fixturesData.nextMatch) || undefined
+        }
+      : undefined;
 
-    return [
+    const competitions = fixturesData.competitionGroups.map(g => g.competition.name);
+
+    const meta = generateTeamMeta(
+      teamMetadata.team,
+      fixturesData.broadcastCoverage.total,
+      nextMatchInfo,
       {
-        question: `What time is ${teamName} playing today?`,
-        answer: nextMatch && new Date(nextMatch.kickoff_utc).toDateString() === new Date().toDateString()
-          ? `${teamName} is playing today at ${new Date(nextMatch.kickoff_utc).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })} UK time against ${opponentName}${broadcasterName ? ` on ${broadcasterName}` : ''}.`
-          : `${teamName} is not playing today. Their next match is ${nextMatch ? `on ${new Date(nextMatch.kickoff_utc).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}` : 'to be confirmed'}.`
-      },
-      {
-        question: `What channel is ${teamName} on?`,
-        answer: channelAnswer
-      },
-      {
-        question: `Where can I watch ${teamName} on TV in the UK?`,
-        answer: `${teamName} matches are typically broadcast on Sky Sports, TNT Sports, Amazon Prime Video, or BBC depending on the competition. Premier League matches are on Sky Sports and TNT Sports, while European competitions are mainly on TNT Sports. Check the fixtures list above for specific channel information for each match.`
-      },
-      {
-        question: `When is ${teamName}'s next match?`,
-        answer: nextMatchAnswer
+        competitions,
+        venue: teamMetadata.venue,
+        location: teamMetadata.city
       }
-    ];
-  }, [team, nextMatch, teamSlug]);
+    );
 
-  // Phase 3: Slug consolidation - no more redirect logic needed
+    updateDocumentMeta(meta);
+  }, [teamMetadata, fixturesData, teamSlug, getBroadcasterName]);
+
+  // Generate multiple SportsEvent schemas for rich results
+  const sportsEventSchemas = useMemo(() => {
+    return generateMultipleSportsEvents(
+      fixturesData.competitionGroups.flatMap(g => g.upcoming),
+      5
+    );
+  }, [fixturesData.competitionGroups]);
+
+  if (loading) {
+    return (
+      <div className="club-page">
+        <Header />
+        <main>
+          <div className="wrap">
+            <div className="loading">Loading fixtures…</div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="club-page">
+        <Header />
+        <main>
+          <div className="wrap">
+            <div className="error">{error}</div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (!teamMetadata) {
+    return (
+      <div className="club-page">
+        <Header />
+        <main>
+          <div className="wrap">
+            <div className="error">Team not found.</div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  const teamName = formatTeamNameShort(teamMetadata.team.name);
 
   return (
     <div className="club-page">
-      {/* FAQ Structured Data */}
-      <StructuredData
-        type="faq"
-        data={faqData}
-        dateModified={new Date().toISOString()}
-      />
-      {/* SportsTeam Structured Data */}
-      {team && (
-        <StructuredData
-          type="team"
-          data={team}
+      {/* Enhanced Structured Data */}
+      <StructuredData type="faq" data={faqData} dateModified={new Date().toISOString()} />
+      <StructuredData type="team" data={teamMetadata.team} />
+
+      {/* Multiple SportsEvent schemas for rich results */}
+      {sportsEventSchemas.map((schema, index) => (
+        <script
+          key={`sports-event-${index}`}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
         />
-      )}
+      ))}
+
       <Header />
 
       <main>
         <div className="wrap">
-          <Breadcrumbs items={generateBreadcrumbs(window.location.pathname, {
-            teamName: team ? formatTeamNameShort(team.name) : 'Team'
-          })} />
+          {/* Breadcrumbs */}
+          <Breadcrumbs
+            items={generateBreadcrumbs(window.location.pathname, {
+              teamName
+            })}
+          />
 
-          <h1 style={{ marginTop: 0, fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}>
-            {team ? formatTeamNameShort(team.name) : 'Team'} TV Schedule - What Time Are {team ? formatTeamNameShort(team.name) : 'Team'} Playing?
-          </h1>
-
-          {/* Competition Badge - appears below H1 */}
-          {team?.competition_id && (
-            <CompetitionBadge competitionId={team.competition_id} />
-          )}
+          {/* NEW: Team Header with crest and metadata */}
+          <TeamHeader
+            metadata={teamMetadata}
+            competitionGroups={fixturesData.competitionGroups}
+            className="mb-6"
+          />
 
           {/* Freshness Indicator */}
-          {!loading && !error && fixtures.length > 0 && (
+          {fixtures.length > 0 && (
             <div style={{ marginTop: '12px', marginBottom: '16px' }}>
               <FreshnessIndicator
                 date={getMostRecentFixtureUpdate(fixtures) || new Date()}
@@ -201,170 +226,147 @@ const ClubPage: React.FC = () => {
             </div>
           )}
 
-          {loading && <div className="loading">Loading fixtures…</div>}
-          {error && <div className="error">{error}</div>}
+          {/* NEW: Enhanced Next Match Component */}
+          {fixturesData.nextMatch && (
+            <EnhancedNextMatch
+              fixture={fixturesData.nextMatch}
+              teamSlug={teamSlug}
+              className="mb-8"
+            />
+          )}
 
-          {!loading && !error && (
-            <>
-              {/* Next Match Callout */}
-              {nextMatch && (
-                <Card variant="primary" className="mb-8">
-                  <CardHeader size="default">
-                    <CardTitle size="sm" as="h2">
-                      ⚡ Next Match
-                    </CardTitle>
-                    <div className="text-3xl font-bold mt-2">
-                      {formatTeamNameShort(nextMatch.home.name)} vs {formatTeamNameShort(nextMatch.away.name)}
-                    </div>
-                  </CardHeader>
+          {/* NEW: Team Stats Card */}
+          <TeamStatsCard
+            metadata={teamMetadata}
+            competitionGroups={fixturesData.competitionGroups}
+            upcomingCount={fixturesData.broadcastCoverage.total}
+            next7DaysCount={fixturesData.next7Days.length}
+            broadcastCoverage={fixturesData.broadcastCoverage}
+            className="mb-12"
+          />
 
-                  <CardContent size="default">
-                    <Stack space="md">
-                      <Flex align="center" gap="sm">
-                        <span className="text-xl">📅</span>
-                        <span>{new Date(nextMatch.kickoff_utc).toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</span>
-                      </Flex>
+          {/* Visual Separator */}
+          <div style={{
+            height: '1px',
+            background: 'linear-gradient(to right, transparent, #e2e8f0 20%, #e2e8f0 80%, transparent)',
+            margin: '3rem 0'
+          }} />
 
-                      <Flex align="center" gap="sm">
-                        <span className="text-xl">⏰</span>
-                        <span>{new Date(nextMatch.kickoff_utc).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })} UK Time</span>
-                      </Flex>
+          {/* How to Watch Section */}
+          <Card variant="outline" className="mb-12">
+            <CardHeader size="default">
+              <CardTitle size="default" as="h2">
+                📺 How to Watch {teamName} on TV
+              </CardTitle>
+            </CardHeader>
 
-                      {getBroadcasterName(nextMatch) && (
-                        <Flex align="center" gap="sm">
-                          <span className="text-xl">📺</span>
-                          <span className="font-semibold">{getBroadcasterName(nextMatch)}</span>
-                        </Flex>
-                      )}
-
-                      <div className="mt-2 pt-4 border-t border-white/30">
-                        <div className="font-medium">
-                          Kicks off in: {(() => {
-                            const now = new Date().getTime();
-                            const kickoff = new Date(nextMatch.kickoff_utc).getTime();
-                            const diff = kickoff - now;
-
-                            if (diff < 0) return 'Match started';
-
-                            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-
-                            if (days > 0) return `${days}d ${hours}h`;
-                            if (hours > 0) return `${hours}h ${minutes}m`;
-                            return `${minutes}m`;
-                          })()}
-                        </div>
-                      </div>
-                    </Stack>
-                  </CardContent>
-                </Card>
-              )}
-
-              <Card variant="outline" className="mb-8">
-                <CardHeader size="default">
-                  <CardTitle size="default" as="h2">
-                    📺 How to Watch {team ? formatTeamNameShort(team.name) : 'This Team'} on TV
-                  </CardTitle>
-                </CardHeader>
-
-                <CardContent size="default">
-                  <Stack space="md">
-                    {nextMatch && getBroadcasterName(nextMatch) && (
-                      <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
-                        <p className="font-semibold text-blue-900 dark:text-blue-100">
-                          🎯 Next Match: Watch on <span className="font-bold">{getBroadcasterName(nextMatch)}</span>
-                        </p>
-                        <p className="text-sm mt-1 text-blue-800 dark:text-blue-200">
-                          {nextMatch.home.name} vs {nextMatch.away.name} • {new Date(nextMatch.kickoff_utc).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}
-                        </p>
-                      </div>
-                    )}
-
-                    <div>
-                      <p className="mb-4">
-                        {team ? formatTeamNameShort(team.name) : 'Premier League'} matches are broadcast live across multiple UK channels depending on the competition:
-                      </p>
-
-                      <Stack space="sm">
-                        <Flex align="start" gap="sm">
-                          <span className="text-lg">⚽</span>
-                          <div>
-                            <strong>Premier League:</strong>{' '}
-                            <a href="https://www.skysports.com/football/fixtures-results" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">
-                              Sky Sports
-                            </a>
-                            {' '}and{' '}
-                            <a href="https://tntsports.co.uk/football" target="_blank" rel="noopener noreferrer" className="text-blue-600 dark:text-blue-400 hover:underline">
-                              TNT Sports
-                            </a>
-                          </div>
-                        </Flex>
-
-                        <Flex align="start" gap="sm">
-                          <span className="text-lg">🏆</span>
-                          <div>
-                            <strong>Champions League & Europa League:</strong> Primarily TNT Sports
-                          </div>
-                        </Flex>
-
-                        <Flex align="start" gap="sm">
-                          <span className="text-lg">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span>
-                          <div>
-                            <strong>FA Cup & Carabao Cup:</strong> BBC, ITV, Sky Sports
-                          </div>
-                        </Flex>
-                      </Stack>
-                    </div>
-
-                    <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        ℹ️ All kick-off times shown in UK time (GMT/BST) • Broadcaster confirmed fixtures are marked below
-                      </p>
-                    </div>
-                  </Stack>
-                </CardContent>
-              </Card>
-
-              {/* Live Matches Ticker - shows matches on same day as next match in same competition */}
-              {nextMatch && (
-                <LiveMatchesTicker
-                  currentMatchDate={nextMatch.kickoff_utc}
-                  competitionIds={nextMatch.competition_id ? [nextMatch.competition_id] : undefined}
-                />
-              )}
-
-              <section>
-                <h2 style={{ marginTop: 0 }}>Upcoming fixtures ({fixtures.length})</h2>
-                {fixtures.length === 0 ? (
-                  <div className="no-fixtures">No upcoming fixtures found.</div>
-                ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    {fixtures.map(fx => (
-                      <FixtureCard
-                        key={fx.id}
-                        fixture={fx}
-                        variant="default"
-                        showViewButton={true}
-                      />
-                    ))}
+            <CardContent size="default">
+              <Stack space="md">
+                {fixturesData.nextMatch && getBroadcasterName(fixturesData.nextMatch) && (
+                  <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+                    <p className="font-semibold text-blue-900 dark:text-blue-100">
+                      🎯 Next Match: Watch on{' '}
+                      <span className="font-bold">{getBroadcasterName(fixturesData.nextMatch)}</span>
+                    </p>
+                    <p className="text-sm mt-1 text-blue-800 dark:text-blue-200">
+                      {formatTeamNameShort(fixturesData.nextMatch.home.name)} vs{' '}
+                      {formatTeamNameShort(fixturesData.nextMatch.away.name)} •{' '}
+                      {new Date(fixturesData.nextMatch.kickoff_utc).toLocaleDateString('en-GB', {
+                        day: 'numeric',
+                        month: 'short'
+                      })}
+                    </p>
                   </div>
                 )}
-              </section>
 
-              {/* Related Teams Section - moved below fixtures for better UX */}
-              {team && (
-                <RelatedTeamsSection
-                  currentTeam={team}
-                  competitionName={competitionName}
-                />
-              )}
+                <div>
+                  <p className="mb-4">
+                    {teamName} matches are broadcast live across multiple UK channels depending on the
+                    competition:
+                  </p>
 
-              <div style={{ marginTop: '1.5rem' }}>
-                <a href="/" style={{ color: 'var(--color-accent)', textDecoration: 'underline' }}>← Back to Schedule</a>
-              </div>
-            </>
+                  <Stack space="sm">
+                    <Flex align="start" gap="sm">
+                      <span className="text-lg">⚽</span>
+                      <div>
+                        <strong>Premier League:</strong>{' '}
+                        <a
+                          href="https://www.skysports.com/football/fixtures-results"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 dark:text-blue-400 hover:underline"
+                        >
+                          Sky Sports
+                        </a>{' '}
+                        and{' '}
+                        <a
+                          href="https://tntsports.co.uk/football"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 dark:text-blue-400 hover:underline"
+                        >
+                          TNT Sports
+                        </a>
+                      </div>
+                    </Flex>
+
+                    <Flex align="start" gap="sm">
+                      <span className="text-lg">🏆</span>
+                      <div>
+                        <strong>Champions League & Europa League:</strong> Primarily TNT Sports
+                      </div>
+                    </Flex>
+
+                    <Flex align="start" gap="sm">
+                      <span className="text-lg">🏴󠁧󠁢󠁥󠁮󠁧󠁿</span>
+                      <div>
+                        <strong>FA Cup & Carabao Cup:</strong> BBC, ITV, Sky Sports
+                      </div>
+                    </Flex>
+                  </Stack>
+                </div>
+
+                <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    ℹ️ All kick-off times shown in UK time (GMT/BST) • Broadcaster confirmed fixtures are
+                    marked below
+                  </p>
+                </div>
+              </Stack>
+            </CardContent>
+          </Card>
+
+          {/* Visual Separator */}
+          <div style={{
+            height: '1px',
+            background: 'linear-gradient(to right, transparent, #e2e8f0 20%, #e2e8f0 80%, transparent)',
+            margin: '3rem 0'
+          }} />
+
+          {/* NEW: Competition Fixtures Section with Tabs */}
+          <CompetitionFixturesSection
+            competitionGroups={fixturesData.competitionGroups}
+            teamName={teamMetadata.team.name}
+            hasMultipleCompetitions={fixturesData.hasMultipleCompetitions}
+            className="mb-12"
+          />
+
+          {/* Related Teams Section */}
+          {teamMetadata.team && (
+            <div className="mb-8">
+              <RelatedTeamsSection
+                currentTeam={teamMetadata.team}
+                competitionName={competitionName}
+              />
+            </div>
           )}
+
+          {/* Back Link */}
+          <div style={{ marginTop: '1.5rem' }}>
+            <a href="/" style={{ color: 'var(--color-accent)', textDecoration: 'underline' }}>
+              ← Back to Schedule
+            </a>
+          </div>
         </div>
       </main>
     </div>
