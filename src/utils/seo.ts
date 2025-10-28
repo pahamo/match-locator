@@ -427,23 +427,40 @@ export const generateSimpleMatchMeta = (fixture: SimpleFixture) => {
 export const generateTeamMeta = (
   team: Team,
   upcomingCount: number = 0,
-  nextMatch?: { opponent: string; date: string; channel?: string }
+  nextMatch?: { opponent: string; date: string; channel?: string },
+  options?: {
+    competitions?: string[]; // List of competition names team plays in
+    venue?: string;
+    location?: string;
+  }
 ) => {
   const teamShort = formatTeamNameShort(team.name);
   const season = getCurrentSeason();
 
-  // Optimized title targeting "what time is [team] playing" searches
-  const title = `${teamShort} TV Schedule - What Time Are ${teamShort} Playing? | Match Locator`;
+  // Build competition context for title/description
+  const competitionContext = options?.competitions && options.competitions.length > 1
+    ? options.competitions.join(' & ')
+    : options?.competitions?.[0] || 'Premier League';
 
-  // Enhanced description with next match info if available
+  // Optimized title targeting "what time is [team] playing" searches
+  // Add location for local SEO if available
+  const locationSuffix = options?.location ? ` ${options.location}` : '';
+  const title = `${teamShort} TV Schedule${locationSuffix} - What Time Are ${teamShort} Playing? | ${season}`;
+
+  // Enhanced description with next match info and competition keywords
   let description: string;
   if (nextMatch) {
     const channelInfo = nextMatch.channel
       ? ` on ${nextMatch.channel}`
       : ' - channel TBC';
-    description = `${teamShort} next play ${nextMatch.opponent} ${nextMatch.date}${channelInfo}. Complete ${season} TV schedule with all fixtures, kick-off times & UK broadcast info.`;
+    description = `${teamShort} next play ${nextMatch.opponent} ${nextMatch.date}${channelInfo}. Complete ${season} ${competitionContext} TV schedule with all fixtures, kick-off times & UK broadcast info.`;
   } else {
-    description = `Find out when ${teamShort} are playing next! Complete ${season} TV schedule with all kick-off times and UK broadcast channels. Sky Sports, TNT Sports, Amazon Prime & BBC coverage. Never miss a ${teamShort} match.`;
+    description = `Find out when ${teamShort} are playing next! Complete ${season} ${competitionContext} TV schedule with all kick-off times and UK broadcast channels. Sky Sports, TNT Sports, Amazon Prime & BBC coverage. Never miss a ${teamShort} match.`;
+  }
+
+  // Add venue to description if available (local SEO)
+  if (options?.venue && description.length < 140) {
+    description += ` Home matches at ${options.venue}.`;
   }
 
   const canonical = `${CANONICAL_BASE}/clubs/${team.slug}`;

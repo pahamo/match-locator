@@ -352,6 +352,36 @@ const AdminDashboardPage: React.FC = () => {
             </Link>
 
             <Link
+              to="/admin/international-broadcasts"
+              style={{
+                background: 'white',
+                border: '1px solid #e2e8f0',
+                borderRadius: '8px',
+                padding: '20px',
+                textDecoration: 'none',
+                color: 'inherit',
+                transition: 'all 0.2s ease',
+                display: 'block'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = '#7c3aed';
+                e.currentTarget.style.boxShadow = '0 2px 8px rgba(124, 58, 237, 0.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = '#e2e8f0';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                <span style={{ fontSize: '20px', marginRight: '8px' }}>🌍</span>
+                <h3 style={{ fontSize: '16px', fontWeight: '600', margin: '0' }}>International Broadcasts</h3>
+              </div>
+              <p style={{ fontSize: '14px', color: '#6b7280', margin: '0' }}>
+                Test broadcast rights across different countries before deploying.
+              </p>
+            </Link>
+
+            <Link
               to="/admin/fix-data"
               style={{
                 background: 'white',

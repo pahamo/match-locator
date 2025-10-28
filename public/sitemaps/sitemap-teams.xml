@@ -61,17 +61,17 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/clubs/afc-bournemouth</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://matchlocator.com/clubs/bournemouth</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/clubs/auxerre</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/clubs/aktobe</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -181,6 +181,11 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://matchlocator.com/clubs/barnsley</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://matchlocator.com/clubs/basel</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -207,6 +212,11 @@
   </url>
   <url>
     <loc>https://matchlocator.com/clubs/benfica</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/clubs/be-ikta-</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -311,11 +321,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/clubs/brighton-hove-albion</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://matchlocator.com/clubs/brighton</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -347,6 +352,11 @@
   </url>
   <url>
     <loc>https://matchlocator.com/clubs/osasuna</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/clubs/c-diz</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -407,6 +417,11 @@
   </url>
   <url>
     <loc>https://matchlocator.com/clubs/amadora</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/clubs/cfr-cluj</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -826,12 +841,22 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://matchlocator.com/clubs/granada</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://matchlocator.com/clubs/guernsey</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://matchlocator.com/clubs/guiseley</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/clubs/h-cken</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -857,6 +882,11 @@
   </url>
   <url>
     <loc>https://matchlocator.com/clubs/hamworthy-recreation</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/clubs/hapoel-be-er-sheva</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -916,7 +946,17 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://matchlocator.com/clubs/huesca</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://matchlocator.com/clubs/hull-city</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/clubs/ilves</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1026,6 +1066,11 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://matchlocator.com/clubs/levski-sofia</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://matchlocator.com/clubs/lille</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -1052,6 +1097,11 @@
   </url>
   <url>
     <loc>https://matchlocator.com/clubs/ludogorets</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/clubs/lugano</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1086,17 +1136,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://matchlocator.com/clubs/manchester-city</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://matchlocator.com/clubs/man-city</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/clubs/manchester-united</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1197,11 +1237,6 @@
   </url>
   <url>
     <loc>https://matchlocator.com/clubs/norwich</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/clubs/nottingham-forest</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1336,6 +1371,11 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://matchlocator.com/clubs/partizan</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://matchlocator.com/clubs/pec-zwolle</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -1352,6 +1392,11 @@
   </url>
   <url>
     <loc>https://matchlocator.com/clubs/peterborough-sports</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/clubs/peterborough-united</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1387,6 +1432,11 @@
   </url>
   <url>
     <loc>https://matchlocator.com/clubs/preston-ne</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/clubs/prishtina</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1461,6 +1511,11 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://matchlocator.com/clubs/reading</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://matchlocator.com/clubs/real-betis</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -1477,6 +1532,11 @@
   </url>
   <url>
     <loc>https://matchlocator.com/clubs/real-sociedad</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/clubs/real-valladolid</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1566,7 +1626,17 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://matchlocator.com/clubs/sd-eibar</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://matchlocator.com/clubs/sevilla</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/clubs/shakhtar-donetsk</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1652,6 +1722,11 @@
   </url>
   <url>
     <loc>https://matchlocator.com/clubs/sparta</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://matchlocator.com/clubs/spartak-trnava</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1792,11 +1867,6 @@
   </url>
   <url>
     <loc>https://matchlocator.com/clubs/torpedo-kutaisi</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/clubs/tottenham-hotspur</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1972,11 +2042,6 @@
   </url>
   <url>
     <loc>https://matchlocator.com/clubs/wokingham-town</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://matchlocator.com/clubs/wolverhampton-wanderers</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
