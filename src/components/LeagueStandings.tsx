@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from '../design-system/components/Card';
 import { formatTeamNameShort } from '../utils/seo';
+import type { Team } from '../types';
 
 interface StandingDetail {
   type: {
@@ -37,6 +38,7 @@ interface LeagueStandingsProps {
   seasonId: number;
   competitionName?: string;
   compact?: boolean; // Compact mode hides some columns
+  teams?: Team[]; // Optional teams for slug mapping
 }
 
 interface ParsedStanding {
@@ -78,11 +80,28 @@ const parseStandingDetails = (details: StandingDetail[]) => {
 export const LeagueStandings: React.FC<LeagueStandingsProps> = ({
   seasonId,
   competitionName = 'League',
-  compact = false
+  compact = false,
+  teams = []
 }) => {
   const [standings, setStandings] = useState<ParsedStanding[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Create a mapping from team short names to slugs for link generation
+  const teamSlugMap = useMemo(() => {
+    const map = new Map<string, string>();
+    teams.forEach(team => {
+      const shortName = formatTeamNameShort(team.name).toLowerCase();
+      map.set(shortName, team.slug);
+    });
+    return map;
+  }, [teams]);
+
+  // Helper function to get team slug from team name
+  const getTeamSlug = (teamName: string): string | null => {
+    const shortName = teamName.toLowerCase();
+    return teamSlugMap.get(shortName) || null;
+  };
 
   useEffect(() => {
     const fetchStandings = async () => {
@@ -255,7 +274,16 @@ export const LeagueStandings: React.FC<LeagueStandingsProps> = ({
                           e.currentTarget.style.display = 'none';
                         }}
                       />
-                      <span className="font-medium">{team.teamName}</span>
+                      {getTeamSlug(team.teamName) ? (
+                        <a
+                          href={`/clubs/${getTeamSlug(team.teamName)}`}
+                          className="font-medium hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                        >
+                          {team.teamName}
+                        </a>
+                      ) : (
+                        <span className="font-medium">{team.teamName}</span>
+                      )}
                     </div>
                   </td>
                   <td className={`text-center py-3 px-2 ${compact ? 'hidden' : ''}`}>{team.played}</td>

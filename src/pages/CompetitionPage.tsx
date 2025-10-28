@@ -300,6 +300,7 @@ const CompetitionPage: React.FC = () => {
                 seasonId={getCompetitionConfig(slug)!.seasonId!}
                 competitionName={competition.name}
                 compact={true}
+                teams={teams}
               />
             ) : (
             <section style={{
