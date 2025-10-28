@@ -10,6 +10,7 @@ export interface Team {
   venue?: string | null;
   home_venue?: string | null;
   city?: string | null;
+  founded?: number | null;
 }
 
 export interface Provider {
