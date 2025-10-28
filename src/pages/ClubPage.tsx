@@ -34,11 +34,16 @@ const ClubPage: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-        const data = await getFixtures({ 
-          teamSlug: teamSlug, 
-          dateFrom: new Date().toISOString(),
-          limit: 500, 
-          order: 'asc' 
+
+        // Fetch from 4 months ago to include recent results and all future fixtures
+        const fourMonthsAgo = new Date();
+        fourMonthsAgo.setMonth(fourMonthsAgo.getMonth() - 4);
+
+        const data = await getFixtures({
+          teamSlug: teamSlug,
+          dateFrom: fourMonthsAgo.toISOString(),
+          limit: 500,
+          order: 'asc'
         });
         if (!ignore) {
           setFixtures(data);
