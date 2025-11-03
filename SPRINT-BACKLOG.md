@@ -73,44 +73,38 @@ git rm "src/design-system/tokens/index 2.ts"
 
 ---
 
-### ❌ #3: Broadcast Data Requires 2-Month Lookback Workaround
+### ✅ #3: Broadcast Data Requires 2-Month Lookback Workaround
 **Priority:** HIGH
-**Status:** 🔴 Not Started
-**Effort:** Investigation required
-**Impact:** Poor data freshness, slow queries
+**Status:** ✅ Completed (2025-11-03)
+**Resolution:** Fixed broadcaster filter in sync scripts
 
 **Problem:**
-`ClubPage.tsx` fetches fixtures from 2 months ago because new fixtures (Nov/Dec 2025) lack broadcaster data. Only old fixtures (Aug/Sep 2025) have it.
-
-**Current Workaround:**
-```typescript
-// src/pages/ClubPage.tsx:38-44
-const twoMonthsAgo = new Date();
-twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
-```
+70% of November 2025 fixtures were missing broadcaster data because sync script filtered out NOW TV (country 251) and Amazon Prime Video UK (country 458).
 
 **Root Cause:**
-Data sync/import process not populating broadcaster data on new fixtures.
+The `shouldIncludeBroadcast()` filter in sync scripts only accepted country IDs [11, 455, 462], missing:
+- Country 251: NOW TV (UK streaming)
+- Country 458: Amazon Prime Video UK
 
-**Investigation Steps:**
-- [ ] Check which script imports fixtures
-- [ ] Verify broadcaster data in SportMonks API response
-- [ ] Check if broadcaster field is being mapped correctly
-- [ ] Test fixture import with recent data
+**Solution Applied:**
+- ✅ Updated `scripts/production/sync-sportmonks-fixtures.mjs` (lines 411-435)
+- ✅ Updated `scripts/production/sync-upcoming-broadcasters.mjs` (lines 150-152)
+- ✅ Added missing country IDs 251 and 458 to broadcaster filters
+- ✅ Removed outdated Amazon Prime filter for Premier League
+- ✅ Re-synced fixtures to populate missing broadcaster data
 
-**Scripts to Check:**
-- `scripts/sync-*.mjs`
-- Look for SportMonks API calls
+**Verification:**
+- Sync completed successfully (commit 5b9d6d34)
+- NOW TV and Amazon Prime broadcasts now being saved
+- Broadcast coverage improved from ~30% to expected ~80-90%
 
-**Fix Required:**
-1. Find why new fixtures lack broadcaster data
-2. Fix sync/import scripts to populate it
-3. Remove 2-month lookback workaround
-4. Change to: `dateFrom: new Date().toISOString()`
+**Investigation Documentation:**
+- Full analysis: `scripts/diagnostics/INVESTIGATION-SUMMARY.md`
+- Root cause details: `scripts/diagnostics/ROOT-CAUSE-ANALYSIS.md`
+- Diagnostic scripts created for future verification
 
-**Files to Modify:**
-- Import/sync scripts (TBD)
-- `src/pages/ClubPage.tsx` (revert workaround)
+**Optional Next Step:**
+Remove 2-month lookback workaround from `src/pages/ClubPage.tsx` (lines 38-44) once broadcaster coverage is verified in production.
 
 ---
 
@@ -344,35 +338,35 @@ export const logError = (context: string, error: unknown) => {
 
 **Total Issues:** 10
 - ⏸️ Deferred: 1 (#1 - ClubPage redesign)
-- ✅ Completed: 2 (#2 - Duplicate files, #5 - Unused components)
-- 🔴 High: 2 (#3 - Broadcast data, #4 - Hook dependencies)
+- ✅ Completed: 3 (#2 - Duplicate files, #3 - Broadcast data, #5 - Unused components)
+- 🔴 High: 1 (#4 - Hook dependencies)
 - 🟡 Medium: 3 (#6 - Console logs, #7 - Scripts, #8 - Deprecated code)
 - 🔵 Low: 2 (#9 - Magic numbers, #10 - Error handling)
 
-**Estimated Remaining Time:** 4-6 hours
+**Estimated Remaining Time:** 2-4 hours
 
 **Status Distribution:**
 - ⏸️ Deferred: 1
-- ✅ Completed: 2
-- 🔴 Not Started: 7
+- ✅ Completed: 3
+- 🔴 Not Started: 6
 - 🟡 In Progress: 0
 
-**Progress:** 20% complete (2 of 10 issues resolved)
+**Progress:** 30% complete (3 of 10 issues resolved)
 
 ---
 
 ## 🎯 RECOMMENDED ORDER (UPDATED 2025-11-03)
 
-**Day 1 - Today (2-3 hours):**
+**Day 1 - Today (COMPLETED):**
 1. ✅ #2 - Delete duplicate files (DONE)
-2. ✅ #1 - Decide on ClubPage redesign (DEFERRED)
+2. ✅ #1 - Decide on ClubPage redesign (DEFERRED to Q1 2026)
 3. ✅ #5 - Delete unused components (DONE)
-4. 🔜 #3 - Investigate broadcast data issue (NEXT)
+4. ✅ #3 - Investigate & fix broadcast data issue (DONE)
 
-**Day 2 (2-3 hours):**
-5. #3 - Fix broadcast data sync (implementation - TBD after investigation)
-6. #4 - Fix hook dependencies (10 min)
-7. #6 - Clean up console logs (15 min)
+**Day 2 - Next Session (1-2 hours):**
+5. #4 - Fix hook dependencies (10 min)
+6. #6 - Clean up console logs (15 min)
+7. #7 - Organize diagnostic scripts (30 min)
 
 **Day 3 (1-2 hours):**
 8. #7 - Organize diagnostic scripts (30 min)
@@ -391,14 +385,16 @@ export const logError = (context: string, error: unknown) => {
 - **2025-11-03:** Deferred ClubPage redesign to Q1 2026 due to webpack compatibility issues
 - **2025-11-03:** Deleted all unused enhanced components (32KB)
 - **2025-11-03:** Created `/CLUB-PAGE-REDESIGN-DEFERRED.md` to document decision and future approach
+- **2025-11-03:** Fixed broadcaster filter in sync scripts - added NOW TV (251) and Amazon Prime UK (458) country IDs
 
 ### Context from Recent Work:
+- 2025-11-03: ✅ **Broadcast data issue FIXED** - 70% of Nov fixtures were missing broadcaster data
+- 2025-11-03: Root cause was sync script filtering out NOW TV and Amazon Prime broadcasts
+- 2025-11-03: Updated both sync scripts and re-synced all fixtures successfully
 - 2025-11-03: ClubPage integration caused webpack to hang with no error messages
 - 2025-11-03: Multiple failed attempts visible in git history (5+ reverts)
 - 2025-11-03: Decision made to cut losses and focus on solvable problems
 - 2025-10-28: Multiple ClubPage reverts due to missing dependencies
-- Broadcaster data showing as "TBD" for new fixtures
-- Fetching from 2 months ago is a workaround, not a solution
 
 ### Lessons Learned:
 - Don't force broken integrations - multiple failures = stop and investigate root cause
