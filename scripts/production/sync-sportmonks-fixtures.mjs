@@ -410,11 +410,15 @@ function shouldIncludeBroadcast(station, competitionId) {
   // station here is the pivot record: { id, fixture_id, tvstation_id, country_id, tvstation: {...} }
   const ENGLAND_COUNTRY_ID = 462;
   const IRELAND_COUNTRY_ID = 455;
+  const UK_COUNTRY_ID = 11;
+  const NOW_TV_COUNTRY_ID = 251;      // NOW TV (UK streaming service)
+  const AMAZON_COUNTRY_ID = 458;       // Amazon Prime Video (UK)
   const PREMIER_LEAGUE_COMPETITION_ID = 1; // Our database competition ID
 
-  // Include England (462) and Ireland (455) - Sky Sports UK is labeled as 455 by SportMonks
+  // Include UK broadcasters: England (462), Ireland (455 - Sky Sports UK), UK general (11),
+  // NOW TV (251), and Amazon Prime Video UK (458)
   // But filter out Irish-specific channels (have "ROI" in name)
-  if (![ENGLAND_COUNTRY_ID, IRELAND_COUNTRY_ID, 11].includes(station.country_id)) {
+  if (![ENGLAND_COUNTRY_ID, IRELAND_COUNTRY_ID, UK_COUNTRY_ID, NOW_TV_COUNTRY_ID, AMAZON_COUNTRY_ID].includes(station.country_id)) {
     return false;
   }
 
@@ -424,16 +428,9 @@ function shouldIncludeBroadcast(station, competitionId) {
     return false;
   }
 
-  // Filter out Amazon Prime for Premier League
-  // Amazon has NO Premier League rights this season (2024-25)
-  // They have some Champions League rights, so only filter for PL
-  if (competitionId === PREMIER_LEAGUE_COMPETITION_ID &&
-      channelName.toLowerCase().includes('amazon')) {
-    if (options.verbose) {
-      console.log(`      ⚠️  Filtering out ${channelName} for PL (no rights this season)`);
-    }
-    return false;
-  }
+  // NOTE: Amazon Prime Video UK filter removed (2025-11-03)
+  // Amazon Prime Video UK (country 458) now correctly included for all competitions
+  // Previous filter incorrectly blocked Amazon for Premier League
 
   return true;
 }

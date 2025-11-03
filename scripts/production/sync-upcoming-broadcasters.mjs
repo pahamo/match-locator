@@ -147,8 +147,9 @@ for (const competitionId of competitionIds) {
       const ukStations = tvStations.filter(ts => {
         if (!ts.tvstation) return false;
 
-        // Include England (462), Ireland (455), and UK (11) country IDs
-        if (![11, 455, 462].includes(ts.country_id)) {
+        // Include UK broadcasters: England (462), Ireland (455 - Sky Sports UK), UK general (11),
+        // NOW TV (251), and Amazon Prime Video UK (458)
+        if (![11, 455, 462, 251, 458].includes(ts.country_id)) {
           return false;
         }
 
