@@ -121,17 +121,19 @@ export function getPopularH2HMatchups(): string[] {
  * Debug: Log statistics about H2H generation
  */
 export function logH2HStats(): void {
-  const totalRoutes = generateAllPremierLeagueH2HRoutes();
-  const popularRoutes = getPopularH2HMatchups();
+  if (process.env.NODE_ENV === 'development') {
+    const totalRoutes = generateAllPremierLeagueH2HRoutes();
+    const popularRoutes = getPopularH2HMatchups();
 
-  console.log('H2H Route Generation Stats:');
-  console.log(`- Premier League teams: ${PREMIER_LEAGUE_TEAMS.length}`);
-  console.log(`- Total H2H combinations: ${getTotalH2HCombinations()}`);
-  console.log(`- Generated routes: ${totalRoutes.length}`);
-  console.log(`- Popular matchups: ${popularRoutes.length}`);
+    console.log('H2H Route Generation Stats:');
+    console.log(`- Premier League teams: ${PREMIER_LEAGUE_TEAMS.length}`);
+    console.log(`- Total H2H combinations: ${getTotalH2HCombinations()}`);
+    console.log(`- Generated routes: ${totalRoutes.length}`);
+    console.log(`- Popular matchups: ${popularRoutes.length}`);
 
-  console.log('\nFirst 10 H2H routes:');
-  totalRoutes.slice(0, 10).forEach((route, i) => {
-    console.log(`${i + 1}. ${route}`);
-  });
+    console.log('\nFirst 10 H2H routes:');
+    totalRoutes.slice(0, 10).forEach((route, i) => {
+      console.log(`${i + 1}. ${route}`);
+    });
+  }
 }

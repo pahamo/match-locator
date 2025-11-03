@@ -28,7 +28,9 @@ const AdminTeamsPage: React.FC = () => {
   const getTeamStats = () => {
     const total = teams.length;
     const eplCount = teams.filter(team => team.competition_id === 1).length;
-    console.log(`[DEBUG] getTeamStats: ${total} total teams, ${eplCount} EPL teams (competition_id === 1)`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[DEBUG] getTeamStats: ${total} total teams, ${eplCount} EPL teams (competition_id === 1)`);
+    }
 
     const withCrests = teams.filter(team => team.crest).length;
     const withShortNames = teams.filter(team => team.short_name).length;
@@ -81,9 +83,13 @@ const AdminTeamsPage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      console.log('[AdminTeamsPage] Starting to load teams...');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[AdminTeamsPage] Starting to load teams...');
+      }
       const teamsData = await getTeams();
-      console.log('[AdminTeamsPage] Teams loaded from service:', teamsData.length, 'teams');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('[AdminTeamsPage] Teams loaded from service:', teamsData.length, 'teams');
+      }
       setTeams(teamsData);
     } catch (err) {
       console.error('[AdminTeamsPage] Failed to load teams:', err);
@@ -95,8 +101,10 @@ const AdminTeamsPage: React.FC = () => {
 
   const filterTeams = () => {
     let filtered = [...teams];
-    console.log(`[DEBUG] filterTeams called - starting with ${teams.length} teams`);
-    console.log(`[DEBUG] Filters: competition="${competitionFilter}", country="${countryFilter}", search="${searchTerm}"`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[DEBUG] filterTeams called - starting with ${teams.length} teams`);
+      console.log(`[DEBUG] Filters: competition="${competitionFilter}", country="${countryFilter}", search="${searchTerm}"`);
+    }
 
     // Text search filter - search by team name and short name if available
     if (searchTerm) {
@@ -109,16 +117,22 @@ const AdminTeamsPage: React.FC = () => {
 
     // Competition filter - now use proper database competition_id
     if (competitionFilter === 'epl') {
-      console.log(`[DEBUG] EPL filter - checking ${filtered.length} teams for competition_id === 1`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`[DEBUG] EPL filter - checking ${filtered.length} teams for competition_id === 1`);
+      }
       const beforeFilter = filtered.length;
       filtered = filtered.filter(team => {
         const matches = team.competition_id === 1;
-        if (!matches && (team.name.includes('Sunderland') || team.name.includes('Leeds') || team.name.includes('Burnley'))) {
-          console.log(`[DEBUG] ${team.name} excluded: competition_id=${team.competition_id} (type: ${typeof team.competition_id})`);
+        if (process.env.NODE_ENV === 'development') {
+          if (!matches && (team.name.includes('Sunderland') || team.name.includes('Leeds') || team.name.includes('Burnley'))) {
+            console.log(`[DEBUG] ${team.name} excluded: competition_id=${team.competition_id} (type: ${typeof team.competition_id})`);
+          }
         }
         return matches;
       });
-      console.log(`[DEBUG] EPL filter result: ${beforeFilter} → ${filtered.length} teams`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`[DEBUG] EPL filter result: ${beforeFilter} → ${filtered.length} teams`);
+      }
     } else if (competitionFilter === 'ucl') {
       const uclTeams = [
         'Manchester City', 'Arsenal', 'Liverpool', 'Aston Villa',
@@ -152,7 +166,9 @@ const AdminTeamsPage: React.FC = () => {
     }
     // Add more country filters as needed
 
-    console.log(`[DEBUG] filterTeams result: ${filtered.length} teams after filtering`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`[DEBUG] filterTeams result: ${filtered.length} teams after filtering`);
+    }
     setFilteredTeams(filtered);
   };
 
@@ -199,7 +215,9 @@ const AdminTeamsPage: React.FC = () => {
     }
 
     try {
-      console.log(`Saving slug for team ${teamId}: ${oldSlug} → ${trimmedNewSlug}`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`Saving slug for team ${teamId}: ${oldSlug} → ${trimmedNewSlug}`);
+      }
 
       const response = await fetch('/.netlify/functions/update-team-slug', {
         method: 'POST',
@@ -219,7 +237,9 @@ const AdminTeamsPage: React.FC = () => {
       }
 
       const result = await response.json();
-      console.log('Slug update result:', result);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Slug update result:', result);
+      }
 
       // Update local state
       setSlugChanges(prev => ({ ...prev, [teamId]: trimmedNewSlug }));
@@ -238,7 +258,9 @@ const AdminTeamsPage: React.FC = () => {
 
       // Show success message
       const successMsg = `✅ Updated: ${currentTeam.name} slug changed from '${oldSlug}' to '${trimmedNewSlug}'`;
-      console.log(successMsg);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(successMsg);
+      }
 
     } catch (error) {
       console.error('Failed to save slug:', error);

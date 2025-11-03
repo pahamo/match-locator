@@ -121,12 +121,14 @@ export function writeSitemapFiles() {
   const sitemapIndex = generateSitemapIndex();
   const stats = generateSitemapStats();
 
-  console.log('H2H Sitemap Generation Stats:');
-  console.log(`- Total H2H pages: ${stats.totalH2HPages}`);
-  console.log(`- Popular matchups: ${stats.popularMatchups}`);
-  console.log(`- High priority pages: ${stats.priorities.popular}`);
-  console.log(`- Standard priority pages: ${stats.priorities.standard}`);
-  console.log(`- Estimated crawl time: ${stats.estimatedCrawlTime}`);
+  if (process.env.NODE_ENV === 'development') {
+    console.log('H2H Sitemap Generation Stats:');
+    console.log(`- Total H2H pages: ${stats.totalH2HPages}`);
+    console.log(`- Popular matchups: ${stats.popularMatchups}`);
+    console.log(`- High priority pages: ${stats.priorities.popular}`);
+    console.log(`- Standard priority pages: ${stats.priorities.standard}`);
+    console.log(`- Estimated crawl time: ${stats.estimatedCrawlTime}`);
+  }
 
   return {
     'sitemap-h2h.xml': h2hSitemap,

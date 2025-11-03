@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { getFixtures, getTeams } from '../services/supabase';
 import { getSimpleCompetitions } from '../services/supabase-simple';
 import type { Fixture, Team, Competition } from '../types';
@@ -59,14 +59,45 @@ const FixturesPage: React.FC = () => {
   const [locationFilter, setLocationFilter] = useState<FilterLocation>('');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [showPastGames, setShowPastGames] = useState(false);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => {
-    loadData();
-  }, []);
-
   const [displayCount, setDisplayCount] = useState(50);
   const [hasMore, setHasMore] = useState(false);
+
+  // Load data on mount - wrapped in useCallback to stabilize reference
+  const loadData = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Load data from all visible competitions (no competitionId filter = multi-competition)
+      const [fixturesData, teamsData, competitionsData] = await Promise.all([
+        getFixtures({
+          limit: 500,
+          order: 'asc'
+          // No competitionId parameter = loads from all production-visible competitions
+        }),
+        getTeams(),
+        getSimpleCompetitions(false) // Only production-visible competitions
+      ]);
+
+      setFixtures(fixturesData);
+      setTeams(teamsData);
+      setCompetitions(competitionsData);
+      setHasMore(fixturesData.length > 50);
+
+      // Update SEO meta tags for fixtures page
+      const meta = generateFixturesMeta();
+      updateDocumentMeta(meta);
+    } catch (err) {
+      console.error('Failed to load data:', err);
+      setError('Failed to load fixtures. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  }, []); // Empty deps - only references setters which are stable
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   useEffect(() => {
     let filtered = [...fixtures];
@@ -111,40 +142,6 @@ const FixturesPage: React.FC = () => {
     setDisplayCount(50);
     setHasMore(filtered.length > 50);
   }, [fixtures, teamFilter, matchweekFilter, competitionFilter, locationFilter, showPastGames, competitions]);
-
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      // Load data from all visible competitions (no competitionId filter = multi-competition)
-      const [fixturesData, teamsData, competitionsData] = await Promise.all([
-        getFixtures({
-          limit: 500,
-          order: 'asc'
-          // No competitionId parameter = loads from all production-visible competitions
-        }),
-        getTeams(),
-        getSimpleCompetitions(false) // Only production-visible competitions
-      ]);
-
-      setFixtures(fixturesData);
-      setTeams(teamsData);
-      setCompetitions(competitionsData);
-      setHasMore(fixturesData.length > 50);
-
-      // Update SEO meta tags for fixtures page
-      const meta = generateFixturesMeta();
-      updateDocumentMeta(meta);
-    } catch (err) {
-      console.error('Failed to load data:', err);
-      setError('Failed to load fixtures. Please try again later.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  
 
   const getMatchweekOptions = () => {
     const weeks = new Set<number>();
