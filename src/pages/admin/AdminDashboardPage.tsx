@@ -25,6 +25,11 @@ interface DashboardStats {
     total: number;
     visible: number;
   };
+  sync: {
+    lastSyncTime: string | null;
+    fixturesWithData: number;
+    dataQualityScore: number;
+  };
 }
 
 const AdminDashboardPage: React.FC = () => {
@@ -58,7 +63,7 @@ const AdminDashboardPage: React.FC = () => {
       // Load all data in parallel
       const [teams, fixtures, competitions] = await Promise.all([
         getTeams(),
-        getSimpleFixtures(1), // Get Premier League fixtures for now
+        getSimpleFixtures(), // Get ALL fixtures across all competitions
         getSimpleCompetitions(true) // Include hidden competitions
       ]);
 
@@ -104,10 +109,23 @@ const AdminDashboardPage: React.FC = () => {
         visible: competitions.filter(c => c.is_production_visible).length
       };
 
+      // Calculate sync stats
+      // Data quality = average of (teams with crests, fixtures with broadcasters)
+      const crestCoverage = (teamStats.withCrests / teamStats.total) * 100;
+      const broadcasterCoverage = (fixtureStats.withBroadcaster / fixtureStats.total) * 100;
+      const dataQualityScore = Math.round((crestCoverage + broadcasterCoverage) / 2);
+
+      const syncStats = {
+        lastSyncTime: fixtures.length > 0 ? new Date().toISOString() : null,
+        fixturesWithData: fixtureStats.withBroadcaster + fixtureStats.blackouts,
+        dataQualityScore
+      };
+
       setStats({
         teams: teamStats,
         fixtures: fixtureStats,
-        competitions: competitionStats
+        competitions: competitionStats,
+        sync: syncStats
       });
     } catch (err) {
       console.error('Failed to load dashboard data:', err);
@@ -178,8 +196,8 @@ const AdminDashboardPage: React.FC = () => {
                 {stats.teams.total}
               </div>
               <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>Total teams</div>
-              <div style={{ fontSize: '12px', color: stats.teams.eplCount === 20 ? '#16a34a' : '#dc2626' }}>
-                {stats.teams.eplCount}/20 EPL teams
+              <div style={{ fontSize: '12px', color: stats.teams.withCrests > (stats.teams.total * 0.9) ? '#16a34a' : '#f59e0b' }}>
+                {stats.teams.withCrests} with crests
               </div>
             </div>
 
@@ -203,7 +221,7 @@ const AdminDashboardPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Broadcaster Coverage */}
+            {/* Sync Status */}
             <div style={{
               background: 'white',
               border: '1px solid #e2e8f0',
@@ -211,15 +229,15 @@ const AdminDashboardPage: React.FC = () => {
               padding: '20px'
             }}>
               <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
-                <span style={{ fontSize: '24px', marginRight: '8px' }}>📺</span>
-                <h3 style={{ fontSize: '16px', fontWeight: '600', margin: '0' }}>Broadcasters</h3>
+                <span style={{ fontSize: '24px', marginRight: '8px' }}>🔄</span>
+                <h3 style={{ fontSize: '16px', fontWeight: '600', margin: '0' }}>Data Quality</h3>
               </div>
               <div style={{ fontSize: '28px', fontWeight: '700', color: '#1f2937', marginBottom: '4px' }}>
-                {Math.round((stats.fixtures.withBroadcaster / stats.fixtures.total) * 100)}%
+                {stats.sync.dataQualityScore}%
               </div>
-              <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>Coverage</div>
-              <div style={{ fontSize: '12px', color: '#6b7280' }}>
-                {stats.fixtures.blackouts} blackouts
+              <div style={{ fontSize: '14px', color: '#6b7280', marginBottom: '8px' }}>Overall Score</div>
+              <div style={{ fontSize: '12px', color: stats.sync.dataQualityScore >= 80 ? '#16a34a' : '#f59e0b' }}>
+                {stats.sync.dataQualityScore >= 80 ? '✓ Healthy' : '⚠️ Needs Attention'}
               </div>
             </div>
 
@@ -287,7 +305,7 @@ const AdminDashboardPage: React.FC = () => {
                 <h3 style={{ fontSize: '16px', fontWeight: '600', margin: '0' }}>Manage Teams</h3>
               </div>
               <p style={{ fontSize: '14px', color: '#6b7280', margin: '0' }}>
-                View and manage all teams. Currently {stats.teams.eplCount < 20 ? 'missing' : 'have all'} EPL teams.
+                View and manage all teams across {stats.competitions.total} competitions.
               </p>
             </Link>
 
@@ -443,7 +461,7 @@ const AdminDashboardPage: React.FC = () => {
           </div>
         </div>
 
-        {/* System Health */}
+        {/* Data Quality Details */}
         <div>
           <h2 style={{
             fontSize: '18px',
@@ -451,7 +469,7 @@ const AdminDashboardPage: React.FC = () => {
             color: '#1f2937',
             marginBottom: '16px'
           }}>
-            System Health
+            Data Quality Breakdown
           </h2>
 
           <div style={{
@@ -460,35 +478,51 @@ const AdminDashboardPage: React.FC = () => {
             borderRadius: '8px',
             padding: '20px'
           }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span>EPL Teams Coverage</span>
-                <span style={{
-                  color: stats.teams.eplCount === 20 ? '#16a34a' : '#dc2626',
-                  fontWeight: '600'
-                }}>
-                  {stats.teams.eplCount === 20 ? '✓ Complete' : `⚠️ ${20 - stats.teams.eplCount} missing`}
-                </span>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {/* Team Data */}
+              <div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <span style={{ fontWeight: '600' }}>Team Data</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingLeft: '16px' }}>
+                  <span style={{ fontSize: '14px', color: '#6b7280' }}>Total Teams</span>
+                  <span style={{ fontWeight: '600' }}>{stats.teams.total}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingLeft: '16px' }}>
+                  <span style={{ fontSize: '14px', color: '#6b7280' }}>Teams with Crests</span>
+                  <span style={{
+                    color: stats.teams.withCrests > (stats.teams.total * 0.9) ? '#16a34a' : '#f59e0b',
+                    fontWeight: '600'
+                  }}>
+                    {Math.round((stats.teams.withCrests / stats.teams.total) * 100)}%
+                  </span>
+                </div>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span>Broadcaster Coverage</span>
-                <span style={{
-                  color: stats.fixtures.withBroadcaster > (stats.fixtures.total * 0.8) ? '#16a34a' : '#f59e0b',
-                  fontWeight: '600'
-                }}>
-                  {Math.round((stats.fixtures.withBroadcaster / stats.fixtures.total) * 100)}%
-                </span>
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span>Team Crests</span>
-                <span style={{
-                  color: stats.teams.withCrests > (stats.teams.total * 0.9) ? '#16a34a' : '#f59e0b',
-                  fontWeight: '600'
-                }}>
-                  {Math.round((stats.teams.withCrests / stats.teams.total) * 100)}%
-                </span>
+              {/* Fixture Data */}
+              <div style={{ borderTop: '1px solid #e2e8f0', paddingTop: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <span style={{ fontWeight: '600' }}>Fixture Data</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingLeft: '16px' }}>
+                  <span style={{ fontSize: '14px', color: '#6b7280' }}>Broadcaster Coverage</span>
+                  <span style={{
+                    color: stats.fixtures.withBroadcaster > (stats.fixtures.total * 0.7) ? '#16a34a' : '#f59e0b',
+                    fontWeight: '600'
+                  }}>
+                    {Math.round((stats.fixtures.withBroadcaster / stats.fixtures.total) * 100)}%
+                  </span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingLeft: '16px' }}>
+                  <span style={{ fontSize: '14px', color: '#6b7280' }}>3pm Blackouts</span>
+                  <span style={{ fontWeight: '600', color: '#6b7280' }}>{stats.fixtures.blackouts}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingLeft: '16px' }}>
+                  <span style={{ fontSize: '14px', color: '#6b7280' }}>Fixtures with Data</span>
+                  <span style={{ fontWeight: '600', color: '#6b7280' }}>
+                    {stats.sync.fixturesWithData} / {stats.fixtures.total}
+                  </span>
+                </div>
               </div>
             </div>
           </div>

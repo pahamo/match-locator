@@ -15,6 +15,7 @@ interface FixtureDebugRow {
   away_score: number | null;
   broadcaster: string | null;
   broadcaster_id: number | null;
+  is_blackout: boolean;
 }
 
 interface BroadcastRecord {
@@ -45,7 +46,7 @@ const AdminPage: React.FC = () => {
       // Build query
       let query = supabase
         .from('fixtures_with_teams')
-        .select('id, utc_kickoff, home_team, away_team, competition_id, round, status, home_score, away_score, broadcaster, broadcaster_id')
+        .select('id, utc_kickoff, home_team, away_team, competition_id, round, status, home_score, away_score, broadcaster, broadcaster_id, is_blackout')
         .order('utc_kickoff', { ascending: true });
 
       if (competitionFilter) {
@@ -288,6 +289,17 @@ const AdminPage: React.FC = () => {
                             fontWeight: 'bold'
                           }}>
                             {fixture.broadcaster}
+                          </span>
+                        ) : fixture.is_blackout ? (
+                          <span style={{
+                            background: '#ef4444',
+                            color: 'white',
+                            padding: '4px 8px',
+                            borderRadius: '4px',
+                            fontSize: '12px',
+                            fontWeight: 'bold'
+                          }}>
+                            🚫 3pm Blackout
                           </span>
                         ) : (
                           <span style={{
