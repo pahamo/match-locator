@@ -1,6 +1,9 @@
 // Find Sportmonks team IDs for Premier League teams
+import dotenv from 'dotenv';
 
-const SPORTMONKS_TOKEN = 'lNX5lqJtQo2FSsKfM4PvDzhgkS4AkGLkjRtYZWjNmSZvdGHJxxtD0HyHoazs';
+dotenv.config();
+
+const SPORTMONKS_TOKEN = process.env.SPORTMONKS_TOKEN;
 
 const teamsToFind = [
   'Bournemouth',
