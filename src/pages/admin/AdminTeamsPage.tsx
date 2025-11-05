@@ -27,9 +27,12 @@ const AdminTeamsPage: React.FC = () => {
   // Helper function - must be defined before useMemo
   const getTeamStats = () => {
     const total = teams.length;
-    const eplCount = teams.filter(team => team.competition_id === 1).length;
+
+    // Count unique competitions (not EPL-specific)
+    const uniqueCompetitions = new Set(teams.map(team => team.competition_id)).size;
+
     if (process.env.NODE_ENV === 'development') {
-      console.log(`[DEBUG] getTeamStats: ${total} total teams, ${eplCount} EPL teams (competition_id === 1)`);
+      console.log(`[DEBUG] getTeamStats: ${total} total teams across ${uniqueCompetitions} competitions`);
     }
 
     const withCrests = teams.filter(team => team.crest).length;
@@ -44,7 +47,7 @@ const AdminTeamsPage: React.FC = () => {
 
     return {
       total,
-      eplCount,
+      uniqueCompetitions,
       withCrests,
       withShortNames,
       withColors,
@@ -323,8 +326,8 @@ const AdminTeamsPage: React.FC = () => {
             borderRadius: '8px',
             padding: '16px'
           }}>
-            <div style={{ fontSize: '24px', fontWeight: '700', color: stats.eplCount === 20 ? '#16a34a' : '#dc2626' }}>{stats.eplCount}/20</div>
-            <div style={{ fontSize: '14px', color: '#6b7280' }}>EPL Teams</div>
+            <div style={{ fontSize: '24px', fontWeight: '700', color: '#1f2937' }}>{stats.uniqueCompetitions}</div>
+            <div style={{ fontSize: '14px', color: '#6b7280' }}>Competitions</div>
           </div>
 
           <div style={{
