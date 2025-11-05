@@ -26,10 +26,10 @@ export async function getSimpleFixtures(competitionId?: number): Promise<SimpleF
 
     let query = supabase
       .from('fixtures_with_teams')
-      .select('id, utc_kickoff, home_team_id, away_team_id, home_team, away_team, home_slug:home_team_slug, away_slug:away_team_slug, home_crest, away_crest, competition_id, stage, round, status, home_score, away_score, broadcaster, broadcaster_id')
+      .select('id, utc_kickoff, home_team_id, away_team_id, home_team, away_team, home_slug:home_team_slug, away_slug:away_team_slug, home_crest, away_crest, competition_id, stage, round, status, home_score, away_score, broadcaster, broadcaster_id, is_blackout')
       .gte('utc_kickoff', seasonStartIso)
       .order('utc_kickoff', { ascending: true })
-      .limit(5000); // Admin dashboard needs all fixtures (default Supabase limit is 1000)
+      .range(0, 4999); // Fetch up to 5000 fixtures (rows 0-4999)
 
     // Only filter by competition if competitionId is provided
     if (competitionId !== undefined) {
