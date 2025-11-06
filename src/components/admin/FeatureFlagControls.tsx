@@ -308,15 +308,17 @@ const FeatureFlagControls: React.FC<FeatureFlagControlsProps> = ({ className = '
           </div>
         )}
 
-        {Object.entries(flags.sportMonksFeatures).map(([key, value]) => (
-          <ToggleSwitch
-            key={key}
-            label={key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
-            checked={value}
-            onChange={() => toggleFeature('sportMonksFeatures', key, value)}
-            disabled={!flags.dataSources.useSportMonks}
-          />
-        ))}
+        {Object.entries(flags.sportMonksFeatures)
+          .filter(([key, value]) => typeof value === 'boolean') // Only show boolean flags
+          .map(([key, value]) => (
+            <ToggleSwitch
+              key={key}
+              label={key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+              checked={value as boolean}
+              onChange={() => toggleFeature('sportMonksFeatures', key, value as boolean)}
+              disabled={!flags.dataSources.useSportMonks}
+            />
+          ))}
       </div>
 
       {/* SoccersAPI Features - DEPRECATED */}
