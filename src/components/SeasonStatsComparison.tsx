@@ -2,6 +2,12 @@ import React, { useState, useEffect } from 'react';
 import type { Team, Fixture } from '../types';
 import { calculateCleanSheets } from '../utils/cleanSheets';
 
+interface FormMatch {
+  result: 'W' | 'D' | 'L';
+  opponentName: string;
+  opponentCrest: string | null;
+}
+
 interface TeamSeasonStats {
   teamName: string;
   position: number | null;
@@ -18,7 +24,7 @@ interface TeamSeasonStats {
   goalsConcededPerMatch: number;
   cleanSheets: number;
   cleanSheetPercentage: number;
-  form: string[]; // ['W', 'W', 'D', 'L', 'W']
+  form: FormMatch[]; // Array of matches with opponent info
 }
 
 interface SeasonStatsComparisonProps {
@@ -78,7 +84,7 @@ const SeasonStatsComparison: React.FC<SeasonStatsComparisonProps> = ({
     let lost = 0;
     let goalsFor = 0;
     let goalsAgainst = 0;
-    const form: string[] = [];
+    const form: FormMatch[] = [];
 
     // Process each completed fixture
     fixtures.forEach(fixture => {
@@ -93,20 +99,29 @@ const SeasonStatsComparison: React.FC<SeasonStatsComparisonProps> = ({
 
       const teamScore = isHome ? fixture.score.home : fixture.score.away;
       const opponentScore = isHome ? fixture.score.away : fixture.score.home;
+      const opponent = isHome ? fixture.away : fixture.home;
 
       goalsFor += teamScore!;
       goalsAgainst += opponentScore!;
 
+      let result: 'W' | 'D' | 'L';
       if (teamScore! > opponentScore!) {
         won++;
-        form.unshift('W'); // Add to front (most recent first)
+        result = 'W';
       } else if (teamScore === opponentScore) {
         drawn++;
-        form.unshift('D');
+        result = 'D';
       } else {
         lost++;
-        form.unshift('L');
+        result = 'L';
       }
+
+      // Add to front (most recent first) with opponent info
+      form.unshift({
+        result,
+        opponentName: opponent.name,
+        opponentCrest: opponent.crest
+      });
     });
 
     // Calculate clean sheets
@@ -342,25 +357,60 @@ const SeasonStatsComparison: React.FC<SeasonStatsComparisonProps> = ({
             <div style={{
               display: 'flex',
               justifyContent: 'center',
-              gap: '4px'
+              gap: '8px'
             }}>
-              {team1Stats.form.length > 0 ? team1Stats.form.map((result, index) => (
+              {team1Stats.form.length > 0 ? team1Stats.form.map((match, index) => (
                 <div
                   key={index}
                   style={{
-                    width: '28px',
-                    height: '28px',
-                    borderRadius: '50%',
-                    backgroundColor: getFormColor(result),
-                    color: 'white',
                     display: 'flex',
+                    flexDirection: 'column',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '0.75rem',
-                    fontWeight: '700'
+                    gap: '4px'
                   }}
                 >
-                  {result}
+                  {/* Opponent Badge */}
+                  {match.opponentCrest ? (
+                    <img
+                      src={match.opponentCrest}
+                      alt={match.opponentName}
+                      title={match.opponentName}
+                      style={{
+                        width: '24px',
+                        height: '24px',
+                        objectFit: 'contain'
+                      }}
+                    />
+                  ) : (
+                    <div style={{
+                      width: '24px',
+                      height: '24px',
+                      fontSize: '0.625rem',
+                      color: '#94a3b8',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      {match.opponentName.substring(0, 3).toUpperCase()}
+                    </div>
+                  )}
+                  {/* Result Circle */}
+                  <div
+                    style={{
+                      width: '28px',
+                      height: '28px',
+                      borderRadius: '50%',
+                      backgroundColor: getFormColor(match.result),
+                      color: 'white',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '0.75rem',
+                      fontWeight: '700'
+                    }}
+                  >
+                    {match.result}
+                  </div>
                 </div>
               )) : (
                 <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>No matches</div>
@@ -377,25 +427,60 @@ const SeasonStatsComparison: React.FC<SeasonStatsComparisonProps> = ({
             <div style={{
               display: 'flex',
               justifyContent: 'center',
-              gap: '4px'
+              gap: '8px'
             }}>
-              {team2Stats.form.length > 0 ? team2Stats.form.map((result, index) => (
+              {team2Stats.form.length > 0 ? team2Stats.form.map((match, index) => (
                 <div
                   key={index}
                   style={{
-                    width: '28px',
-                    height: '28px',
-                    borderRadius: '50%',
-                    backgroundColor: getFormColor(result),
-                    color: 'white',
                     display: 'flex',
+                    flexDirection: 'column',
                     alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '0.75rem',
-                    fontWeight: '700'
+                    gap: '4px'
                   }}
                 >
-                  {result}
+                  {/* Opponent Badge */}
+                  {match.opponentCrest ? (
+                    <img
+                      src={match.opponentCrest}
+                      alt={match.opponentName}
+                      title={match.opponentName}
+                      style={{
+                        width: '24px',
+                        height: '24px',
+                        objectFit: 'contain'
+                      }}
+                    />
+                  ) : (
+                    <div style={{
+                      width: '24px',
+                      height: '24px',
+                      fontSize: '0.625rem',
+                      color: '#94a3b8',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}>
+                      {match.opponentName.substring(0, 3).toUpperCase()}
+                    </div>
+                  )}
+                  {/* Result Circle */}
+                  <div
+                    style={{
+                      width: '28px',
+                      height: '28px',
+                      borderRadius: '50%',
+                      backgroundColor: getFormColor(match.result),
+                      color: 'white',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '0.75rem',
+                      fontWeight: '700'
+                    }}
+                  >
+                    {match.result}
+                  </div>
                 </div>
               )) : (
                 <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>No matches</div>

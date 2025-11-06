@@ -5,7 +5,6 @@ import Breadcrumbs from '../components/Breadcrumbs';
 import StructuredData from '../components/StructuredData';
 import H2HStatsCard from '../components/H2HStatsCard';
 import SeasonStatsComparison from '../components/SeasonStatsComparison';
-import RecentFormWidget from '../components/RecentFormWidget';
 import NextFixtureHero from '../components/NextFixtureHero';
 import { FixtureCard } from '../design-system';
 import { getHeadToHeadFixtures, getLiveOrNextHeadToHeadFixture, getFixtures, supabase } from '../services/supabase';
@@ -488,17 +487,6 @@ const HeadToHeadPage: React.FC = () => {
               team2={team2}
               team1Fixtures={team1Fixtures}
               team2Fixtures={team2Fixtures}
-            />
-          )}
-
-          {/* Recent Form Widget */}
-          {team1Fixtures.length > 0 && team2Fixtures.length > 0 && (
-            <RecentFormWidget
-              team1={team1}
-              team2={team2}
-              team1Fixtures={team1Fixtures}
-              team2Fixtures={team2Fixtures}
-              matchesCount={5}
             />
           )}
 
