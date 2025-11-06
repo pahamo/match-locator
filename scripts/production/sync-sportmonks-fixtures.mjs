@@ -478,6 +478,8 @@ async function syncFixtureTVStations(fixtureDbId, competitionId, tvStations, fla
         country_code: 'EN',  // England (ISO2 code)
         broadcaster_type: station.tvstation.type,
         sportmonks_tv_station_id: station.tvstation_id,  // API's unique ID
+        image_path: station.tvstation.image_path || null,  // Broadcaster logo URL
+        url: station.tvstation.url || null,  // Broadcaster website URL
         data_source: 'sportmonks',
         last_synced_at: new Date().toISOString()
       };

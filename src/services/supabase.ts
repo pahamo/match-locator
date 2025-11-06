@@ -36,6 +36,8 @@ interface FixtureRow {
   away_score?: number | null;
   broadcaster?: string | null; // Broadcaster name from view
   broadcaster_id?: number | null; // Broadcaster provider ID from view
+  broadcaster_image_path?: string | null; // Broadcaster logo URL from view
+  broadcaster_url?: string | null; // Broadcaster website URL from view
 }
 
 interface BroadcastRow {
@@ -87,6 +89,8 @@ function mapFixtureRow(row: FixtureRow, providersByFixture: Record<number, Provi
     status: row.status || 'scheduled',
     broadcaster: row.broadcaster ?? undefined, // From database view
     broadcaster_id: row.broadcaster_id ?? undefined, // From database view
+    broadcaster_image_path: row.broadcaster_image_path ?? undefined, // Broadcaster logo URL
+    broadcaster_url: row.broadcaster_url ?? undefined, // Broadcaster website URL
     stage: row.stage ?? undefined, // Pass through jsonb object from API
     round: row.round ?? undefined, // Pass through jsonb object from API
     score,
@@ -161,7 +165,7 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
         id,utc_kickoff,venue,status,competition_id,stage,round,
         home_team_id,home_team,home_team_slug,home_crest,home_score,
         away_team_id,away_team,away_team_slug,away_crest,away_score,
-        broadcaster,broadcaster_id
+        broadcaster,broadcaster_id,broadcaster_image_path,broadcaster_url
       `)
       .order('utc_kickoff', { ascending: order === 'asc' })
       .limit(limit);
@@ -244,7 +248,7 @@ export async function getFixtureById(id: number): Promise<Fixture | undefined> {
         id,utc_kickoff,venue,status,competition_id,stage,round,
         home_team_id,home_team,home_team_slug,home_crest,home_score,
         away_team_id,away_team,away_team_slug,away_crest,away_score,
-        broadcaster,broadcaster_id
+        broadcaster,broadcaster_id,broadcaster_image_path,broadcaster_url
       `)
       .eq('id', id)
       .limit(1);
@@ -297,7 +301,7 @@ export async function getFixtureByTeamsAndDate(homeTeam: string, awayTeam: strin
         id,utc_kickoff,venue,status,competition_id,stage,round,
         home_team_id,home_team,home_team_slug,home_crest,home_score,
         away_team_id,away_team,away_team_slug,away_crest,away_score,
-        broadcaster,broadcaster_id
+        broadcaster,broadcaster_id,broadcaster_image_path,broadcaster_url
       `)
       .gte('utc_kickoff', `${searchDate}T00:00:00.000Z`)
       .lt('utc_kickoff', `${searchDate}T23:59:59.999Z`)
@@ -378,7 +382,7 @@ export async function getAdminFixtures(competitionId: number = 1): Promise<Admin
         id,utc_kickoff,venue,status,competition_id,stage,round,
         home_team_id,home_team,home_team_slug,home_crest,home_score,
         away_team_id,away_team,away_team_slug,away_crest,away_score,
-        broadcaster,broadcaster_id
+        broadcaster,broadcaster_id,broadcaster_image_path,broadcaster_url
       `)
       .eq('competition_id', competitionId)
       .gte('utc_kickoff', currentSeasonStart)
@@ -577,7 +581,7 @@ export async function getFixturesForDay(date: string, competitionIds?: number[])
         id,utc_kickoff,venue,status,competition_id,stage,round,
         home_team_id,home_team,home_team_slug,home_crest,home_score,
         away_team_id,away_team,away_team_slug,away_crest,away_score,
-        broadcaster,broadcaster_id
+        broadcaster,broadcaster_id,broadcaster_image_path,broadcaster_url
       `)
       .gte('utc_kickoff', startOfDay.toISOString())
       .lte('utc_kickoff', endOfDay.toISOString())

@@ -82,6 +82,8 @@ export interface Fixture {
   score?: FixtureScore;
   broadcaster?: string; // Broadcaster name from database view
   broadcaster_id?: number; // Broadcaster provider ID from database view
+  broadcaster_image_path?: string; // Broadcaster logo URL from SportMonks
+  broadcaster_url?: string; // Broadcaster website URL from SportMonks
   // API objects stored as-is (not transformed)
   round?: RoundData; // Round object from API (use getMatchweek() helper to extract number)
   stage?: StageData; // Stage object from API
@@ -100,6 +102,8 @@ export interface SimpleFixture {
   away_crest?: string;
   broadcaster?: string;
   providerId?: number;
+  broadcaster_image_path?: string; // Broadcaster logo URL from SportMonks
+  broadcaster_url?: string; // Broadcaster website URL from SportMonks
   isBlackout?: boolean;
   competition_id?: number;
   stage?: StageData | string;  // Can be object or string (backwards compatibility)
