@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import Header from '../components/Header';
 import Breadcrumbs from '../components/Breadcrumbs';
 import StructuredData from '../components/StructuredData';
-import H2HStatsCard from '../components/H2HStatsCard';
 import SeasonStatsComparison from '../components/SeasonStatsComparison';
 import NextFixtureHero from '../components/NextFixtureHero';
 import { FixtureCard } from '../design-system';
@@ -490,17 +489,8 @@ const HeadToHeadPage: React.FC = () => {
             />
           )}
 
-          {/* H2H Statistics */}
+          {/* All H2H Matches */}
           {fixtures.length > 0 && (
-            <H2HStatsCard
-              team1Name={team1.name}
-              team2Name={team2.name}
-              stats={h2hStats}
-            />
-          )}
-
-          {/* Upcoming Matches */}
-          {upcomingFixtures.length > 0 && (
             <div style={{ marginBottom: '32px' }}>
               <h2 style={{
                 fontSize: '1.5rem',
@@ -510,47 +500,21 @@ const HeadToHeadPage: React.FC = () => {
                 paddingBottom: '8px',
                 borderBottom: '2px solid #e2e8f0'
               }}>
-                Upcoming Matches ({upcomingFixtures.length})
+                Head-to-Head Matches ({fixtures.length})
               </h2>
 
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {upcomingFixtures.map(fixture => (
-                  <FixtureCard
-                    key={fixture.id}
-                    fixture={fixture}
-                    variant="compact"
-                    showMatchweek={true}
-                    showViewButton={true}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Completed Fixtures */}
-          {completedFixtures.length > 0 && (
-            <div style={{ marginBottom: '32px' }}>
-              <h2 style={{
-                fontSize: '1.5rem',
-                fontWeight: '700',
-                color: '#1e293b',
-                marginBottom: '16px',
-                paddingBottom: '8px',
-                borderBottom: '2px solid #e2e8f0'
-              }}>
-                Recent Results ({completedFixtures.length})
-              </h2>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {completedFixtures.map(fixture => (
-                  <FixtureCard
-                    key={fixture.id}
-                    fixture={fixture}
-                    variant="compact"
-                    showMatchweek={true}
-                    showViewButton={true}
-                  />
-                ))}
+                {fixtures
+                  .sort((a, b) => new Date(a.kickoff_utc).getTime() - new Date(b.kickoff_utc).getTime())
+                  .map(fixture => (
+                    <FixtureCard
+                      key={fixture.id}
+                      fixture={fixture}
+                      variant="withTime"
+                      showMatchweek={false}
+                      showViewButton={false}
+                    />
+                  ))}
               </div>
             </div>
           )}
