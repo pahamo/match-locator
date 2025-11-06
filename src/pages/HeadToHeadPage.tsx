@@ -4,9 +4,11 @@ import Header from '../components/Header';
 import Breadcrumbs from '../components/Breadcrumbs';
 import StructuredData from '../components/StructuredData';
 import H2HStatsCard from '../components/H2HStatsCard';
+import SeasonStatsComparison from '../components/SeasonStatsComparison';
+import RecentFormWidget from '../components/RecentFormWidget';
 import NextFixtureHero from '../components/NextFixtureHero';
 import { FixtureCard } from '../design-system';
-import { getHeadToHeadFixtures, getLiveOrNextHeadToHeadFixture, supabase } from '../services/supabase';
+import { getHeadToHeadFixtures, getLiveOrNextHeadToHeadFixture, getFixtures, supabase } from '../services/supabase';
 import { updateDocumentMeta, formatTeamNameShort } from '../utils/seo';
 import { generateBreadcrumbs } from '../utils/breadcrumbs';
 import { generateH2HMeta, calculateH2HStats } from '../utils/headToHead';
@@ -25,6 +27,8 @@ const HeadToHeadPage: React.FC = () => {
   const [nextFixture, setNextFixture] = useState<Fixture | null>(null);
   const [team1, setTeam1] = useState<Team | null>(null);
   const [team2, setTeam2] = useState<Team | null>(null);
+  const [team1Fixtures, setTeam1Fixtures] = useState<Fixture[]>([]);
+  const [team2Fixtures, setTeam2Fixtures] = useState<Fixture[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [shouldRedirect, setShouldRedirect] = useState<string | null>(null);
@@ -111,6 +115,50 @@ const HeadToHeadPage: React.FC = () => {
       setTeam1(team1Data);
       setTeam2(team2Data);
       setFixtures(fixturesData);
+
+      // Fetch full team data from teams table to get slugs
+      if (team1Data && team2Data) {
+        console.log('[H2H] Fetching full team data for:', team1Data.id, team2Data.id);
+
+        const { data: fullTeam1 } = await supabase
+          .from('teams')
+          .select('*')
+          .eq('id', team1Data.id)
+          .single();
+
+        const { data: fullTeam2 } = await supabase
+          .from('teams')
+          .select('*')
+          .eq('id', team2Data.id)
+          .single();
+
+        console.log('[H2H] Full team data:', {
+          team1: fullTeam1?.name,
+          team1Slug: fullTeam1?.slug,
+          team2: fullTeam2?.name,
+          team2Slug: fullTeam2?.slug
+        });
+
+        // Fetch individual team fixtures for season stats and recent form
+        if (fullTeam1?.slug && fullTeam2?.slug) {
+          console.log('[H2H] Fetching fixtures for slugs:', fullTeam1.slug, fullTeam2.slug);
+
+          const [team1AllFixtures, team2AllFixtures] = await Promise.all([
+            getFixtures({ teamSlug: fullTeam1.slug, limit: 50 }),
+            getFixtures({ teamSlug: fullTeam2.slug, limit: 50 })
+          ]);
+
+          console.log('[H2H] Fixtures fetched:', {
+            team1Count: team1AllFixtures.length,
+            team2Count: team2AllFixtures.length
+          });
+
+          setTeam1Fixtures(team1AllFixtures);
+          setTeam2Fixtures(team2AllFixtures);
+        } else {
+          console.error('[H2H] Missing slugs!', { fullTeam1, fullTeam2 });
+        }
+      }
 
       // If no upcoming fixture, show the most recent completed match
       if (!nextFixtureData && fixturesData.length > 0) {
@@ -427,6 +475,27 @@ const HeadToHeadPage: React.FC = () => {
                 {generateMatchPreview(team1.name, team2.name, nextFixture || undefined)}
               </div>
             </div>
+          )}
+
+          {/* Season Stats Comparison */}
+          {team1Fixtures.length > 0 && team2Fixtures.length > 0 && (
+            <SeasonStatsComparison
+              team1={team1}
+              team2={team2}
+              team1Fixtures={team1Fixtures}
+              team2Fixtures={team2Fixtures}
+            />
+          )}
+
+          {/* Recent Form Widget */}
+          {team1Fixtures.length > 0 && team2Fixtures.length > 0 && (
+            <RecentFormWidget
+              team1={team1}
+              team2={team2}
+              team1Fixtures={team1Fixtures}
+              team2Fixtures={team2Fixtures}
+              matchesCount={5}
+            />
           )}
 
           {/* H2H Statistics */}

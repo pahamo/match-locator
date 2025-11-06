@@ -219,12 +219,26 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
     
     let mapped = rows.map(r => mapFixtureRow(r, providersByFixture));
 
-    // Apply team filter if specified - consolidated slug field
+    // Apply team filter if specified
+    // NOTE: fixtures_with_teams view doesn't have team slugs, so we need to
+    // look up the team ID from the slug and filter by ID
     if (teamSlug) {
-      mapped = mapped.filter(fx =>
-        fx.home.slug === teamSlug ||
-        fx.away.slug === teamSlug
-      );
+      // First, get the team ID from the slug
+      const { data: team } = await supabase
+        .from('teams')
+        .select('id')
+        .eq('slug', teamSlug)
+        .single();
+
+      if (team) {
+        mapped = mapped.filter(fx =>
+          fx.home.id === team.id ||
+          fx.away.id === team.id
+        );
+      } else {
+        // Fallback to empty array if team not found
+        mapped = [];
+      }
     }
     
     // Apply filtering logic to exclude test fixtures (IDs <= 30)
