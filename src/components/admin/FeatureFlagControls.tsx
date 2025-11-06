@@ -169,10 +169,14 @@ const FeatureFlagControls: React.FC<FeatureFlagControlsProps> = ({ className = '
           </span>
           <span style={{
             fontSize: '14px',
-            color: getCurrentAPISource() === 'soccersapi' ? 'var(--color-success)' : 'var(--color-warning)',
+            color: getCurrentAPISource() === 'sportmonks' ? 'var(--color-success)' :
+                   getCurrentAPISource() === 'soccersapi' ? 'var(--color-warning)' :
+                   'var(--color-error)',
             fontWeight: '600'
           }}>
-            {getCurrentAPISource() === 'soccersapi' ? '🆕 SoccersAPI' : '📊 Football-Data.org'}
+            {getCurrentAPISource() === 'sportmonks' ? '⚽ SportMonks (Production)' :
+             getCurrentAPISource() === 'soccersapi' ? '🔶 SoccersAPI (Deprecated)' :
+             '📊 Football-Data.org (Legacy)'}
           </span>
         </div>
         {isTestMode() && (
@@ -203,7 +207,7 @@ const FeatureFlagControls: React.FC<FeatureFlagControlsProps> = ({ className = '
         </div>
       )}
 
-      {/* Master API Controls */}
+      {/* SportMonks API Controls */}
       <div style={{ marginBottom: '32px' }}>
         <h3 style={{
           fontSize: '16px',
@@ -213,43 +217,84 @@ const FeatureFlagControls: React.FC<FeatureFlagControlsProps> = ({ className = '
           alignItems: 'center',
           gap: '8px'
         }}>
-          🎛️ API Source Control
+          ⚽ SportMonks API (Production)
         </h3>
+
+        <ToggleSwitch
+          label="Use SportMonks API (Master Switch)"
+          checked={flags.dataSources.useSportMonks}
+          onChange={() => toggleFeature('dataSources', 'useSportMonks', flags.dataSources.useSportMonks)}
+        />
+
+        <ToggleSwitch
+          label="Test Mode (Log only, don't update DB)"
+          checked={flags.dataSources.sportMonksTestMode}
+          onChange={() => toggleFeature('dataSources', 'sportMonksTestMode', flags.dataSources.sportMonksTestMode)}
+          disabled={!flags.dataSources.useSportMonks}
+        />
+      </div>
+
+      {/* SoccersAPI Controls - DEPRECATED */}
+      <div style={{ marginBottom: '32px', opacity: 0.6 }}>
+        <h3 style={{
+          fontSize: '16px',
+          marginBottom: '16px',
+          color: 'var(--color-text-disabled)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}>
+          🔶 SoccersAPI (Deprecated - Do Not Use)
+        </h3>
+
+        <div style={{
+          padding: '12px',
+          backgroundColor: 'var(--color-warning-light)',
+          border: '1px solid var(--color-warning)',
+          borderRadius: 'var(--border-radius-md)',
+          marginBottom: '16px',
+          fontSize: '14px',
+          color: 'var(--color-warning-dark)'
+        }}>
+          ⚠️ SoccersAPI is deprecated. Use SportMonks API instead.
+        </div>
 
         <ToggleSwitch
           label="Use SoccersAPI (Master Switch)"
           checked={flags.dataSources.useSoccersAPI}
           onChange={toggleMasterSwitch}
+          disabled={true}
         />
 
         <ToggleSwitch
           label="Test Mode (Log only, don't update DB)"
           checked={flags.dataSources.soccersAPITestMode}
           onChange={() => toggleFeature('dataSources', 'soccersAPITestMode', flags.dataSources.soccersAPITestMode)}
-          disabled={!flags.dataSources.useSoccersAPI}
+          disabled={true}
         />
 
         <ToggleSwitch
           label="Comparison Mode (Run both APIs)"
           checked={flags.dataSources.enableAPIComparison}
           onChange={() => toggleFeature('dataSources', 'enableAPIComparison', flags.dataSources.enableAPIComparison)}
+          disabled={true}
         />
       </div>
 
-      {/* SoccersAPI Features */}
+      {/* SportMonks Features */}
       <div style={{ marginBottom: '32px' }}>
         <h3 style={{
           fontSize: '16px',
           marginBottom: '16px',
-          color: flags.dataSources.useSoccersAPI ? 'var(--color-text)' : 'var(--color-text-disabled)',
+          color: flags.dataSources.useSportMonks ? 'var(--color-text)' : 'var(--color-text-disabled)',
           display: 'flex',
           alignItems: 'center',
           gap: '8px'
         }}>
-          ⚽ SoccersAPI Features
+          ⚽ SportMonks Features (Production)
         </h3>
 
-        {!flags.dataSources.useSoccersAPI && (
+        {!flags.dataSources.useSportMonks && (
           <div style={{
             padding: '12px',
             backgroundColor: 'var(--color-warning-light)',
@@ -259,9 +304,45 @@ const FeatureFlagControls: React.FC<FeatureFlagControlsProps> = ({ className = '
             fontSize: '14px',
             color: 'var(--color-warning-dark)'
           }}>
-            ⚠️ Enable SoccersAPI to control these features
+            ⚠️ Enable SportMonks API to control these features
           </div>
         )}
+
+        {Object.entries(flags.sportMonksFeatures).map(([key, value]) => (
+          <ToggleSwitch
+            key={key}
+            label={key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
+            checked={value}
+            onChange={() => toggleFeature('sportMonksFeatures', key, value)}
+            disabled={!flags.dataSources.useSportMonks}
+          />
+        ))}
+      </div>
+
+      {/* SoccersAPI Features - DEPRECATED */}
+      <div style={{ marginBottom: '32px', opacity: 0.6 }}>
+        <h3 style={{
+          fontSize: '16px',
+          marginBottom: '16px',
+          color: 'var(--color-text-disabled)',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}>
+          🔶 SoccersAPI Features (Deprecated)
+        </h3>
+
+        <div style={{
+          padding: '12px',
+          backgroundColor: 'var(--color-warning-light)',
+          border: '1px solid var(--color-warning)',
+          borderRadius: 'var(--border-radius-md)',
+          marginBottom: '16px',
+          fontSize: '14px',
+          color: 'var(--color-warning-dark)'
+        }}>
+          ⚠️ These features are deprecated. Use SportMonks features instead.
+        </div>
 
         {Object.entries(flags.soccersAPIFeatures).map(([key, value]) => (
           <ToggleSwitch
@@ -269,7 +350,7 @@ const FeatureFlagControls: React.FC<FeatureFlagControlsProps> = ({ className = '
             label={key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}
             checked={value}
             onChange={() => toggleFeature('soccersAPIFeatures', key, value)}
-            disabled={!flags.dataSources.useSoccersAPI}
+            disabled={true}
           />
         ))}
       </div>
