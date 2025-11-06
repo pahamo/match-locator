@@ -143,9 +143,13 @@ const HeadToHeadPage: React.FC = () => {
         if (fullTeam1?.slug && fullTeam2?.slug) {
           console.log('[H2H] Fetching fixtures for slugs:', fullTeam1.slug, fullTeam2.slug);
 
+          // Fetch fixtures from the start of the season (August 1st current year)
+          const seasonStartDate = new Date(new Date().getFullYear(), 7, 1); // Month is 0-indexed, so 7 = August
+          const dateFrom = seasonStartDate.toISOString();
+
           const [team1AllFixtures, team2AllFixtures] = await Promise.all([
-            getFixtures({ teamSlug: fullTeam1.slug, limit: 50 }),
-            getFixtures({ teamSlug: fullTeam2.slug, limit: 50 })
+            getFixtures({ teamSlug: fullTeam1.slug, limit: 50, dateFrom, order: 'desc' }),
+            getFixtures({ teamSlug: fullTeam2.slug, limit: 50, dateFrom, order: 'desc' })
           ]);
 
           console.log('[H2H] Fixtures fetched:', {
