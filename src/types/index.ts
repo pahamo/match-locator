@@ -132,4 +132,5 @@ export interface FixturesApiParams {
   limit?: number;
   order?: 'asc' | 'desc';
   competitionId?: number;
+  includeNonProductionVisible?: boolean;
 }

@@ -129,14 +129,32 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
       teamSlug,
       dateFrom,
       dateTo,
+      competitionId,
       limit = 100,
       order = 'asc',
-      competitionId // Don't default to 1 anymore, let visibility settings control
+      includeNonProductionVisible = false
     } = params;
 
-    // If no specific competition is requested, filter by production-visible competitions
+    // If teamSlug is provided, look up the team ID first
+    let teamId: number | null = null;
+    if (teamSlug) {
+      const { data: team } = await supabase
+        .from('teams')
+        .select('id')
+        .eq('slug', teamSlug)
+        .single();
+
+      if (!team) {
+        console.warn('[Supabase] Team not found for slug:', teamSlug);
+        return []; // Team not found, return empty array
+      }
+      teamId = team.id;
+      console.log(`[Supabase] Looking for fixtures with team ID: ${teamId}`);
+    }
+
+    // Load production-visible competitions if not including all
     let allowedCompetitionIds: number[] = [];
-    if (!competitionId) {
+    if (!includeNonProductionVisible) {
       try {
         const { data: competitions, error } = await supabase
           .from('competitions')
@@ -167,8 +185,7 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
         away_team_id,away_team,away_team_slug,away_crest,away_score,
         broadcaster,broadcaster_id,broadcaster_image_path,broadcaster_url
       `)
-      .order('utc_kickoff', { ascending: order === 'asc' })
-      .limit(limit);
+      .order('utc_kickoff', { ascending: order === 'asc' });
 
     if (dateFrom) {
       query = query.gte('utc_kickoff', dateFrom);
@@ -187,6 +204,14 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
     } else if (allowedCompetitionIds.length > 0) {
       query = query.in('competition_id', allowedCompetitionIds);
     }
+
+    // Apply team filter in the query itself (BEFORE limit)
+    if (teamId) {
+      query = query.or(`home_team_id.eq.${teamId},away_team_id.eq.${teamId}`);
+    }
+
+    // Apply limit AFTER all filters (including team filter)
+    query = query.limit(limit);
 
     const { data: rows, error } = await query;
 
@@ -218,28 +243,6 @@ export async function getFixtures(params: FixturesApiParams = {}): Promise<Fixtu
     }
     
     let mapped = rows.map(r => mapFixtureRow(r, providersByFixture));
-
-    // Apply team filter if specified
-    // NOTE: fixtures_with_teams view doesn't have team slugs, so we need to
-    // look up the team ID from the slug and filter by ID
-    if (teamSlug) {
-      // First, get the team ID from the slug
-      const { data: team } = await supabase
-        .from('teams')
-        .select('id')
-        .eq('slug', teamSlug)
-        .single();
-
-      if (team) {
-        mapped = mapped.filter(fx =>
-          fx.home.id === team.id ||
-          fx.away.id === team.id
-        );
-      } else {
-        // Fallback to empty array if team not found
-        mapped = [];
-      }
-    }
     
     // Apply filtering logic to exclude test fixtures (IDs <= 30)
     // This matches the current SPA's filtering logic
