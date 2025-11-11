@@ -5,6 +5,9 @@ import Breadcrumbs from '../components/Breadcrumbs';
 import StructuredData from '../components/StructuredData';
 import { FixtureCard } from '../design-system';
 import LiveBadge from '../components/LiveBadge';
+import { PopularTeamsGrid } from '../components/PopularTeamsGrid';
+import { PopularCompetitionsGrid } from '../components/PopularCompetitionsGrid';
+import { WeekendPreviewSection } from '../components/WeekendPreviewSection';
 import { getFixturesByDateRange } from '../services/supabase';
 import { getTodayUTCRange, getFormattedDateForSEO, getUKDate, getTimeUntilMidnight } from '../utils/dateRange';
 import { updateDocumentMeta } from '../utils/seo';
@@ -278,55 +281,54 @@ const TodayFixturesPage: React.FC = () => {
           </Link>
         </div>
 
-        {/* No fixtures message */}
-        {fixtures.length === 0 && (
+        {/* Discovery Sections - Always Visible */}
+        {!loading && (
+          <>
+            <PopularTeamsGrid />
+            <PopularCompetitionsGrid />
+            <WeekendPreviewSection />
+          </>
+        )}
+
+        {/* Today's Fixtures Section - Only show if there are matches today */}
+        {fixtures.length > 0 && (
+          <div style={{ marginBottom: '32px' }}>
+            <h2 style={{
+              fontSize: '1.75rem',
+              marginBottom: '20px',
+              fontWeight: '700',
+              color: 'var(--color-text)'
+            }}>
+              Today's Matches ({fixtures.length})
+            </h2>
+          </div>
+        )}
+
+        {/* No fixtures message - Simplified since discovery sections are always shown */}
+        {fixtures.length === 0 && !loading && (
           <div style={{
             textAlign: 'center',
-            padding: '64px 20px',
+            padding: '32px 20px',
             backgroundColor: 'var(--color-surface)',
             borderRadius: 'var(--border-radius-lg)',
-            border: '1px solid var(--color-border)'
+            border: '1px solid var(--color-border)',
+            marginBottom: '32px'
           }}>
-            <h2 style={{ marginBottom: '16px', color: 'var(--color-text-secondary)' }}>
-              No matches today
+            <h2 style={{
+              marginBottom: '12px',
+              color: 'var(--color-text)',
+              fontSize: '1.5rem',
+              fontWeight: '600'
+            }}>
+              No matches scheduled today
             </h2>
             <p style={{
-              marginBottom: '24px',
+              margin: 0,
               color: 'var(--color-text-secondary)',
-              maxWidth: '400px',
-              margin: '0 auto 24px'
+              fontSize: '0.95rem'
             }}>
-              There are no football matches scheduled for today. Check tomorrow's fixtures or browse all upcoming matches.
+              Explore popular teams and competitions above, or check this weekend's fixtures.
             </p>
-            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
-              <Link
-                to="/matches/tomorrow"
-                style={{
-                  padding: '12px 24px',
-                  backgroundColor: 'var(--color-primary)',
-                  color: 'white',
-                  textDecoration: 'none',
-                  borderRadius: 'var(--border-radius-md)',
-                  fontWeight: '500'
-                }}
-              >
-                Tomorrow's Fixtures
-              </Link>
-              <Link
-                to="/matches"
-                style={{
-                  padding: '12px 24px',
-                  backgroundColor: 'var(--color-surface)',
-                  color: 'var(--color-text)',
-                  textDecoration: 'none',
-                  borderRadius: 'var(--border-radius-md)',
-                  border: '1px solid var(--color-border)',
-                  fontWeight: '500'
-                }}
-              >
-                All Fixtures
-              </Link>
-            </div>
           </div>
         )}
 
