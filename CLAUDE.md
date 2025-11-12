@@ -4,11 +4,12 @@
 
 **Before implementing ANY feature, you MUST:**
 
-1. ✅ **Read App.tsx routing** - Verify current URL structure, don't assume
-2. ✅ **Check existing utility functions** - Look at what they actually return, test if unsure
-3. ✅ **Never expose database IDs to users** - IDs are internal only, never in URLs
-4. ✅ **Ask clarifying questions FIRST** - If URLs/routing/architecture are involved, ask the user before coding
-5. ✅ **When uncertain, ask** - Don't make assumptions, don't guess, ASK
+1. ✅ **ALWAYS use design system components** - NEVER use inline styles, use Card/Flex/Stack and Tailwind
+2. ✅ **Read App.tsx routing** - Verify current URL structure, don't assume
+3. ✅ **Check existing utility functions** - Look at what they actually return, test if unsure
+4. ✅ **Never expose database IDs to users** - IDs are internal only, never in URLs
+5. ✅ **Ask clarifying questions FIRST** - If URLs/routing/architecture are involved, ask the user before coding
+6. ✅ **When uncertain, ask** - Don't make assumptions, don't guess, ASK
 
 **Failure to follow this checklist results in wasted work and user frustration.**
 
@@ -47,6 +48,40 @@
 - `src/design-system/components/Layout/Flex.tsx` - Flexbox layouts
 - `src/design-system/components/Layout/Stack.tsx` - Vertical/horizontal stacks
 - `src/design-system/components/Button/Button.tsx` - Button variants
+
+**Real Example from Codebase**:
+```tsx
+// ❌ WRONG - Inline styles (what NOT to do)
+<div style={{
+  background: 'var(--color-surface)',
+  border: '1px solid var(--color-border)',
+  borderRadius: '8px',
+  padding: '10px 16px',
+  display: 'flex',
+  gap: '12px'
+}}>
+  <span style={{ fontWeight: '600', color: 'var(--color-text)' }}>
+    {count} matches
+  </span>
+</div>
+
+// ✅ CORRECT - Design system + Tailwind
+<Card variant="outline" className="mb-4">
+  <Flex justify="between" align="center" gap="md" className="px-4 py-2.5">
+    <span className="text-sm font-semibold text-foreground">
+      {count} matches
+    </span>
+  </Flex>
+</Card>
+```
+
+**When creating new components:**
+1. Extract reusable UI into a component (e.g., `StatusBar.tsx`)
+2. Use design system components (Card, Flex, Stack) as building blocks
+3. Apply Tailwind classes for spacing and colors
+4. Use theme tokens: `text-foreground`, `bg-card`, `border-border`, etc.
+
+**Reference**: See `src/components/StatusBar.tsx` for a properly implemented component.
 
 ---
 

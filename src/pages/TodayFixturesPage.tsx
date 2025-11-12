@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Breadcrumbs from '../components/Breadcrumbs';
 import StructuredData from '../components/StructuredData';
+import { StatusBar } from '../components/StatusBar';
+import { Card } from '../design-system/components/Card';
+import Flex from '../design-system/components/Layout/Flex';
 import { FixtureCard } from '../design-system';
-import LiveBadge from '../components/LiveBadge';
 import { PopularTeamsGrid } from '../components/PopularTeamsGrid';
 import { PopularCompetitionsGrid } from '../components/PopularCompetitionsGrid';
 import { WeekendPreviewSection } from '../components/WeekendPreviewSection';
@@ -175,98 +177,44 @@ const TodayFixturesPage: React.FC = () => {
       <Header />
       <main className="wrap" style={{ paddingTop: 'var(--layout-page-top-margin)' }}>
         <Breadcrumbs items={generateBreadcrumbs('/matches/today')} />
-        {/* Compact Status Bar */}
-        <div style={{
-          background: 'var(--color-surface)',
-          border: '1px solid var(--color-border)',
-          borderRadius: '8px',
-          padding: '10px 16px',
-          marginBottom: '16px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '12px',
-          fontSize: '13px',
-          color: 'var(--color-text-secondary)'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-            {liveFixtures.length > 0 && (
-              <LiveBadge kickoffTime={liveFixtures[0].kickoff_utc} variant="compact" />
-            )}
-            <span style={{ fontWeight: '600', color: 'var(--color-text)' }}>
-              {fixtures.length} {fixtures.length === 1 ? 'match' : 'matches'} today
-            </span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', fontSize: '12px' }}>
-            <span>Updated: {lastUpdated.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}</span>
-            <span>• Auto-updates</span>
-          </div>
-        </div>
 
-        {/* Page Header - Compact */}
-        <div style={{ marginBottom: '24px' }}>
-          <h1 style={{
-            fontSize: 'clamp(1.5rem, 4vw, 2.25rem)',
-            marginBottom: '12px',
-            fontWeight: '700',
-            lineHeight: '1.2'
-          }}>
+        {/* Status Bar - Design System Component */}
+        <StatusBar
+          matchCount={fixtures.length}
+          lastUpdated={lastUpdated}
+          hasLiveMatches={liveFixtures.length > 0}
+          liveKickoffTime={liveFixtures.length > 0 ? liveFixtures[0].kickoff_utc : undefined}
+        />
+
+        {/* Page Header - Compact with Tailwind */}
+        <div className="mb-6">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight mb-3">
             ⚽ Football on TV Today - {getFormattedDateForSEO(getUKDate())}
           </h1>
 
-          {/* Compact SEO Banner */}
-          <div style={{
-            background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-            borderRadius: '8px',
-            padding: '12px 16px',
-            color: 'white',
-            fontSize: 'clamp(13px, 2.5vw, 15px)',
-            lineHeight: '1.5',
-            textAlign: 'center'
-          }}>
-            Find every Premier League, Champions League, and FA Cup match on Sky Sports, TNT Sports, BBC & Amazon Prime — free, real-time updates
-          </div>
+          {/* Compact SEO Banner - Using Card with gradient */}
+          <Card variant="primary" className="py-3 px-4">
+            <p className="text-xs sm:text-sm text-center text-white leading-relaxed">
+              Find every Premier League, Champions League, and FA Cup match on Sky Sports, TNT Sports, BBC & Amazon Prime — free, real-time updates
+            </p>
+          </Card>
         </div>
 
-        {/* Quick Navigation */}
-        <div style={{
-          display: 'flex',
-          gap: '12px',
-          marginBottom: '32px',
-          flexWrap: 'wrap'
-        }}>
+        {/* Quick Navigation - Using Flex and Tailwind */}
+        <Flex gap="md" wrap="wrap" className="mb-8">
           <Link
             to="/matches/tomorrow"
-            style={{
-              padding: '8px 16px',
-              backgroundColor: 'var(--color-surface)',
-              border: '1px solid var(--color-border)',
-              borderRadius: 'var(--border-radius-md)',
-              textDecoration: 'none',
-              color: 'var(--color-text)',
-              fontSize: '14px',
-              fontWeight: '500'
-            }}
+            className="px-4 py-2 bg-card border border-border rounded-md no-underline text-foreground text-sm font-medium hover:bg-muted transition-colors"
           >
             Tomorrow's Fixtures →
           </Link>
           <Link
             to="/matches"
-            style={{
-              padding: '8px 16px',
-              backgroundColor: 'var(--color-surface)',
-              border: '1px solid var(--color-border)',
-              borderRadius: 'var(--border-radius-md)',
-              textDecoration: 'none',
-              color: 'var(--color-text)',
-              fontSize: '14px',
-              fontWeight: '500'
-            }}
+            className="px-4 py-2 bg-card border border-border rounded-md no-underline text-foreground text-sm font-medium hover:bg-muted transition-colors"
           >
             All Fixtures
           </Link>
-        </div>
+        </Flex>
 
         {/* Discovery Sections - Always Visible */}
         {!loading && (
@@ -279,63 +227,34 @@ const TodayFixturesPage: React.FC = () => {
 
         {/* Today's Fixtures Section - Only show if there are matches today */}
         {fixtures.length > 0 && (
-          <div style={{ marginBottom: '32px' }}>
-            <h2 style={{
-              fontSize: '1.75rem',
-              marginBottom: '20px',
-              fontWeight: '700',
-              color: 'var(--color-text)'
-            }}>
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold mb-5 text-foreground">
               Today's Matches ({fixtures.length})
             </h2>
           </div>
         )}
 
-        {/* No fixtures message - Simplified since discovery sections are always shown */}
+        {/* No fixtures message - Using Card component */}
         {fixtures.length === 0 && !loading && (
-          <div style={{
-            textAlign: 'center',
-            padding: '32px 20px',
-            backgroundColor: 'var(--color-surface)',
-            borderRadius: 'var(--border-radius-lg)',
-            border: '1px solid var(--color-border)',
-            marginBottom: '32px'
-          }}>
-            <h2 style={{
-              marginBottom: '12px',
-              color: 'var(--color-text)',
-              fontSize: '1.5rem',
-              fontWeight: '600'
-            }}>
+          <Card variant="outline" className="text-center py-8 px-5 mb-8">
+            <h2 className="text-2xl font-semibold mb-3 text-foreground">
               No matches scheduled today
             </h2>
-            <p style={{
-              margin: 0,
-              color: 'var(--color-text-secondary)',
-              fontSize: '0.95rem'
-            }}>
+            <p className="text-sm text-muted-foreground">
               Explore popular teams and competitions above, or check this weekend's fixtures.
             </p>
-          </div>
+          </Card>
         )}
 
         {/* Live Fixtures */}
         {liveFixtures.length > 0 && (
-          <section style={{ marginBottom: '40px' }}>
-            <h2 style={{
-              fontSize: '1.5rem',
-              marginBottom: '20px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}>
-              🔴 Live Now ({liveFixtures.length})
-            </h2>
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '8px'
-            }}>
+          <section className="mb-10">
+            <Flex align="center" gap="sm" className="mb-5">
+              <h2 className="text-2xl font-bold text-foreground">
+                🔴 Live Now ({liveFixtures.length})
+              </h2>
+            </Flex>
+            <Flex direction="column" gap="sm">
               {liveFixtures.map(fixture => (
                 <FixtureCard
                   key={fixture.id}
@@ -344,27 +263,19 @@ const TodayFixturesPage: React.FC = () => {
                   showViewButton={true}
                 />
               ))}
-            </div>
+            </Flex>
           </section>
         )}
 
         {/* Upcoming Fixtures */}
         {upcomingFixtures.length > 0 && (
-          <section style={{ marginBottom: '40px' }}>
-            <h2 style={{
-              fontSize: '1.5rem',
-              marginBottom: '20px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}>
-              ⏰ Upcoming Today ({upcomingFixtures.length})
-            </h2>
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '8px'
-            }}>
+          <section className="mb-10">
+            <Flex align="center" gap="sm" className="mb-5">
+              <h2 className="text-2xl font-bold text-foreground">
+                ⏰ Upcoming Today ({upcomingFixtures.length})
+              </h2>
+            </Flex>
+            <Flex direction="column" gap="sm">
               {upcomingFixtures.map(fixture => (
                 <FixtureCard
                   key={fixture.id}
@@ -373,27 +284,19 @@ const TodayFixturesPage: React.FC = () => {
                   showViewButton={true}
                 />
               ))}
-            </div>
+            </Flex>
           </section>
         )}
 
         {/* Finished Fixtures */}
         {finishedFixtures.length > 0 && (
-          <section style={{ marginBottom: '40px' }}>
-            <h2 style={{
-              fontSize: '1.5rem',
-              marginBottom: '20px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px'
-            }}>
-              ✅ Finished Today ({finishedFixtures.length})
-            </h2>
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '8px'
-            }}>
+          <section className="mb-10">
+            <Flex align="center" gap="sm" className="mb-5">
+              <h2 className="text-2xl font-bold text-foreground">
+                ✅ Finished Today ({finishedFixtures.length})
+              </h2>
+            </Flex>
+            <Flex direction="column" gap="sm">
               {finishedFixtures.map(fixture => (
                 <FixtureCard
                   key={fixture.id}
@@ -403,31 +306,19 @@ const TodayFixturesPage: React.FC = () => {
                   hideBroadcaster={true}
                 />
               ))}
-            </div>
+            </Flex>
           </section>
         )}
 
         {/* Footer info */}
         {fixtures.length > 0 && (
-          <div style={{
-            marginTop: '48px',
-            padding: '24px',
-            backgroundColor: 'var(--color-surface)',
-            borderRadius: 'var(--border-radius-lg)',
-            border: '1px solid var(--color-border)',
-            textAlign: 'center'
-          }}>
-            <p style={{
-              margin: '0',
-              fontSize: '14px',
-              color: 'var(--color-text-secondary)',
-              lineHeight: '1.6'
-            }}>
+          <Card variant="outline" className="mt-12 p-6 text-center">
+            <p className="text-sm text-muted-foreground leading-relaxed m-0">
               All times shown in UK timezone. Page updates automatically every 60 seconds during match days.
               <br />
               Showing {fixtures.length} match{fixtures.length !== 1 ? 'es' : ''} for today.
             </p>
-          </div>
+          </Card>
         )}
       </main>
     </div>
