@@ -59,6 +59,12 @@ const ClubPage: React.FC = () => {
               return status === 'upcoming' || status === 'upNext';
             });
 
+            // Count only upcoming fixtures for accurate meta
+            const upcomingCount = data.filter(fx => {
+              const status = getMatchStatus(fx.kickoff_utc).status;
+              return status === 'upcoming' || status === 'upNext' || status === 'live';
+            }).length;
+
             // Prepare next match info for meta
             const nextMatchInfo = upcomingMatch ? {
               opponent: formatTeamNameShort(
@@ -73,7 +79,7 @@ const ClubPage: React.FC = () => {
               channel: upcomingMatch.providers_uk?.[0]?.name
             } : undefined;
 
-            const meta = generateTeamMeta(teamData, data.length, nextMatchInfo);
+            const meta = generateTeamMeta(teamData, upcomingCount, nextMatchInfo);
             updateDocumentMeta(meta);
           }
         }
@@ -104,6 +110,14 @@ const ClubPage: React.FC = () => {
     return fixtures.find(fx => {
       const status = getMatchStatus(fx.kickoff_utc).status;
       return status === 'upcoming' || status === 'upNext';
+    });
+  }, [fixtures]);
+
+  // Filter upcoming fixtures only (exclude past matches)
+  const upcomingFixtures = useMemo(() => {
+    return fixtures.filter(fx => {
+      const status = getMatchStatus(fx.kickoff_utc).status;
+      return status === 'upcoming' || status === 'upNext' || status === 'live';
     });
   }, [fixtures]);
 
@@ -340,12 +354,12 @@ const ClubPage: React.FC = () => {
               )}
 
               <section>
-                <h2 style={{ marginTop: 0 }}>Upcoming fixtures ({fixtures.length})</h2>
-                {fixtures.length === 0 ? (
+                <h2 style={{ marginTop: 0 }}>Upcoming fixtures ({upcomingFixtures.length})</h2>
+                {upcomingFixtures.length === 0 ? (
                   <div className="no-fixtures">No upcoming fixtures found.</div>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    {fixtures.map(fx => (
+                    {upcomingFixtures.map(fx => (
                       <FixtureCard
                         key={fx.id}
                         fixture={fx}
