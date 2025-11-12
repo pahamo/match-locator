@@ -175,70 +175,57 @@ const TodayFixturesPage: React.FC = () => {
       <Header />
       <main className="wrap" style={{ paddingTop: 'var(--layout-page-top-margin)' }}>
         <Breadcrumbs items={generateBreadcrumbs('/matches/today')} />
-        {/* Page Header */}
-        <div style={{ marginBottom: '32px' }}>
-          <h1 style={{
-            fontSize: 'clamp(2rem, 5vw, 3.5rem)',
-            marginBottom: '8px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px',
-            flexWrap: 'wrap'
-          }}>
-            <span>⚽ Football on TV Today - {getFormattedDateForSEO(getUKDate())}</span>
+        {/* Compact Status Bar */}
+        <div style={{
+          background: 'var(--color-surface)',
+          border: '1px solid var(--color-border)',
+          borderRadius: '8px',
+          padding: '10px 16px',
+          marginBottom: '16px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '12px',
+          fontSize: '13px',
+          color: 'var(--color-text-secondary)'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
             {liveFixtures.length > 0 && (
               <LiveBadge kickoffTime={liveFixtures[0].kickoff_utc} variant="compact" />
             )}
+            <span style={{ fontWeight: '600', color: 'var(--color-text)' }}>
+              {fixtures.length} {fixtures.length === 1 ? 'match' : 'matches'} today
+            </span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', fontSize: '12px' }}>
+            <span>Updated: {lastUpdated.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}</span>
+            <span>• Auto-updates</span>
+          </div>
+        </div>
+
+        {/* Page Header - Compact */}
+        <div style={{ marginBottom: '24px' }}>
+          <h1 style={{
+            fontSize: 'clamp(1.5rem, 4vw, 2.25rem)',
+            marginBottom: '12px',
+            fontWeight: '700',
+            lineHeight: '1.2'
+          }}>
+            ⚽ Football on TV Today - {getFormattedDateForSEO(getUKDate())}
           </h1>
 
-          {/* Hero Value Proposition */}
+          {/* Compact SEO Banner */}
           <div style={{
             background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-            borderRadius: '12px',
-            padding: 'clamp(20px, 4vw, 32px)',
-            marginBottom: '24px',
+            borderRadius: '8px',
+            padding: '12px 16px',
             color: 'white',
+            fontSize: 'clamp(13px, 2.5vw, 15px)',
+            lineHeight: '1.5',
             textAlign: 'center'
           }}>
-            <p style={{
-              margin: '0 0 12px 0',
-              fontSize: 'clamp(18px, 3vw, 22px)',
-              fontWeight: '600',
-              lineHeight: '1.4'
-            }}>
-              Your Complete Guide to UK Football on TV
-            </p>
-            <p style={{
-              margin: 0,
-              fontSize: 'clamp(14px, 2.5vw, 16px)',
-              opacity: 0.95,
-              lineHeight: '1.5',
-              maxWidth: '800px',
-              marginLeft: 'auto',
-              marginRight: 'auto'
-            }}>
-              Find every Premier League, Champions League, and FA Cup match shown on Sky Sports, TNT Sports, BBC, and Amazon Prime. Real-time updates, kick-off times, and broadcast info — completely free.
-            </p>
-          </div>
-
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px',
-            color: 'var(--color-text-secondary)'
-          }}>
-            <p style={{ margin: 0, fontSize: '16px' }}>
-              Live UK TV Schedule • {fixtures.length} {fixtures.length === 1 ? 'match' : 'matches'} today
-            </p>
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '16px',
-              fontSize: '14px'
-            }}>
-              <span>Last updated: {lastUpdated.toLocaleTimeString()}</span>
-              <span>Updates every 60 seconds</span>
-            </div>
+            Find every Premier League, Champions League, and FA Cup match on Sky Sports, TNT Sports, BBC & Amazon Prime — free, real-time updates
           </div>
         </div>
 
